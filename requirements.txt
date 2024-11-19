@@ -1,0 +1,12 @@
+altgraph
+future
+importlib-metadata
+pefile
+pyinstaller
+pyinstaller-hooks-contrib
+pywin32-ctypes
+typing-extensions
+zipp
+psycopg2
+Django
+sqlparse
