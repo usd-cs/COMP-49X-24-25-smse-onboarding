@@ -1,5 +1,5 @@
-from django.shortcuts import render
-
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
 from .models import Task
 
 
@@ -12,10 +12,22 @@ def home(request):
     #     completed = True,
     #     deadline = "2025-01-05 23:59",
     # )
-    tasks = Task.objects.all()
-    return render(request, 'new_hire_dashboard/home.html', {"tasks": tasks})
+    incomplete_tasks = Task.objects.filter(completed=False).order_by('deadline')
+    completed_tasks = Task.objects.filter(completed=True).order_by('deadline')
+    return render(request, 'new_hire_dashboard/home.html', {
+        'incomplete_tasks': incomplete_tasks,
+        'completed_tasks': completed_tasks,
+    })
 
 
 def notifications(request):
     # return HttpResponse("Hello world. You're at the dashboard.")
     return render(request, 'new_hire_dashboard/notifications.html')
+
+def complete_task(request, task_id):
+    if request.method == 'POST':
+        task = get_object_or_404(Task, id=task_id)
+        task.completed = True  # Mark as completed
+        task.save()  # Save the changes
+        return JsonResponse({'message': f'Task "{task.title}" marked as completed successfully!'})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
