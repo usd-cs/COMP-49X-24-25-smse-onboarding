@@ -49,5 +49,5 @@ jobs:
         python manage.py migrate
     - name: Run Tests
       run: |
-        cd smse_onboarding
+        cd smse_onboarding_main_project
         python manage.py test
