@@ -1,5 +1,7 @@
 from django.test import TestCase
+
 from smse_onboarding.models import Faculty, Task, TaskProgress
+
 
 class FacultyModelTest(TestCase):
     def setUp(self):
@@ -24,6 +26,7 @@ class FacultyModelTest(TestCase):
         self.assertEqual(self.faculty.first_name, "Jane")
         self.assertEqual(self.faculty.last_name, "Doe")
         self.assertEqual(self.faculty.engineering_dept, "Computer Science")
+
 
 class TaskModelTest(TestCase):
     def setUp(self):

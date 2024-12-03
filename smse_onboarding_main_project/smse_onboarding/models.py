@@ -1,6 +1,8 @@
 from django.db import models
 
 # Non-Admin Faculty Table
+
+
 class Faculty(models.Model):
     faculty_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
@@ -20,10 +22,14 @@ class Faculty(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 # Admin Table
+
+
 class Admin(Faculty):
     permissions = models.CharField(max_length=255)
 
 # Task Table
+
+
 class Task(models.Model):
     task_id = models.AutoField(primary_key=True)
     task_name = models.CharField(max_length=255)
@@ -37,6 +43,8 @@ class Task(models.Model):
         return self.task_name
 
 # Task Progress Table
+
+
 class TaskProgress(models.Model):
     progress_id = models.AutoField(primary_key=True)
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
@@ -47,6 +55,8 @@ class TaskProgress(models.Model):
         return f"Task Progress {self.progress_id}"
 
 # Faculty Documents Table
+
+
 class FacultyDocument(models.Model):
     document_id = models.AutoField(primary_key=True)
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
@@ -56,6 +66,8 @@ class FacultyDocument(models.Model):
         return f"Document {self.document_id} for Faculty {self.faculty_id}"
 
 # Other Employees Table
+
+
 class OtherEmployee(models.Model):
     other_employee_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
