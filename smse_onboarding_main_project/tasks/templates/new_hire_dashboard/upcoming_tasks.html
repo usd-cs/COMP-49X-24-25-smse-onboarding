@@ -1,0 +1,30 @@
+<div class="card">
+    <label class="card-header">Tasks</label>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <input class="form-check-input me-3" type="checkbox" value="">
+            <label class="form-check-label" style="width: 40%">Task</label>
+            <label class="form-check-label">Due Date</label>
+        </li>
+
+        {% if tasks %}
+        <div class="tasks-list">
+            {% for task in tasks %}
+                {% if not task.completed %}
+                <li class="list-group-item d-flex align-items-center" style="height: 65px;">
+                    <input class="form-check-input me-3" type="checkbox" value="">
+                    <label class="form-check-label" style="width: 40%">{{ task.title }}</label>
+                    <label class="form-check-label" style="width: 40%">{{ task.deadline }}</label>
+                    <label class="form-check-label text-danger" style="width: 30%">30 days left</label>
+                    <i class="bi bi-three-dots-vertical"></i>
+                </li>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-secondary text-center">
+            <p>No tasks available.</p>
+        </div>
+        {% endif %}
+    </ul>
+</div>
