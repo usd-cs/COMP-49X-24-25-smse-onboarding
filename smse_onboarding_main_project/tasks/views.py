@@ -12,13 +12,10 @@ def home(request):
     #     completed = True,
     #     deadline = "2025-01-05 23:59",
     # )
-    incomplete_tasks = Task.objects.filter(completed=False).order_by('deadline')
-    completed_tasks = Task.objects.filter(completed=True).order_by('deadline')
+    tasks = Task.objects.all()
     return render(request, 'new_hire_dashboard/home.html', {
-        'incomplete_tasks': incomplete_tasks,
-        'completed_tasks': completed_tasks,
+        'tasks': tasks,
     })
-
 
 def notifications(request):
     # return HttpResponse("Hello world. You're at the dashboard.")
@@ -27,7 +24,7 @@ def notifications(request):
 def complete_task(request, task_id):
     if request.method == 'POST':
         task = get_object_or_404(Task, id=task_id)
-        task.completed = True  # Mark as completed
-        task.save()  # Save the changes
+        task.completed = True  # mark complete
+        task.save()
         return JsonResponse({'message': f'Task "{task.title}" marked as completed successfully!'})
     return JsonResponse({'error': 'Invalid request method'}, status=400)

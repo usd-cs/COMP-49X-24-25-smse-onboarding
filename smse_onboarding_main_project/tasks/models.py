@@ -12,3 +12,5 @@ class Task(models.Model):
 
     class Meta:
         ordering = ['created_at']
+
+
