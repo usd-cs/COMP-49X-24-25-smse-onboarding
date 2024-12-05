@@ -5,7 +5,11 @@ from unittest.mock import patch
 from django.urls import reverse
 from .models import Task
 
+
 class TaskTests(TestCase):
+    """
+    Setting up the test case. 
+    """
     def setUp(self):
         self.task = Task.objects.create(
             title="Test Task",
@@ -14,6 +18,9 @@ class TaskTests(TestCase):
             completed=False,
         )
 
+    """
+    Test case for completing a task
+    """
     def test_complete_task_success(self):
         #mocks completing a task
         response = self.client.post(reverse('tasks:complete_task', args=[self.task.id]))
@@ -22,6 +29,9 @@ class TaskTests(TestCase):
         self.assertTrue(self.task.completed)
         self.assertEqual(response.json()['message'], f'Task "{self.task.title}" marked as completed successfully!')
 
+    """
+    Test case for mocking a save.
+    """
     @patch('tasks.models.Task.save')  # mocks the save method
     def test_complete_task_mock_save(self, mock_save):
         # mocks completing a task with a mocked save

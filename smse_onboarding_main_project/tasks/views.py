@@ -1,5 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
+from django.utils import timezone
+from datetime import timedelta
+
 from .models import Task
 
 
@@ -13,6 +16,12 @@ def home(request):
     #     deadline = "2025-01-05 23:59",
     # )
     tasks = Task.objects.all()
+
+    # ensures remaining days is shown correctly
+    for task in tasks:
+        if not task.completed:
+            task.remaining_days = (task.deadline - timezone.now()).days
+
     return render(request, 'new_hire_dashboard/home.html', {
         'tasks': tasks,
     })

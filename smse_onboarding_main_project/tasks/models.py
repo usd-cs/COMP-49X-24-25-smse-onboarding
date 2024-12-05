@@ -2,7 +2,6 @@ from django.db import models
 
 # Create your models here.
 
-
 class Task(models.Model):
     title = models.TextField()
     description = models.TextField()
@@ -12,5 +11,3 @@ class Task(models.Model):
 
     class Meta:
         ordering = ['created_at']
-
-
