@@ -26,10 +26,6 @@ def home(request):
         'tasks': tasks,
     })
 
-def notifications(request):
-    # return HttpResponse("Hello world. You're at the dashboard.")
-    return render(request, 'new_hire_dashboard/notifications.html')
-
 def complete_task(request, task_id):
     if request.method == 'POST':
         task = get_object_or_404(Task, id=task_id)
