@@ -6,6 +6,4 @@ app_name = "tasks"
 
 urlpatterns = [
     path("", views.home, name="home"),
-
-    path('notifications/', views.notifications, name='notifications'),
 ]

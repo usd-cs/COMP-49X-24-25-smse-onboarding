@@ -14,8 +14,3 @@ def home(request):
     # )
     tasks = Task.objects.all()
     return render(request, 'new_hire_dashboard/home.html', {"tasks": tasks})
-
-
-def notifications(request):
-    # return HttpResponse("Hello world. You're at the dashboard.")
-    return render(request, 'new_hire_dashboard/notifications.html')
