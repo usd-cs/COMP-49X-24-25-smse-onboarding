@@ -1,20 +1,23 @@
-SMSE Onboarding Web Application
+# SMSE Onboarding Web Application
+
+Authors: Shayna Bello, Long Pham, Nick Zhou
 
 Description: The SMSE Web Application is a web-based onboarding application that allows new hire users to view and manage their onboarding tasks. The project aims to provide a simple, user-friendly platform where users can check on upcoming tasks and mark them as complete, which will update their overal tasks progress. 
 
 Table of Contents:
 
-Features
-Requirments
-Install Dependencies:
-Database Setup
-Run Migrations
-Run Development Server
-Testing:
-Load Test Data
-URLs
-Test Users usernames and passwords
-UI Design
+1. Features
+2. Requirments
+3. Install Dependencies
+4. Database Setup
+5. Run Migrations
+6. Run Development Server
+7. Testing
+8. Load Test Data
+9. URLs
+10. Test Users usernames and passwords
+11. UI Design
+
 Features:
 
 Requirements:
