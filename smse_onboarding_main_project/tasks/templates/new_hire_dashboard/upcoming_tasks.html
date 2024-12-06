@@ -1,3 +1,6 @@
+{% load static %}
+<script src="{% static 'js/mark_task_complete.js' %}"></script>
+
 <div class="card">
     <label class="card-header">Tasks</label>
     <ul class="list-group">
@@ -12,6 +15,10 @@
             {% for task in tasks %}
                 {% if not task.completed %}
                 <li class="list-group-item d-flex align-items-center" style="height: 65px;">
+                    <form action="{% url 'tasks:complete_task' task.id %}" method="POST">
+                        {% csrf_token %}
+                        <input class="form-check-input me-3" type="checkbox" onclick="this.form.submit()">
+                    </form>
                     <input class="form-check-input me-3" type="checkbox" value="">
                     <label class="form-check-label" style="width: 40%">{{ task.title }}</label>
                     <label class="form-check-label" style="width: 40%">{{ task.deadline }}</label>

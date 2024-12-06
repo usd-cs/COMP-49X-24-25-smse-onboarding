@@ -35,5 +35,5 @@ def complete_task(request, task_id):
         task = get_object_or_404(Task, id=task_id)
         task.completed = True  # mark complete
         task.save()
-        return JsonResponse({'message': f'Task "{task.title}" marked as completed successfully!'})
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
+        return JsonResponse({"success": True})
+    return JsonResponse({"success": False, "error": "Invalid request"})
