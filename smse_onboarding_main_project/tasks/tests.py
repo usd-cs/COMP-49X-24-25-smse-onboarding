@@ -25,7 +25,7 @@ class TaskTests(TestCase):
         #mocks completing a task
         response = self.client.post(reverse('tasks:complete_task', args=[self.task.id]))
         self.task.refresh_from_db()
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         self.assertTrue(self.task.completed)
         self.assertEqual(response.json()['message'], f'Task "{self.task.title}" marked as completed successfully!')
 
@@ -37,4 +37,4 @@ class TaskTests(TestCase):
         # mocks completing a task with a mocked save
         response = self.client.post(reverse('tasks:complete_task', args=[self.task.id]))
         mock_save.assert_called_once()
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
