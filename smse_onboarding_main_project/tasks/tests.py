@@ -1,15 +1,18 @@
-from django.test import TestCase
-from django.utils import timezone
 from datetime import timedelta
 from unittest.mock import patch
+
+from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
+
 from .models import Task
 
 
 class TaskTests(TestCase):
     """
-    Setting up the test case. 
+    Setting up the test case.
     """
+
     def setUp(self):
         self.task = Task.objects.create(
             title="Test Task",
@@ -21,8 +24,9 @@ class TaskTests(TestCase):
     """
     Test case for completing a task
     """
+
     def test_complete_task_success(self):
-        #mocks completing a task
+        # mocks completing a task
         response = self.client.post(reverse('tasks:complete_task', args=[self.task.id]))
         self.task.refresh_from_db()
         self.assertEqual(response.status_code, 302)
