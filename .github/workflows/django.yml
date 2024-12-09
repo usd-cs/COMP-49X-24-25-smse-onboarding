@@ -42,7 +42,7 @@ jobs:
         flake8 .
     - name: Run Migrations
       env:
-        DATABASE_URL: psql postgres://smse:password@localhost:5432/SMSE-Onboarding
+        DATABASE_URL: psql postgres://postgres:password@localhost:5432/smse-db
       run: |
         cd smse_onboarding_main_project
         python manage.py makemigrations
