@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'smse-db',
         'USER': 'postgres',
-        'PASSWORD': 'password', 
+        'PASSWORD': 'password',  #Password Checking
         'HOST': 'localhost',
         'PORT': '5432',
     }
