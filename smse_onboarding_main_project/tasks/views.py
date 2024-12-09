@@ -2,13 +2,26 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-
+from datetime import timedelta
 from .models import Task
 
 
 def home(request):
     # return HttpResponse("Hello world. You're at the dashboard.")
-
+    # Task.objects.create(
+    #     title = "Get Zoom phone",
+    #     description = "Get a Zoom phone number.",
+    #     created_at = "2024-12-02 18:07",
+    #     completed = True,
+    #     deadline = "2025-01-05 23:59",
+    # )
+    # Task.objects.create(
+    #     title = "Request furniture",
+    #     description = "Request furniture for the new office.",
+    #     created_at = "2024-12-01 09:00",
+    #     completed = False,
+    #     deadline = "2025-01-12 23:59",
+    # )
     # file = open('C:/Users/longp/Coding Projects/Python/Senior Project/COMP-49X-24-25-smse-onboarding/smse_onboarding_main_project/tasks/fixtures/test_data.json')
     # tasks_json = json.load(file)
 
