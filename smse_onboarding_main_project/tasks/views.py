@@ -1,10 +1,8 @@
-
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from datetime import timedelta
 from .models import Task
-
 
 def home(request):
     # return HttpResponse("Hello world. You're at the dashboard.")
@@ -45,8 +43,14 @@ def home(request):
         else:
             num_completed += 1
 
+    # Avoid division by zero error
+    if len(tasks) > 0:
+        percentage = (num_completed / len(tasks)) * 100
+    else:
+        percentage = 0
+
     return render(request, 'new_hire_dashboard/home.html', {
-        'tasks': tasks, 'num_tasks': len(tasks), 'num_completed': num_completed, 'percentage': (num_completed / len(tasks)) * 100
+        'tasks': tasks, 'num_tasks': len(tasks), 'num_completed': num_completed, 'percentage': percentage
     })
 
 
