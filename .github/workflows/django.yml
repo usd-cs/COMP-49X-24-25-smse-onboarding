@@ -21,9 +21,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: smse
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: SMSE_Onboarding
+          POSTGRES_DB: smse-db
 
     steps:
     - uses: actions/checkout@v4
