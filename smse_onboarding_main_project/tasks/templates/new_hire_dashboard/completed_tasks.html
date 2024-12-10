@@ -2,9 +2,9 @@
     <label class="card-header">Tasks</label>
     <ul class="list-group">
         <li class="list-group-item">
-            <input class="form-check-input me-3" type="checkbox" value="">
             <label class="form-check-label" style="width: 30%">Task</label>
             <label class="form-check-label">Due Date</label>
+            <label class="form-check-label text-center" style="width: 20%">Status</label>
         </li>
 
         {% if tasks %}
@@ -12,14 +12,20 @@
             {% for task in tasks %}
                 {% if task.completed %}
                 <li class="list-group-item d-flex align-items-center" style="height: 65px;">
-                    <i class="bi bi-three-dots-vertical" style="width: 6%"></i>
+
+                    <!-- Completed task icon -->
+                    <i class="bi bi-check-circle-fill text-success me-3" style="font-size: 1.5rem;"></i>
+
+                    <!--Task labels -->
                     <label class="form-check-label" style="width: 30%">{{ task.title }}</label>
                     <label class="form-check-label" style="width: 30%">{{ task.deadline }}</label>
                     <label class="form-check-label text-success" style="width: 20%">Completed</label>
+
+                    <!-- Edit icon -->
                     <form method="POST" action="{% url 'tasks:continue_task' task.id %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to set this task as incomplete?')">
-                            Continue Task
+                        <button type="submit" class="btn btn-link p-0" onclick="return confirm('Are you sure you want to set this task as incomplete?')">
+                            <i class="bi bi-three-dots-vertical" style="font-size: 1.5rem; cursor: pointer;"></i>
                         </button>
                     </form>
                 </li>
