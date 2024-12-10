@@ -1,10 +1,13 @@
 <div class="modal fade" id="taskModal{{ task.id }}" aria-labelledby="taskModalLabel" tabindex="-1" aria-hidden="true">
+    <!-- Card for the popup showing the task description -->
     <div class="modal-dialog">
         <div class="modal-content">
+            <!-- Header for the popup showing the task description -->
             <div class="modal-header">
                 <h5 class="modal-title">{{ task.title }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <!-- Body for the popup showing the task description -->
             <div class="modal-body">
                 <p><strong>Created At:</strong> {{ task.created_at }}</p>
                 <p><strong>Deadline:</strong> {{ task.deadline }}</p>
@@ -21,6 +24,7 @@
                 {% endif %}
                 <p><strong>Description:</strong> {{ task.description }}</p>
             </div>
+            <!-- Footer for the popup showing the task description -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>

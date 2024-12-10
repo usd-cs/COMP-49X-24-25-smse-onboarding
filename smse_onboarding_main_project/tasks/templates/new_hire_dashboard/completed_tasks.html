@@ -1,5 +1,6 @@
 <div class="card" style="width: 100%;">
     <ul class="list-group">
+        <!-- Header for the completed tasks table -->
         <li class="list-group-item d-flex">
             <label class="form-check-label" style="width: 5%"></label>
             <label class="form-check-label" style="width: 34%">Task</label>
@@ -8,12 +9,13 @@
         </li>
 
         {% if tasks %}
+        <!-- Body for the completed tasks table -->
         <div class="tasks-list">
             {% for task in tasks %}
                 {% if task.completed %}
                 <li class="list-group-item d-flex align-items-center" style="height: 65px;">
 
-                    <!-- Completed task icon acts as continue task button-->
+                    <!-- Completed task icon acts as continue task button -->
                     <form method="POST" action="{% url 'tasks:continue_task' task.id %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-link p-0" style="color: green;" onclick="return confirm('Are you sure you want to set this task as incomplete?')">
@@ -26,7 +28,7 @@
                     <label class="form-check-label" style="width: 35%">{{ task.deadline }}</label>
                     <label class="form-check-label text-success" style="width: 25%">Completed</label>
 
-                    <!-- Edit icon No functionality-->
+                    <!-- Three dots icon shows a dropdown menu -->
                     <div class="dropdown">
                         <i class="bi bi-three-dots-vertical ms-auto" style="font-size: 1.5rem; cursor: pointer;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
                         <ul class="dropdown-menu">
@@ -34,6 +36,7 @@
                         </ul>
                     </div>
     
+                    <!-- Render the popup upon clicking "Description" from the dropdown menu -->
                     {% include 'new_hire_dashboard/task_popup.html' %}
 
                 </li>
