@@ -1,12 +1,21 @@
-
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from datetime import timedelta
 from tasks.models import Task
-
+import json
 
 def home(request):
+    # f = open('tasks/fixtures/test_data.json')
+    # data = json.load(f)
+    # for i in data:
+    #     Task.objects.create(
+    #         title = i["fields"]["title"],
+    #         description = i["fields"]["description"],
+    #         created_at = i["fields"]["created_at"],
+    #         completed = i["fields"]["completed"],
+    #         deadline = i["fields"]["deadline"],
+    #     )
 
     tasks = Task.objects.all()
 

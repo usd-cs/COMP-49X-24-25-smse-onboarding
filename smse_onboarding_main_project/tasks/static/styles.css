@@ -91,7 +91,7 @@ body {
 }
 
 .tasks-list .btn-link:hover i.bi-check-circle-fill {
-    color: red;
+    color: gray;
 }
 
 body {

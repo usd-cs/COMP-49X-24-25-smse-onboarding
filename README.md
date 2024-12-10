@@ -36,11 +36,11 @@ Database Setup:
 
 bash# psql -U postgres (login to postgresql, i used username:postgres and password: password)
 
-sql# CREATE DATABASE smse_onboarding_db;
+sql# CREATE DATABASE "smse-db";
 
-sql# CREATE USER postgres WITH PASSWORD password; (this is the username and password we're all using)
+sql# CREATE USER postgres WITH PASSWORD 'password'; (this is the username and password we're all using)
 
-sql# GRANT ALL PRIVILEGES ON DATABASE smse-db TO postgres;
+sql# GRANT ALL PRIVILEGES ON DATABASE "smse-db" TO postgres;
 
 The database settings under settings.py should look like this: DATABASES = { 'default': { 'ENGINE': 'django.db.backends.postgresql', 'NAME': 'smse-db', 'USER': 'postgres', 'PASSWORD': 'password', 'HOST': 'localhost', 'PORT': '5432', } }
 

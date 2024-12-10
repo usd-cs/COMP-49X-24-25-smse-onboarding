@@ -2,8 +2,8 @@
     <ul class="list-group">
         <li class="list-group-item d-flex">
             <label class="form-check-label" style="width: 5%"></label>
-            <label class="form-check-label" style="width: 35%">Task</label>
-            <label class="form-check-label" style="width: 35%">Due Date</label>
+            <label class="form-check-label" style="width: 34%">Task</label>
+            <label class="form-check-label" style="width: 24%">Due Date</label>
             <label class="form-check-label text-center" style="width: 25%">Status</label>
         </li>
 
@@ -16,8 +16,8 @@
                     <!-- Completed task icon acts as continue task button-->
                     <form method="POST" action="{% url 'tasks:continue_task' task.id %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-link p-0" onclick="return confirm('Are you sure you want to set this task as incomplete?')">
-                            <i class="bi bi-check-circle-fill text-success me-3" style="font-size: 1.5rem;"></i>
+                        <button type="submit" class="btn btn-link p-0" style="color: green;" onclick="return confirm('Are you sure you want to set this task as incomplete?')">
+                            <i class="bi bi-check-circle-fill me-3" style="font-size: 1.5rem;"></i>
                         </button>
                     </form>
 
@@ -27,7 +27,12 @@
                     <label class="form-check-label text-success" style="width: 25%">Completed</label>
 
                     <!-- Edit icon No functionality-->
-                    <i class="bi bi-three-dots-vertical ms-auto" style="font-size: 1.5rem; cursor: default;"></i>
+                    <div class="dropdown">
+                        <i class="bi bi-three-dots-vertical ms-auto" style="font-size: 1.5rem; cursor: pointer;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Description</a></li>
+                        </ul>
+                    </div>
 
                 </li>
                 {% endif %}
