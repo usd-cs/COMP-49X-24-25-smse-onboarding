@@ -1,42 +1,49 @@
 <div class="card" style="width: 100%;">
     <ul class="list-group">
         <li class="list-group-item d-flex">
-            <label class="form-check-label" style="width: 5%"></label>
-            <label class="form-check-label" style="width: 35%">Task</label>
-            <label class="form-check-label" style="width: 35%">Due Date</label>
+            <label class="form-check-label" style="width: 4.5%"></label>
+            <label class="form-check-label" style="width: 34%">Task</label>
+            <label class="form-check-label" style="width: 29%">Due Date</label>
             <label class="form-check-label text-center" style="width: 25%">Days Remaining</label>
         </li>
 
         {% if tasks %}
         <div class="tasks-list">
             {% for task in tasks %}
-                {% if not task.completed %}
-                <li class="list-group-item d-flex align-items-center" style="height: 65px;">
+            {% if not task.completed %}
+            <li class="list-group-item d-flex align-items-center" style="height: 65px;">
 
-                    <!--Check mark acts as complete task button-->
-                    <form method="POST" action="{% url 'tasks:complete_task' task.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link p-0" style="color: gray;" onclick="return confirm('Are you sure you want to complete this task?')">
-                            <i class="bi bi-check-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
-                        </button>
-                    </form>
+                <!--Check mark acts as complete task button-->
+                <form method="POST" action="{% url 'tasks:complete_task' task.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0" style="color: gray;"
+                        onclick="return confirm('Are you sure you want to complete this task?')">
+                        <i class="bi bi-check-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
+                    </button>
+                </form>
 
-                    <!--Task labels-->
-                    <label class="form-check-label" style="width: 35%">{{ task.title }}</label>
-                    <label class="form-check-label" style="width: 35%">{{ task.deadline }}</label>
-                    <label class="form-check-label text-danger" style="width: 25%">
-                        {% if task.remaining_days >= 0 %}
-                            {{ task.remaining_days }} days left
-                        {% else %}
-                            Overdue
-                        {% endif %}
-                    </label>
+                <!--Task labels-->
+                <label class="form-check-label" style="width: 35%">{{ task.title }}</label>
+                <label class="form-check-label" style="width: 35%">{{ task.deadline }}</label>
+                <label class="form-check-label text-danger" style="width: 25%">
+                    {% if task.remaining_days >= 0 %}
+                        {{ task.remaining_days }} days left
+                    {% else %}
+                        Overdue
+                    {% endif %}
+                </label>
 
-                    <!-- Edit icon on the right side-->
-                    <i class="bi bi-three-dots-vertical ms-auto" style="font-size: 1.5rem; cursor: pointer;"></i>
+                <!-- Edit icon on the right side-->
+                <div class="dropdown">
+                    <i class="bi bi-three-dots-vertical ms-auto" style="font-size: 1.5rem; cursor: pointer;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">Description</a></li>
+                    </ul>
+                </div>
 
-                </li>
-                {% endif %}
+                {% include 'new_hire_dashboard/task_popup.html' %}
+            </li>
+            {% endif %}
             {% endfor %}
         </div>
         {% else %}

@@ -1,13 +1,11 @@
-
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from datetime import timedelta
 from tasks.models import Task
-
+import json
 
 def home(request):
-
     tasks = Task.objects.all()
 
     num_completed = 0
