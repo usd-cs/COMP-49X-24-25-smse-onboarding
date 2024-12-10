@@ -1,9 +1,9 @@
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
 from django.urls import reverse
-from django.utils import timezone
+#from django.utils import timezone
 
 from tasks.models import Task
 
@@ -21,6 +21,10 @@ class TaskTests(TestCase):
         Args:
             mock_create (Mock): Mocked `Task.objects.create` method.
         """
+
+        # testing with a fixed deadline so test passes
+        test_deadline = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc)
+
         #set up the mocked task
         mock_task = Mock()
         mock_task.title = "Test Task"
@@ -31,14 +35,14 @@ class TaskTests(TestCase):
         task = Task.objects.create(
             title="Test Task",
             description="This is a test task.",
-            deadline=timezone.now() + timedelta(days=30),
+            deadline=test_deadline,
             completed=False,
         )
 
         mock_create.assert_called_once_with(
             title="Test Task",
             description="This is a test task.",
-            deadline=timezone.now() + timedelta(days=30),
+            deadline=test_deadline,
             completed=False,
         )
         self.assertEqual(task.title, "Test Task")
