@@ -4,6 +4,13 @@ from django.db import models
 
 
 class Faculty(models.Model):
+    """
+    Model for non-admin faculty.
+
+    Args:
+        models.Model: Inherits from the models.Model class.
+    """
+    
     faculty_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -25,12 +32,26 @@ class Faculty(models.Model):
 
 
 class Admin(Faculty):
+    """
+    Model for admin.
+
+    Args:
+        models.Model: Inherits from the Faculty class.
+    """
+    
     permissions = models.CharField(max_length=255)
 
 # Task Table
 
 
 class Task(models.Model):
+    """
+    Model for a task.
+
+    Args:
+        models.Model: Inherits from the models.Model class.
+    """
+
     task_id = models.AutoField(primary_key=True)
     task_name = models.CharField(max_length=255)
     due_date = models.DateTimeField()
@@ -46,6 +67,13 @@ class Task(models.Model):
 
 
 class TaskProgress(models.Model):
+    """
+    Model for a task's progress.
+
+    Args:
+        models.Model: Inherits from the models.Model class.
+    """
+
     progress_id = models.AutoField(primary_key=True)
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
@@ -58,6 +86,13 @@ class TaskProgress(models.Model):
 
 
 class FacultyDocument(models.Model):
+    """
+    Model for a document uploaded by a faculty user.
+
+    Args:
+        models.Model: Inherits from the models.Model class.
+    """
+
     document_id = models.AutoField(primary_key=True)
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     file_path = models.CharField(max_length=255)
@@ -69,6 +104,13 @@ class FacultyDocument(models.Model):
 
 
 class OtherEmployee(models.Model):
+    """
+    Model for other employees such as those from ITS and HR.
+
+    Args:
+        models.Model: Inherits from the models.Model class.
+    """
+
     other_employee_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)

@@ -10,12 +10,18 @@ from tasks.models import Task
 class TaskTests(TestCase):
     """
     Unit tests for the Task model and related view logic using mocks.
+
+    Args:
+        TestCase: Inherits from the TestCase class.
     """
 
     @patch('tasks.models.Task.objects.create')  # Mock the create method
     def test_task_creation(self, mock_create):
         """
         Test the creation of a Task object using a mock.
+
+        Args:
+            mock_create: Create the mock.
         """
         test_deadline = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc)
 
@@ -45,7 +51,10 @@ class TaskTests(TestCase):
     @patch('tasks.models.Task.objects.create')
     def test_task_creation_invalid_data(self, mock_create):
         """
-        Test that creating a task with invalid data raises an error.
+        Test that creates a task with invalid data raises an error.
+
+        Args:
+            mock_create: Create the mock.
         """
         mock_create.side_effect = ValueError("Invalid data")
 
