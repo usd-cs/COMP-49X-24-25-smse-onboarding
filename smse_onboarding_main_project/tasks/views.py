@@ -6,17 +6,6 @@ from tasks.models import Task
 import json
 
 def home(request):
-    # f = open('tasks/fixtures/test_data.json')
-    # data = json.load(f)
-    # for i in data:
-    #     Task.objects.create(
-    #         title = i["fields"]["title"],
-    #         description = i["fields"]["description"],
-    #         created_at = i["fields"]["created_at"],
-    #         completed = i["fields"]["completed"],
-    #         deadline = i["fields"]["deadline"],
-    #     )
-
     tasks = Task.objects.all()
 
     num_completed = 0
