@@ -3,7 +3,6 @@ from unittest.mock import Mock, patch
 
 from django.test import TestCase
 from django.urls import reverse
-#from django.utils import timezone
 
 from tasks.models import Task
 
@@ -25,13 +24,13 @@ class TaskTests(TestCase):
         # testing with a fixed deadline so test passes
         test_deadline = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc)
 
-        #set up the mocked task
+        # set up the mocked task
         mock_task = Mock()
         mock_task.title = "Test Task"
         mock_task.completed = False
         mock_create.return_value = mock_task
 
-        #mock calling create method
+        # mock calling create method
         task = Task.objects.create(
             title="Test Task",
             description="This is a test task.",
@@ -62,7 +61,7 @@ class TaskTests(TestCase):
         mock_task.save = Mock()
         mock_get_object_or_404.return_value = mock_task
 
-        #simulate completing task
+        # simulate completing task
         response = self.client.post(reverse('tasks:complete_task', args=[1]))
 
         mock_get_object_or_404.assert_called_once_with(Task, id=1)
@@ -83,9 +82,9 @@ class TaskTests(TestCase):
         mock_task = Mock()
         mock_task.save = mock_save
 
-        #simulate saving a task
+        # simulate saving a task
         mock_task.save()
 
-        #response = self.client.post(reverse('tasks:complete_task', args=[self.task.id]))
+        # response = self.client.post(reverse('tasks:complete_task', args=[self.task.id]))
         mock_save.assert_called_once()
-        #self.assertEqual(response.status_code, 302)
+        # self.assertEqual(response.status_code, 302)
