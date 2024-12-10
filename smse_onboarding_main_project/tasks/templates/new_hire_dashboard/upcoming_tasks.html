@@ -1,10 +1,10 @@
-<div class="card">
-    <label class="card-header">Tasks</label>
+<div class="card" style="width: 100%;">
     <ul class="list-group">
-        <li class="list-group-item">
-            <label class="form-check-label" style="width: 30%">Task</label>
-            <label class="form-check-label">Due Date</label>
-            <label class="form-check-label text-center" style="width: 19.5%">Days Remaining</label>
+        <li class="list-group-item d-flex">
+            <label class="form-check-label" style="width: 5%"></label>
+            <label class="form-check-label" style="width: 35%">Task</label>
+            <label class="form-check-label" style="width: 35%">Due Date</label>
+            <label class="form-check-label text-center" style="width: 25%">Days Remaining</label>
         </li>
 
         {% if tasks %}
@@ -17,14 +17,14 @@
                     <form method="POST" action="{% url 'tasks:complete_task' task.id %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-link p-0" style="color: gray;" onclick="return confirm('Are you sure you want to complete this task?')">
-                            <i class="bi bi-check-circle" style="font-size: 1.5rem;"></i>
+                            <i class="bi bi-check-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
                         </button>
                     </form>
 
                     <!--Task labels-->
-                    <label class="form-check-label" style="width: 30%">{{ task.title }}</label>
-                    <label class="form-check-label" style="width: 30%">{{ task.deadline }}</label>
-                    <label class="form-check-label text-danger" style="width: 19.5%">
+                    <label class="form-check-label" style="width: 35%">{{ task.title }}</label>
+                    <label class="form-check-label" style="width: 35%">{{ task.deadline }}</label>
+                    <label class="form-check-label text-danger" style="width: 25%">
                         {% if task.remaining_days >= 0 %}
                             {{ task.remaining_days }} days left
                         {% else %}

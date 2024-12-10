@@ -70,3 +70,30 @@ body {
     justify-content: center;
     position: relative;
 }
+
+.tasks-list .list-group-item {
+    display: flex;
+    align-items: center;
+}
+
+.tasks-list .btn-link {
+    margin: 0;
+    padding: 0;
+}
+
+.tasks-list .bi {
+    vertical-align: middle;
+}
+
+/* Hover effect for check-circle icons */
+.tasks-list .btn-link:hover i.bi-check-circle {
+    color: green;
+}
+
+.tasks-list .btn-link:hover i.bi-check-circle-fill {
+    color: red;
+}
+
+body {
+    background-color: lightgray;
+}
