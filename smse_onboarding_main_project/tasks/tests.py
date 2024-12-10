@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import Task
+from tasks.models import Task
 
 
 class TaskTests(TestCase):
@@ -13,7 +13,7 @@ class TaskTests(TestCase):
     Unit tests for the Task model using mocks to avoid database creation.
     """
 
-    @patch('smse_onboarding.models.Task.objects.create')  # mocks the create method
+    @patch('tasks.models.Task.objects.create')  # mocks the create method
     def test_task_creation(self, mock_create):
         """
         Test the creation of a Task object using a mock.
@@ -44,31 +44,30 @@ class TaskTests(TestCase):
         self.assertEqual(task.title, "Test Task")
         self.assertFalse(task.completed)
 
-    @patch('smse_onboarding.models.Task.objects.get')  # mocks the get method
-    @patch('smse_onboarding.models.Task.save')         # Mocks the save method
-    def test_complete_task_success(self, mock_save, mock_get):
+    @patch('tasks.views.get_object_or_404')  # mocks the get object method
+    def test_complete_task_success(self, mock_get_object_or_404):
         """
         Test marking a task as completed using mocked database functions.
 
         Args:
-            mock_save (Mock): Mocked `Task.save` method.
-            mock_get (Mock): Mocked `Task.objects.get` method.
+            mock_get_object_or_404 (Mock): Mocked `get_object_or_404` method.
         """
         # setup the mocked task
         mock_task = Mock()
         mock_task.completed = False
-        mock_get.return_value = mock_task
+        mock_task.save = Mock()
+        mock_get_object_or_404.return_value = mock_task
 
         #simulate completing task
         response = self.client.post(reverse('tasks:complete_task', args=[1]))
 
-        mock_get.assert_called_once_with(id=1)
-        mock_save.assert_called_once()
-        mock_task.completed = True  # Simulate marking the task as complete
+        mock_get_object_or_404.assert_called_once_with(Task, id=1)
+        mock_task.save.assert_called_once()
+        self.assertTrue(mock_task.completed)
         self.assertEqual(response.status_code, 302)
         # self.assertEqual(response.json()['message'], f'Task "{self.task.title}" marked as completed successfully!')
 
-    @patch('smse_onboarding.models.Task.save')  # mocks the save method
+    @patch('tasks.models.Task.save')  # mocks the save method
     def test_complete_task_mock_save(self, mock_save):
         """
         Test that the save method is called when marking a task as complete.
