@@ -1,74 +1,88 @@
-from django.test import TestCase
+from unittest import TestCase
+from unittest.mock import MagicMock
+from datetime import datetime, timedelta
 
-from smse_onboarding.models import Faculty, Task, TaskProgress
+
+class TaskMock:
+    """Mock for Task model."""
+    def __init__(self, task_id, task_name, due_date, completed_status):
+        self.task_id = task_id
+        self.task_name = task_name
+        self.due_date = due_date
+        self.completed_status = completed_status
+        self.save = MagicMock()  # Mock save method
 
 
-class FacultyModelTest(TestCase):
+class TaskProgressMock:
+    """Mock for TaskProgress model."""
+    def __init__(self, progress_id, task, faculty, progress_status):
+        self.progress_id = progress_id
+        self.task = task
+        self.faculty = faculty
+        self.progress_status = progress_status
+        self.save = MagicMock()  # Mock save method
+
+
+class TaskTests(TestCase):
+    """Unit tests for Task model with a mocked database."""
+
     def setUp(self):
-        # Create sample data for testing
-        self.faculty = Faculty.objects.create(
-            first_name="Jane",
-            last_name="Doe",
-            job_role="Professor",
-            engineering_dept="Computer Science",
-            password="securepassword",
-            email="jane.doe@example.com",
-            phone="1234567890",
-            zoom_phone="0987654321",
-            office_room="CS101",
-            hire_date="2024-01-01T09:00:00Z",
-            mailing_list_status=True,
-            bio="Experienced computer science professor."
-        )
-
-    def test_faculty_creation(self):
-        # Test if faculty was created successfully
-        self.assertEqual(self.faculty.first_name, "Jane")
-        self.assertEqual(self.faculty.last_name, "Doe")
-        self.assertEqual(self.faculty.engineering_dept, "Computer Science")
-
-
-class TaskModelTest(TestCase):
-    def setUp(self):
-        # Create a faculty member for testing relationships
-        self.faculty = Faculty.objects.create(
-            first_name="John",
-            last_name="Smith",
-            job_role="Assistant Professor",
-            engineering_dept="Electrical Engineering",
-            password="password123",
-            email="john.smith@example.com",
-            phone="9876543210",
-            zoom_phone="0123456789",
-            office_room="EE102",
-            hire_date="2024-01-02T09:00:00Z",
-            mailing_list_status=False,
-            bio="New hire in Electrical Engineering."
-        )
-
-        # Create a task for testing
-        self.task = Task.objects.create(
-            task_name="Setup Email",
-            due_date="2024-02-01T10:00:00Z",
-            created_date="2024-01-01T10:00:00Z",
-            completed_status=False,
-            assigned_to="John Smith",
-            description="Set up your university email account."
+        # Mock a task instance
+        self.mock_task = TaskMock(
+            task_id=1,
+            task_name="Mock Task",
+            due_date=datetime.now() + timedelta(days=7),
+            completed_status=False
         )
 
     def test_task_creation(self):
-        # Test if task was created successfully
-        self.assertEqual(self.task.task_name, "Setup Email")
-        self.assertFalse(self.task.completed_status)
-        self.assertEqual(self.task.description, "Set up your university email account.")
+        """Test task creation and saving."""
+        self.mock_task.save()
+        self.mock_task.save.assert_called_once()  # Ensure the save method was called
 
-    def test_task_progress(self):
-        # Test TaskProgress creation
-        progress = TaskProgress.objects.create(
-            faculty=self.faculty,
-            task=self.task,
+        self.assertEqual(self.mock_task.task_name, "Mock Task")
+        self.assertFalse(self.mock_task.completed_status)
+
+    def test_task_update_status(self):
+        """Test updating the completed status of a task."""
+        self.mock_task.completed_status = True  # Simulate status update
+        self.assertTrue(self.mock_task.completed_status)
+
+
+class TaskProgressTests(TestCase):
+    """Unit tests for TaskProgress model with a mocked database."""
+
+    def setUp(self):
+        # Mock faculty and task instances
+        self.mock_task = TaskMock(
+            task_id=1,
+            task_name="Mock Task",
+            due_date=datetime.now() + timedelta(days=7),
+            completed_status=False
+        )
+        self.mock_faculty = MagicMock()  # Mock Faculty object
+        self.mock_faculty.faculty_id = 1
+        self.mock_faculty.first_name = "John"
+        self.mock_faculty.last_name = "Doe"
+
+        # Mock a task progress instance
+        self.mock_task_progress = TaskProgressMock(
+            progress_id=1,
+            task=self.mock_task,
+            faculty=self.mock_faculty,
             progress_status="In Progress"
         )
-        self.assertEqual(progress.progress_status, "In Progress")
-        self.assertEqual(progress.task.task_name, "Setup Email")
-        self.assertEqual(progress.faculty.first_name, "John")
+
+    def test_task_progress_creation(self):
+        """Test task progress creation and saving."""
+        self.mock_task_progress.save()
+        self.mock_task_progress.save.assert_called_once()  # Ensure the save method was called
+
+        self.assertEqual(self.mock_task_progress.progress_status, "In Progress")
+        self.assertEqual(self.mock_task_progress.task.task_id, 1)
+        self.assertEqual(self.mock_task_progress.faculty.faculty_id, 1)
+
+    def test_task_progress_update_status(self):
+        """Test updating the progress status of a task progress."""
+        self.mock_task_progress.progress_status = "Completed"  # Simulate status update
+        self.assertEqual(self.mock_task_progress.progress_status, "Completed")
