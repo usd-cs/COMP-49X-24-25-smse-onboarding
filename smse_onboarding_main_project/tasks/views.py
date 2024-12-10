@@ -6,6 +6,12 @@ from tasks.models import Task
 import json
 
 def home(request):
+    """
+    Render the home page.
+
+    Args:
+        request: Request generated when user clicks to go to the home page.
+    """
     tasks = Task.objects.all()
 
     num_completed = 0
@@ -23,6 +29,13 @@ def home(request):
 
 
 def complete_task(request, task_id):
+    """
+    Backend function for completing a task.
+
+    Args:
+        request: Request generated when user clicks to complete a task.
+        task_id: The ID for the task.
+    """
     if request.method == 'POST':
         task = get_object_or_404(Task, id=task_id)
         task.completed = True  # mark complete
@@ -33,6 +46,13 @@ def complete_task(request, task_id):
 
 
 def continue_task(request, task_id):
+    """
+    Backend function for continuing a task.
+
+    Args:
+        request: Request generated when user clicks to continue a task.
+        task_id: The ID for the task.
+    """
     if request.method == 'POST':
         task = get_object_or_404(Task, id=task_id)
         task.completed = False  # mark complete

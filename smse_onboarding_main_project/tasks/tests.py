@@ -72,6 +72,9 @@ class TaskTests(TestCase):
     def test_task_ordering(self, mock_all):
         """
         Test that tasks are ordered by `created_at` field.
+
+        Args:
+            mock_all: Mock all of the mock tasks.
         """
         # Create mock tasks with different `created_at` values
         mock_task1 = Mock(created_at=datetime(2025, 1, 9, tzinfo=timezone.utc))
@@ -89,6 +92,9 @@ class TaskTests(TestCase):
     def test_task_creation_with_past_deadline(self, mock_create):
         """
         Test that a task with a past deadline raises a validation error.
+
+        Args:
+            mock_create: Create the mock.
         """
         past_deadline = datetime(2020, 1, 1, tzinfo=timezone.utc)
 
@@ -108,6 +114,9 @@ class TaskTests(TestCase):
     def test_complete_task_success(self, mock_get_object_or_404):
         """
         Test marking a task as completed using mocked database functions.
+
+        Args:
+            mock_get_object_or_404: Mock the get_object_or_404 function.
         """
         # Set up the mocked task
         mock_task = Mock()
@@ -127,6 +136,9 @@ class TaskTests(TestCase):
     def test_complete_task_mock_save(self, mock_save):
         """
         Test that the save method is called when marking a task as complete.
+
+        Args:
+            mock_save: Save a mock task.
         """
         # Set up a mocked task
         mock_task = Mock()
@@ -141,6 +153,9 @@ class TaskTests(TestCase):
     def test_complete_task_response(self, mock_get_object_or_404):
         """
         Test that the response for completing a task is as expected.
+
+        Args:
+            mock_get_object_or_404: Mock the get_object_or_404 function.
         """
         # Set up the mocked task
         mock_task = Mock()
