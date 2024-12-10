@@ -4,6 +4,9 @@ from django.db import models
 class Task(models.Model):
     """
     Model for a task.
+    
+    Args:
+        models.Model: Inherits from the models.Model class.
     """
     title = models.TextField()
     description = models.TextField()
