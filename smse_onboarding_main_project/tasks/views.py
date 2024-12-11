@@ -16,7 +16,6 @@ def home(request):
 
     num_completed = 0
 
-    # ensures remaining days is shown correctly
     for task in tasks:
         if not task.completed:
             task.remaining_days = (task.deadline - timezone.now()).days

@@ -23,30 +23,40 @@ class TaskTests(TestCase):
         Args:
             mock_create: Create the mock.
         """
+        test_created_at = datetime(2024, 12, 11, 12, 00, 00, tzinfo=timezone.utc)
         test_deadline = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc)
 
         # Set up the mocked task
         mock_task = Mock()
         mock_task.title = "Test Task"
+        mock_task.description = "This is a test task."
+        mock_task.created_at = datetime(2024, 12, 11, 12, 00, 00, tzinfo=timezone.utc)
         mock_task.completed = False
+        mock_task.deadline = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc)
         mock_create.return_value = mock_task
 
         # Call the mocked create method
         task = Task.objects.create(
             title="Test Task",
             description="This is a test task.",
-            deadline=test_deadline,
+            created_at=test_created_at,
             completed=False,
+            deadline=test_deadline,
         )
 
         mock_create.assert_called_once_with(
             title="Test Task",
             description="This is a test task.",
-            deadline=test_deadline,
+            created_at=test_created_at,
             completed=False,
+            deadline=test_deadline,
         )
+
         self.assertEqual(task.title, "Test Task")
+        self.assertEqual(task.description, "This is a test task.")
+        self.assertEqual(task.created_at, test_created_at)
         self.assertFalse(task.completed)
+        self.assertEqual(task.deadline, test_deadline)
 
     @patch('tasks.models.Task.objects.create')
     def test_task_creation_invalid_data(self, mock_create):
@@ -168,7 +178,7 @@ class TaskTests(TestCase):
 
         self.assertEqual(response.status_code, 302)  # Check redirect
 
-    def test_task_update_status(self):
+    def test_task_update_status_complete(self):
         """
         Test updating the completed status of a task.
         """
@@ -179,3 +189,121 @@ class TaskTests(TestCase):
         # Simulate status update
         mock_task.completed = True
         self.assertTrue(mock_task.completed)
+
+    @patch('tasks.views.get_object_or_404')  # Mock the get_object_or_404 method
+    def test_continue_task_success(self, mock_get_object_or_404):
+        """
+        Test marking a task as incomplete using mocked database functions.
+
+        Args:
+            mock_get_object_or_404: Mock the get_object_or_404 function.
+        """
+        # Set up the mocked task
+        mock_task = Mock()
+        mock_task.completed = True
+        mock_task.save = Mock()
+        mock_get_object_or_404.return_value = mock_task
+
+        # Simulate continuing the task
+        response = self.client.post(reverse('tasks:continue_task', args=[1]))
+
+        mock_get_object_or_404.assert_called_once_with(Task, id=1)
+        mock_task.save.assert_called_once()
+        self.assertFalse(mock_task.completed)  # Explicitly check the field
+        self.assertEqual(response.status_code, 302)
+
+    @patch('tasks.views.get_object_or_404')
+    def test_continue_task_response(self, mock_get_object_or_404):
+        """
+        Test that the response for continuing a task is as expected.
+
+        Args:
+            mock_get_object_or_404: Mock the get_object_or_404 function.
+        """
+        # Set up the mocked task
+        mock_task = Mock()
+        mock_task.completed = True
+        mock_task.save = Mock()
+        mock_get_object_or_404.return_value = mock_task
+
+        # Simulate continuing the task
+        response = self.client.post(reverse('tasks:continue_task', args=[1]))
+
+        self.assertEqual(response.status_code, 302)  # Check redirect
+
+    def test_task_update_status_incomplete(self):
+        """
+        Test updating the completed status of a task.
+        """
+        # Mock a task instance
+        mock_task = Mock()
+        mock_task.completed = True
+
+        # Simulate status update
+        mock_task.completed = False
+        self.assertFalse(mock_task.completed)
+
+    @patch('tasks.models.Task.objects.all')  # Mock the all method
+    def test_total_tasks(self, mock_all):
+        # Create mock tasks with different 'created_at' and 'completed' values
+        mock_task1 = Mock(created_at=datetime(2025, 1, 9, tzinfo=timezone.utc), completed=True)
+        mock_task2 = Mock(created_at=datetime(2025, 1, 8, tzinfo=timezone.utc), completed=False)
+        mock_all.return_value = [mock_task1, mock_task2]
+
+        # Simulate ordering logic explicitly
+        tasks = sorted(Task.objects.all(), key=lambda task: task.created_at)
+        
+        self.assertEqual(len(tasks), 2)
+        mock_all.assert_called_once()
+
+    @patch('tasks.models.Task.objects.all')  # Mock the all method
+    def test_zero_tasks(self, mock_all):
+        mock_all.return_value = []
+
+        # Simulate ordering logic explicitly
+        tasks = sorted(Task.objects.all(), key=lambda task: task.created_at)
+        
+        self.assertEqual(len(tasks), 0)
+        mock_all.assert_called_once()
+
+    @patch('tasks.models.Task.objects.all')  # Mock the all method
+    def test_increase_completed_tasks(self, mock_all):
+        # Create mock tasks with different 'created_at' and 'completed' values
+        mock_task1 = Mock(created_at=datetime(2025, 1, 9, tzinfo=timezone.utc), completed=True)
+        mock_task2 = Mock(created_at=datetime(2025, 1, 8, tzinfo=timezone.utc), completed=False)
+        mock_all.return_value = [mock_task1, mock_task2]
+
+        # Simulate ordering logic explicitly
+        tasks = sorted(Task.objects.all(), key=lambda task: task.created_at)
+
+        mock_task2.completed = True
+
+        num_completed = 0
+
+        for task in tasks:
+            if task.completed:
+                num_completed += 1
+        
+        self.assertEqual(num_completed, 2)
+        mock_all.assert_called_once()
+
+    @patch('tasks.models.Task.objects.all')  # Mock the all method
+    def test_decrease_completed_tasks(self, mock_all):
+        # Create mock tasks with different 'created_at' and 'completed' values
+        mock_task1 = Mock(created_at=datetime(2025, 1, 9, tzinfo=timezone.utc), completed=True)
+        mock_task2 = Mock(created_at=datetime(2025, 1, 8, tzinfo=timezone.utc), completed=False)
+        mock_all.return_value = [mock_task1, mock_task2]
+
+        # Simulate ordering logic explicitly
+        tasks = sorted(Task.objects.all(), key=lambda task: task.created_at)
+
+        mock_task1.completed = False
+
+        num_completed = 0
+
+        for task in tasks:
+            if task.completed:
+                num_completed += 1
+        
+        self.assertEqual(num_completed, 0)
+        mock_all.assert_called_once()
