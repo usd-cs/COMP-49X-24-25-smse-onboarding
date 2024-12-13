@@ -1,10 +1,11 @@
+from datetime import datetime, timedelta
 from unittest import TestCase
 from unittest.mock import MagicMock
-from datetime import datetime, timedelta
 
 
 class TaskMock:
     """Mock for Task model."""
+
     def __init__(self, task_id, task_name, due_date, completed_status):
         """
         Function for setting up the mock for the Task model.
@@ -24,6 +25,7 @@ class TaskMock:
 
 class TaskProgressMock:
     """Mock for TaskProgress model."""
+
     def __init__(self, progress_id, task, faculty, progress_status):
         """
         Function for setting up the mock for the TaskProgress model.
@@ -76,7 +78,7 @@ class TaskTests(TestCase):
 class TaskProgressTests(TestCase):
     """
     Unit tests for TaskProgress model with a mocked database.
-    
+
     Args:
         TestCase: Inherits from the TestCase class.
     """

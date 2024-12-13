@@ -1,9 +1,8 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
 from django.urls import reverse
-
 from tasks.models import Task
 
 
@@ -252,7 +251,7 @@ class TaskTests(TestCase):
 
         # Simulate ordering logic explicitly
         tasks = sorted(Task.objects.all(), key=lambda task: task.created_at)
-        
+
         self.assertEqual(len(tasks), 2)
         mock_all.assert_called_once()
 
@@ -262,7 +261,7 @@ class TaskTests(TestCase):
 
         # Simulate ordering logic explicitly
         tasks = sorted(Task.objects.all(), key=lambda task: task.created_at)
-        
+
         self.assertEqual(len(tasks), 0)
         mock_all.assert_called_once()
 
@@ -283,7 +282,7 @@ class TaskTests(TestCase):
         for task in tasks:
             if task.completed:
                 num_completed += 1
-        
+
         self.assertEqual(num_completed, 2)
         mock_all.assert_called_once()
 
@@ -304,6 +303,6 @@ class TaskTests(TestCase):
         for task in tasks:
             if task.completed:
                 num_completed += 1
-        
+
         self.assertEqual(num_completed, 0)
         mock_all.assert_called_once()

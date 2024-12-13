@@ -7,4 +7,3 @@ from .models import Task
 
 # Register models.
 admin.site.register(Task)
-

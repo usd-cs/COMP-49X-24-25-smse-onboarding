@@ -10,7 +10,7 @@ class Faculty(models.Model):
     Args:
         models.Model: Inherits from the models.Model class.
     """
-    
+
     faculty_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -38,7 +38,7 @@ class Admin(Faculty):
     Args:
         models.Model: Inherits from the Faculty class.
     """
-    
+
     permissions = models.CharField(max_length=255)
 
 # Task Table
