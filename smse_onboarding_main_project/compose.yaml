@@ -2,16 +2,18 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build:
+      context: .
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - .:/usr/local/app
     depends_on:
       - db
     environment:
       DJANGO_SETTINGS_MODULE: smse_onboarding.settings
       DATABASE_URL: postgres://postgres:password@db:5432/smse-db
+      DOCKERIZED: "1"
 
   db:
     image: postgres:13
@@ -21,3 +23,8 @@ services:
       POSTGRES_DB: smse-db
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
