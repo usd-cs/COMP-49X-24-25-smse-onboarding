@@ -23,9 +23,17 @@ def home(request):
         else:
             num_completed += 1
 
+    # Avoid division by zero
+    total_tasks = len(tasks)
+    percentage = (num_completed / total_tasks) * 100 if total_tasks > 0 else 0
+
     return render(request, 'new_hire_dashboard/home.html', {
-        'tasks': tasks, 'num_tasks': len(tasks), 'num_completed': num_completed, 'percentage': (num_completed / len(tasks)) * 100
+        'tasks': tasks, 
+        'num_tasks': total_tasks, 
+        'num_completed': num_completed, 
+        'percentage': percentage
     })
+
 
 
 def complete_task(request, task_id):
