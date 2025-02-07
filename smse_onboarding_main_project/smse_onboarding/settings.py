@@ -75,30 +75,17 @@ WSGI_APPLICATION = 'smse_onboarding.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-import os
-
-if os.getenv("DOCKERIZED"):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'smse-db',
-            'USER': 'postgres',
-            'PASSWORD': 'password',
-            'HOST': 'db',  # Docker service name
-            'PORT': '5432',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'smse-db',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'HOST': 'db',
+        'PORT': '5432',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'smse-db',
-            'USER': 'postgres',
-            'PASSWORD': 'password',
-            'HOST': 'localhost',  # Localhost for running outside Docker
-            'PORT': '5432',
-        }
-    }
+}
 
 
 # Password validation
