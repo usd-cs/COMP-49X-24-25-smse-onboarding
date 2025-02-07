@@ -78,14 +78,13 @@ WSGI_APPLICATION = 'smse_onboarding.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'smse-db',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': 'smse-db',  
+        'USER': 'postgres',  
+        'PASSWORD': 'password',  
+        'HOST': 'db',  
+        'PORT': '5432',  
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
