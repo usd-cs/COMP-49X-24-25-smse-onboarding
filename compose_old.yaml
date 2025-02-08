@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./smse_onboarding_main_project:/app
+    command: python smse_onboarding_main_project/manage.py runserver
+
+# services:
+#   web: 
+#     build:
+#       context: app
+#       target: builder
+#     ports: 
+#       - '8000:8000'
