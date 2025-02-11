@@ -17,6 +17,7 @@ Table of Contents:
 9. URLs
 10. Test Users usernames and passwords
 11. UI Design
+12. Dockerfile
 
 Features:
 
@@ -108,3 +109,7 @@ Task Progress
 ---
 
 Figma UI design for the project: https://www.figma.com/design/YVS33HH5t2CeZHXbrviOy6/SMSE-Intro-Project-Design?node-id=2304-963&t=B59YOP0OfzPS1Udq-1
+---
+Dockerfile
+- 
+- Changing local files into Dockers including requirements.txt, databases. 
