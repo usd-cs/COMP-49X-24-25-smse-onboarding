@@ -1,0 +1,38 @@
+services:
+  web:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/usr/local/app
+    depends_on:
+      - db
+    environment:
+      DJANGO_SETTINGS_MODULE: smse_onboarding.settings
+      DATABASE_URL: postgres://postgres:password@db:5432/smse-db
+      DB_HOST: db
+      DOCKERIZED: "1"
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_EMAIL: admin@gmail.com
+      DJANGO_SUPERUSER_PASSWORD: password
+    command: >
+      sh -c "until nc -z db 5432; do echo 'Waiting for PostgreSQL...'; sleep 2; done &&
+             python manage.py migrate &&
+             python manage.py loaddata tasks/fixtures/test_data.json || true &&
+             python manage.py createsuperuser --noinput --username=admin --email=admin@gmail.com || true &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: smse-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
