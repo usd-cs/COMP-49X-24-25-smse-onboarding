@@ -11,6 +11,7 @@ services:
     environment:
       DJANGO_SETTINGS_MODULE: smse_onboarding.settings
       DATABASE_URL: postgres://postgres:password@db:5432/smse-db
+      DB_HOST: db
       DOCKERIZED: "1"
       DJANGO_SUPERUSER_USERNAME: admin
       DJANGO_SUPERUSER_EMAIL: admin@gmail.com
