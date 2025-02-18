@@ -5,6 +5,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from tasks.models import Task
+from tasks.models import Faculty
+from tasks.models import Admin
 
 
 class TaskTests(TestCase):
@@ -179,3 +181,112 @@ class TaskTests(TestCase):
         # Simulate status update
         mock_task.completed = True
         self.assertTrue(mock_task.completed)
+
+class LoginTests(TestCase):
+    
+    @patch('tasks.models.Faculty.objects.create')  # Mock the create method
+    def test_faculty_creation(self, mock_create):
+        mock_faculty = Mock()
+        mock_faculty.faculty_id = 1
+        mock_faculty.first_name = "Test"
+        mock_faculty.last_name = "Faculty"
+        mock_faculty.job_role = "Professor"
+        mock_faculty.engineering_dept = "Computer Science"
+        mock_faculty.password = "password"
+        mock_faculty.email = "testfaculty@sandiego.edu"
+        mock_faculty.phone = "8581234567"
+        mock_faculty.zoom_phone = "6192601234"
+        mock_faculty.office_room = "GH101"
+        mock_faculty.hire_date = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc)
+        mock_faculty.mailing_list_status = False
+        mock_faculty.bio = "This is a test bio"
+        mock_create.return_value = mock_faculty
+
+        faculty = Faculty.objects.create(
+            faculty_id = 1,
+            first_name = "Test",
+            last_name = "Faculty",
+            job_role = "Professor",
+            engineering_dept = "Computer Science",
+            password = "password",
+            email = "testfaculty@sandiego.edu",
+            phone = "8581234567",
+            zoom_phone = "6192601234",
+            office_room = "GH101",
+            hire_date = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc),
+            mailing_list_status = False,
+            bio = "This is a test bio",
+        )
+
+        mock_create.assert_called_once_with(
+            faculty_id = 1,
+            first_name = "Test",
+            last_name = "Faculty",
+            job_role = "Professor",
+            engineering_dept = "Computer Science",
+            password = "password",
+            email = "testfaculty@sandiego.edu",
+            phone = "8581234567",
+            zoom_phone = "6192601234",
+            office_room = "GH101",
+            hire_date = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc),
+            mailing_list_status = False,
+            bio = "This is a test bio",
+        )
+
+        self.assertEqual(mock_faculty, faculty)
+
+    @patch('tasks.models.Admin.objects.create')  # Mock the create method
+    def test_admin_creation(self, mock_create):
+        mock_admin = Mock()
+        mock_admin.faculty_id = 1
+        mock_admin.first_name = "Test"
+        mock_admin.last_name = "Admin"
+        mock_admin.job_role = "Admin"
+        mock_admin.engineering_dept = "Computer Science"
+        mock_admin.password = "password"
+        mock_admin.email = "testadmin@sandiego.edu"
+        mock_admin.phone = "8581234567"
+        mock_admin.zoom_phone = "6192601234"
+        mock_admin.office_room = "GH101"
+        mock_admin.hire_date = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc)
+        mock_admin.mailing_list_status = False
+        mock_admin.bio = "This is a test bio"
+        mock_admin.permissions = "These are test permissions"
+        mock_create.return_value = mock_admin
+
+        admin = Admin.objects.create(
+            faculty_id = 1,
+            first_name = "Test",
+            last_name = "Admin",
+            job_role = "Admin",
+            engineering_dept = "Computer Science",
+            password = "password",
+            email = "testadmin@sandiego.edu",
+            phone = "8581234567",
+            zoom_phone = "6192601234",
+            office_room = "GH101",
+            hire_date = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc),
+            mailing_list_status = False,
+            bio = "This is a test bio",
+            permissions = "These are test permissions",
+        )
+
+        mock_create.assert_called_once_with(
+            faculty_id = 1,
+            first_name = "Test",
+            last_name = "Admin",
+            job_role = "Admin",
+            engineering_dept = "Computer Science",
+            password = "password",
+            email = "testadmin@sandiego.edu",
+            phone = "8581234567",
+            zoom_phone = "6192601234",
+            office_room = "GH101",
+            hire_date = datetime(2025, 1, 9, 2, 57, 1, tzinfo=timezone.utc),
+            mailing_list_status = False,
+            bio = "This is a test bio",
+            permissions = "These are test permissions",
+        )
+
+        self.assertEqual(mock_admin, admin)
