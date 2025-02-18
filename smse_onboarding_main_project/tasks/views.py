@@ -63,21 +63,18 @@ def complete_task(request, task_id):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
-def complete_task(request, task_id):
+def continue_task(request, task_id):
     """
-    Backend function for completing a task.
+    Backend function for continuing a task.
 
     Args:
-        request: Request generated when user clicks to complete a task.
+        request: Request generated when user clicks to continue a task.
         task_id: The ID for the task.
     """
     if request.method == 'POST':
         task = get_object_or_404(Task, id=task_id)
-
-        if not task.is_unlocked():
-            return JsonResponse({'error': 'Task is locked and cannot be completed yet.'}, status=400)
-        task.completed = True 
+        task.completed = False  # mark complete
         task.save()
         return redirect('tasks:home')
-
+        # return JsonResponse({'message': f'Task "{task.title}" marked as completed successfully!'})
     return JsonResponse({'error': 'Invalid request method'}, status=400)
