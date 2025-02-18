@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Task(models.Model):
@@ -17,8 +18,6 @@ class Task(models.Model):
     class Meta:
         """Orders the task by creation date"""
         ordering = ['created_at']
-
-from django.db import models
 
 # Non-Admin Faculty Table
 
