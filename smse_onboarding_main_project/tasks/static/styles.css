@@ -93,7 +93,3 @@ body {
 .tasks-list .btn-link:hover i.bi-check-circle-fill {
     color: gray;
 }
-
-body {
-    background-color: lightgray;
-}
