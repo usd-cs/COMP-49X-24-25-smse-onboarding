@@ -37,7 +37,11 @@ def home(request):
     percentage = (num_completed / total_tasks) * 100 if total_tasks > 0 else 0
 
     return render(request, 'new_hire_dashboard/home.html', {
+<<<<<<< HEAD
         'tasks': tasks_data, 
+=======
+        'tasks': tasks,
+>>>>>>> origin/main
         'num_tasks': total_tasks,
         'num_completed': num_completed,
         'percentage': percentage
@@ -78,3 +82,7 @@ def continue_task(request, task_id):
         return redirect('tasks:home')
         # return JsonResponse({'message': f'Task "{task.title}" marked as completed successfully!'})
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+def admin_help(request):
+    return render(request, 'tasks/help_guide.html')
