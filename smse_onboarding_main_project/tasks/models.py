@@ -33,7 +33,7 @@ class Faculty(models.Model):
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="faculty_profile")  # links to jdjango default User
-    #faculty_id = models.AutoField(primary_key=True)
+    faculty_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     job_role = models.CharField(max_length=255)
@@ -47,7 +47,7 @@ class Faculty(models.Model):
     mailing_list_status = models.BooleanField(default=False)
     bio = models.TextField(blank=True)
 
-    completed_onboarding = models.BooleanField(default=False) #helps flag new hires from reg faculty
+    completed_onboarding = models.BooleanField(default=False) #helps flag new hires from reg
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -87,8 +87,7 @@ class FacultyDocument(models.Model):
     file_path = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"Document {self.document_id} for Faculty {self.faculty_id}"
-
+        return f"{self.faculty.first_name}'s Document"
 # Other Employees Table
 
 

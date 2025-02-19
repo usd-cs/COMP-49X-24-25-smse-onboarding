@@ -2,25 +2,36 @@
 Admin file.
 """
 from django.contrib import admin
-
-from .models import Task, Faculty
+from django.contrib.auth.models import User
+from .models import Task, Faculty, TaskProgress, FacultyDocument
 
 # Register models.
-#admin.site.register(Task)
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('title', 'deadline')
-    search_fields = ('title', 'deadline')
+    list_display = ('title', 'assigned_to', 'completed', 'deadline')
+    search_fields = ('title', 'assigned_to__first_name', 'assigned_to__last_name')
+    list_filter = ('completed',)
 
 @admin.register(Faculty)
 class FacultyAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email')
-    search_fields = ('first_name', 'email')
-    list_filter = ('first_name',)
+    list_display = ('first_name', 'last_name', 'engineering_dept', 'email', 'completed_onboarding', 'user_type')
+    search_fields = ('first_name', 'last_name', 'email')
+    list_filter = ('engineering_dept', 'completed_onboarding')
 
-    def assigned_tasks(self, obj):
-        return ", ".join([task.title for task in obj.tasks.all()])
-    assigned_tasks.short_description = "Assigned Tasks"
+    def user_type(self, obj):
+        if obj.user.is_superuser:
+            return "Superuser Admin"
+        elif obj.user.is_staff:
+            return "SMSE Admin"
+        elif not obj.completed_onboarding:
+            return "New Hire"
+        else:
+            return "Faculty"
 
-    list_display += ('assigned_tasks',)
+    user_type.short_description = "User Role"
+
+@admin.register(FacultyDocument)
+class FacultyDocumentAdmin(admin.ModelAdmin):
+    list_display = ('faculty', 'file_path')
+    search_fields = ('faculty__first_name', 'faculty__last_name')
