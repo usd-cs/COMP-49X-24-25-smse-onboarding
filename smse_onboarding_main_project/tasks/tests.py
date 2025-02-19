@@ -6,8 +6,6 @@ from django.urls import reverse
 
 from tasks.models import Task
 from tasks.models import Faculty
-from tasks.models import Admin
-
 
 class TaskTests(TestCase):
     """
@@ -183,7 +181,7 @@ class TaskTests(TestCase):
         self.assertTrue(mock_task.completed)
 
 class LoginTests(TestCase):
-    
+
     @patch('tasks.models.Faculty.objects.create')  # Mock the create method
     def test_faculty_creation(self, mock_create):
         mock_faculty = Mock()
