@@ -14,7 +14,7 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
     deadline = models.DateTimeField()
-    #assigned_to = models.ForeignKey('Faculty', on_delete=models.CASCADE, related_name='tasks')
+    assigned_to = models.ForeignKey('Faculty', on_delete=models.CASCADE, related_name='tasks')
     #assigned_to = models.CharField(max_length=255)  # ForeignKey if needed
 
     def __str__(self):
