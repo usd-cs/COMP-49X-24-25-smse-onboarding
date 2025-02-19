@@ -14,7 +14,8 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
     deadline = models.DateTimeField()
-    assigned_to = models.ForeignKey('Faculty', on_delete=models.CASCADE, related_name='tasks')
+
+    assigned_to = models.ManyToManyField('Faculty', related_name='tasks', blank=True) #blank lets it exist without needing an assignment
     #assigned_to = models.CharField(max_length=255)  # ForeignKey if needed
 
     def __str__(self):
@@ -32,16 +33,17 @@ class Faculty(models.Model):
         models.Model: Inherits from the models.Model class.
     """
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="faculty_profile")  # links to jdjango default User
+    #user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="faculty_profile", default=2)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="faculty_profile", null=True, blank=True)
     faculty_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     job_role = models.CharField(max_length=255)
     engineering_dept = models.CharField(max_length=255)
     #password = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255)
+    email = models.EmailField(max_length=255, unique=True)
     phone = models.CharField(max_length=10)
-    zoom_phone = models.CharField(max_length=10)
+    zoom_phone = models.CharField(max_length=10, blank=True, null=True)
     office_room = models.CharField(max_length=20)
     hire_date = models.DateTimeField()
     mailing_list_status = models.BooleanField(default=False)

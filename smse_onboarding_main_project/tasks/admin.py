@@ -15,9 +15,23 @@ class TaskAdmin(admin.ModelAdmin):
     shows tasks assignments. 
 
     """
-    list_display = ('title', 'assigned_to', 'completed', 'deadline')
-    search_fields = ('title', 'assigned_to__first_name', 'assigned_to__last_name')
+    list_display = ('title', 'get_assigned_faculty', 'completed', 'deadline')
+    search_fields = ('title', 'completed')
     list_filter = ('completed',)
+
+    def get_assigned_faculty(self, obj):
+        """
+        Returns a comma-separated string of faculty members assigned to this task.
+
+        Args:
+            obj (Task): The task instance.
+
+        Returns:
+            str: List of faculty names assigned to the task.
+        """
+        return ", ".join([f"{faculty.first_name} {faculty.last_name}" for faculty in obj.assigned_to.all()])
+
+    get_assigned_faculty.short_description = "Assigned To"
 
 @admin.register(Faculty)
 class FacultyAdmin(admin.ModelAdmin):
@@ -41,7 +55,8 @@ class FacultyAdmin(admin.ModelAdmin):
         Returns:
             str: Represents the user's role.
         """
-
+        if not obj.user:
+            return "No role"
         if obj.user.is_superuser:
             return "Superuser Admin"
         elif obj.user.is_staff:
