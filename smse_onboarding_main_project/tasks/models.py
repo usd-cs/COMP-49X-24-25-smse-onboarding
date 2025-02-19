@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -31,12 +32,13 @@ class Faculty(models.Model):
         models.Model: Inherits from the models.Model class.
     """
 
-    faculty_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="faculty_profile")  # links to jdjango default User
+    #faculty_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     job_role = models.CharField(max_length=255)
     engineering_dept = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
+    #password = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
     phone = models.CharField(max_length=10)
     zoom_phone = models.CharField(max_length=10)
@@ -44,6 +46,8 @@ class Faculty(models.Model):
     hire_date = models.DateTimeField()
     mailing_list_status = models.BooleanField(default=False)
     bio = models.TextField(blank=True)
+
+    completed_onboarding = models.BooleanField(default=False) #helps flag new hires from reg faculty
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -86,6 +90,7 @@ class FacultyDocument(models.Model):
         return f"Document {self.document_id} for Faculty {self.faculty_id}"
 
 # Other Employees Table
+
 
 
 class OtherEmployee(models.Model):
