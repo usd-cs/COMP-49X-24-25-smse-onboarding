@@ -1,22 +1,147 @@
+<!DOCTYPE html>
 {% load static %}
 <html lang="en">
-    {% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding Portal | Admin Help</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'smse_logo.jpg' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <!-- Navigation Bar (Same as Home Page) -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <a href="{% url 'tasks:admin_help' %}">Help & Guide</a>
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <div class="dropdown">
+                    <i class="text-white me-3 bi bi-list navbar-brand" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                    <ul class="dropdown-menu dropdown-menu-start">
+                        <li><a class="dropdown-item" href="#">All Tasks (Coming Soon)</a></li>
+                        <li><a class="dropdown-item" href="#">Notifications</a></li>
+                    </ul>
+                </div>
+                <span class="navbar-brand">Onboarding Portal</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="dropdown">
+                    <i class="text-white me-3 bi bi-person-circle navbar-brand" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Edit Profile (Coming Soon)</a></li>
+                        <li><a class="dropdown-item" href="{% url 'login' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
+                        <form id="logout-form" method="post" action="{% url 'login' %}" style="display: none;">
+                            {% csrf_token %}
+                        </form>
+                    </ul>
+                </div>
+                <img class="justify-items-end" src="{% static 'smse_logo_transparent.png' %}" alt="SMSE logo" width="40px" height="40px">
+            </div>
+        </div>
+    </nav>
 
-        <h1>Help Guide For Admin</h1>
-        <p>Welcome to the SMSE Admin Help Guide! This guide will help you navigate the onboarding app.</p>
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <h2 class="text-center">Advanced SMSE Admin Help Guide</h2>
+        <p class="text-muted text-center">Learn how to navigate and manage the advanced admin page efficiently.</p>
 
-        <h2>Logging In</h2>
-        <p>Go to <strong>/faculty-admin</strong> and enter your credentials.</p>
+        <!-- Section: Overview -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"> Overview of the Advanced Admin Page</h5>
+            </div>
+            <div class="card-body">
+                <p>The Advanced Admin Page is where administrators can manage faculty, users, and onboarding tasks in advanced settings.</p>
+                <p>Each section in the admin page corresponds to an area of the onboarding system.</p>
+            </div>
+        </div>
 
-        <h2>Managing Faculty</h2>
-        <p>Click on "Faculty Directory" in the Admin Dashboard to view and edit faculty members.</p>
+        <!-- Section: Navigation -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"> Navigating the Advanced Admin Page</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li><strong>Dashboard:</strong> Displays available sections like Users, Groups, Tasks, and Faculty.</li>
+                    <li><strong>Search Bar:</strong> Quickly find records by entering names, emails, or task titles.</li>
+                    <li><strong>Filters:</strong> Use the right sidebar to filter by categories like status, role, or department.</li>
+                </ul>
+            </div>
+        </div>
 
-        <h2>Sending Email Reminders</h2>
-        <p>Click on a new hire's deadline card, then select "Send Reminder."</p>
+        <!-- Section: Explanation of Each Link -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"> Explanation of Each Link</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li><strong>Groups:</strong> Manage user permission groups (e.g., Admins, Faculty, New Hires).</li>
+                    <li><strong>Users:</strong> View and edit user accounts, assign permissions, and reset passwords.</li>
+                    <li><strong>Tasks:</strong> Manage faculty onboarding tasks, assign tasks, and track progress.</li>
+                    <li><strong>Faculty Documents:</strong> Upload and view faculty resumes and other documents.</li>
+                    <li><strong>Faculty:</strong> View all faculty members, edit details, assign onboarding tasks.</li>
+                </ul>
+            </div>
+        </div>
 
-        <h2>Managing Special Permissions</h2>
-        <p><strong>Something</strong><br>More stuff</p>
+        <!-- Section: Searching & Filtering -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"> Searching & Filtering</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Searching:</strong></p>
+                <ul>
+                    <li>Use the search bar to find faculty members by name or email.</li>
+                    <li>Search tasks by title to find specific onboarding tasks.</li>
+                </ul>
+                <p><strong>Filtering:</strong></p>
+                <ul>
+                    <li>Use filters (right side panel) to show only pending tasks or incomplete onboarding.</li>
+                    <li>Filter faculty by department, role, or onboarding status.</li>
+                </ul>
+            </div>
+        </div>
 
-    {% endblock %}
+        <!-- Section: Editing & Managing Roles -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"> Changing User Roles & Permissions</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>To change permissions:</strong></p>
+                <ul>
+                    <li>Go to <strong>Users</strong> in the admin panel.</li>
+                    <li>Click on a user and select their permissions (Admin, Staff, Faculty).</li>
+                    <li>Admins can add, delete, and manage all records, while staff may have limited access.</li>
+                </ul>
+            </div>
+        </div>
 
+        <!-- Section: Editing Faculty & Assigning Tasks -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"> Managing Faculty & Assigning Tasks</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>To edit faculty details:</strong></p>
+                <ul>
+                    <li>Go to <strong>Faculty</strong> in the admin panel.</li>
+                    <li>Click on a faculty member and update their department, contact info, or job title.</li>
+                </ul>
+                <p><strong>To assign tasks:</strong></p>
+                <ul>
+                    <li>Go to <strong>Tasks</strong> in the admin panel.</li>
+                    <li>Click on an existing task or create a new one.</li>
+                    <li>Select the faculty members to assign the task to.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
