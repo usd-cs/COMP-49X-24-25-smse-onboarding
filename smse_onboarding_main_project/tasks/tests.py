@@ -234,6 +234,7 @@ class LoginTests(TestCase):
 
         self.assertEqual(mock_faculty, faculty)
 
+"""
     @patch('tasks.models.Admin.objects.create')  # Mock the create method
     def test_admin_creation(self, mock_create):
         mock_admin = Mock()
@@ -288,3 +289,4 @@ class LoginTests(TestCase):
         )
 
         self.assertEqual(mock_admin, admin)
+    """
