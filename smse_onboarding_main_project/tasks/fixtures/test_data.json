@@ -1,5 +1,40 @@
 [
     {
+        "model": "tasks.faculty",
+        "pk": 1,
+        "fields": {
+            "user": null,
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "job_role": "Professor",
+            "engineering_dept": "Computer Science",
+            "email": "jane.doe@example.com",
+            "phone": "1234567890",
+            "zoom_phone": "0987654321",
+            "office_room": "CS101",
+            "hire_date": "2024-01-15T08:00:00-08:00",
+            "completed_onboarding": false
+        }
+    },
+    {
+        "model": "tasks.faculty",
+        "pk": 2,
+        "fields": {
+            "user": null,
+            "first_name": "John",
+            "last_name": "Smith",
+            "job_role": "Assistant Professor",
+            "engineering_dept": "Electrical Engineering",
+            "email": "john.smith@example.com",
+            "phone": "987654321",
+            "zoom_phone": "0123456789",
+            "office_room": "EE102",
+            "hire_date": "2024-02-01T08:00:00-08:00",
+            "completed_onboarding": false
+        }
+    },
+
+    {
         "model": "tasks.task",
         "pk": 1,
         "fields": {
@@ -7,7 +42,8 @@
             "description": "Attend the onboarding orientation session for new hires.",
             "created_at": "2024-11-01T09:00:00-08:00",
             "completed": false,
-            "deadline": "2024-12-15T17:00:00-08:00"
+            "deadline": "2024-12-15T17:00:00-08:00",
+            "assigned_to":[1,2]
         }
     },
     {
@@ -18,7 +54,8 @@
             "description": "Upload your resume to the onboarding portal or email to SMSE admin team.",
             "created_at": "2024-11-02T10:30:00-08:00",
             "completed": false,
-            "deadline": "2024-12-20T17:00:00-08:00"
+            "deadline": "2024-12-20T17:00:00-08:00",
+            "assigned_to":[2]
         }
     },
     {
@@ -29,7 +66,8 @@
             "description": "Request computer from IT and pick up at IT office.",
             "created_at": "2024-11-03T15:45:00-08:00",
             "completed": true,
-            "deadline": "2024-11-30T12:00:00-08:00"
+            "deadline": "2024-11-30T12:00:00-08:00",
+            "assigned_to": [1, 2]
         }
     },
     {
@@ -40,7 +78,8 @@
             "description": "Collect your office key from the front office.",
             "created_at": "2024-11-04T14:15:00-08:00",
             "completed": true,
-            "deadline": "2024-12-23T17:00:00-08:00"
+            "deadline": "2024-12-23T17:00:00-08:00",
+            "assigned_to":[1, 2]
         }
     },
     {
@@ -51,7 +90,8 @@
             "description": "Pick up mailbox key.",
             "created_at": "2024-11-05T15:16:00-08:00",
             "completed": false,
-            "deadline": "2024-12-04T17:00:00-08:00"
+            "deadline": "2024-12-04T17:00:00-08:00",
+            "assigned_to":[1, 2]
         }
     },
     {
@@ -62,7 +102,8 @@
             "description": "Request any furniture needed from admin team.",
             "created_at": "2024-11-04T14:15:00-08:00",
             "completed": false,
-            "deadline": "2025-01-01T17:00:00-08:00"
+            "deadline": "2025-01-01T17:00:00-08:00",
+            "assigned_to":[1, 2]
         }
     }
 ]
