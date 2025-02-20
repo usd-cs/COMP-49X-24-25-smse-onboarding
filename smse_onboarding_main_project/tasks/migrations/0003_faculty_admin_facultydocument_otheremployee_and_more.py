@@ -4,6 +4,18 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+def create_faculty_table(apps, schema_editor):
+    # Check if the database table already exists
+    table_names = schema_editor.connection.introspection.table_names()
+    if "tasks_faculty" not in table_names:
+        # if the table does not exist, create it
+        Faculty = apps.get_model("tasks", "Faculty")
+        schema_editor.create_model(Faculty)
+    else:
+        # if it does exist, do nothing
+        pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -11,24 +23,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.CreateModel(
-            name="Faculty",
-            fields=[
-                ("faculty_id", models.AutoField(primary_key=True, serialize=False)),
-                ("first_name", models.CharField(max_length=255)),
-                ("last_name", models.CharField(max_length=255)),
-                ("job_role", models.CharField(max_length=255)),
-                ("engineering_dept", models.CharField(max_length=255)),
-                ("password", models.CharField(max_length=255)),
-                ("email", models.EmailField(max_length=255)),
-                ("phone", models.CharField(max_length=10)),
-                ("zoom_phone", models.CharField(max_length=10)),
-                ("office_room", models.CharField(max_length=20)),
-                ("hire_date", models.DateTimeField()),
-                ("mailing_list_status", models.BooleanField(default=False)),
-                ("bio", models.TextField(blank=True)),
-            ],
-        ),
+        # 用 RunPython 替代原来的 CreateModel Faculty 操作
+        migrations.RunPython(create_faculty_table),
         migrations.CreateModel(
             name="Admin",
             fields=[
