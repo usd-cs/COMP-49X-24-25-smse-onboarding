@@ -51,10 +51,7 @@ class Faculty(models.Model):
     hire_date = models.DateTimeField()
     mailing_list_status = models.BooleanField(default=False)
     bio = models.TextField(blank=True)
-<<<<<<< HEAD
     completed_onboarding = models.BooleanField(default=False)  # helps flag new hires from reg
-=======
->>>>>>> 1049daa95f61b3db84d87feb9462d933d2c9011f
     tasks = models.ManyToManyField(Task)
 
     def __str__(self):
