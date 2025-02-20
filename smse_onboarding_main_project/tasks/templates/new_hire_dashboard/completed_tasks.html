@@ -13,33 +13,34 @@
         <div class="tasks-list">
             {% for task in tasks %}
                 {% if task.completed %}
-                <li class="list-group-item d-flex align-items-center" style="height: 65px;">
+                    <li class="list-group-item d-flex align-items-center" style="height: 65px;">
 
-                    <!-- Completed task icon acts as continue task button -->
-                    <form method="POST" action="{% url 'tasks:continue_task' task.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link p-0" style="color: green;" onclick="return confirm('Are you sure you want to set this task as incomplete?')">
-                            <i class="bi bi-check-circle-fill me-3" style="font-size: 1.5rem;"></i>
-                        </button>
-                    </form>
+                        <!-- Completed task icon acts as continue task button -->
+                        <form method="POST" action="{% url 'tasks:continue_task' task.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link p-0" style="color: green;"
+                                    onclick="return confirm('Are you sure you want to set this task as incomplete?')">
+                                <i class="bi bi-check-circle-fill me-3" style="font-size: 1.5rem;"></i>
+                            </button>
+                        </form>
 
-                    <!--Task labels -->
-                    <label class="form-check-label" style="width: 35%">{{ task.title }}</label>
-                    <label class="form-check-label" style="width: 35%">{{ task.deadline }}</label>
-                    <label class="form-check-label text-success" style="width: 25%">Completed</label>
+                        <!-- Task labels -->
+                        <label class="form-check-label" style="width: 35%;">{{ task.title }}</label>
+                        <label class="form-check-label" style="width: 35%;">{{ task.deadline }}</label>
+                        <label class="form-check-label text-success" style="width: 25%;">Completed</label>
 
-                    <!-- Three dots icon shows a dropdown menu -->
-                    <div class="dropdown">
-                        <i class="bi bi-three-dots-vertical ms-auto" style="font-size: 1.5rem; cursor: pointer;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">Description</a></li>
-                        </ul>
-                    </div>
-    
+                        <!-- Three dots icon shows a dropdown menu -->
+                        <div class="dropdown ms-auto">
+                            <i class="bi bi-three-dots-vertical" style="font-size: 1.5rem; cursor: pointer;"
+                               role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">Description</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
                     <!-- Render the popup upon clicking "Description" from the dropdown menu -->
                     {% include 'new_hire_dashboard/task_popup.html' %}
-
-                </li>
                 {% endif %}
             {% endfor %}
         </div>

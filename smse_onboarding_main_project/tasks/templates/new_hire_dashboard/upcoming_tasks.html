@@ -12,36 +12,37 @@
         <!-- Body for the upcoming tasks table -->
         <div class="tasks-list">
             {% for task in tasks %}
-            {% if not task.completed %}
-            <li class="list-group-item d-flex align-items-center task-item" 
-                style="height: 65px; {% if not task.is_unlocked %}opacity: 0.5;{% endif %}" 
-                data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}" style="cursor: pointer;">
+                {% if not task.completed %}
+                    <li class="list-group-item d-flex align-items-center task-item"
+                        style="height: 65px; {% if not task.is_unlocked %}opacity: 0.5;{% endif %}; cursor: pointer;"
+                        data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
 
-                 <!-- Check mark acts as complete task button -->
-                <form method="POST" action="{% url 'tasks:complete_task' task.id %}" onsubmit="event.stopPropagation();">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-link p-0" 
-                        style="color: gray;" {% if not task.is_unlocked %}disabled{% endif %}
-                        onclick="return confirm('Are you sure you want to complete this task?')">
-                        <i class="bi bi-check-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
-                    </button>
-                </form>
+                        <!-- Check mark acts as complete task button -->
+                        <form method="POST" action="{% url 'tasks:complete_task' task.id %}" onsubmit="event.stopPropagation();">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link p-0" 
+                                    style="color: gray;" 
+                                    {% if not task.is_unlocked %}disabled{% endif %}
+                                    onclick="return confirm('Are you sure you want to complete this task?')">
+                                <i class="bi bi-check-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
+                            </button>
+                        </form>
 
-                <!-- Task labels (Click to open modal) -->
-                <span class="task-text" style="width: 35%; cursor: pointer;">{{ task.title }}</span>
-                <span class="task-deadline" style="width: 35%">{{ task.deadline }}</span>
-                <span class="task-status text-danger" style="width: 25%">
-                    {% if task.remaining_days >= 0 %}
-                        {{ task.remaining_days }} days left
-                    {% else %}
-                        Overdue
-                    {% endif %}
-                </span>
+                        <!-- Task labels (Click to open modal) -->
+                        <span class="task-text" style="width: 35%;">{{ task.title }}</span>
+                        <span class="task-deadline" style="width: 35%;">{{ task.deadline }}</span>
+                        <span class="task-status text-danger" style="width: 25%;">
+                            {% if task.remaining_days >= 0 %}
+                                {{ task.remaining_days }} days left
+                            {% else %}
+                                Overdue
+                            {% endif %}
+                        </span>
+                    </li>
 
-                <!-- pop up tasks -->
-                {% include 'new_hire_dashboard/task_popup.html' %}
-            </li>
-            {% endif %}
+                    <!-- Modal is placed here, at the same loop level, not inside <li> -->
+                    {% include 'new_hire_dashboard/task_popup.html' %}
+                {% endif %}
             {% endfor %}
         </div>
         {% else %}
