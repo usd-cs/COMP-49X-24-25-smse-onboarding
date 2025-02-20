@@ -23,15 +23,11 @@ class Task(models.Model):
     class Meta:
         ordering = ['created_at']
 
-<<<<<<< HEAD
     def is_unlocked(self):
         """Check if the task is available: prerequisite task must be completed."""
         if self.prerequisite_task:
             return self.prerequisite_task.completed
         return True
-=======
-# Non-Admin Faculty Table
->>>>>>> 1049daa95f61b3db84d87feb9462d933d2c9011f
 
 
 class Faculty(models.Model):
