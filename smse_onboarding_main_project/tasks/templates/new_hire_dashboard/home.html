@@ -13,12 +13,11 @@
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-        <a href="{% url 'tasks:admin_help' %}">Help & Guide</a>
         <div class="container-fluid">
             <!-- Left side icon and title -->
             <div class="d-flex align-items-center">
                 <div class="dropdown">
-                    <i class="text-white me-3 bi bi-list navbar-brand" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                    <i class="text-white me-3 bi bi-list navbar-brand" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
                     <ul class="dropdown-menu dropdown-menu-start">
                         <li><a class="dropdown-item" href="#">All Tasks (Coming Soon)</a></li>
                         <li><a class="dropdown-item" href="#">Notifications</a></li>
@@ -30,13 +29,10 @@
             <!-- Right side icon and logo -->
             <div class="d-flex align-items-center">
                 <div class="dropdown">
-                    <i class="text-white me-3 bi bi-person-circle navbar-brand" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                    <i class="text-white me-3 bi bi-person-circle navbar-brand" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="#">Edit Profile (Coming Soon)</a></li>
-                        <li><a class="dropdown-item" href="{% url 'login' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
-                        <form id="logout-form" method="post" action="{% url 'login' %}" style="display: none;">
-                            {% csrf_token %}
-                        </form>
+                        <li><a class="dropdown-item" href="#">Logout (Coming Soon)</a></li>
                     </ul>
                 </div>
                 <img class="justify-items-end" src="{% static 'smse_logo_transparent.png' %}" alt="SMSE logo" width="40px" height="40px">
@@ -47,7 +43,7 @@
     <!-- Main Container-->
     <div class="container-fluid main-container">
         <div class="row h-100">
-            <!-- left side (40%) -->
+            <!-- Left side (40%) -->
             <div class="col-5">
                 <!-- Status Card (Top 50%) -->
                 <div class="row h-50">
@@ -69,6 +65,7 @@
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

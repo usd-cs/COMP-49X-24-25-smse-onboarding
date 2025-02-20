@@ -93,3 +93,19 @@ body {
 .tasks-list .btn-link:hover i.bi-check-circle-fill {
     color: gray;
 }
+
+/* Ensure modal and backdrop are on top and remain clickable */
+.modal-backdrop.show {
+    z-index: 1040 !important;
+    pointer-events: auto !important;
+}
+
+.modal.fade.show {
+    z-index: 1050 !important;
+    pointer-events: auto !important;
+}
+
+.modal-content {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
