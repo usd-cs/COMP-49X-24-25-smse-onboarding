@@ -15,7 +15,7 @@
             {% for task in tasks %}
                 {% if not task.completed %}
                     <li class="list-group-item d-flex align-items-center task-item"
-                        style="height: 65px; {% if not task.is_unlocked %}opacity: 0.5;{% endif %}; cursor: pointer;">
+                        style="height: 65px; {% if not task.is_unlocked %}opacity: 0.5;{% endif %};">
                         
                         <!-- Check mark acts as complete task button -->
                         <form method="POST" action="{% url 'tasks:complete_task' task.id %}" onsubmit="event.stopPropagation();">
@@ -28,14 +28,16 @@
                             </button>
                         </form>
                         
-                        <!-- Task labels -->
+                        <!-- Task labels (Click to open modal) -->
                         <!-- Only the task title is clickable to open the modal -->
                         <span class="task-text" style="width: 35%; cursor: pointer;"
                               data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
                             {{ task.title }}
                         </span>
-                        <span class="task-deadline" style="width: 35%;">{{ task.deadline }}</span>
-                        <span class="task-status text-danger" style="width: 25%;">
+                        <span class="task-deadline" style="width: 35%; cursor: default;">
+                            {{ task.deadline }}
+                        </span>
+                        <span class="task-status text-danger" style="width: 25%; cursor: default;">
                             {% if task.remaining_days >= 0 %}
                                 {{ task.remaining_days }} days left
                             {% else %}
