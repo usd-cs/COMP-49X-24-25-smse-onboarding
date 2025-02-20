@@ -2,14 +2,16 @@
     <div class="card-body">
         <div class="row h-100">
             <!-- left Side -->
+            {% if user.is_authenticated %}
             <div class="col-6 d-flex flex-column align-items-center justify-content-center">
-                <h4 class="mb-3">Welcome, User!</h4>
+                <h4 class="mb-3">Welcome, {{ user.first_name }}!</h4>
                 <div class="position-relative">
                     <i class="bi bi-person-circle avatar-large mb-2"></i>
                 </div>
-                <h5 class="mb-1">FirstName LastName</h5>
+                <h5 class="mb-1">{{ user.first_name }} {{ user.last_name }}</h5>
                 <p class="text-muted mb-0"> Software Engineer</p>
             </div>
+            {% endif %}
             <!-- Right Side -->
             <div class="col-6 d-flex flex-column align-items-center justify-content-center">
                 {% if tasks %}
