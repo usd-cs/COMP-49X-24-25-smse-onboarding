@@ -43,6 +43,7 @@ class Faculty(models.Model):
     hire_date = models.DateTimeField()
     mailing_list_status = models.BooleanField(default=False)
     bio = models.TextField(blank=True)
+    tasks = models.ManyToManyField(Task)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
