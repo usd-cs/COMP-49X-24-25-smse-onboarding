@@ -3,22 +3,20 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from tasks.models import Task
 import json
+
 def home(request):
     """
     Render the home page.
-    Original comments preserved
+    Original comments preserved.
     """
     tasks = Task.objects.all()
 
     num_completed = 0
-    tasks_data = []
 
-    # ensures remaining days is shown correctly
+    # Loop through tasks to count completed tasks.
     for task in tasks:
-        remaining_days = (task.deadline - timezone.now()).days if not task.completed else None
         if task.completed:
             num_completed += 1
-
 
     total_tasks = len(tasks)
     percentage = (num_completed / total_tasks) * 100 if total_tasks > 0 else 0
@@ -48,7 +46,6 @@ def complete_task(request, task_id):
     
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
-
 def continue_task(request, task_id):
     """
     Backend function for continuing a task.
@@ -59,12 +56,10 @@ def continue_task(request, task_id):
     """
     if request.method == 'POST':
         task = get_object_or_404(Task, id=task_id)
-        task.completed = False  # mark complete
+        task.completed = False  # mark task as incomplete
         task.save()
         return redirect('tasks:home')
-        # return JsonResponse({'message': f'Task "{task.title}" marked as completed successfully!'})
     return JsonResponse({'error': 'Invalid request method'}, status=400)
-
 
 def admin_help(request):
     return render(request, 'tasks/help_guide.html')
