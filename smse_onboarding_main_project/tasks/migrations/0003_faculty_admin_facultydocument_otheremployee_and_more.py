@@ -23,7 +23,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # 用 RunPython 替代原来的 CreateModel Faculty 操作
         migrations.RunPython(create_faculty_table),
         migrations.CreateModel(
             name="Admin",
