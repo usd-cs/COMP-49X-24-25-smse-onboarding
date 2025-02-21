@@ -1,0 +1,33 @@
+Name                                                                                     Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------------------------------------------------------
+manage.py                                                                                   11      2    82%   12-13
+smse_onboarding/__init__.py                                                                  0      0   100%
+smse_onboarding/models.py                                                                   54      5    91%   29, 64, 83, 101, 125
+smse_onboarding/settings.py                                                                 24      0   100%
+smse_onboarding/tests.py                                                                    45      0   100%
+smse_onboarding/urls.py                                                                      5      0   100%
+tasks/__init__.py                                                                            0      0   100%
+tasks/admin.py                                                                              31     10    68%   32, 58-67
+tasks/apps.py                                                                                4      0   100%
+tasks/migrations/0001_initial.py                                                             5      0   100%
+tasks/migrations/0002_faculty_otheremployee_facultydocument_taskprogress.py                  5      0   100%
+tasks/migrations/0002_task_prerequisite_task.py                                              5      0   100%
+tasks/migrations/0003_remove_faculty_password_faculty_completed_onboarding_and_more.py       6      0   100%
+tasks/migrations/0004_alter_faculty_user.py                                                  6      0   100%
+tasks/migrations/0005_merge_20250219_2352.py                                                 4      0   100%
+tasks/migrations/__init__.py                                                                 0      0   100%
+tasks/models.py                                                                             60      8    87%   20, 27-29, 52, 65, 77, 95
+tasks/tests.py                                                                              80      0   100%
+tasks/urls.py                                                                                4      0   100%
+tasks/views.py                                                                              31     22    29%   12-24, 39-47, 57-62, 65
+----------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                      380     47    88%
+
+Found 11 test(s).
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.009s
+
+OK
