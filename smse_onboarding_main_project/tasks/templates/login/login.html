@@ -14,14 +14,14 @@
 
 <body>
     <h1 class="text-primary text-center" style="margin-top: 70px;">SMSE Onboarding Portal</h1>
-    <h3 class="text-dark text-center" style="margin-top: 80px;">Log in to your account</h3>
+    <h3 class="text-light text-center" style="margin-top: 80px;">Log in to your account</h3>
     <form class="d-flex flex-column align-items-center" method="POST" action="{% url 'login' %}">
         {% csrf_token %}
         <div class="mt-4" style="width: 50%;">
-            <label class="text-black w-100" for="username">Username</label><br>
+            <label class="text-light w-100" for="username">Username</label><br>
             <input class="form-control" type="text" name="username" required><br><br>
 
-            <label class="text-black w-100" for="password">Password</label><br>
+            <label class="text-light w-100" for="password">Password</label><br>
             <input class="form-control" type="password" name="password" required><br><br>
 
             <button class="btn btn-primary text-center form-control" type="submit">Sign in</button>

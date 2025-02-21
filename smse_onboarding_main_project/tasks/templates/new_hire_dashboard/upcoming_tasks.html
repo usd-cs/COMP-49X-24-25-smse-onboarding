@@ -13,7 +13,7 @@
         <!-- Body for the upcoming tasks table -->
         <div class="tasks-list">
             {% for task in tasks %}
-                {% if not task.completed and faculty.faculty_id in task.assigned_to %}
+                {% if not task.completed and faculty in task.assigned_to.all %}
                     <li class="list-group-item d-flex align-items-center task-item"
                         style="height: 65px;{% if not task.is_unlocked %} opacity: 0.5{% endif %}">
                         
