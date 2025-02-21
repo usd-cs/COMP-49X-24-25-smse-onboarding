@@ -19,7 +19,8 @@ services:
     command: >
       sh -c "until nc -z db 5432; do echo 'Waiting for PostgreSQL...'; sleep 2; done &&
              python manage.py migrate &&
-             python manage.py loaddata tasks/fixtures/test_data.json || true &&
+             python manage.py loaddata tasks/fixtures/test_faculty.json || true &&
+             python manage.py loaddata tasks/fixtures/test_tasks.json || true &&
              python manage.py createsuperuser --noinput --username=admin --email=admin@gmail.com || true &&
              python manage.py runserver 0.0.0.0:8000"
 

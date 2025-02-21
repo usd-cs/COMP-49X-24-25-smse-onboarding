@@ -1,3 +1,8 @@
+<style>
+    .locked-task {
+        opacity: 0.5;
+    }
+</style>
 <div class="card"
     style="width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;">
     <ul class="list-group">
@@ -13,9 +18,9 @@
         <!-- Body for the upcoming tasks table -->
         <div class="tasks-list">
             {% for task in tasks %}
-                {% if not task.completed %}
-                    <li class="list-group-item d-flex align-items-center task-item"
-                        style="height: 65px; {% if not task.is_unlocked %}opacity: 0.5;{% endif %};">
+                {% if not task.completed and faculty in task.assigned_to.all %}
+                    <li class="list-group-item d-flex align-items-center task-item {% if not task.is_unlocked %}locked-task{% endif %}"
+                        style="height: 65px;">
                         
                         <!-- Check mark acts as complete task button -->
                         <form method="POST" action="{% url 'tasks:complete_task' task.id %}" onsubmit="event.stopPropagation();">

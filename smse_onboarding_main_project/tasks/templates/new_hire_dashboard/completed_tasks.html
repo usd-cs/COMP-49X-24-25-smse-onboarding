@@ -13,7 +13,7 @@
         <!-- Body for the completed tasks table -->
         <div class="tasks-list">
             {% for task in tasks %}
-                {% if task.completed %}
+                {% if task.completed and faculty in task.assigned_to.all %}
                     <li class="list-group-item d-flex align-items-center" style="height: 65px;">
 
                         <!-- Completed task icon acts as continue task button -->
@@ -25,19 +25,18 @@
                             </button>
                         </form>
 
-                        <!-- Task labels -->
-                        <label class="form-check-label" style="width: 35%;">{{ task.title }}</label>
-                        <label class="form-check-label" style="width: 35%;">{{ task.deadline }}</label>
-                        <label class="form-check-label text-success" style="width: 25%;">Completed</label>
-
-                        <!-- Three dots icon shows a dropdown menu -->
-                        <div class="dropdown ms-auto">
-                            <i class="bi bi-three-dots-vertical" style="font-size: 1.5rem; cursor: pointer;"
-                               role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">Description</a></li>
-                            </ul>
-                        </div>
+                        <!-- Task labels (Click to open modal) -->
+                        <!-- Only the task title is clickable to open the modal -->
+                        <span class="task-text" style="width: 35%; cursor: pointer;"
+                              data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
+                            {{ task.title }}
+                        </span>
+                        <span class="task-deadline" style="width: 35%; cursor: default;">
+                            {{ task.deadline }}
+                        </span>
+                        <span class="task-status text-success" style="width: 25%; cursor: default;">
+                            Completed
+                        </span>
                     </li>
 
                     <!-- Render the popup upon clicking "Description" from the dropdown menu -->
