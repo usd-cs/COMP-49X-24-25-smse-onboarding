@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from tasks.models import Task
+from tasks.models import Task, Faculty
 import json
 
 def home(request):
@@ -15,13 +15,23 @@ def home(request):
 
     # Loop through tasks to count completed tasks.
     for task in tasks:
+        print(task.assigned_to)
         if task.completed:
             num_completed += 1
 
     total_tasks = len(tasks)
     percentage = (num_completed / total_tasks) * 100 if total_tasks > 0 else 0
 
+    try:
+        faculty = Faculty.objects.get(user=request.user)
+    except Exception as e:
+        faculty = None
+        print('Exception : ', e)
+
+    print(faculty.faculty_id)
+
     return render(request, 'new_hire_dashboard/home.html', {
+        'faculty': faculty,
         'tasks': tasks, 
         'num_tasks': total_tasks, 
         'num_completed': num_completed, 
