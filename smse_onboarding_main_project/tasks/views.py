@@ -9,23 +9,26 @@ def home(request):
     Render the home page.
     Original comments preserved.
     """
-    tasks = Task.objects.all()
-
-    num_completed = 0
-
-    # Loop through tasks to count completed tasks.
-    for task in tasks:
-        if task.completed:
-            num_completed += 1
-
-    total_tasks = len(tasks)
-    percentage = (num_completed / total_tasks) * 100 if total_tasks > 0 else 0
-
+    # Get the user logging in
     try:
         faculty = Faculty.objects.get(user=request.user)
     except Exception as e:
         faculty = None
         print('Exception : ', e)
+    
+    tasks = Task.objects.all()
+
+    num_completed = 0
+    total_tasks = 0
+
+    # Loop through tasks to count completed tasks.
+    for task in tasks:
+        if faculty in task.assigned_to.all():
+            total_tasks += 1
+            if task.completed:
+                num_completed += 1
+    
+    percentage = (num_completed / total_tasks) * 100 if total_tasks > 0 else 0
 
     return render(request, 'new_hire_dashboard/home.html', {
         'faculty': faculty,
