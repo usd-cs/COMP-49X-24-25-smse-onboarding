@@ -8,7 +8,7 @@ class Task(models.Model):
     title = models.TextField()
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    completed = models.BooleanField(default=False)
+    #completed = models.BooleanField(default=False)  #NOT NEEDED ANYMORE!!!!
     deadline = models.DateTimeField()
     prerequisite_task = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.SET_NULL
@@ -60,9 +60,10 @@ class TaskProgress(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     progress_status = models.CharField(max_length=255)
+    completed = models.BooleanField(default=False) #makes sure its just for each user
 
     def __str__(self):
-        return f"Task Progress {self.progress_id}"
+        return f"Task Progress {self.task.title} - {self.faculty.first_name} ({'Completed' if self.completed else 'In Progress'})"
 
 
 class FacultyDocument(models.Model):

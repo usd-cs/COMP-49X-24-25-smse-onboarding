@@ -15,9 +15,18 @@ class TaskAdmin(admin.ModelAdmin):
     shows tasks assignments. 
 
     """
-    list_display = ('title', 'get_assigned_faculty', 'completed', 'deadline')
-    search_fields = ('title', 'completed')
-    list_filter = ('completed',)
+    list_display = ('title', 'get_assigned_faculty', 'deadline')
+    #search_fields = ('title', 'completed')
+    list_filter = ('deadline',)
+
+    def get_completed_status(self, obj):
+        """
+        Returns 'Yes' if at least one user has completed the task.
+        """
+        completed_users = TaskProgress.objects.filter(task=obj, completed=True).count()
+        return "Yes" if completed_users > 0 else "No"
+
+    get_completed_status.short_description = "Completed (Any User)"  # ✅ Sets column title in Django Admin
 
     def get_assigned_faculty(self, obj):
         """
