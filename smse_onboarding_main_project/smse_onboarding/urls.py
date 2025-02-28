@@ -29,8 +29,9 @@ urlpatterns = [
     path("home/", include("tasks.urls", namespace="tasks")),
     path('social-auth/', include('social_django.urls', namespace='social')),
     path('login/', custom_login, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('social-auth/', include('social_django.urls', namespace='social')),
 ]
 
 if settings.DEBUG:
