@@ -25,6 +25,7 @@
             <input class="form-control" type="password" name="password" required><br><br>
 
             <button class="btn btn-primary text-center form-control" type="submit">Sign in</button>
+            <a class="nav-link text-primary text-center mt-3" href="{% url 'social:begin' 'google-oauth2' %}?next={% url 'tasks:home' %}">Log In With Google</a>
         </div>
     </form>
 </body>
