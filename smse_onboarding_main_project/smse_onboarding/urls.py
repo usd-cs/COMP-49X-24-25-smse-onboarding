@@ -24,4 +24,6 @@ urlpatterns = [
     path('', RedirectView.as_view(url='login/', permanent=True)),
     path("home/", include("tasks.urls", namespace="tasks")),
     path('login/', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('social-auth/', include('social_django.urls', namespace='social')),
 ]

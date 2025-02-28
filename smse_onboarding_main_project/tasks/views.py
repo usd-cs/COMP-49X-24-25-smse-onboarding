@@ -1,9 +1,14 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 from tasks.models import Task, Faculty
 import json
 
+def login(request):
+    return render(request, 'login/login.html')
+
+@login_required
 def home(request):
     """
     Render the home page.
