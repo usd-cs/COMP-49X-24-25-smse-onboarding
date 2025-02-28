@@ -80,7 +80,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'smse_onboarding.wsgi.application'
 
-
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='757103126544-eo45sod0pu6hg2iiqlnvs3kp6o20kikd.apps.googleusercontent.com'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://localhost:8000/social-auth/complete/google-oauth2/'
 
 # Database
