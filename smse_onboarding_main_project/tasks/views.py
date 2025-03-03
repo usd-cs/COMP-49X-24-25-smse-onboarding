@@ -30,6 +30,10 @@ def home(request):
         
     tasks = Task.objects.all()
     
+    # Get all tasks assigned to this faculty
+    assigned_tasks = tasks.filter(assigned_to=faculty)
+    total_assigned_tasks = assigned_tasks.count()
+    
     # Get all completed tasks for this faculty in one database query
     completed_task_ids = set(
         TaskProgress.objects.filter(
@@ -37,6 +41,14 @@ def home(request):
             completed=True
         ).values_list('task_id', flat=True)
     )
+    
+    # Count completed tasks
+    completed_tasks_count = len(completed_task_ids)
+    
+    # Calculate completion percentage
+    completion_percentage = 0
+    if total_assigned_tasks > 0:
+        completion_percentage = (completed_tasks_count / total_assigned_tasks) * 100
     
     # Calculate days remaining and set completion status for each task
     for task in tasks:
@@ -46,6 +58,14 @@ def home(request):
     context = {
         'tasks': tasks,
         'faculty': faculty,
+        # Original variable names
+        'completed_tasks_count': completed_tasks_count,
+        'total_assigned_tasks': total_assigned_tasks,
+        'completion_percentage': round(completion_percentage),
+        # Variables used in the status_card.html template
+        'num_completed': completed_tasks_count,
+        'num_tasks': total_assigned_tasks,
+        'percentage': round(completion_percentage),
     }
     
     return render(request, 'new_hire_dashboard/home.html', context)
