@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
-
 class Task(models.Model):
     """
     Model for a task.
@@ -95,8 +94,9 @@ class TaskProgress(models.Model):
     progress_id = models.AutoField(primary_key=True)
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    # Adding completed field as it exists in the database and has a not-null constraint
     completed = models.BooleanField(default=True)
-
+    
     class Meta:
         # Ensure we only have one progress record per faculty-task pair
         unique_together = ('faculty', 'task')

@@ -80,11 +80,13 @@ def complete_task(request, task_id):
                     task.completed = True
                     task.save()
                 
+                # Use the correct URL pattern name with namespace
                 return redirect('tasks:home')
             
         except Task.DoesNotExist:
             pass
     
+    # Use the correct URL pattern name with namespace
     return redirect('tasks:home')
 
 def continue_task(request, task_id):
@@ -108,11 +110,13 @@ def continue_task(request, task_id):
                     task.completed = False
                     task.save()
                 
+                # Use the correct URL pattern name with namespace
                 return redirect('tasks:home')
             
         except Task.DoesNotExist:
             pass
     
+    # Use the correct URL pattern name with namespace
     return redirect('tasks:home')
 
 def admin_help(request):
