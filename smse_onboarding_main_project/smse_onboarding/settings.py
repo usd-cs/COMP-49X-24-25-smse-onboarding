@@ -139,3 +139,11 @@ LOGIN_URL = '/login/'
 # Media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Add these settings for file uploads
+ALLOWED_DOCUMENT_TYPES = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+]
+MAX_UPLOAD_SIZE = 5242880  # 5MB
