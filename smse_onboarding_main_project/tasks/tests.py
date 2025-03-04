@@ -386,18 +386,19 @@ class DocumentManagementTests(TestCase):
         # Log in as admin
         self.client.login(username='adminuser', password='admin123')
 
-        # Create documents for different faculty
-        doc1 = FacultyDocument.objects.create(
+        # Create test documents
+        FacultyDocument.objects.create(
             faculty=self.faculty,
             title="Faculty Doc",
-            file=self.test_file,
+            file=SimpleUploadedFile("test.pdf", b"file_content"),
             uploaded_by=self.user
         )
 
-        doc2 = FacultyDocument.objects.create(
-            faculty=self.admin_faculty,
+        # Create another document uploaded by admin
+        FacultyDocument.objects.create(
+            faculty=self.faculty,
             title="Admin Doc",
-            file=self.test_file,
+            file=SimpleUploadedFile("test2.pdf", b"file_content"),
             uploaded_by=self.admin_user
         )
 
