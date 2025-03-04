@@ -1,0 +1,625 @@
+/* Base Styles */
+:root {
+    --primary-color: #1a3a8f;
+    --secondary-color: #f5f7fa;
+    --accent-color: #3b82f6;
+    --text-color: #333;
+    --light-text: #6b7280;
+    --border-color: #e5e7eb;
+    --purple: #8b5cf6;
+    --red: #ef4444;
+    --green: #10b981;
+    --yellow: #f59e0b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: var(--text-color);
+    overflow-y: auto;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 280px;
+    background-color: #0A1E3C;
+    padding: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    height: 100vh;  
+    position: fixed;  
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 0;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.school-name {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.nav-item:hover {
+    background-color: #132f5c;
+    color: #ffffff;
+}
+
+.nav-item.active {
+    background-color: #1a3a6d;
+    color: #ffffff;
+}
+
+.nav-item i {
+    font-size: 20px;
+}
+
+.quick-links {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quick-links-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.new-badge {
+    background-color: #FF3366;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    margin-left: auto;
+}
+
+/* Main Content Styles */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Navigation Bar */
+.top-nav {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: white;
+    border-bottom: 1px solid var(--border-color);
+    height: 70px;  
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 1rem;
+    color: var(--text-color);
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f5f7fa;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-bar i {
+    color: var(--light-text);
+    margin-right: 0.5rem;
+}
+
+.search-bar input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    color: var(--text-color);
+}
+
+.nav-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.notification {
+    position: relative;
+    font-size: 1.25rem;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ef4444;
+    color: white;
+    font-size: 0.7rem;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.language-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.language-selector img {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.role {
+    font-size: 0.8rem;
+    color: var(--light-text);
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: visible;
+}
+
+.dashboard-header {
+    background-color: #f5f7fa;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-title {
+    font-size: 1.75rem;
+    color: #111827;
+}
+
+.dashboard-cards {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 0.5rem;
+}
+
+.dashboard-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.card-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.add-hire-btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.add-hire-btn:hover {
+    background-color: #2563eb;
+}
+
+.card-body {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0;
+}
+
+/* Tables */
+.deadlines-table, .admin-tasks-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.deadlines-table th, .admin-tasks-table th,
+.deadlines-table td, .admin-tasks-table td {
+    padding: 1rem 2rem;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+    background-color: white;
+}
+
+/* Checkbox column styling */
+.checkbox-cell {
+    width: 60px;
+    padding: 1rem 1.5rem !important;
+    text-align: center;
+}
+
+.checkbox-cell input[type="checkbox"] {
+    margin: 0;
+}
+
+/* Empty header for checkbox column */
+.deadlines-table th:first-child,
+.admin-tasks-table th:first-child {
+    padding: 1rem 1.5rem;
+    width: 60px;
+}
+
+/* Other columns */
+.deadlines-table td:nth-child(2),
+.admin-tasks-table td:nth-child(2) {
+    padding-left: 0.5rem;
+}
+
+/* Column width specifications */
+.deadlines-table td:nth-child(3) {
+    width: 25%;
+}
+
+.deadlines-table td:nth-child(4) {
+    width: 25%;
+}
+
+.deadlines-table td:nth-child(5) {
+    width: 15%;
+}
+
+.deadlines-table td:nth-child(6) {
+    width: 15%;
+}
+
+.admin-tasks-table td:nth-child(3) {
+    width: 30%;
+}
+
+.admin-tasks-table td:nth-child(4) {
+    width: 30%;
+}
+
+/* Checkbox alignment */
+input[type="checkbox"] {
+    margin: 0;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+}
+
+/* Progress bar container alignment */
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-right: 1rem;
+}
+
+/* Progress Bar */
+.progress {
+    flex-grow: 1;
+    height: 6px;
+    background-color: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 3px;
+}
+
+.progress-bar.overdue {
+    background-color: var(--red);
+}
+
+.progress-bar.approaching {
+    background-color: var(--purple);
+}
+
+.progress-bar.upcoming {
+    background-color: var(--green);
+}
+
+.progress-text {
+    min-width: 48px;
+    font-size: 0.875rem;
+    color: var(--text-color);
+}
+
+/* Status Colors */
+.overdue {
+    color: var(--red) !important;
+}
+
+.approaching {
+    color: var(--purple) !important;
+}
+
+.upcoming {
+    color: var(--green) !important;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.notify-btn, .edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--light-text);
+    transition: color 0.2s;
+}
+
+.notify-btn:hover {
+    color: var(--purple);
+}
+
+.edit-btn:hover {
+    color: var(--accent-color);
+}
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    appearance: none;
+    -webkit-appearance: none;
+    vertical-align: middle;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    top: -1px;
+    left: 2px;
+}
+
+/* Admin Tasks Table */
+.admin-tasks {
+    margin-top: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.admin-tasks .card-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-tasks .card-body {
+    padding: 0;
+}
+
+/* Empty state styling */
+.empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: var(--light-text);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 200px;
+    }
+    
+    .nav-item {
+        padding: 0.75rem 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        padding: 0.5rem;
+    }
+    
+    .logo-container {
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .nav-item {
+        padding: 0.5rem 1rem;
+    }
+    
+    .top-nav {
+        padding: 0.75rem 1rem;
+    }
+    
+    .dashboard-content {
+        padding: 1rem;
+    }
+}
+
+/* Admin Tasks Table Specific Styles */
+.admin-tasks-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.admin-tasks-table th,
+.admin-tasks-table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+    background-color: white;
+}
+
+.admin-tasks-table th:first-child,
+.admin-tasks-table td:first-child {
+    padding-left: 2rem;
+    width: 40px;
+}
+
+.admin-tasks-table td.checkbox-cell {
+    padding-right: 0;
+}
+
+.admin-tasks-table td:nth-child(2) {
+    padding-left: 0.5rem;
+}
+
+.admin-tasks-table .due-date {
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.admin-tasks-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-tasks-table tbody tr:hover {
+    background-color: var(--secondary-color);
+}
+
+.admin-tasks-table input[type="checkbox"] {
+    margin: 0;
+    position: relative;
+    top: 0;
+}
+
+/* Update checkbox styling for admin tasks */
+.admin-tasks-table input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    appearance: none;
+    -webkit-appearance: none;
+    vertical-align: middle;
+    transition: all 0.2s ease;
+}
+
+.admin-tasks-table input[type="checkbox"]:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.admin-tasks-table input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    top: -1px;
+    left: 2px;
+} 
