@@ -18,16 +18,10 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic.base import RedirectView
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='login/', permanent=True)),
     path("home/", include("tasks.urls", namespace="tasks")),
-    path('login/', auth_views.LoginView.as_view(
-        template_name='login/login.html',
-        next_page='/admin-dashboard/'
-    ), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
-    path('admin-dashboard/', include('admin_dashboard.urls', namespace='admin_dashboard')),
+    path('login/', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
 ]

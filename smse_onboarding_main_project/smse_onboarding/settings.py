@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tasks',
     'smse_onboarding',
-    'admin_dashboard',
 ]
 
 MIDDLEWARE = [
