@@ -1,3 +1,4 @@
+{% load custom_filters %}
 
 <div class="card">
     <div class="card-body">
@@ -96,12 +97,12 @@
                                 <td>{{ doc.title }}</td>
                                 <td>{{ doc.uploaded_at|date:"M d, Y" }}</td>
                                 <td>
-                                    <a href="{{ doc.file.url }}" class="btn btn-sm btn-info" target="_blank">
-                                        <i class="bi bi-eye"></i> View
+                                    <a href="{% url 'tasks:download_document' doc.document_id %}" class="btn btn-sm btn-success">
+                                        <i class="bi bi-download"></i> Download
                                     </a>
                                     <form action="{% url 'tasks:delete_document' doc.document_id %}" method="post" style="display: inline;">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-danger" 
+                                        <button type="submit" class="btn btn-sm btn-danger"
                                                 onclick="return confirm('Are you sure you want to delete this document?')">
                                             <i class="bi bi-trash"></i> Delete
                                         </button>

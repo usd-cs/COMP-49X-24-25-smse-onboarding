@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from tasks.models import Task, Faculty, FacultyDocument
@@ -9,6 +9,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.db import models
+from django.conf import settings
+import os
 
 # The linter errors are wrong
 # Django's model classes automatically get a Manager instance at .objects
@@ -148,3 +150,34 @@ def delete_document(request, doc_id):
         document.delete()
         messages.success(request, 'Document deleted successfully!')
     return redirect('tasks:home')
+
+@login_required
+def download_document(request, doc_id):
+    """View for downloading documents"""
+    document = get_object_or_404(FacultyDocument, document_id=doc_id)
+    
+    # Check permissions
+    if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or 
+                                     request.user.faculty_profile != document.faculty):
+        raise PermissionDenied
+    
+    file_path = os.path.join(settings.MEDIA_ROOT, document.file.name)
+    if os.path.exists(file_path):
+        # Get file extension and actual MIME type
+        file_ext = os.path.splitext(document.file.name)[1].lower()
+        content_types = {
+            '.pdf': 'application/pdf',
+            '.doc': 'application/msword',
+            '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        }
+        content_type = content_types.get(file_ext, 'application/octet-stream')
+        
+        # Use the actual filename from storage
+        filename = os.path.basename(document.file.name)
+        
+        response = FileResponse(open(file_path, 'rb'), content_type=content_type)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+    else:
+        messages.error(request, 'File not found.')
+        return redirect('tasks:home')

@@ -1,5 +1,4 @@
 {% extends 'new_hire_dashboard/home.html' %}
-{% load humanize %}
 
 {% block main_content %}
 <div class="card h-100">
@@ -34,7 +33,7 @@
                     {% for doc in documents %}
                     <tr>
                         <td>{{ doc.title }}</td>
-                        <td>{{ doc.uploaded_at|naturaltime }}</td>
+                        <td>{{ doc.uploaded_at|date:"M d, Y" }}</td>
                         <td>
                             <a href="{{ doc.file.url }}" class="btn btn-sm btn-info" target="_blank">
                                 <i class="bi bi-eye"></i> View

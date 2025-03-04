@@ -140,7 +140,7 @@ LOGIN_URL = '/login/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Add these settings for file uploads
+# Settings for file uploads
 ALLOWED_DOCUMENT_TYPES = [
     'application/pdf',
     'application/msword',
