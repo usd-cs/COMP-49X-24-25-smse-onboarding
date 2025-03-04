@@ -1,7 +1,7 @@
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from tasks.models import Task, Faculty, FacultyDocument
+from tasks.models import Task, Faculty, FacultyDocument, TaskProgress
 import json
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -12,96 +12,149 @@ from django.db import models
 from django.conf import settings
 import os
 
-# The linter errors are wrong
-# Django's model classes automatically get a Manager instance at .objects
+def get_faculty_from_request(request):
+    """
+    Helper function to get the faculty object from the request.
+    """
+    if request.user.is_authenticated:
+        try:
+            return request.user.faculty_profile
+        except AttributeError:
+            pass
+    return None
 
 @login_required
 def home(request):
     """
-    Render the home page with documents data for modals
+    Render the home page with tasks and documents data
     """
-    try:
-        faculty = Faculty.objects.get(user=request.user)
-        # Get documents for the faculty
-        documents = FacultyDocument.objects.filter(faculty=faculty)
-    except Exception as e:
-        faculty = None
-        documents = []
-        print('Exception : ', e)
+    faculty = get_faculty_from_request(request)
+    if not faculty:
+        return redirect('login')
 
     tasks = Task.objects.all()
+    documents = FacultyDocument.objects.filter(faculty=faculty)
 
-    num_completed = 0
-    total_tasks = 0
+    # Get all tasks assigned to this faculty
+    assigned_tasks = tasks.filter(assigned_to=faculty)
+    total_assigned_tasks = assigned_tasks.count()
 
-    # Loop through tasks to count completed tasks.
+    # Get all completed tasks for this faculty in one database query
+    completed_task_ids = set(
+        TaskProgress.objects.filter(
+            faculty=faculty,
+            completed=True
+        ).values_list('task_id', flat=True)
+    )
+
+    # Count completed tasks
+    completed_tasks_count = len(completed_task_ids)
+
+    # Calculate completion percentage
+    completion_percentage = 0
+    if total_assigned_tasks > 0:
+        completion_percentage = (completed_tasks_count / total_assigned_tasks) * 100
+
+    # Calculate days remaining and set completion status for each task
     for task in tasks:
-        if faculty in task.assigned_to.all():
-            total_tasks += 1
-            if task.completed:
-                num_completed += 1
+        # Add faculty-specific completion status
+        task.is_completed_by_faculty = task.id in completed_task_ids
 
-    percentage = (num_completed / total_tasks) * 100 if total_tasks > 0 else 0
-
-    return render(request, 'new_hire_dashboard/home.html', {
-        'faculty': faculty,
+    context = {
         'tasks': tasks,
+        'faculty': faculty,
         'documents': documents,  # Add documents to context
-        'num_tasks': total_tasks,
-        'num_completed': num_completed,
-        'percentage': percentage
-    })
+        'completed_tasks_count': completed_tasks_count,
+        'total_assigned_tasks': total_assigned_tasks,
+        'completion_percentage': round(completion_percentage),
+        'num_completed': completed_tasks_count,
+        'num_tasks': total_assigned_tasks,
+        'percentage': round(completion_percentage),
+    }
+
+    return render(request, 'new_hire_dashboard/home.html', context)
 
 def complete_task(request, task_id):
     """
-    Backend function for completing a task.
-
-    Args:
-        request: Request generated when user clicks to complete a task.
-        task_id: The ID for the task.
+    Mark a task as completed for the current faculty.
     """
     if request.method == 'POST':
-        task = get_object_or_404(Task, id=task_id)
+        try:
+            task = Task.objects.get(pk=task_id)
+            faculty = get_faculty_from_request(request)
 
-        if task.is_unlocked():
-            task.completed = True
-            task.save()
-        return redirect('tasks:home')
+            if faculty and task.is_unlocked():
+                # Mark task as completed for this specific faculty
+                TaskProgress.objects.update_or_create(
+                    faculty=faculty,
+                    task=task,
+                    defaults={'completed': True}
+                )
 
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
+                # Check if all faculty have completed this task
+                assigned_faculty_count = task.assigned_to.count()
+                completed_faculty_count = TaskProgress.objects.filter(
+                    task=task,
+                    faculty__in=task.assigned_to.all(),
+                    completed=True
+                ).count()
+
+                # Only update the task's completed status if all assigned faculty have completed it
+                if completed_faculty_count == assigned_faculty_count and not task.completed:
+                    task.completed = True
+                    task.save()
+
+                return redirect('tasks:home')
+
+        except Task.DoesNotExist:
+            pass
+
+    return redirect('tasks:home')
 
 def continue_task(request, task_id):
     """
-    Backend function for continuing a task.
-
-    Args:
-        request: Request generated when user clicks to continue a task.
-        task_id: The ID for the task.
+    Mark a task as not completed for the current faculty.
     """
     if request.method == 'POST':
-        task = get_object_or_404(Task, id=task_id)
-        task.completed = False  # mark task as incomplete
-        task.save()
-        return redirect('tasks:home')
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
+        try:
+            task = Task.objects.get(pk=task_id)
+            faculty = get_faculty_from_request(request)
+
+            if faculty:
+                # Mark task as not completed for this specific faculty
+                TaskProgress.objects.filter(
+                    faculty=faculty,
+                    task=task
+                ).delete()
+
+                # Update the task's completed status
+                if task.completed:
+                    task.completed = False
+                    task.save()
+
+                # Use the correct URL pattern name with namespace
+                return redirect('tasks:home')
+
+        except Task.DoesNotExist:
+            pass
+
+    # Use the correct URL pattern name with namespace
+    return redirect('tasks:home')
 
 def admin_help(request):
-    return render(request, 'tasks/help_guide.html')
+    return render(request, 'new_hire_dashboard/admin_resources/admin_help.html')
 
 @login_required
 def show_documents(request, faculty_id=None):
-    """Shows thel list of all faculty documents"""
+    """Shows the list of all faculty documents"""
     user = request.user
 
-    # If faculty_id is provided, then can see pecific faculty's documents
     if faculty_id:
         faculty = get_object_or_404(Faculty, faculty_id=faculty_id)
-        # Check permissions
         if not user.is_staff and (not hasattr(user, 'faculty_profile') or user.faculty_profile.faculty_id != faculty_id):
             raise PermissionDenied
         documents = FacultyDocument.objects.filter(faculty=faculty)
     else:
-        # If user is staff, show all documents, otherwise show only their documents
         if user.is_staff:
             documents = FacultyDocument.objects.all()
         else:
@@ -155,12 +208,12 @@ def delete_document(request, doc_id):
 def download_document(request, doc_id):
     """View for downloading documents"""
     document = get_object_or_404(FacultyDocument, document_id=doc_id)
-    
+
     # Check permissions
-    if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or 
+    if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or
                                      request.user.faculty_profile != document.faculty):
         raise PermissionDenied
-    
+
     file_path = os.path.join(settings.MEDIA_ROOT, document.file.name)
     if os.path.exists(file_path):
         # Get file extension and actual MIME type
@@ -171,10 +224,10 @@ def download_document(request, doc_id):
             '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         }
         content_type = content_types.get(file_ext, 'application/octet-stream')
-        
+
         # Use the actual filename from storage
         filename = os.path.basename(document.file.name)
-        
+
         response = FileResponse(open(file_path, 'rb'), content_type=content_type)
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
