@@ -39,26 +39,7 @@
             "completed_onboarding": false
         }
     },
-    {
-        "model": "tasks.faculty",
-        "pk": 3,
-        "fields": {
-            "user": null,
-            "faculty_id": 3,
-            "first_name": "admin",
-            "last_name": "Person",
-            "job_role": "Professor & Admin",
-            "engineering_dept": "Computer Science",
-            "email": "admin.faculty@example.com",
-            "phone": "5551234567",
-            "zoom_phone": "5557654321",
-            "office_room": "CS301",
-            "hire_date": "2023-01-01T08:00:00-08:00",
-            "mailing_list_status": true,
-            "bio": "Faculty member with administrative privileges",
-            "completed_onboarding": true
-        }
-    },
+
     {
         "model": "tasks.task",
         "pk": 1,
@@ -68,7 +49,7 @@
             "created_at": "2024-11-01T09:00:00-08:00",
             "completed": false,
             "deadline": "2024-12-15T17:00:00-08:00",
-            "assigned_to": [2]
+            "assigned_to":[2]
         }
     },
     {
@@ -155,40 +136,6 @@
             "completed": false,
             "deadline": "2025-01-01T17:00:00-08:00",
             "assigned_to":[1, 2]
-        }
-    },
-
-    {
-        "model": "tasks.facultydocument",
-        "pk": 1,
-        "fields": {
-            "faculty": 1,
-            "title": "Jane Doe Resume",
-            "file": "faculty_documents/janedoe_resume.pdf",
-            "uploaded_at": "2024-01-15T10:00:00-08:00",
-            "uploaded_by": 1
-        }
-    },
-    {
-        "model": "tasks.facultydocument",
-        "pk": 2,
-        "fields": {
-            "faculty": 2,
-            "title": "John Doe Resume",
-            "file": "faculty_documents/johndoe_resume.pdf",
-            "uploaded_at": "2024-02-01T11:30:00-08:00",
-            "uploaded_by": 1
-        }
-    },
-    {
-        "model": "tasks.facultydocument",
-        "pk": 3,
-        "fields": {
-            "faculty": 3,
-            "title": "Admin Resume",
-            "file": "faculty_documents/admin_resume.pdf",
-            "uploaded_at": "2024-01-01T09:00:00-08:00",
-            "uploaded_by": 1
         }
     }
 ]

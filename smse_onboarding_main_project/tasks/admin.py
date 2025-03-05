@@ -74,6 +74,5 @@ class FacultyDocumentAdmin(admin.ModelAdmin):
     This class customizes the Django Admin panel for managing faculty documents.
     It allows searching and displaying faculty document information.
     """
-    list_display = ('title', 'faculty', 'uploaded_by', 'uploaded_at')
-    search_fields = ('title', 'faculty__first_name', 'faculty__last_name')
-    list_filter = ('uploaded_at', 'faculty')
+    list_display = ('faculty', 'file_path')
+    search_fields = ('faculty__first_name', 'faculty__last_name')
