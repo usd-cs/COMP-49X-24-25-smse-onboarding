@@ -144,10 +144,10 @@ def continue_task(request, task_id):
 
 @login_required
 def help_guide(request):
-    """
-    View for the help guide page
-    """
-    return render(request, 'tasks/help_guide.html')
+    """View for the help guide page"""
+    if request.user.is_staff:
+        return redirect(f"{reverse('admin_dashboard')}?show_help=true")
+    return redirect(f"{reverse('tasks:home')}?show_help=true")
 
 @login_required
 def show_documents(request):
@@ -175,7 +175,6 @@ def upload_document(request):
     """View for uploading documents"""
     if request.method == 'POST':
         try:
-            # For admin users, use their own faculty profile
             if request.user.is_staff:
                 faculty = request.user.faculty_profile
             else:
@@ -189,17 +188,17 @@ def upload_document(request):
             )
             document.save()
             messages.success(request, 'Document uploaded successfully!')
-            
-            if request.user.is_staff:
-                return redirect('admin_dashboard')  # Return to admin dashboard
-            return redirect('tasks:document_list')  # Return to regular document list
-
         except Exception as e:
             messages.error(request, f'Error uploading document: {str(e)}')
-            
+
+        # Redirect with query parameter to show the modal
+        if request.user.is_staff:
+            return redirect('admin_dashboard')
+        return redirect(f"{reverse('tasks:home')}?show_documents=true")
+
     if request.user.is_staff:
         return redirect('admin_dashboard')
-    return redirect('tasks:document_list')
+    return redirect('tasks:home')
 
 @login_required
 def delete_document(request, doc_id):
@@ -218,14 +217,14 @@ def delete_document(request, doc_id):
             
             if request.user.is_staff:
                 return redirect('admin_dashboard')
-            return redirect('tasks:document_list')
+            return redirect(f"{reverse('tasks:home')}?show_documents=true")
             
         except Exception as e:
             messages.error(request, f'Error deleting document: {str(e)}')
             
     if request.user.is_staff:
         return redirect('admin_dashboard')
-    return redirect('tasks:document_list')
+    return redirect(f"{reverse('tasks:home')}?show_documents=true")
 
 @login_required
 def download_document(request, doc_id):

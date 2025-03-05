@@ -42,41 +42,14 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="container mt-4">
+    <div class="container">
         <h2 class="text-center">Advanced SMSE Admin Help Guide</h2>
         <p class="text-muted text-center">Learn how to navigate and manage the advanced admin page efficiently.</p>
 
-        <!-- Add this after your h2 title -->
-        <div class="table-of-contents card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Table of Contents</h5>
-            </div>
-            <div class="card-body">
-                <ul class="list-unstyled">
-                    <li><a href="#overview">Overview of the Advanced Admin Page</a></li>
-                    <li><a href="#navigation">Navigating the Advanced Admin Page</a></li>
-                    <li><a href="#tasks">Managing Tasks</a>
-                        <ul>
-                            <li><a href="#tasks-create">Creating Tasks</a></li>
-                            <li><a href="#tasks-assign">Assigning Tasks</a></li>
-                            <li><a href="#tasks-track">Tracking Progress</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#faculty">Faculty Management</a>
-                        <ul>
-                            <li><a href="#faculty-add">Adding New Faculty</a></li>
-                            <li><a href="#faculty-edit">Editing Faculty Information</a></li>
-                            <li><a href="#faculty-documents">Managing Documents</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
         <!-- Section: Overview -->
-        <div id="overview" class="card mb-4">
+        <div class="card mb-4">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"> Overview of the Advanced Admin Page</h5>
+                <h5 class="mb-0">Overview of the Advanced Admin Page</h5>
             </div>
             <div class="card-body">
                 <p>The Advanced Admin Page is where administrators can manage faculty, users, and onboarding tasks in advanced settings.</p>
@@ -85,7 +58,7 @@
         </div>
 
         <!-- Section: Navigation -->
-        <div id="navigation" class="card mb-4">
+        <div class="card mb-4">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0"> Navigating the Advanced Admin Page</h5>
             </div>
@@ -172,3 +145,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+<script>
+// Show help guide modal on page load if needed
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('show_help') === 'true') {
+        const modal = new bootstrap.Modal(document.getElementById('helpGuideModal'));
+        modal.show();
+    }
+});
+</script>
