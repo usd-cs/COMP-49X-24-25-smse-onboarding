@@ -154,3 +154,24 @@ class OtherEmployee(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+
+class AdminTask(models.Model):
+    TASK_TYPES = [
+        ('welcome_gift', 'Send Welcome Gift'),
+        ('assign_office', 'Assign Office'),
+        ('check_resume', 'Check Resume'),
+    ]
+
+    title = models.CharField(max_length=100, choices=TASK_TYPES)
+    assigned_to_admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin_tasks')
+    faculty_member = models.ForeignKey(User, on_delete=models.CASCADE, related_name='faculty_admin_tasks')
+    completed = models.BooleanField(default=False)
+    deadline = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['deadline']
+
+    def __str__(self):
+        return f"{self.title} for {self.faculty_member.username}"
