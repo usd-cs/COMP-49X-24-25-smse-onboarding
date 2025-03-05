@@ -1,17 +1,16 @@
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from tasks.models import Task, Faculty, FacultyDocument, TaskProgress
-import json
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.contrib import messages
-from django.db import models
+from django.core.exceptions import PermissionDenied
 from django.conf import settings
 import os
-from django.contrib.auth import authenticate, login
+
+# Import models properly
+from .models import Task, Faculty, FacultyDocument, TaskProgress
 
 def get_faculty_from_request(request):
     """
@@ -175,10 +174,16 @@ def upload_document(request):
     """View for uploading documents"""
     if request.method == 'POST':
         try:
+            # Check if user is staff or has permission for the faculty
             if request.user.is_staff:
                 faculty = request.user.faculty_profile
             else:
                 faculty = get_object_or_404(Faculty, user=request.user)
+                # Add this check to prevent uploading for other faculty
+                if 'faculty_id' in request.POST:
+                    target_faculty = get_object_or_404(Faculty, id=request.POST['faculty_id'])
+                    if faculty != target_faculty:
+                        raise PermissionDenied
 
             document = FacultyDocument(
                 faculty=faculty,
@@ -188,10 +193,13 @@ def upload_document(request):
             )
             document.save()
             messages.success(request, 'Document uploaded successfully!')
+            
+        except PermissionDenied:
+            # Return 403 instead of redirecting
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         except Exception as e:
             messages.error(request, f'Error uploading document: {str(e)}')
 
-        # Redirect with query parameter to show the modal
         if request.user.is_staff:
             return redirect('admin_dashboard')
         return redirect(f"{reverse('tasks:home')}?show_documents=true")
@@ -207,10 +215,10 @@ def delete_document(request, doc_id):
         try:
             document = get_object_or_404(FacultyDocument, document_id=doc_id)
             
-            # Check permissions
-            if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or
+            # Check permissions - return 403 if not authorized
+            if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or 
                                             request.user.faculty_profile != document.faculty):
-                raise PermissionDenied
+                return JsonResponse({'error': 'Permission denied'}, status=403)
             
             document.delete()
             messages.success(request, 'Document deleted successfully!')
@@ -221,6 +229,7 @@ def delete_document(request, doc_id):
             
         except Exception as e:
             messages.error(request, f'Error deleting document: {str(e)}')
+            return JsonResponse({'error': str(e)}, status=400)
             
     if request.user.is_staff:
         return redirect('admin_dashboard')
