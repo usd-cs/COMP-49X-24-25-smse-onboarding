@@ -21,17 +21,15 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
+from tasks.views import custom_login, admin_dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='login/', permanent=True)),
     path("home/", include("tasks.urls", namespace="tasks")),
-    path('login/', auth_views.LoginView.as_view(
-        template_name='login/login.html',
-        next_page='/admin-dashboard/'
-    ), name='login'),
+    path('login/', custom_login, name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
-    path('admin-dashboard/', include('tasks.urls', namespace='admin_dashboard')),
+    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
 ]
 
 if settings.DEBUG:
