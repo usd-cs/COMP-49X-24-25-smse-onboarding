@@ -142,8 +142,12 @@ def continue_task(request, task_id):
     # Use the correct URL pattern name with namespace
     return redirect('tasks:home')
 
-def admin_help(request):
-    return render(request, 'new_hire_dashboard/admin_resources/admin_help.html')
+@login_required
+def help_guide(request):
+    """
+    View for the help guide page
+    """
+    return render(request, 'tasks/help_guide.html')
 
 @login_required
 def show_documents(request, faculty_id=None):
@@ -318,7 +322,7 @@ def admin_dashboard(request):
         'faculty_tasks': faculty_tasks,
         'admin_tasks': admin_tasks,
     }
-    
+
     return render(request, 'admin_dashboard/admin_dashboard.html', context)
 
 def custom_login(request):
@@ -326,12 +330,12 @@ def custom_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
             login(request, user)
             if is_admin(user):
                 return redirect('admin_dashboard')
             else:
                 return redirect('tasks:home')
-        
+
     return render(request, 'login/login.html')
