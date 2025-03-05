@@ -1,0 +1,42 @@
+{% load static %}
+<div class="sidebar">
+    <div class="logo-container">
+        <img src="{% static 'admin_dashboard/logo.png' %}" alt="SMSE Logo" class="logo" onerror="this.src='{% static 'admin_dashboard/default-logo.png' %}'; this.onerror='';">
+        <div class="school-name">School of Engineering</div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="#" class="nav-item active">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="bi bi-people-fill"></i>
+            <span>Faculty Directory</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="bi bi-check2-square"></i>
+            <span>Task Progress</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="bi bi-bell-fill"></i>
+            <span>Notification</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="bi bi-gear-fill"></i>
+            <span>Settings</span>
+        </a>
+        <a href="{% url 'login' %}" class="nav-item">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+    </nav>
+
+    <div class="quick-links">
+        <div class="quick-links-title">
+            <i class="bi bi-link-45deg"></i>
+            <span>Quick Links</span>
+            <span class="new-badge">NEW</span>
+        </div>
+    </div>
+</div>
