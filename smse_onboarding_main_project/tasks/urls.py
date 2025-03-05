@@ -10,4 +10,5 @@ urlpatterns = [
     path('complete-task/<int:task_id>/', views.complete_task, name='complete_task'),
     path('continue-task/<int:task_id>/', views.continue_task, name='continue_task'),
     path('admin-help/', views.admin_help, name="admin_help"),
+    path('admin-dashboard/', views.admin_dashboard, name="admin_dashboard"),
 ]
