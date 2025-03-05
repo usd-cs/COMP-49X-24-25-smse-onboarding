@@ -150,64 +150,82 @@ def help_guide(request):
     return render(request, 'tasks/help_guide.html')
 
 @login_required
-def show_documents(request, faculty_id=None):
-    """Shows the list of all faculty documents"""
+def show_documents(request):
+    """Shows documents for the logged-in user"""
     user = request.user
-
-    if faculty_id:
-        faculty = get_object_or_404(Faculty, faculty_id=faculty_id)
-        if not user.is_staff and (not hasattr(user, 'faculty_profile') or user.faculty_profile.faculty_id != faculty_id):
-            raise PermissionDenied
-        documents = FacultyDocument.objects.filter(faculty=faculty)
+    
+    # Get documents uploaded by the current user
+    if user.is_staff:
+        documents = FacultyDocument.objects.filter(uploaded_by=user)
     else:
-        if user.is_staff:
-            documents = FacultyDocument.objects.all()
-        else:
-            faculty = get_object_or_404(Faculty, user=user)
-            documents = FacultyDocument.objects.filter(faculty=faculty)
-
-    return render(request, 'tasks/document_list.html', {
+        faculty = get_object_or_404(Faculty, user=user)
+        documents = FacultyDocument.objects.filter(faculty=faculty)
+    
+    template_name = 'tasks/admin_document_list.html' if user.is_staff else 'tasks/document_list.html'
+    
+    context = {
         'documents': documents,
-        'faculty': faculty if faculty_id else None
-    })
+        'user': user,
+    }
+    
+    return render(request, template_name, context)
 
 @login_required
 def upload_document(request):
     """View for uploading documents"""
     if request.method == 'POST':
-        faculty_id = request.POST.get('faculty')
+        try:
+            # For admin users, use their own faculty profile
+            if request.user.is_staff:
+                faculty = request.user.faculty_profile
+            else:
+                faculty = get_object_or_404(Faculty, user=request.user)
 
-        if not request.user.is_staff:
-            faculty = get_object_or_404(Faculty, user=request.user)
-            if str(faculty.faculty_id) != faculty_id:
-                raise PermissionDenied
+            document = FacultyDocument(
+                faculty=faculty,
+                title=request.POST.get('title'),
+                file=request.FILES['document'],
+                uploaded_by=request.user
+            )
+            document.save()
+            messages.success(request, 'Document uploaded successfully!')
+            
+            if request.user.is_staff:
+                return redirect('admin_dashboard')  # Return to admin dashboard
+            return redirect('tasks:document_list')  # Return to regular document list
 
-        document = FacultyDocument(
-            faculty_id=faculty_id,
-            title=request.POST.get('title'),
-            file=request.FILES['document'],
-            uploaded_by=request.user
-        )
-        document.save()
-        messages.success(request, 'Document uploaded successfully!')
-        return redirect('tasks:home')
-
-    return redirect('tasks:home')
+        except Exception as e:
+            messages.error(request, f'Error uploading document: {str(e)}')
+            
+    if request.user.is_staff:
+        return redirect('admin_dashboard')
+    return redirect('tasks:document_list')
 
 @login_required
 def delete_document(request, doc_id):
     """View for deleting documents"""
-    if request.method == 'POST':  # Change to POST for security reasons
-        document = get_object_or_404(FacultyDocument, document_id=doc_id)
-
-        # Check permissions
-        if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or
-                                         request.user.faculty_profile != document.faculty):
-            raise PermissionDenied
-
-        document.delete()
-        messages.success(request, 'Document deleted successfully!')
-    return redirect('tasks:home')
+    if request.method == 'POST':
+        try:
+            document = get_object_or_404(FacultyDocument, document_id=doc_id)
+            
+            # Check permissions
+            if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or
+                                            request.user.faculty_profile != document.faculty):
+                raise PermissionDenied
+            
+            document.delete()
+            messages.success(request, 'Document deleted successfully!')
+            
+            if request.user.is_staff:
+                return redirect('admin_dashboard')
+            return redirect('tasks:document_list')
+            
+        except Exception as e:
+            messages.error(request, f'Error deleting document: {str(e)}')
+            
+    if request.user.is_staff:
+        return redirect('admin_dashboard')
+    return redirect('tasks:document_list')
 
 @login_required
 def download_document(request, doc_id):
@@ -257,6 +275,8 @@ def admin_dashboard(request):
     """
     Admin dashboard view showing upcoming deadlines and admin tasks
     """
+    # Get documents for the current user
+    documents = FacultyDocument.objects.filter(uploaded_by=request.user)
 
     faculty_tasks = [
         {
@@ -321,6 +341,7 @@ def admin_dashboard(request):
     context = {
         'faculty_tasks': faculty_tasks,
         'admin_tasks': admin_tasks,
+        'documents': documents,
     }
 
     return render(request, 'admin_dashboard/admin_dashboard.html', context)
