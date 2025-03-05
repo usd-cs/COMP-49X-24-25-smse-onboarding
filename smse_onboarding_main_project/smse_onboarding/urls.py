@@ -31,7 +31,7 @@ urlpatterns = [
         next_page='/admin-dashboard/'
     ), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
-    path('admin-dashboard/', include('admin_dashboard.urls', namespace='admin_dashboard')),
+    path('admin-dashboard/', include('tasks.urls', namespace='admin_dashboard')),
 ]
 
 if settings.DEBUG:
