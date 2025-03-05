@@ -13,7 +13,7 @@ class Task(models.Model):
     deadline = models.DateTimeField()
     prerequisite_task = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.SET_NULL
-    )  # Allow tasks to depend on another task
+    )  # Allow tasks to depend on another tasks
 
     assigned_to = models.ManyToManyField('Faculty', related_name='tasks', blank=True)  # blank lets it exist without needing an assignment
 
