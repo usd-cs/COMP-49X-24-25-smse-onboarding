@@ -18,6 +18,7 @@ services:
       DJANGO_SUPERUSER_PASSWORD: password
     command: >
       sh -c "until nc -z db 5432; do echo 'Waiting for PostgreSQL...'; sleep 2; done &&
+             python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py loaddata tasks/fixtures/test_data.json || true &&
              python manage.py createsuperuser --noinput --username=admin --email=admin@gmail.com || true &&
