@@ -402,22 +402,7 @@ input[type="checkbox"] {
 .progress-bar {
     height: 100%;
     border-radius: 3px;
-}
-
-.progress-bar.overdue {
-    background-color: var(--red);
-}
-
-.progress-bar.approaching {
-    background-color: var(--purple);
-}
-
-.progress-bar.upcoming {
     background-color: var(--green);
-}
-
-.progress-bar.completed {
-    background-color: #0A1E3C;
 }
 
 .progress-text {

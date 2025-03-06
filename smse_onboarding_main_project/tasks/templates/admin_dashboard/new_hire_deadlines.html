@@ -34,8 +34,8 @@
                                 <span class="progress-text">{{ faculty.completion_percentage }}%</span>
                             {% else %}
                                 <div class="progress">
-                                    <div class="progress-bar {{ faculty.status_class }}" 
-                                         style="width: {{ faculty.completion_percentage }}%">
+                                    <div class="progress-bar" 
+                                         style="width: {{ faculty.completion_percentage }}%; background-color: {% if faculty.remaining_days < 0 %}var(--red){% else %}var(--green){% endif %};">
                                     </div>
                                 </div>
                                 <span class="progress-text">{{ faculty.completion_percentage }}%</span>
