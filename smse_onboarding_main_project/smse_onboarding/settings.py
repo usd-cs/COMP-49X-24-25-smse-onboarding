@@ -38,14 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'social_django',
     'tasks',
     'smse_onboarding',
-]
-
-AUTHENTICATION_BACKENDS = [
-    'social_core.backends.google.GoogleOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'smse_onboarding.urls'
@@ -74,7 +67,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'social_django.context_processors.backends',
             ],
         },
     },
@@ -82,29 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'smse_onboarding.wsgi.application'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='757103126544-eo45sod0pu6hg2iiqlnvs3kp6o20kikd.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://localhost:8000/social-auth/complete/google-oauth2/'
-
-SOCIAL_AUTH_PIPELINE = (
-    'social_core.pipeline.social_auth.social_details',
-    'social_core.pipeline.social_auth.social_uid',
-    'social_core.pipeline.social_auth.auth_allowed',
-    # Enable these two lines to associate users by email
-    'social_core.pipeline.social_auth.associate_by_email',
-    'social_core.pipeline.user.get_username',
-    'social_core.pipeline.social_auth.social_user',
-    'social_core.pipeline.user.create_user',
-    'social_core.pipeline.social_auth.associate_user',
-    'social_core.pipeline.social_auth.load_extra_data',
-    'social_core.pipeline.user.user_details',
-)
-
-# Add this setting to enable email association
-SOCIAL_AUTH_GOOGLE_OAUTH2_USE_UNIQUE_USER_ID = False
-SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
-    'prompt': 'select_account'
-}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
