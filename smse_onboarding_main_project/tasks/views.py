@@ -12,9 +12,6 @@ import os
 # Import models properly
 from .models import Task, Faculty, FacultyDocument, TaskProgress
 
-def login(request):
-    return render(request, 'login/login.html')
-
 def get_faculty_from_request(request):
     """
     Helper function to get the faculty object from the request.
