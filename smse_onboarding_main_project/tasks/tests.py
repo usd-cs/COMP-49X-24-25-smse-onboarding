@@ -9,8 +9,10 @@ from .models import Faculty, FacultyDocument
 from django.core.files.storage import default_storage
 import os
 from django.conf import settings
+from django.utils import timezone as django_timezone
 
-from tasks.models import Task
+from tasks.models import Task, TaskProgress
+from tasks.views import is_admin
 
 
 class TaskTests(TestCase):
@@ -380,3 +382,157 @@ class DocumentManagementTests(TestCase):
         self.assertContains(response, "Faculty Doc")
         self.assertContains(response, "Admin Doc")
 """
+
+class AdminDashboardTests(TestCase):
+    def setUp(self):
+        """Set up test data for admin dashboard tests"""
+        # Create an admin user
+        self.admin_user = User.objects.create_user(
+            username='adminuser',
+            password='admin123',
+            is_staff=True,
+            is_superuser=True
+        )
+
+        # Create some faculty members with different onboarding states
+        self.faculty1 = Faculty.objects.create(
+            user=User.objects.create_user(username='faculty1', password='pass123'),
+            first_name='John',
+            last_name='Doe',
+            job_role='Assistant Professor',
+            engineering_dept='Computer Science',
+            email='john@example.com',
+            phone='1234567890',
+            office_room='CS101',
+            hire_date=django_timezone.now() + timedelta(days=30),
+            completed_onboarding=False
+        )
+
+        self.faculty2 = Faculty.objects.create(
+            user=User.objects.create_user(username='faculty2', password='pass123'),
+            first_name='Jane',
+            last_name='Smith',
+            job_role='Associate Professor',
+            engineering_dept='Electrical Engineering',
+            email='jane@example.com',
+            phone='0987654321',
+            office_room='EE201',
+            hire_date=django_timezone.now() + timedelta(days=15),
+            completed_onboarding=False
+        )
+
+        # Create some tasks
+        self.task1 = Task.objects.create(
+            title='Complete Paperwork',
+            description='Fill out new hire paperwork',
+            deadline=django_timezone.now() + timedelta(days=7)
+        )
+        self.task1.assigned_to.add(self.faculty1)
+
+        self.task2 = Task.objects.create(
+            title='Setup Office',
+            description='Set up office space',
+            deadline=django_timezone.now() + timedelta(days=20)
+        )
+        self.task2.assigned_to.add(self.faculty2)
+
+        self.client = Client()
+
+    def test_admin_dashboard_access(self):
+        """Test that only admin users can access the dashboard"""
+        # Test unauthenticated access
+        response = self.client.get(reverse('admin_dashboard'))
+        self.assertEqual(response.status_code, 302)  # Should redirect to login
+
+        # Test non-admin access
+        self.client.login(username='faculty1', password='pass123')
+        response = self.client.get(reverse('admin_dashboard'))
+        self.assertEqual(response.status_code, 302)  # Should redirect
+
+        # Test admin access
+        self.client.login(username='adminuser', password='admin123')
+        response = self.client.get(reverse('admin_dashboard'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_upcoming_deadlines_display(self):
+        """Test that upcoming deadlines are correctly displayed"""
+        self.client.login(username='adminuser', password='admin123')
+        response = self.client.get(reverse('admin_dashboard'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('faculty_tasks', response.context)
+        
+        faculty_tasks = response.context['faculty_tasks']
+        
+        # Check if both faculty members are in the context
+        self.assertEqual(len(faculty_tasks), 2)
+        
+        # Verify the structure of faculty tasks
+        for faculty_task in faculty_tasks:
+            self.assertIn('name', faculty_task)
+            self.assertIn('current_task', faculty_task)
+            self.assertIn('completion_percentage', faculty_task)
+            self.assertIn('status_class', faculty_task)
+            self.assertIn('remaining_days', faculty_task)
+            self.assertIn('all_tasks', faculty_task)
+
+    def test_admin_tasks_display(self):
+        """Test that admin tasks are correctly displayed"""
+        self.client.login(username='adminuser', password='admin123')
+        response = self.client.get(reverse('admin_dashboard'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('admin_tasks', response.context)
+        
+        admin_tasks = response.context['admin_tasks']
+        
+        # Verify that admin tasks are present
+        self.assertTrue(len(admin_tasks) > 0)
+        
+        # Check the structure of admin tasks
+        for task in admin_tasks:
+            self.assertIn('id', task)
+            self.assertIn('title', task)
+            self.assertIn('description', task)
+            self.assertIn('deadline', task)
+            self.assertIn('completed', task)
+            self.assertIn('is_overdue', task)
+
+    def test_completion_percentage_calculation(self):
+        """Test that task completion percentage is calculated correctly"""
+        # Create a task progress for faculty1
+        TaskProgress.objects.create(
+            faculty=self.faculty1,
+            task=self.task1,
+            completed=True
+        )
+        
+        self.client.login(username='adminuser', password='admin123')
+        response = self.client.get(reverse('admin_dashboard'))
+        
+        faculty_tasks = response.context['faculty_tasks']
+        
+        # Find faculty1's tasks in the context
+        faculty1_task = next(ft for ft in faculty_tasks if ft['id'] == self.faculty1.faculty_id)
+        
+        # Since faculty1 has completed 1 out of 1 task
+        self.assertEqual(faculty1_task['completion_percentage'], 100)
+
+    def test_status_class_assignment(self):
+        """Test that status classes are correctly assigned based on deadlines"""
+        # Create a task with an overdue deadline
+        overdue_task = Task.objects.create(
+            title='Overdue Task',
+            description='This task is overdue',
+            deadline=django_timezone.now() - timedelta(days=1)
+        )
+        overdue_task.assigned_to.add(self.faculty1)
+        
+        self.client.login(username='adminuser', password='admin123')
+        response = self.client.get(reverse('admin_dashboard'))
+        
+        faculty_tasks = response.context['faculty_tasks']
+        faculty1_task = next(ft for ft in faculty_tasks if ft['id'] == self.faculty1.faculty_id)
+        
+        # Should be 'overdue' since there's an overdue task
+        self.assertEqual(faculty1_task['status_class'], 'overdue')
