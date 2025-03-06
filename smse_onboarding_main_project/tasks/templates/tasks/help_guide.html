@@ -13,17 +13,12 @@
 <body>
     <!-- Navigation Bar (Same as Home Page) -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-        <a href="{% url 'tasks:help_guide' %}">Help & Guide</a>
         <div class="container-fluid">
             <div class="d-flex align-items-center">
-                <div class="dropdown">
-                    <i class="text-white me-3 bi bi-list navbar-brand" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                    <ul class="dropdown-menu dropdown-menu-start">
-                        <li><a class="dropdown-item" href="#">All Tasks (Coming Soon)</a></li>
-                        <li><a class="dropdown-item" href="#">Notifications</a></li>
-                    </ul>
-                </div>
-                <span class="navbar-brand">Onboarding Portal</span>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-light me-3">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+                <span class="navbar-brand">Help & Guide</span>
             </div>
             <div class="d-flex align-items-center">
                 <div class="dropdown">
