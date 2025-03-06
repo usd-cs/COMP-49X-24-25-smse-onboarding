@@ -4,14 +4,15 @@ from django.utils import timezone
 from tasks.models import Task, Faculty, FacultyDocument, TaskProgress, AdminTask
 import json
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.contrib import messages
-from django.db import models
+from django.core.exceptions import PermissionDenied
 from django.conf import settings
 import os
-from django.contrib.auth import authenticate, login
+
+# Import models properly
+from .models import Task, Faculty, FacultyDocument, TaskProgress
 
 def get_faculty_from_request(request):
     """
@@ -142,68 +143,100 @@ def continue_task(request, task_id):
     # Use the correct URL pattern name with namespace
     return redirect('tasks:home')
 
-def admin_help(request):
-    return render(request, 'new_hire_dashboard/admin_resources/admin_help.html')
+@login_required
+def help_guide(request):
+    """View for the help guide page"""
+    context = {
+        'user': request.user,
+    }
+    return render(request, 'tasks/help_guide.html', context)
 
 @login_required
-def show_documents(request, faculty_id=None):
-    """Shows the list of all faculty documents"""
+def show_documents(request):
+    """Shows documents for the logged-in user"""
     user = request.user
-
-    if faculty_id:
-        faculty = get_object_or_404(Faculty, faculty_id=faculty_id)
-        if not user.is_staff and (not hasattr(user, 'faculty_profile') or user.faculty_profile.faculty_id != faculty_id):
-            raise PermissionDenied
-        documents = FacultyDocument.objects.filter(faculty=faculty)
+    
+    # Get documents uploaded by the current user
+    if user.is_staff:
+        documents = FacultyDocument.objects.filter(uploaded_by=user)
     else:
-        if user.is_staff:
-            documents = FacultyDocument.objects.all()
-        else:
-            faculty = get_object_or_404(Faculty, user=user)
-            documents = FacultyDocument.objects.filter(faculty=faculty)
-
-    return render(request, 'tasks/document_list.html', {
+        faculty = get_object_or_404(Faculty, user=user)
+        documents = FacultyDocument.objects.filter(faculty=faculty)
+    
+    template_name = 'tasks/admin_document_list.html' if user.is_staff else 'tasks/document_list.html'
+    
+    context = {
         'documents': documents,
-        'faculty': faculty if faculty_id else None
-    })
+        'user': user,
+    }
+    
+    return render(request, template_name, context)
 
 @login_required
 def upload_document(request):
     """View for uploading documents"""
     if request.method == 'POST':
-        faculty_id = request.POST.get('faculty')
+        try:
+            # Check if user is staff or has permission for the faculty
+            if request.user.is_staff:
+                faculty = request.user.faculty_profile
+            else:
+                faculty = get_object_or_404(Faculty, user=request.user)
+                # Add this check to prevent uploading for other faculty
+                if 'faculty_id' in request.POST:
+                    target_faculty = get_object_or_404(Faculty, id=request.POST['faculty_id'])
+                    if faculty != target_faculty:
+                        raise PermissionDenied
 
-        if not request.user.is_staff:
-            faculty = get_object_or_404(Faculty, user=request.user)
-            if str(faculty.faculty_id) != faculty_id:
-                raise PermissionDenied
+            document = FacultyDocument(
+                faculty=faculty,
+                title=request.POST.get('title'),
+                file=request.FILES['document'],
+                uploaded_by=request.user
+            )
+            document.save()
+            messages.success(request, 'Document uploaded successfully!')
+            
+        except PermissionDenied:
+            # Return 403 instead of redirecting
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+        except Exception as e:
+            messages.error(request, f'Error uploading document: {str(e)}')
 
-        document = FacultyDocument(
-            faculty_id=faculty_id,
-            title=request.POST.get('title'),
-            file=request.FILES['document'],
-            uploaded_by=request.user
-        )
-        document.save()
-        messages.success(request, 'Document uploaded successfully!')
-        return redirect('tasks:home')
+        if request.user.is_staff:
+            return redirect('admin_dashboard')
+        return redirect(f"{reverse('tasks:home')}?show_documents=true")
 
+    if request.user.is_staff:
+        return redirect('admin_dashboard')
     return redirect('tasks:home')
 
 @login_required
 def delete_document(request, doc_id):
     """View for deleting documents"""
-    if request.method == 'POST':  # Change to POST for security reasons
-        document = get_object_or_404(FacultyDocument, document_id=doc_id)
-
-        # Check permissions
-        if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or
-                                         request.user.faculty_profile != document.faculty):
-            raise PermissionDenied
-
-        document.delete()
-        messages.success(request, 'Document deleted successfully!')
-    return redirect('tasks:home')
+    if request.method == 'POST':
+        try:
+            document = get_object_or_404(FacultyDocument, document_id=doc_id)
+            
+            # Check permissions - return 403 if not authorized
+            if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or 
+                                            request.user.faculty_profile != document.faculty):
+                return JsonResponse({'error': 'Permission denied'}, status=403)
+            
+            document.delete()
+            messages.success(request, 'Document deleted successfully!')
+            
+            if request.user.is_staff:
+                return redirect('admin_dashboard')
+            return redirect(f"{reverse('tasks:home')}?show_documents=true")
+            
+        except Exception as e:
+            messages.error(request, f'Error deleting document: {str(e)}')
+            return JsonResponse({'error': str(e)}, status=400)
+            
+    if request.user.is_staff:
+        return redirect('admin_dashboard')
+    return redirect(f"{reverse('tasks:home')}?show_documents=true")
 
 @login_required
 def download_document(request, doc_id):
@@ -309,27 +342,43 @@ def admin_dashboard(request):
             ]
         })
 
-    # Get admin tasks for the current admin user
-    admin_tasks = Task.objects.filter(
-        assigned_to__user=request.user
-    ).order_by('deadline')
-
-    # Convert admin tasks to the format expected by the template
-    admin_tasks_data = [{
-        'id': task.id,
-        'title': task.title,
-        'assigned_to': 'admin Person',  # Since these are admin's own tasks
-        'deadline': task.deadline,
-        'completed': task.is_completed_by(get_faculty_from_request(request)),
-        'is_overdue': task.deadline < timezone.now(),
-        'description': task.description
-    } for task in admin_tasks]
+    # Get admin tasks (tasks that need admin attention)
+    now = timezone.now()
+    admin_tasks = [
+        {
+            'id': 1,  # 添加 ID 字段
+            'title': 'Contract Written',
+            'description': 'Make sure to have the new hire contract written.',
+            'assigned_to': 'admin Person',
+            'deadline': now + timezone.timedelta(days=30),
+            'completed': False,
+            'is_overdue': False
+        },
+        {
+            'id': 2,  # 添加 ID 字段
+            'title': 'Office Assignment',
+            'description': 'Assign new hire for there office.',
+            'assigned_to': 'admin Person',
+            'deadline': now + timezone.timedelta(days=-5),  # 5 days overdue
+            'completed': False,
+            'is_overdue': True
+        },
+        {
+            'id': 3,  # 添加 ID 字段
+            'title': 'Collect CVs',
+            'description': 'Collecting recent new hires\' CVs and Bios.',
+            'assigned_to': 'admin Person',
+            'deadline': now + timezone.timedelta(days=60),
+            'completed': True,
+            'is_overdue': False
+        }
+    ]
 
     context = {
         'faculty_tasks': faculty_tasks,
-        'admin_tasks': admin_tasks_data,
+        'admin_tasks': admin_tasks,
     }
-    
+
     return render(request, 'admin_dashboard/admin_dashboard.html', context)
 
 def custom_login(request):
@@ -337,14 +386,14 @@ def custom_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
             login(request, user)
             if is_admin(user):
                 return redirect('admin_dashboard')
             else:
                 return redirect('tasks:home')
-        
+
     return render(request, 'login/login.html')
 
 @login_required
@@ -370,6 +419,21 @@ def toggle_admin_task(request, task_id):
                 'status': 'success',
                 'completed': task.completed,
                 'is_overdue': task.is_overdue
+        task = get_object_or_404(Task, id=task_id)
+        faculty = get_faculty_from_request(request)
+        
+        if faculty:
+            if task.is_completed_by(faculty):
+                task.uncomplete_for_faculty(faculty)
+                completed = False
+            else:
+                task.complete_for_faculty(faculty)
+                completed = True
+            
+            return JsonResponse({
+                'status': 'success',
+                'completed': completed,
+                'is_overdue': task.deadline < timezone.now()
             })
     
     return JsonResponse({'status': 'error'}, status=400)

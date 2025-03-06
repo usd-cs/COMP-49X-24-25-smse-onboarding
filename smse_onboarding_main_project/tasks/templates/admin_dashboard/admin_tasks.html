@@ -23,6 +23,7 @@
                     {% for task in admin_tasks %}
                     <tr data-task-id="{{ task.id }}">
                         <td class="checkbox-cell">
+
                             <button class="toggle-task-status" title="Toggle task status" style="border: none; background: none; padding: 0; cursor: pointer;">
                                 {% if task.completed %}
                                     <i class="bi bi-check-circle-fill" style="color: var(--accent-color); font-size: 1.2rem;"></i>
@@ -38,8 +39,10 @@
                             </button>
                         </td>
                         <td>
+                          <div class="task-info">
                             <div class="task-title">{{ task.title }}</div>
-                        </td>
+                          </div>
+                        
                         <td>{{ task.assigned_to }}</td>
                         <td class="due-date {% if task.is_overdue %}overdue{% endif %}">
                             {{ task.deadline|date:"m/d/y" }}
@@ -65,6 +68,30 @@
 }
 .task-title {
     font-weight: 500;
+
+    margin-bottom: 4px;
+}
+.task-description {
+    font-size: 0.875rem;
+    color: var(--light-text);
+}
+.task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.progress {
+    border-radius: 50%;
+    overflow: hidden;
+}
+.progress-bar {
+    border-radius: 50%;
+}
+.bi-check-circle-fill {
+    transition: transform 0.2s ease;
+}
+.toggle-task-status:hover .bi-check-circle-fill {
+    transform: scale(1.1);
 }
 </style>
 
@@ -92,22 +119,37 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (data.completed) {
                         // 切换到完成状态
-                        if (progressContainer) progressContainer.remove();
-                        if (!icon) {
-                            this.innerHTML = '<i class="bi bi-check-circle-fill" style="color: var(--accent-color); font-size: 1.2rem;"></i>';
+                        if (progressContainer) {
+                            progressContainer.style.opacity = '0';
+                            setTimeout(() => {
+                                progressContainer.remove();
+                                this.innerHTML = '<i class="bi bi-check-circle-fill" style="color: var(--accent-color); font-size: 1.2rem; opacity: 0;"></i>';
+                                setTimeout(() => {
+                                    const newIcon = this.querySelector('i');
+                                    if (newIcon) newIcon.style.opacity = '1';
+                                }, 50);
+                            }, 200);
                         }
                     } else {
-                        // 切换到未完成状态
-                        if (icon) icon.parentElement.remove();
-                        if (!progressContainer) {
-                            const color = data.is_overdue ? 'var(--red)' : 'var(--green)';
-                            this.innerHTML = `
-                                <div class="progress-container">
-                                    <div class="progress" style="width: 20px; height: 20px;">
-                                        <div class="progress-bar" style="width: 100%; background-color: ${color};"></div>
+
+                        if (icon) {
+                            icon.style.opacity = '0';
+                            setTimeout(() => {
+                                icon.parentElement.remove();
+                                const color = data.is_overdue ? 'var(--red)' : 'var(--green)';
+                                this.innerHTML = `
+                                    <div class="progress-container" style="opacity: 0;">
+                                        <div class="progress" style="width: 20px; height: 20px;">
+                                            <div class="progress-bar" style="width: 100%; background-color: ${color};"></div>
+                                        </div>
                                     </div>
-                                </div>
-                            `;
+                                `;
+                                setTimeout(() => {
+                                    const newProgress = this.querySelector('.progress-container');
+                                    if (newProgress) newProgress.style.opacity = '1';
+                                }, 50);
+                            }, 200);
+
                         }
                     }
                 }
