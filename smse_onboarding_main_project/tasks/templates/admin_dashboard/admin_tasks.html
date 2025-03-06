@@ -23,25 +23,17 @@
                     {% for task in admin_tasks %}
                     <tr data-task-id="{{ task.id }}">
                         <td class="checkbox-cell">
-                            <button class="toggle-task-status" title="Toggle task status" style="border: none; background: none; padding: 0; cursor: pointer;">
-                                {% if task.completed %}
-                                    <i class="bi bi-check-circle-fill" style="color: var(--accent-color); font-size: 1.2rem;"></i>
-                                {% else %}
-                                    <div class="progress-container">
-                                        <div class="progress" style="width: 20px; height: 20px;">
-                                            <div class="progress-bar" 
-                                                 style="width: 100%; background-color: {% if task.is_overdue %}var(--red){% else %}var(--green){% endif %};">
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            </button>
+                            {% if task.completed %}
+                                <i class="bi bi-check-circle-fill task-completed"></i>
+                            {% else %}
+                                <div class="circle-progress {% if task.is_overdue %}red{% else %}green{% endif %}"></div>
+                            {% endif %}
                         </td>
                         <td>
                             <div class="task-info">
                                 <div class="task-title">{{ task.title }}</div>
                                 {% if task.description %}
-                                    <div class="task-description text-muted">{{ task.description }}</div>
+                                    <div class="task-description">{{ task.description }}</div>
                                 {% endif %}
                             </div>
                         </td>

@@ -382,36 +382,78 @@ input[type="checkbox"] {
     top: -1px;
 }
 
-/* Progress bar container alignment */
+/* Progress Indicators */
 .progress-container {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding-right: 1rem;
+    gap: 8px;
 }
 
-/* Progress Bar */
-.progress {
+/* Line Progress Bar (for new hire deadlines) */
+.line-progress {
     flex-grow: 1;
-    height: 8px;
+    height: 4px;
     background-color: #f0f0f0;
-    border-radius: 4px;
+    border-radius: 2px;
     overflow: hidden;
-    box-shadow: none;
+    margin-right: 8px;
 }
 
-.progress-bar {
+.line-progress .progress-bar {
     height: 100%;
-    border-radius: 4px;
     background-color: var(--green);
-    transition: width 0.6s ease, background-color 0.3s ease;
+    border-radius: 2px;
+}
+
+/* Circle Progress Indicator (for admin tasks) */
+.circle-progress {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin: 0 20px;
+}
+
+.circle-progress.green {
+    background-color: var(--green);
+}
+
+.circle-progress.red {
+    background-color: var(--red);
+}
+
+/* Completed Task Checkmark */
+.task-completed {
+    color: var(--accent-color);
+    font-size: 1.2rem;
+    margin: 0 16px;
 }
 
 .progress-text {
-    min-width: 48px;
     font-size: 0.875rem;
     color: var(--text-color);
-    margin-left: 8px;
+    font-weight: 500;
+    min-width: 45px;
+}
+
+/* Status text colors */
+.overdue-text {
+    color: var(--red);
+    margin-left: 4px;
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.task-title {
+    font-weight: 500;
+}
+
+.task-description {
+    color: var(--light-text);
+    font-size: 0.875rem;
 }
 
 /* Status Colors */
@@ -425,6 +467,24 @@ input[type="checkbox"] {
 
 .upcoming {
     color: var(--green) !important;
+}
+
+.overdue .progress-bar {
+    background-color: var(--red);
+}
+
+.completed .progress-bar {
+    background-color: var(--accent-color);
+}
+
+.progress-bar {
+    background-color: var(--green);
+}
+
+/* Checkmark icon for completed tasks */
+.bi-check-circle-fill {
+    color: var(--accent-color);
+    font-size: 1.2rem;
 }
 
 /* Action Buttons */
