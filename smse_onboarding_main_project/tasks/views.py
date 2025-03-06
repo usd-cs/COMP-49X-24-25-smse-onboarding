@@ -144,9 +144,10 @@ def continue_task(request, task_id):
 @login_required
 def help_guide(request):
     """View for the help guide page"""
-    if request.user.is_staff:
-        return redirect(f"{reverse('admin_dashboard')}?show_help=true")
-    return redirect(f"{reverse('tasks:home')}?show_help=true")
+    context = {
+        'user': request.user,
+    }
+    return render(request, 'tasks/help_guide.html', context)
 
 @login_required
 def show_documents(request):
