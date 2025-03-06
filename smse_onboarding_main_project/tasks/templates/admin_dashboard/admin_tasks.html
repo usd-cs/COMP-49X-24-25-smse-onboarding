@@ -5,32 +5,131 @@
     <div class="card-body">
         <table class="admin-tasks-table">
             <colgroup>
-                <col style="width: 45%;">
+                <col style="width: 10%;">
+                <col style="width: 35%;">
                 <col style="width: 30%;">
                 <col style="width: 25%;">
             </colgroup>
             <thead>
                 <tr>
+                    <th>Status</th>
                     <th>Task</th>
-                    <th>New Hire</th>
+                    <th>Assigned By</th>
                     <th>Due Date</th>
                 </tr>
             </thead>
             <tbody>
                 {% if admin_tasks %}
                     {% for task in admin_tasks %}
-                    <tr>
-                        <td>{{ task.title }}</td>
+                    <tr data-task-id="{{ task.id }}">
+                        <td class="checkbox-cell">
+                            <button class="toggle-task-status" title="Toggle task status" style="border: none; background: none; padding: 0; cursor: pointer;">
+                                {% if task.completed %}
+                                    <i class="bi bi-check-circle-fill" style="color: var(--accent-color); font-size: 1.2rem;"></i>
+                                {% else %}
+                                    <div class="progress-container">
+                                        <div class="progress" style="width: 20px; height: 20px;">
+                                            <div class="progress-bar" 
+                                                 style="width: 100%; background-color: {% if task.is_overdue %}var(--red){% else %}var(--green){% endif %};">
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </button>
+                        </td>
+                        <td>
+                            <div class="task-title">{{ task.title }}</div>
+                        </td>
                         <td>{{ task.assigned_to }}</td>
-                        <td class="due-date">{{ task.deadline|date:"m/d/y" }}</td>
+                        <td class="due-date {% if task.is_overdue %}overdue{% endif %}">
+                            {{ task.deadline|date:"m/d/y" }}
+                            {% if task.is_overdue %}
+                                <span class="overdue-text">(Overdue)</span>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="3" class="text-center">No tasks found.</td>
+                        <td colspan="4" class="text-center">No tasks found.</td>
                     </tr>
                 {% endif %}
             </tbody>
         </table>
     </div>
-</div> 
+</div>
+
+<style>
+.toggle-task-status:focus {
+    outline: none;
+}
+.task-title {
+    font-weight: 500;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.toggle-task-status').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const taskRow = this.closest('tr');
+            const taskId = taskRow.dataset.taskId;
+            
+            fetch(`/tasks/admin/toggle-task/${taskId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // 更新UI而不是刷新页面
+                    const icon = this.querySelector('i');
+                    const progressContainer = this.querySelector('.progress-container');
+                    
+                    if (data.completed) {
+                        // 切换到完成状态
+                        if (progressContainer) progressContainer.remove();
+                        if (!icon) {
+                            this.innerHTML = '<i class="bi bi-check-circle-fill" style="color: var(--accent-color); font-size: 1.2rem;"></i>';
+                        }
+                    } else {
+                        // 切换到未完成状态
+                        if (icon) icon.parentElement.remove();
+                        if (!progressContainer) {
+                            const color = data.is_overdue ? 'var(--red)' : 'var(--green)';
+                            this.innerHTML = `
+                                <div class="progress-container">
+                                    <div class="progress" style="width: 20px; height: 20px;">
+                                        <div class="progress-bar" style="width: 100%; background-color: ${color};"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script> 

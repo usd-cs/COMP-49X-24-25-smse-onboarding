@@ -15,4 +15,5 @@ urlpatterns = [
     path('documents/upload/', views.upload_document, name='upload_document'),
     path('documents/delete/<int:doc_id>/', views.delete_document, name='delete_document'),
     path('documents/download/<int:doc_id>/', views.download_document, name='download_document'),
+    path('admin/toggle-task/<int:task_id>/', views.toggle_admin_task, name='toggle_admin_task'),
 ]

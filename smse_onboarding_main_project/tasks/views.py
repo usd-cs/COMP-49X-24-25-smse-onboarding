@@ -1,7 +1,7 @@
 from django.http import JsonResponse, FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from tasks.models import Task, Faculty, FacultyDocument, TaskProgress
+from tasks.models import Task, Faculty, FacultyDocument, TaskProgress, AdminTask
 import json
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
@@ -309,31 +309,25 @@ def admin_dashboard(request):
             ]
         })
 
-    # Get admin tasks (tasks that need admin attention)
-    admin_tasks = [
-        {
-            'title': 'Send Welcome Gift',
-            'assigned_to': 'Clark Kent',
-            'deadline': timezone.now() + timezone.timedelta(days=30),
-            'completed': False
-        },
-        {
-            'title': 'Assign Office',
-            'assigned_to': 'Clark Kent',
-            'deadline': timezone.now() + timezone.timedelta(days=45),
-            'completed': False
-        },
-        {
-            'title': 'Task 3',
-            'assigned_to': 'Bruce Wayne',
-            'deadline': timezone.now() + timezone.timedelta(days=60),
-            'completed': True
-        }
-    ]
+    # Get admin tasks for the current admin user
+    admin_tasks = Task.objects.filter(
+        assigned_to__user=request.user
+    ).order_by('deadline')
+
+    # Convert admin tasks to the format expected by the template
+    admin_tasks_data = [{
+        'id': task.id,
+        'title': task.title,
+        'assigned_to': 'admin Person',  # Since these are admin's own tasks
+        'deadline': task.deadline,
+        'completed': task.is_completed_by(get_faculty_from_request(request)),
+        'is_overdue': task.deadline < timezone.now(),
+        'description': task.description
+    } for task in admin_tasks]
 
     context = {
         'faculty_tasks': faculty_tasks,
-        'admin_tasks': admin_tasks,
+        'admin_tasks': admin_tasks_data,
     }
     
     return render(request, 'admin_dashboard/admin_dashboard.html', context)
@@ -352,3 +346,30 @@ def custom_login(request):
                 return redirect('tasks:home')
         
     return render(request, 'login/login.html')
+
+@login_required
+@user_passes_test(is_admin)
+def toggle_admin_task(request, task_id):
+    """
+    Toggle the completion status of an admin task
+    """
+    if request.method == 'POST':
+        task = get_object_or_404(AdminTask, id=task_id)
+        
+        # Ensure the user has permission to modify this task
+        if task.assigned_by == request.user:
+            if task.completed:
+                task.completed = False
+                task.completed_at = None
+            else:
+                task.completed = True
+                task.completed_at = timezone.now()
+            task.save()
+            
+            return JsonResponse({
+                'status': 'success',
+                'completed': task.completed,
+                'is_overdue': task.is_overdue
+            })
+    
+    return JsonResponse({'status': 'error'}, status=400)

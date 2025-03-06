@@ -154,3 +154,32 @@ class OtherEmployee(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+
+class AdminTask(models.Model):
+    """
+    Model for admin tasks.
+    """
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    assigned_to = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='assigned_admin_tasks')
+    assigned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_admin_tasks')
+    deadline = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def is_overdue(self):
+        return not self.completed and self.deadline < timezone.now()
+
+    def complete(self):
+        self.completed = True
+        self.completed_at = timezone.now()
+        self.save()
+
+    class Meta:
+        ordering = ['deadline']
