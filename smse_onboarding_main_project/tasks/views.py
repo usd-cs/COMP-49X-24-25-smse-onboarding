@@ -340,31 +340,40 @@ def admin_dashboard(request):
         })
 
     # Get admin tasks (tasks that need admin attention)
+    now = timezone.now()
     admin_tasks = [
         {
-            'title': 'Send Welcome Gift',
-            'assigned_to': 'Clark Kent',
-            'deadline': timezone.now() + timezone.timedelta(days=30),
-            'completed': False
+            'id': 1,  # 添加 ID 字段
+            'title': 'Contract Written',
+            'description': 'Make sure to have the new hire contract written.',
+            'assigned_to': 'admin Person',
+            'deadline': now + timezone.timedelta(days=30),
+            'completed': False,
+            'is_overdue': False
         },
         {
-            'title': 'Assign Office',
-            'assigned_to': 'Clark Kent',
-            'deadline': timezone.now() + timezone.timedelta(days=45),
-            'completed': False
+            'id': 2,  # 添加 ID 字段
+            'title': 'Office Assignment',
+            'description': 'Assign new hire for there office.',
+            'assigned_to': 'admin Person',
+            'deadline': now + timezone.timedelta(days=-5),  # 5 days overdue
+            'completed': False,
+            'is_overdue': True
         },
         {
-            'title': 'Task 3',
-            'assigned_to': 'Bruce Wayne',
-            'deadline': timezone.now() + timezone.timedelta(days=60),
-            'completed': True
+            'id': 3,  # 添加 ID 字段
+            'title': 'Collect CVs',
+            'description': 'Collecting recent new hires\' CVs and Bios.',
+            'assigned_to': 'admin Person',
+            'deadline': now + timezone.timedelta(days=60),
+            'completed': True,
+            'is_overdue': False
         }
     ]
 
     context = {
         'faculty_tasks': faculty_tasks,
         'admin_tasks': admin_tasks,
-        'documents': documents,
     }
 
     return render(request, 'admin_dashboard/admin_dashboard.html', context)
