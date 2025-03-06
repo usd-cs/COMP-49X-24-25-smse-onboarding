@@ -30,13 +30,13 @@
                 <td>{{ doc.uploaded_at|date:"M d, Y" }}</td>
                 <td>
                     <div class="{% if admin_style %}action-buttons{% endif %}">
-                        <a href="{{ doc.file.url }}" 
-                           class="{% if admin_style %}notify-btn{% else %}btn btn-sm btn-info{% endif %}" 
-                           target="_blank" 
+                        <a href="{{ doc.file.url }}"
+                           class="{% if admin_style %}notify-btn{% else %}btn btn-sm btn-info{% endif %}"
+                           target="_blank"
                            title="{% if admin_style %}View{% endif %}">
                             <i class="bi bi-eye"></i>{% if not admin_style %} View{% endif %}
                         </a>
-                        <a href="#" 
+                        <a href="#"
                            class="{% if admin_style %}edit-btn{% else %}btn btn-sm btn-danger{% endif %}"
                            onclick="deleteDocument({{ doc.document_id }}); return false;"
                            title="{% if admin_style %}Delete{% endif %}">
@@ -55,22 +55,60 @@
 </div>
 
 <script>
+// adding this to to the script section
+document.querySelector('#uploadModal form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    }).then(response => {
+        if (response.ok) {
+            // Close upload modal
+            const uploadModal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+            uploadModal.hide();
+
+            // Refresh documents list
+            fetch('{% url "tasks:document_list" %}')
+                .then(response => response.text())
+                .then(html => {
+                    document.querySelector('#documentsModal .modal-body').innerHTML = html;
+                });
+
+            // Show success message
+            alert('Document uploaded successfully!');
+        } else {
+            alert('Error uploading document');
+        }
+    });
+});
+
 function deleteDocument(docId) {
     if (confirm('Are you sure you want to delete this document?')) {
-        fetch(`/home/documents/delete/${docId}/`, {
+        fetch(`/tasks/documents/delete/${docId}/`, {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'Content-Type': 'application/json'
+                'X-CSRFToken': '{{ csrf_token }}'
             }
         }).then(response => {
             if (response.ok) {
-                // Refresh the documents list
-                location.reload();
+                // Refresh documents list
+                fetch('{% url "tasks:document_list" %}')
+                    .then(response => response.text())
+                    .then(html => {
+                        document.querySelector('#documentsModal .modal-body').innerHTML = html;
+                    });
+
+                // Show success message
+                alert('Document deleted successfully!');
             } else {
                 alert('Error deleting document');
             }
         });
     }
 }
-</script> 
+</script>
