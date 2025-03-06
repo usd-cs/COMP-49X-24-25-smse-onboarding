@@ -380,3 +380,160 @@ class DocumentManagementTests(TestCase):
         self.assertContains(response, "Faculty Doc")
         self.assertContains(response, "Admin Doc")
 """
+
+class DocumentIntegrationTests(TestCase):
+    def setUp(self):
+        # Create test users
+        self.admin_user = User.objects.create_superuser(
+            username='adminuser',
+            email='admin@test.com',
+            password='admin123'
+        )
+
+        self.faculty_user = User.objects.create_user(
+            username='facultyuser',
+            email='faculty@test.com',
+            password='faculty123'
+        )
+
+        # Create faculty profile
+        self.faculty = Faculty.objects.create(
+            user=self.faculty_user,
+            first_name='Test',
+            last_name='Faculty',
+            job_role='Professor',
+            engineering_dept='Computer Science',
+            email='faculty@test.com',
+            phone='1234567890',
+            office_room='CS101',
+            hire_date='2024-01-01'
+        )
+
+        # Create test file
+        self.test_pdf = SimpleUploadedFile(
+            "test_doc.pdf",
+            b"PDF content",
+            content_type="application/pdf"
+        )
+
+        self.test_docx = SimpleUploadedFile(
+            "test_doc.docx",
+            b"DOCX content",
+            content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+
+        self.client = Client()
+
+    def test_faculty_document_upload_and_admin_visibility(self):
+        """Test that faculty can upload documents and admin can see them"""
+        # Login as faculty
+        self.client.login(username='facultyuser', password='faculty123')
+
+        # Upload document
+        upload_data = {
+            'title': 'Faculty Test Upload',
+            'document': self.test_pdf,
+        }
+        response = self.client.post(reverse('tasks:upload_document'), upload_data)
+        self.assertEqual(response.status_code, 302)  # Redirect after upload
+
+        # Verify document was created
+        doc = FacultyDocument.objects.get(title='Faculty Test Upload')
+        self.assertEqual(doc.uploaded_by, self.faculty_user)
+        self.assertEqual(doc.faculty, self.faculty)
+
+        # Login as admin and check visibility
+        self.client.login(username='adminuser', password='admin123')
+        response = self.client.get(reverse('admin:tasks_facultydocument_changelist'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Faculty Test Upload')
+        self.assertContains(response, 'facultyuser')  # Check uploader is visible
+
+    def test_document_delete_cascade(self):
+        """Test that documents are properly deleted from storage when model is deleted"""
+        self.client.login(username='facultyuser', password='faculty123')
+
+        # Upload document
+        upload_data = {
+            'title': 'Delete Test',
+            'document': self.test_pdf,
+        }
+        self.client.post(reverse('tasks:upload_document'), upload_data)
+
+        # Get the document
+        doc = FacultyDocument.objects.get(title='Delete Test')
+        file_path = doc.file.path
+
+        # Verify file exists
+        self.assertTrue(os.path.exists(file_path))
+
+        # Delete document
+        doc.delete()
+
+        # Verify file was deleted from storage
+        self.assertFalse(os.path.exists(file_path))
+
+    def test_multiple_document_formats(self):
+        """Test uploading different document formats"""
+        self.client.login(username='facultyuser', password='faculty123')
+
+        # Upload PDF
+        pdf_upload = {
+            'title': 'PDF Test',
+            'document': self.test_pdf,
+        }
+        response = self.client.post(reverse('tasks:upload_document'), pdf_upload)
+        self.assertEqual(response.status_code, 302)
+
+        # Upload DOCX
+        docx_upload = {
+            'title': 'DOCX Test',
+            'document': self.test_docx,
+        }
+        response = self.client.post(reverse('tasks:upload_document'), docx_upload)
+        self.assertEqual(response.status_code, 302)
+
+        # Verify both documents exist
+        self.assertTrue(FacultyDocument.objects.filter(title='PDF Test').exists())
+        self.assertTrue(FacultyDocument.objects.filter(title='DOCX Test').exists())
+
+    def test_document_access_control(self):
+        """Test document access permissions"""
+        # Create another faculty user
+        other_faculty_user = User.objects.create_user(
+            username='otherfaculty',
+            password='other123'
+        )
+        other_faculty = Faculty.objects.create(
+            user=other_faculty_user,
+            first_name='Other',
+            last_name='Faculty',
+            email='other@test.com',
+            phone='0987654321',
+            office_room='CS102',
+            hire_date='2024-01-01'
+        )
+
+        # Upload document as first faculty
+        self.client.login(username='facultyuser', password='faculty123')
+        upload_data = {
+            'title': 'Private Doc',
+            'document': self.test_pdf,
+        }
+        self.client.post(reverse('tasks:upload_document'), upload_data)
+        doc = FacultyDocument.objects.get(title='Private Doc')
+
+        # Try to access as other faculty
+        self.client.login(username='otherfaculty', password='other123')
+        response = self.client.get(reverse('tasks:download_document', args=[doc.document_id]))
+        self.assertEqual(response.status_code, 403)  # Should be forbidden
+
+        # Try to delete as other faculty
+        response = self.client.post(reverse('tasks:delete_document', args=[doc.document_id]))
+        self.assertEqual(response.status_code, 403)  # Should be forbidden
+
+    def tearDown(self):
+        # Clean up uploaded files
+        for doc in FacultyDocument.objects.all():
+            if doc.file and os.path.exists(doc.file.path):
+                os.remove(doc.file.path)
