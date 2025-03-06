@@ -18,12 +18,20 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic.base import RedirectView
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.auth.decorators import login_required
+from tasks.views import custom_login, admin_dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='login/', permanent=True)),
     path("home/", include("tasks.urls", namespace="tasks")),
-    path('login/', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('social-auth/', include('social_django.urls', namespace='social')),
+    path('login/', custom_login, name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
