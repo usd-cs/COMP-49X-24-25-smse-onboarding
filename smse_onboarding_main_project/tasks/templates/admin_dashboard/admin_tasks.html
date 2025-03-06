@@ -5,14 +5,12 @@
     <div class="card-body">
         <table class="admin-tasks-table">
             <colgroup>
-                <col style="width: 40px;">
                 <col style="width: 45%;">
                 <col style="width: 30%;">
                 <col style="width: 25%;">
             </colgroup>
             <thead>
                 <tr>
-                    <th></th>
                     <th>Task</th>
                     <th>New Hire</th>
                     <th>Due Date</th>
@@ -22,13 +20,6 @@
                 {% if admin_tasks %}
                     {% for task in admin_tasks %}
                     <tr>
-                        <td class="checkbox-cell">
-                            {% if task.completed %}
-                            <input type="checkbox" checked>
-                            {% else %}
-                            <input type="checkbox">
-                            {% endif %}
-                        </td>
                         <td>{{ task.title }}</td>
                         <td>{{ task.assigned_to }}</td>
                         <td class="due-date">{{ task.deadline|date:"m/d/y" }}</td>
@@ -36,7 +27,7 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="4" class="text-center">No tasks found.</td>
+                        <td colspan="3" class="text-center">No tasks found.</td>
                     </tr>
                 {% endif %}
             </tbody>

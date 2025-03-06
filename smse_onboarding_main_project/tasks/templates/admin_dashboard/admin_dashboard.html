@@ -56,6 +56,79 @@
         </div>
     </div>
 
+    <!-- Faculty Task Details Modal -->
+    <div class="modal fade" id="facultyTaskModal" tabindex="-1" aria-labelledby="facultyTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="facultyTaskModalLabel">Faculty Tasks</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Upcoming Tasks -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0">Upcoming Tasks</h6>
+                                </div>
+                                <div class="card-body upcoming-tasks-container">
+                                    <!-- Tasks will be populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Completed Tasks -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <h6 class="mb-0">Completed Tasks</h6>
+                                </div>
+                                <div class="card-body completed-tasks-container">
+                                    <!-- Tasks will be populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this where you list faculty tasks -->
+    {% for faculty in faculty_tasks %}
+    <div class="faculty-card mb-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-title mb-0">
+                        <a href="#" class="faculty-name-link" 
+                           data-faculty-id="{{ faculty.id }}"
+                           data-faculty-name="{{ faculty.name }}"
+                           data-bs-toggle="modal" 
+                           data-bs-target="#facultyTaskModal">
+                            {{ faculty.name }}
+                        </a>
+                    </h6>
+                    <span class="badge bg-{{ faculty.status_class }}">{{ faculty.status_class|title }}</span>
+                </div>
+                <p class="card-text mt-2 mb-1">Current Task: {{ faculty.current_task }}</p>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: {{ faculty.completion_percentage }}%"
+                         aria-valuenow="{{ faculty.completion_percentage }}"
+                         aria-valuemin="0"
+                         aria-valuemax="100">
+                        {{ faculty.completion_percentage }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
     <script>
         // Define a filter for absolute value (to handle negative days)
         document.addEventListener('DOMContentLoaded', function() {
@@ -90,6 +163,57 @@
                     bar.style.transition = 'width 1s ease-in-out';
                     bar.style.width = width;
                 }, 100);
+            });
+
+            const facultyLinks = document.querySelectorAll('.faculty-name-link');
+            
+            facultyLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const facultyId = this.dataset.facultyId;
+                    const facultyName = this.dataset.facultyName;
+                    
+                    // Update modal title
+                    document.getElementById('facultyTaskModalLabel').textContent = `${facultyName}'s Tasks`;
+                    
+                    // Find faculty tasks from the data
+                    const faculty = {{ faculty_tasks|safe }}.find(f => f.id == facultyId);
+                    
+                    if (faculty) {
+                        const upcomingTasksContainer = document.querySelector('.upcoming-tasks-container');
+                        const completedTasksContainer = document.querySelector('.completed-tasks-container');
+                        
+                        // Clear existing content
+                        upcomingTasksContainer.innerHTML = '';
+                        completedTasksContainer.innerHTML = '';
+                        
+                        // Populate tasks
+                        faculty.all_tasks.forEach(task => {
+                            const taskHtml = `
+                                <div class="task-item mb-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>${task.title}</span>
+                                        <small class="text-muted">Due: ${new Date(task.deadline).toLocaleDateString()}</small>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            if (task.completed) {
+                                completedTasksContainer.innerHTML += taskHtml;
+                            } else {
+                                upcomingTasksContainer.innerHTML += taskHtml;
+                            }
+                        });
+                        
+                        // Add message if no tasks
+                        if (!upcomingTasksContainer.innerHTML) {
+                            upcomingTasksContainer.innerHTML = '<p class="text-muted">No upcoming tasks</p>';
+                        }
+                        if (!completedTasksContainer.innerHTML) {
+                            completedTasksContainer.innerHTML = '<p class="text-muted">No completed tasks</p>';
+                        }
+                    }
+                });
             });
         });
     </script>

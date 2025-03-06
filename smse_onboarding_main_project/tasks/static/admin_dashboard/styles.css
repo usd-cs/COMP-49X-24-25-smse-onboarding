@@ -416,6 +416,10 @@ input[type="checkbox"] {
     background-color: var(--green);
 }
 
+.progress-bar.completed {
+    background-color: #0A1E3C;
+}
+
 .progress-text {
     min-width: 48px;
     font-size: 0.875rem;
