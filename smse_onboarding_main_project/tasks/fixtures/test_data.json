@@ -1,15 +1,46 @@
 [
     {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "username": "longpham",
+            "password": "pbkdf2_sha256$870000$sCDDoZgPqKKeqiNzk3pBcm$MNECvTcABd4Elw34RtvKcL4yhQFlpK4jNpn5B7NKGhA=",
+            "email": "longpham@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "username": "sbello",
+            "password": "pbkdf2_sha256$870000$f9PaJosQrH2zONZUqDmlwk$muN3Ccp4uw4xQJdKqrDb4uF/1ldXrnUM2B8q0SV9uK0=",
+            "email": "sbello@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 3,
+        "fields": {
+            "username": "nickzhou",
+            "password": "pbkdf2_sha256$870000$jPdk4xiM0ZeKmgT4xbonfp$qMnkWyYc/VZs3oybUroQ9gUeLXattxb4KdgG9fXm2L8=",
+            "email": "nickzhou@sandiego.edu",
+            "is_active": true
+        }
+    },
+
+    {
         "model": "tasks.faculty",
         "pk": 1,
         "fields": {
-            "user": null,
+            "user": 1,
             "faculty_id": 1,
-            "first_name": "Jane",
-            "last_name": "Doe",
+            "first_name": "Long",
+            "last_name": "Pham",
             "job_role": "Professor",
             "engineering_dept": "Computer Science",
-            "email": "jane.doe@example.com",
+            "email": "longpham@sandiego.edu",
             "phone": "1234567890",
             "zoom_phone": "0987654321",
             "office_room": "CS101",
@@ -23,13 +54,13 @@
         "model": "tasks.faculty",
         "pk": 2,
         "fields": {
-            "user": null,
+            "user": 2,
             "faculty_id": 2,
-            "first_name": "John",
-            "last_name": "Smith",
+            "first_name": "Shayna",
+            "last_name": "Bello",
             "job_role": "Assistant Professor",
             "engineering_dept": "Electrical Engineering",
-            "email": "john.smith@example.com",
+            "email": "sbello@sandiego.edu",
             "phone": "987654321",
             "zoom_phone": "0123456789",
             "office_room": "EE102",
@@ -43,22 +74,23 @@
         "model": "tasks.faculty",
         "pk": 3,
         "fields": {
-            "user": null,
+            "user": 3,
             "faculty_id": 3,
-            "first_name": "admin",
-            "last_name": "Person",
-            "job_role": "Professor & Admin",
-            "engineering_dept": "Computer Science",
-            "email": "admin.faculty@example.com",
-            "phone": "5551234567",
-            "zoom_phone": "5557654321",
-            "office_room": "CS301",
-            "hire_date": "2023-01-01T08:00:00-08:00",
+            "first_name": "Nick",
+            "last_name": "Zhou",
+            "job_role": "Adjunct Professor",
+            "engineering_dept": "Mechanical Engineering",
+            "email": "nickzhou@sandiego.edu",
+            "phone": "1010101010",
+            "zoom_phone": "0101010101",
+            "office_room": "ME303",
+            "hire_date": "2024-02-01T08:00:00-08:00",
             "mailing_list_status": true,
-            "bio": "Faculty member with administrative privileges",
-            "completed_onboarding": true
+            "bio": "Yet another test bio",
+            "completed_onboarding": false
         }
     },
+
     {
         "model": "tasks.task",
         "pk": 1,
