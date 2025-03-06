@@ -13,9 +13,9 @@
         "model": "auth.user",
         "pk": 2,
         "fields": {
-            "username": "shaynabello",
+            "username": "sbello",
             "password": "pbkdf2_sha256$870000$f9PaJosQrH2zONZUqDmlwk$muN3Ccp4uw4xQJdKqrDb4uF/1ldXrnUM2B8q0SV9uK0=",
-            "email": "shaynabello@sandiego.edu",
+            "email": "sbello@sandiego.edu",
             "is_active": true
         }
     },
@@ -29,7 +29,7 @@
             "is_active": true
         }
     },
-  
+
     {
         "model": "tasks.faculty",
         "pk": 1,
@@ -60,7 +60,7 @@
             "last_name": "Bello",
             "job_role": "Assistant Professor",
             "engineering_dept": "Electrical Engineering",
-            "email": "shaynabello@sandiego.edu",
+            "email": "sbello@sandiego.edu",
             "phone": "987654321",
             "zoom_phone": "0123456789",
             "office_room": "EE102",
@@ -90,7 +90,7 @@
             "completed_onboarding": false
         }
     },
-  
+
     {
         "model": "tasks.task",
         "pk": 1,
