@@ -165,8 +165,8 @@
             "faculty": 1,
             "title": "Jane Doe Resume",
             "file": "faculty_documents/janedoe_resume.pdf",
-            "uploaded_at": "2024-01-15T08:00:00-08:00",
-            "uploaded_by": 1
+            "uploaded_by": 1,
+            "uploaded_at": "2024-01-15T08:00:00-08:00"
         }
     },
     {
@@ -176,8 +176,8 @@
             "faculty": 2,
             "title": "John Doe Resume",
             "file": "faculty_documents/johndoe_resume.pdf",
-            "uploaded_at": "2024-02-01T08:00:00-08:00",
-            "uploaded_by": 1
+            "uploaded_by": 1,
+            "uploaded_at": "2024-02-01T08:00:00-08:00"
         }
     },
     {
@@ -187,8 +187,8 @@
             "faculty": 3,
             "title": "Admin Resume",
             "file": "faculty_documents/admin_resume.pdf",
-            "uploaded_at": "2024-01-01T08:00:00-08:00",
-            "uploaded_by": 1
+            "uploaded_by": 1,
+            "uploaded_at": "2023-01-01T08:00:00-08:00"
         }
     }
 ]
