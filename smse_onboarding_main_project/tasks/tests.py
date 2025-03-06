@@ -536,3 +536,118 @@ class AdminDashboardTests(TestCase):
         
         # Should be 'overdue' since there's an overdue task
         self.assertEqual(faculty1_task['status_class'], 'overdue')
+
+class ViewsTests(TestCase):
+    def setUp(self):
+        """Set up test data for views tests"""
+        # Create a regular user and faculty
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
+        self.faculty = Faculty.objects.create(
+            user=self.user,
+            first_name='Test',
+            last_name='Faculty',
+            job_role='Professor',
+            engineering_dept='Computer Science',
+            email='test@example.com',
+            phone='1234567890',
+            office_room='CS101',
+            hire_date=django_timezone.now()
+        )
+
+        # Create an admin user
+        self.admin_user = User.objects.create_user(
+            username='adminuser',
+            password='admin123',
+            is_staff=True
+        )
+
+        # Create some tasks
+        self.task1 = Task.objects.create(
+            title='Test Task 1',
+            description='First test task',
+            deadline=django_timezone.now() + timedelta(days=7)
+        )
+        self.task1.assigned_to.add(self.faculty)
+
+        self.task2 = Task.objects.create(
+            title='Test Task 2',
+            description='Second test task',
+            deadline=django_timezone.now() + timedelta(days=14)
+        )
+        self.task2.assigned_to.add(self.faculty)
+
+        # Create a test document
+        self.test_file = SimpleUploadedFile(
+            "test_doc.pdf",
+            b"file_content",
+            content_type="application/pdf"
+        )
+        self.document = FacultyDocument.objects.create(
+            faculty=self.faculty,
+            title="Test Document",
+            file=self.test_file,
+            uploaded_by=self.user
+        )
+
+        self.client = Client()
+
+    def test_home_view_authenticated(self):
+        """Test home view for authenticated user"""
+        self.client.login(username='testuser', password='testpass123')
+        response = self.client.get(reverse('tasks:home'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'new_hire_dashboard/home.html')
+        self.assertIn('tasks', response.context)
+        self.assertIn('faculty', response.context)
+        self.assertIn('documents', response.context)
+        self.assertEqual(response.context['total_assigned_tasks'], 2)
+        self.assertEqual(response.context['completed_tasks_count'], 0)
+        self.assertEqual(response.context['completion_percentage'], 0)
+
+    def test_home_view_unauthenticated(self):
+        """Test home view for unauthenticated user"""
+        response = self.client.get(reverse('tasks:home'))
+        self.assertEqual(response.status_code, 302)  # Should redirect to login
+
+    def test_complete_task(self):
+        """Test completing a task"""
+        self.client.login(username='testuser', password='testpass123')
+        
+        # Complete task1
+        response = self.client.post(reverse('tasks:complete_task', args=[self.task1.id]))
+        self.assertEqual(response.status_code, 302)  # Should redirect
+        
+        # Check if task is marked as completed
+        task_progress = TaskProgress.objects.get(faculty=self.faculty, task=self.task1)
+        self.assertTrue(task_progress.completed)
+        
+        # Check home view for updated completion percentage
+        response = self.client.get(reverse('tasks:home'))
+        self.assertEqual(response.context['completion_percentage'], 50)  # 1 out of 2 tasks completed
+
+    def test_continue_task(self):
+        """Test continuing (uncompleting) a task"""
+        self.client.login(username='testuser', password='testpass123')
+        
+        # First complete the task
+        TaskProgress.objects.create(faculty=self.faculty, task=self.task1, completed=True)
+        
+        # Then uncomplete it
+        response = self.client.post(reverse('tasks:continue_task', args=[self.task1.id]))
+        self.assertEqual(response.status_code, 302)  # Should redirect
+        
+        # Check if task progress is deleted
+        self.assertFalse(TaskProgress.objects.filter(faculty=self.faculty, task=self.task1).exists())
+
+    def test_help_guide_view(self):
+        """Test help guide view"""
+        self.client.login(username='testuser', password='testpass123')
+        response = self.client.get(reverse('tasks:help_guide'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tasks/help_guide.html')
+        self.assertIn('user', response.context)
