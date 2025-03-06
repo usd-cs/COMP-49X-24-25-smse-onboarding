@@ -283,48 +283,63 @@ def admin_dashboard(request):
     """
     Admin dashboard view showing upcoming deadlines and admin tasks
     """
-    # Get documents for the current user
-    documents = FacultyDocument.objects.filter(uploaded_by=request.user)
+    # Get all faculty members who haven't completed onboarding
+    faculty_members = Faculty.objects.filter(completed_onboarding=False)
+    faculty_tasks = []
 
-    faculty_tasks = [
-        {
-            'id': 1,
-            'name': 'Harley Quinn',
-            'current_task': 'Request computer',
-            'completion_percentage': 50,
-            'status_class': 'approaching',
-            'remaining_days': -94,
-            'all_tasks': []
-        },
-        {
-            'id': 2,
-            'name': 'Bruce Wayne',
-            'current_task': 'Request office key',
-            'completion_percentage': 60,
-            'status_class': 'upcoming',
-            'remaining_days': -90,
-            'all_tasks': []
-        },
-        {
-            'id': 3,
-            'name': 'Clark Kent',
-            'current_task': 'Request mailbox',
-            'completion_percentage': 20,
-            'status_class': 'overdue',
-            'remaining_days': -90,
-            'all_tasks': []
-        },
-        {
-            'id': 4,
-            'name': 'Diana Prince',
-            'current_task': 'Complete Security Training',
-            'completion_percentage': 100,
-            'status_class': 'completed',
-            'remaining_days': -71,
-            'all_tasks': []
-        }
-    ]
+    for faculty in faculty_members:
+        # Get all tasks assigned to this faculty
+        assigned_tasks = Task.objects.filter(assigned_to=faculty)
+        total_tasks = assigned_tasks.count()
+        
+        # Get completed tasks for this faculty
+        completed_tasks = TaskProgress.objects.filter(
+            faculty=faculty,
+            completed=True,
+            task__in=assigned_tasks
+        ).count()
 
+        # Calculate completion percentage
+        completion_percentage = 0
+        if total_tasks > 0:
+            completion_percentage = (completed_tasks / total_tasks) * 100
+
+        # Get the next incomplete task
+        next_task = Task.objects.filter(
+            assigned_to=faculty
+        ).exclude(
+            id__in=TaskProgress.objects.filter(
+                faculty=faculty,
+                completed=True
+            ).values_list('task_id', flat=True)
+        ).order_by('deadline').first()
+
+        # Determine status class based on completion and deadlines
+        status_class = 'upcoming'
+        if completion_percentage == 100:
+            status_class = 'completed'
+        elif next_task and next_task.deadline < timezone.now():
+            status_class = 'overdue'
+        elif next_task and (next_task.deadline - timezone.now()).days < 7:
+            status_class = 'approaching'
+
+        faculty_tasks.append({
+            'id': faculty.faculty_id,
+            'name': f"{faculty.first_name} {faculty.last_name}",
+            'current_task': next_task.title if next_task else "All tasks completed",
+            'completion_percentage': round(completion_percentage),
+            'status_class': status_class,
+            'remaining_days': (next_task.deadline - timezone.now()).days if next_task else 0,
+            'all_tasks': [
+                {
+                    'title': task.title,
+                    'completed': TaskProgress.objects.filter(faculty=faculty, task=task, completed=True).exists(),
+                    'deadline': task.deadline
+                } for task in assigned_tasks
+            ]
+        })
+
+    # Get admin tasks (tasks that need admin attention)
     admin_tasks = [
         {
             'title': 'Send Welcome Gift',
@@ -368,3 +383,29 @@ def custom_login(request):
                 return redirect('tasks:home')
 
     return render(request, 'login/login.html')
+
+@login_required
+@user_passes_test(is_admin)
+def toggle_admin_task(request, task_id):
+    """
+    Toggle the completion status of an admin task
+    """
+    if request.method == 'POST':
+        task = get_object_or_404(Task, id=task_id)
+        faculty = get_faculty_from_request(request)
+        
+        if faculty:
+            if task.is_completed_by(faculty):
+                task.uncomplete_for_faculty(faculty)
+                completed = False
+            else:
+                task.complete_for_faculty(faculty)
+                completed = True
+            
+            return JsonResponse({
+                'status': 'success',
+                'completed': completed,
+                'is_overdue': task.deadline < timezone.now()
+            })
+    
+    return JsonResponse({'status': 'error'}, status=400)
