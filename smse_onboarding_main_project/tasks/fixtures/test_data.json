@@ -29,7 +29,6 @@
             "is_active": true
         }
     },
-
     {
         "model": "tasks.faculty",
         "pk": 1,
