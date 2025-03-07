@@ -12,6 +12,7 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
     deadline = models.DateTimeField()
+    is_completed_by_faculty = models.BooleanField(default=False)
     prerequisite_task = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.SET_NULL
     )  # Allow tasks to depend on another task
