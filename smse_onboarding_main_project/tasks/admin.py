@@ -77,3 +77,13 @@ class FacultyDocumentAdmin(admin.ModelAdmin):
     list_display = ('title', 'faculty', 'uploaded_by', 'uploaded_at')
     search_fields = ('title', 'faculty__first_name', 'faculty__last_name')
     list_filter = ('uploaded_at', 'faculty')
+
+# @admin.register(TaskProgress)
+# class TaskProgressAdmin(admin.ModelAdmin):
+#     """
+#     This class customizes the Django Admin panel for managing task progress.
+#     It allows searching and displaying task progress information.
+#     """
+#     list_display = ('faculty', 'task', 'completed')
+#     search_fields = ('title', 'faculty__first_name', 'faculty__last_name')
+#     list_filter = ('uploaded_at', 'faculty')

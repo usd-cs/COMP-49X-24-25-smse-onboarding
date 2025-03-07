@@ -23,9 +23,6 @@ def get_faculty_from_request(request):
             pass
     return None
 
-def login(request):
-    return render(request, 'login/login.html')
-
 @login_required
 def home(request):
     """
