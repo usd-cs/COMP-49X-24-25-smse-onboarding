@@ -30,6 +30,9 @@ def home(request):
     """
     faculty = get_faculty_from_request(request)
     if not faculty:
+        if request.user.is_superuser:
+            return redirect('admin_dashboard')
+
         return redirect('login')
 
     tasks = Task.objects.all()
@@ -386,27 +389,13 @@ def custom_login(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            return redirect(reverse('social:begin', args=['google-oauth2']))
-            # login(request, user)
-            # if is_admin(user):
-            #     return redirect('admin_dashboard')
-            # else:
-            #     return redirect('tasks:home')
+            login(request, user)
+            if is_admin(user):
+                return redirect('admin_dashboard')
+            else:
+                return redirect('tasks:home')
 
     return render(request, 'login/login.html')
-
-def oauth_callback(request):
-    # Assuming you have logic here to authenticate the user via Google OAuth
-    user = request.user  # Get the authenticated user
-    print(f"User authenticated: {user.is_authenticated}, User: {user}")
-    if user.is_authenticated:
-        login(request, user)  # Log the user in
-        if user.is_staff:
-            return redirect('admin_dashboard')  # Redirect to admin dashboard
-        else:
-            return redirect('tasks:home')  # Redirect to new hire dashboard
-
-    return redirect('custom_login')  # Redirect back to login if not authenticated
 
 @login_required
 @user_passes_test(is_admin)
