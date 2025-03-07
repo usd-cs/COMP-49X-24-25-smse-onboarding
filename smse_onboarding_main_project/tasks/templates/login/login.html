@@ -18,14 +18,7 @@
     <form class="d-flex flex-column align-items-center" method="POST" action="{% url 'login' %}">
         {% csrf_token %}
         <div class="mt-4" style="width: 50%;">
-            <label class="text-light w-100" for="username">Username</label><br>
-            <input class="form-control" type="text" name="username" required><br><br>
-
-            <label class="text-light w-100" for="password">Password</label><br>
-            <input class="form-control" type="password" name="password" required><br><br>
-
-            <button class="btn btn-primary text-center form-control" type="submit">Sign in</button>
-            <a class="nav-link text-primary text-center mt-3" href="{% url 'social:begin' 'google-oauth2' %}?next={% url 'tasks:home' %}">Log In With Google</a>
+            <a class="btn btn-primary text-center form-control" role="button" href="{% url 'social:begin' 'google-oauth2' %}">Log In With Google</a>
         </div>
     </form>
 </body>
