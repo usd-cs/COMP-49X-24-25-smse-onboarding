@@ -352,37 +352,6 @@ class DocumentManagementTests(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertTrue(FacultyDocument.objects.filter(document_id=doc.document_id).exists())
 
-"""
-    def test_admin_document_access(self):
-        #Test that admin users can access all documents
-        # Log in as admin
-        self.client.login(username='adminuser', password='admin123')
-
-        # Create test documents
-        FacultyDocument.objects.create(
-            faculty=self.faculty,
-            title="Faculty Doc",
-            file=SimpleUploadedFile("test.pdf", b"file_content"),
-            uploaded_by=self.user
-        )
-
-        # Create another document uploaded by admin
-        FacultyDocument.objects.create(
-            faculty=self.faculty,
-            title="Admin Doc",
-            file=SimpleUploadedFile("test2.pdf", b"file_content"),
-            uploaded_by=self.admin_user
-        )
-
-        # Get document list
-        response = self.client.get(reverse('tasks:document_list'))
-
-        # Check that admin can see all documents
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Faculty Doc")
-        self.assertContains(response, "Admin Doc")
-"""
-
 class AdminDashboardTests(TestCase):
     def setUp(self):
         """Set up test data for admin dashboard tests"""

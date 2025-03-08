@@ -30,6 +30,9 @@ def home(request):
     """
     faculty = get_faculty_from_request(request)
     if not faculty:
+        if request.user.is_superuser:
+            return redirect('admin_dashboard')
+
         return redirect('login')
 
     tasks = Task.objects.all()
@@ -380,18 +383,6 @@ def admin_dashboard(request):
     return render(request, 'admin_dashboard/admin_dashboard.html', context)
 
 def custom_login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            if is_admin(user):
-                return redirect('admin_dashboard')
-            else:
-                return redirect('tasks:home')
-
     return render(request, 'login/login.html')
 
 @login_required

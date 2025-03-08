@@ -13,3 +13,4 @@ sqlparse
 flake8
 autopep8
 importlib-metadata==4.12.0
+social-auth-app-django
