@@ -1,10 +1,10 @@
 from django.db import models
-from tasks.models import Faculty
+from users.models import Faculty
 from django.contrib.auth.models import User
 from django.db.models import Manager
 from django.utils import timezone
 import os
-from typing import Optional
+from typing import Optional, Any
 
 class FacultyDocument(models.Model):
     """

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'smse_onboarding',
     #'tasks.apps.TasksConfig',
     'documents.apps.DocumentsConfig',
+    'users',
 ]
 
 AUTHENTICATION_BACKENDS = [
