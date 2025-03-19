@@ -3,7 +3,7 @@ Admin file.
 """
 from django.contrib import admin
 from django.contrib.auth.models import User
-from .models import Task, Faculty, TaskProgress, FacultyDocument
+from .models import Task, Faculty, TaskProgress
 
 # Register models.
 
@@ -68,15 +68,7 @@ class FacultyAdmin(admin.ModelAdmin):
 
     user_type.short_description = "User Role"
 
-@admin.register(FacultyDocument)
-class FacultyDocumentAdmin(admin.ModelAdmin):
-    """
-    This class customizes the Django Admin panel for managing faculty documents.
-    It allows searching and displaying faculty document information.
-    """
-    list_display = ('title', 'faculty', 'uploaded_by', 'uploaded_at')
-    search_fields = ('title', 'faculty__first_name', 'faculty__last_name')
-    list_filter = ('uploaded_at', 'faculty')
+
 
 # @admin.register(TaskProgress)
 # class TaskProgressAdmin(admin.ModelAdmin):
