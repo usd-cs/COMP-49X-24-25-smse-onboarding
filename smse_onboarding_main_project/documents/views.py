@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from .models import FacultyDocument
-from tasks.models import Faculty
+from users.models import Faculty
 import os
 import mimetypes
 

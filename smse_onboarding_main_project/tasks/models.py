@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Manager, QuerySet
 from django.utils import timezone
 from typing import Optional, Any
-from users.models import Faculty  # Update this import
+from users.models import Faculty
 
 class Task(models.Model):
     """
@@ -19,7 +19,8 @@ class Task(models.Model):
         'self', null=True, blank=True, on_delete=models.SET_NULL
     )  # Allow tasks to depend on another task
 
-    assigned_to = models.ManyToManyField('Faculty', related_name='tasks', blank=True)  # blank lets it exist without needing an assignment
+    #assigned_to = models.ManyToManyField('Faculty', related_name='tasks', blank=True)  # blank lets it exist without needing an assignment
+    assigned_to = models.ManyToManyField(Faculty, related_name='tasks', blank=True)
 
     objects: Manager[Any] = Manager()
 
@@ -34,7 +35,7 @@ class Task(models.Model):
         if not self.prerequisite_task:
             return True
         # Get the actual Task instance
-        prereq = Task.objects.get(pk=self.prerequisite_task.pk)
+        prereq = Task.objects.get(id=self.prerequisite_task.id)
         return bool(prereq.completed)
 
     def is_completed_by(self, faculty):
@@ -94,6 +95,9 @@ class TaskProgress(models.Model):
         return f"{self.faculty} - {self.task} - Completed: {self.completed}"
 
     objects: Manager[Any] = models.Manager()
+
+    class DoesNotExist(Exception):
+        pass
 
 
 

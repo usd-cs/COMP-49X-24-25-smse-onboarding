@@ -10,7 +10,8 @@ from django.conf import settings
 import os
 
 # Import models properly
-from .models import Task, Faculty, TaskProgress
+from .models import Task, TaskProgress
+from users.models import Faculty
 from documents.models import FacultyDocument
 
 def get_faculty_from_request(request):
@@ -19,9 +20,9 @@ def get_faculty_from_request(request):
     """
     if request.user.is_authenticated:
         try:
-            return request.user.faculty_profile
-        except AttributeError:
-            pass
+            return Faculty.objects.get(user=request.user)
+        except Faculty.DoesNotExist:
+            return None
     return None
 
 @login_required
@@ -79,6 +80,7 @@ def home(request):
 
     return render(request, 'new_hire_dashboard/home.html', context)
 
+@login_required
 def complete_task(request, task_id):
     """
     Mark a task as completed for the current faculty.

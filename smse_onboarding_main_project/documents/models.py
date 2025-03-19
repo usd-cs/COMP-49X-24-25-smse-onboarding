@@ -19,11 +19,12 @@ class FacultyDocument(models.Model):
 
     objects: Manager = Manager()
 
+    class DoesNotExist(Exception):
+        pass
+
     def __str__(self) -> str:
         """Return string representation of document."""
-        # Use faculty_id instead of id
-        faculty_instance = Faculty.objects.get(faculty_id=self.faculty.faculty_id)
-        return f"{self.title} - {faculty_instance.first_name}'s Document"
+        return f"{self.title} - {self.faculty.first_name}'s Document"
 
     def delete(self, *args, **kwargs):
         # Delete the file from storage
