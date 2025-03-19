@@ -30,9 +30,12 @@
                                 <a href="{% url 'documents:download' doc.document_id %}" class="btn btn-sm btn-info">
                                     <i class="bi bi-download"></i> Download
                                 </a>
-                                <button class="btn btn-sm btn-danger" onclick="deleteDocument({{ doc.document_id }})">
-                                    <i class="bi bi-trash"></i> Delete
-                                </button>
+                                <form action="{% url 'documents:delete' doc.document_id %}" method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         {% empty %}
@@ -48,4 +51,4 @@
 </div>
 
 {% include 'documents/upload_modal.html' %}
-{% endblock %} 
+{% endblock %}

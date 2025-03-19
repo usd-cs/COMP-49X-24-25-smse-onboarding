@@ -67,7 +67,8 @@ def home(request):
     context = {
         'tasks': tasks,
         'faculty': faculty,
-        'documents': documents,  # Add documents to context
+        'documents': documents,
+        'show_documents': True,
         'completed_tasks_count': completed_tasks_count,
         'total_assigned_tasks': total_assigned_tasks,
         'completion_percentage': round(completion_percentage),

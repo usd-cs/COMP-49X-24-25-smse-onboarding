@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Manager
+from django.db.models import Manager, QuerySet
 from django.utils import timezone
+from typing import Optional, Any
 
 class Task(models.Model):
     """
@@ -13,13 +14,13 @@ class Task(models.Model):
     completed = models.BooleanField(default=False)
     deadline = models.DateTimeField()
     is_completed_by_faculty = models.BooleanField(default=False)
-    prerequisite_task = models.ForeignKey(
+    prerequisite_task: Optional['Task'] = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.SET_NULL
     )  # Allow tasks to depend on another task
 
     assigned_to = models.ManyToManyField('Faculty', related_name='tasks', blank=True)  # blank lets it exist without needing an assignment
 
-    objects: Manager = Manager()
+    objects: Manager[Any] = Manager()
 
     def __str__(self):
         return f"{self.title}"
@@ -27,16 +28,19 @@ class Task(models.Model):
     class Meta:
         ordering = ['created_at']
 
-    def is_unlocked(self):
+    def is_unlocked(self) -> bool:
         """Check if the task is available: prerequisite task must be completed."""
         if not self.prerequisite_task:
             return True
-        return self.prerequisite_task.completed
+        # Get the actual Task instance
+        prereq = Task.objects.get(pk=self.prerequisite_task.pk)
+        return bool(prereq.completed)
 
     def is_completed_by(self, faculty):
         """
         Check if a task is completed by a specific faculty by checking if a TaskProgress record exists.
         """
+        from .models import TaskProgress
         return TaskProgress.objects.filter(
             faculty=faculty,
             task=self,
@@ -109,6 +113,8 @@ class TaskProgress(models.Model):
 
     def __str__(self):
         return f"{self.faculty} - {self.task} - Completed: {self.completed}"
+
+    objects: Manager[Any] = models.Manager()
 
 
 

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Your existing task content -->
+
+{% if show_documents %}
+<div class="documents-section">
+    <h3>Documents</h3>
+    <a href="{% url 'documents:list' %}" class="btn btn-primary">View All Documents</a>
+</div>
+{% endif %}
+{% endblock %} 
