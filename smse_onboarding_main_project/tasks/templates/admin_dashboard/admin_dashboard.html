@@ -59,5 +59,55 @@
 
     <!-- Scripts -->
     <script src="{% static 'admin_dashboard/scripts.js' %}"></script>
+
+    <!-- Add this before the closing body tag -->
+    <div class="modal fade" id="documentsModal" tabindex="-1" aria-labelledby="documentsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentsModalLabel">Manage Documents</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Uploaded By</th>
+                                    <th>Upload Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in documents %}
+                                <tr>
+                                    <td>{{ doc.title }}</td>
+                                    <td>{{ doc.uploaded_by.username }}</td>
+                                    <td>{{ doc.uploaded_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'tasks:download_document' doc.document_id %}" class="btn btn-sm btn-info">
+                                            <i class="bi bi-download"></i> Download
+                                        </a>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteDocument({{ doc.document_id }})">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No documents found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -31,4 +31,42 @@ document.addEventListener('DOMContentLoaded', function() {
             bar.style.width = width;
         }, 100);
     });
-}); 
+
+    // Initialize Bootstrap modals
+    var myModalEl = document.getElementById('documentsModal')
+    if (myModalEl) {
+        var modal = new bootstrap.Modal(myModalEl);
+
+        // Add click handler for the manage documents link
+        document.querySelector('[data-bs-target="#documentsModal"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.show();
+        });
+    }
+
+    // Handle document deletion
+    function deleteDocument(docId) {
+        if (confirm('Are you sure you want to delete this document?')) {
+            fetch(`/home/documents/delete/${docId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Refresh the documents list
+                    location.reload();
+                } else {
+                    alert('Error deleting document');
+                }
+            });
+        }
+    }
+
+    // Make deleteDocument available globally
+    window.deleteDocument = deleteDocument;
+});
+
+
+
