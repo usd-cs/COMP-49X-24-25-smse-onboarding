@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Main Container-->
+<div class="container-fluid main-container">
+    <div class="row h-100">
+        <!-- Left side (40%) -->
+        <div class="col-5">
+            <!-- Status Card (Top 50%) -->
+            <div class="row h-50">
+                <div class="col-12">
+                    {% include 'tasks/new_hire_dashboard/status_card.html' %}
+                </div>
+            </div>
+            <!-- Quick Links Card (Bottom 50%) -->
+            <div class="row h-50">
+                <div class="col-12">
+                    {% include 'tasks/new_hire_dashboard/quick_links.html' %}
+                </div>
+            </div>
+        </div>
+        <!-- Right Side (60%) -->
+        <div class="col-7">
+            {% block main_content %}
+                {% include 'tasks/new_hire_dashboard/tasks.html' %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <!-- Documents Section -->
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Documents</h5>
+                </div>
+                <div class="card-body">
+                    {% if documents %}
+                        <a href="{% url 'documents:list' %}" class="btn btn-primary">
+                            <i class="bi bi-folder2-open"></i> View All Documents
+                        </a>
+                    {% else %}
+                        <p class="text-muted mb-0">No documents uploaded yet.</p>
+                        <a href="{% url 'documents:list' %}" class="btn btn-primary mt-2">
+                            <i class="bi bi-upload"></i> Upload Documents
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

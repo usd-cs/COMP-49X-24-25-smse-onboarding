@@ -67,16 +67,16 @@ class Task(models.Model):
         """
         TaskProgress.objects.filter(faculty=faculty, task=self).delete()
 
+    def get_remaining_days(self):
+        """Calculate remaining days until deadline"""
+        return (self.deadline - timezone.now()).days
+
     @property
     def remaining_days(self):
-        """Calculate days remaining until deadline"""
-        now = timezone.now()
-        delta = self.deadline - now
-        return delta.days
+        return self.get_remaining_days()
 
-
-
-
+    class DoesNotExist(Exception):
+        pass
 
 class TaskProgress(models.Model):
     """

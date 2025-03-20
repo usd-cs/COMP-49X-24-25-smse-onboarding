@@ -34,7 +34,6 @@ def home(request):
     if not faculty:
         if request.user.is_superuser:
             return redirect('admin_dashboard')
-
         return redirect('login')
 
     tasks = Task.objects.all()
@@ -60,10 +59,18 @@ def home(request):
     if total_assigned_tasks > 0:
         completion_percentage = (completed_tasks_count / total_assigned_tasks) * 100
 
+    # Debug output
+    print("DEBUG: Task Information")
+    print(f"Faculty: {faculty.first_name} {faculty.last_name}")
+    print(f"Total tasks: {tasks.count()}")
+    print(f"Assigned tasks: {assigned_tasks.count()}")
+    print(f"Completed tasks: {completed_tasks_count}")
+
     # Calculate days remaining and set completion status for each task
     for task in tasks:
         # Add faculty-specific completion status
         task.is_completed_by_faculty = task.id in completed_task_ids
+        print(f"Task: {task.title} - Completed: {task.is_completed_by_faculty}")
 
     context = {
         'tasks': tasks,
@@ -78,7 +85,7 @@ def home(request):
         'percentage': round(completion_percentage),
     }
 
-    return render(request, 'new_hire_dashboard/home.html', context)
+    return render(request, 'tasks/new_hire_dashboard/home.html', context)
 
 @login_required
 def complete_task(request, task_id):

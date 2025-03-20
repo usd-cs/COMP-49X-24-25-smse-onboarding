@@ -1,0 +1,32 @@
+<div class="modal fade" id="taskModal{{ task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ task.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskModalLabel{{ task.id }}">{{ task.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Description:</strong></p>
+                <p>{{ task.description }}</p>
+                <p><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y" }}</p>
+                {% if task.prerequisite_task %}
+                <p><strong>Prerequisite Task:</strong> {{ task.prerequisite_task.title }}</p>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                {% if not task.is_completed_by_faculty %}
+                <form method="POST" action="{% url 'tasks:complete_task' task.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Mark as Complete</button>
+                </form>
+                {% else %}
+                <form method="POST" action="{% url 'tasks:continue_task' task.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning">Mark as Incomplete</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

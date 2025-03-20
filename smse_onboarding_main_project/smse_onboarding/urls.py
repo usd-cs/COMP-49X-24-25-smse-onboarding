@@ -25,14 +25,13 @@ from tasks.views import custom_login, admin_dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', RedirectView.as_view(url='login/', permanent=True)),
+    path('', RedirectView.as_view(url='users/login/', permanent=True)),
     path("home/", include("tasks.urls", namespace="tasks")),
     path('documents/', include('documents.urls', namespace='documents')),
-    path('login/', custom_login, name='login'),
-    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
-    path('social-auth/', include('social_django.urls', namespace='social')),
     path('users/', include('users.urls', namespace='users')),
+    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='users:login'), name='logout'),
+    path('social-auth/', include('social_django.urls', namespace='social')),
 ]
 
 if settings.DEBUG:

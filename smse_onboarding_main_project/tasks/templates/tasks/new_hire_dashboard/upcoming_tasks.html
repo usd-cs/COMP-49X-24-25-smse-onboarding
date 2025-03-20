@@ -21,18 +21,18 @@
                 {% if not task.is_completed_by_faculty and faculty in task.assigned_to.all %}
                     <li class="list-group-item d-flex align-items-center task-item {% if not task.is_unlocked %}locked-task{% endif %}"
                         style="height: 65px;">
-                        
+
                         <!-- Check mark acts as complete task button -->
                         <form method="POST" action="{% url 'tasks:complete_task' task.id %}" onsubmit="event.stopPropagation();">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-link p-0" 
-                                    style="color: gray;" 
+                            <button type="submit" class="btn btn-link p-0"
+                                    style="color: gray;"
                                     {% if not task.is_unlocked %}disabled{% endif %}
                                     onclick="return confirm('Are you sure you want to complete this task?')">
                                 <i class="bi bi-check-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
                             </button>
                         </form>
-                        
+
                         <!-- Task labels (Click to open modal) -->
                         <!-- Only the task title is clickable to open the modal -->
                         <span class="task-text" style="width: 35%; cursor: pointer;"
@@ -50,9 +50,9 @@
                             {% endif %}
                         </span>
                     </li>
-                    
+
                     <!-- Modal is placed here, at the same loop level, not inside <li> -->
-                    {% include 'new_hire_dashboard/task_popup.html' %}
+                    {% include 'tasks/new_hire_dashboard/task_popup.html' %}
                 {% endif %}
             {% endfor %}
         </div>

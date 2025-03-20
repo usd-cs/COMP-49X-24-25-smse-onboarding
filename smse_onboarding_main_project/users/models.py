@@ -25,6 +25,9 @@ class Faculty(models.Model):
 
     objects: Manager[Any] = models.Manager()
 
+    class DoesNotExist(Exception):
+        pass
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
