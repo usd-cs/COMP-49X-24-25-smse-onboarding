@@ -41,8 +41,6 @@ INSTALLED_APPS = [
     'social_django',
     'tasks',
     'smse_onboarding',
-    #'tasks.apps.TasksConfig',
-    'documents.apps.DocumentsConfig',
 ]
 
 AUTHENTICATION_BACKENDS = [
