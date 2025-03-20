@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     #'tasks.apps.TasksConfig',
     'documents.apps.DocumentsConfig',
     'users',
+    'dashboard.apps.DashboardConfig',
 ]
 
 AUTHENTICATION_BACKENDS = [
