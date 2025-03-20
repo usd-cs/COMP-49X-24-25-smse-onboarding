@@ -27,6 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='login/', permanent=True)),
     path("home/", include("tasks.urls", namespace="tasks")),
+    path('documents/', include('documents.urls', namespace='documents')),
     path('login/', custom_login, name='login'),
     path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
