@@ -4,28 +4,34 @@
     <ul class="list-group">
         <!-- Header -->
         <li class="list-group-item d-flex">
-            <label class="form-check-label" style="width: 5%"></label>
-            <label class="form-check-label" style="width: 34%">Task</label>
-            <label class="form-check-label" style="width: 24%">Due Date</label>
-            <label class="form-check-label text-center" style="width: 25%">Status</label>
+            <div style="width: 5%"></div>
+            <div style="width: 40%">Task</div>
+            <div style="width: 30%">Due Date</div>
+            <div style="width: 25%">Status</div>
         </li>
 
         {% if tasks %}
             {% for task in tasks %}
                 {% if task.is_completed_by_faculty %}
                 <li class="list-group-item d-flex align-items-center">
-                    <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="task-completion-form">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link p-0" style="color: green;">
-                            <i class="bi bi-check-circle-fill me-3" style="font-size: 1.5rem;"></i>
-                        </button>
-                    </form>
+                    <div style="width: 5%">
+                        <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="task-completion-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link p-0" style="color: green;">
+                                <i class="bi bi-check-circle-fill" style="font-size: 1.5rem;"></i>
+                            </button>
+                        </form>
+                    </div>
 
-                    <span class="task-text" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
+                    <div style="width: 40%" class="task-text" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
                         {{ task.title }}
-                    </span>
-                    <span class="task-deadline">{{ task.deadline }}</span>
-                    <span class="task-status">Completed</span>
+                    </div>
+                    <div style="width: 30%" class="task-deadline">
+                        {{ task.deadline }}
+                    </div>
+                    <div style="width: 25%" class="task-status">
+                        Completed
+                    </div>
                 </li>
                 {% endif %}
             {% endfor %}
@@ -37,14 +43,3 @@
         {% endif %}
     </ul>
 </div>
-
-<!-- Add this temporarily for debugging -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const forms = document.querySelectorAll('.task-completion-form');
-    forms.forEach(form => {
-        console.log('Form action:', form.action);
-        console.log('Task ID:', form.action.split('/').slice(-2)[0]);
-    });
-});
-</script>
