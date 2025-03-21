@@ -30,7 +30,7 @@
         }
     },
     {
-        "model": "tasks.faculty",
+        "model": "users.faculty",
         "pk": 1,
         "fields": {
             "user": 1,
@@ -50,7 +50,7 @@
         }
     },
     {
-        "model": "tasks.faculty",
+        "model": "users.faculty",
         "pk": 2,
         "fields": {
             "user": 2,
@@ -59,7 +59,7 @@
             "last_name": "Bello",
             "job_role": "Assistant Professor",
             "engineering_dept": "Electrical Engineering",
-            "email": "shaynabello@sandiego.edu",
+            "email": "sbello@sandiego.edu",
             "phone": "987654321",
             "zoom_phone": "0123456789",
             "office_room": "EE102",
@@ -70,7 +70,7 @@
         }
     },
     {
-        "model": "tasks.faculty",
+        "model": "users.faculty",
         "pk": 3,
         "fields": {
             "user": 3,
@@ -190,36 +190,36 @@
     },
 
     {
-        "model": "tasks.facultydocument",
+        "model": "documents.facultydocument",
         "pk": 1,
         "fields": {
             "faculty": 1,
-            "title": "Jane Doe Resume",
-            "file": "faculty_documents/janedoe_resume.pdf",
+            "title": "Long Pham - CV",
+            "file": "faculty_documents/longpham_cv.pdf",
             "uploaded_by": 1,
             "uploaded_at": "2024-01-15T08:00:00-08:00"
         }
     },
     {
-        "model": "tasks.facultydocument",
+        "model": "documents.facultydocument",
         "pk": 2,
         "fields": {
             "faculty": 2,
-            "title": "John Doe Resume",
-            "file": "faculty_documents/johndoe_resume.pdf",
-            "uploaded_by": 1,
+            "title": "Shayna Bello - Resume",
+            "file": "faculty_documents/sbello_resume.pdf",
+            "uploaded_by": 2,
             "uploaded_at": "2024-02-01T08:00:00-08:00"
         }
     },
     {
-        "model": "tasks.facultydocument",
+        "model": "documents.facultydocument",
         "pk": 3,
         "fields": {
             "faculty": 3,
-            "title": "Admin Resume",
-            "file": "faculty_documents/admin_resume.pdf",
-            "uploaded_by": 1,
-            "uploaded_at": "2023-01-01T08:00:00-08:00"
+            "title": "Nick Zhou - Bio",
+            "file": "faculty_documents/nzhou_bio.pdf",
+            "uploaded_by": 3,
+            "uploaded_at": "2024-02-01T08:00:00-08:00"
         }
     }
 ]
