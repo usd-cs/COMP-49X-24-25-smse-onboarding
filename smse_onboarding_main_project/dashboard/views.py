@@ -48,6 +48,7 @@ def new_hire_home(request):
         ).values_list('task_id', flat=True)
     )
 
+    # Count completed tasks
     completed_tasks_count = len(completed_task_ids)
 
     # Calculate completion percentage
@@ -58,6 +59,7 @@ def new_hire_home(request):
     # Add completion status to each task
     for task in tasks:
         task.is_completed_by_faculty = task.id in completed_task_ids
+        print(f"DEBUG: Task {task.id} - {task.title} - Completed: {task.is_completed_by_faculty}")
 
     context = {
         'tasks': tasks,
@@ -178,12 +180,14 @@ def complete_task(request, task_id):
             task = Task.objects.get(pk=task_id)
             faculty = get_faculty_from_request(request)
 
-            if faculty and task.is_unlocked():
+            if faculty:
+                # Mark task as completed for this specific faculty
                 TaskProgress.objects.update_or_create(
                     faculty=faculty,
                     task=task,
                     defaults={'completed': True}
                 )
+
                 return JsonResponse({'status': 'success'})
 
         except Task.DoesNotExist:
@@ -198,15 +202,43 @@ def continue_task(request, task_id):
         try:
             task = Task.objects.get(pk=task_id)
             faculty = get_faculty_from_request(request)
+            print(f"DEBUG: Attempting to uncomplete task {task_id} for faculty {faculty}")
 
             if faculty:
-                TaskProgress.objects.filter(
+                # Check current completion status
+                current_status = TaskProgress.objects.filter(
+                    faculty=faculty,
+                    task=task,
+                    completed=True
+                ).exists()
+                print(f"DEBUG: Current completion status: {current_status}")
+
+                # Delete the task progress
+                deleted_count = TaskProgress.objects.filter(
                     faculty=faculty,
                     task=task
-                ).delete()
-                return JsonResponse({'status': 'success'})
+                ).delete()[0]
+                print(f"DEBUG: Deleted {deleted_count} TaskProgress records")
+
+                # Verify the deletion worked
+                new_status = TaskProgress.objects.filter(
+                    faculty=faculty,
+                    task=task,
+                    completed=True
+                ).exists()
+                print(f"DEBUG: New completion status: {new_status}")
+
+                return JsonResponse({
+                    'status': 'success',
+                    'deleted_count': deleted_count,
+                    'task_id': task_id
+                })
 
         except Task.DoesNotExist:
+            print(f"DEBUG: Task {task_id} not found")
+            pass
+        except Exception as e:
+            print(f"DEBUG: Error in continue_task: {str(e)}")
             pass
 
     return JsonResponse({'status': 'error'}, status=400)

@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 <div class="card">
     <ul class="list-group">
         <!-- Header -->
@@ -10,6 +12,7 @@
 
         {% if tasks %}
             {% for task in tasks %}
+                {% if task.is_completed_by_faculty %}
                 <li class="list-group-item d-flex align-items-center">
                     <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="task-completion-form">
                         {% csrf_token %}
@@ -22,17 +25,26 @@
                         {{ task.title }}
                     </span>
                     <span class="task-deadline">{{ task.deadline }}</span>
-                    <span class="task-status">
-                        {% if task.is_completed_by_faculty %}
-                            Completed
-                        {% else %}
-                            Pending
-                        {% endif %}
-                    </span>
+                    <span class="task-status">Completed</span>
                 </li>
+                {% endif %}
             {% endfor %}
+            {% if not tasks|completed_tasks %}
+                <li class="list-group-item text-center">No completed tasks available.</li>
+            {% endif %}
         {% else %}
             <li class="list-group-item text-center">No tasks available.</li>
         {% endif %}
     </ul>
 </div>
+
+<!-- Add this temporarily for debugging -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('.task-completion-form');
+    forms.forEach(form => {
+        console.log('Form action:', form.action);
+        console.log('Task ID:', form.action.split('/').slice(-2)[0]);
+    });
+});
+</script>

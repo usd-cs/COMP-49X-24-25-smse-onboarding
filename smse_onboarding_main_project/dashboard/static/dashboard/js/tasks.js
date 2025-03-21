@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(form);
+            const taskItem = form.closest('.task-item') || form.closest('li');
+            const isCompletingTask = form.action.includes('complete_task');
 
             fetch(form.action, {
                 method: 'POST',
@@ -16,9 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Refresh the page to show updated task status
+                    // If we're completing or uncompleting a task, refresh the page
+                    // This ensures both tables are updated correctly
                     window.location.reload();
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
         });
     });
