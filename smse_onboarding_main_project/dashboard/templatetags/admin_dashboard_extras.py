@@ -16,4 +16,4 @@ def abs_filter(value):
     try:
         return abs(int(value))
     except (ValueError, TypeError):
-        return value 
+        return value

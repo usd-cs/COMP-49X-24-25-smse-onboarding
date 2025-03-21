@@ -1,0 +1,401 @@
+:root {
+    --primary-color: #1a3a8f;
+    --accent-color: #3b82f6;
+    --bg-light: #f5f6fa;
+    --text-dark: #2d3436;
+    --text-light: #636e72;
+    --border-color: #e5e7eb;
+    --red: #ef4444;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --purple: #8b5cf6;
+    --secondary-color: #f5f7fa;
+    --text-color: #333;
+    --light-text: #6b7280;
+}
+
+/* Main Layout */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 280px;
+    background-color: #0A1E3C;
+    padding: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    height: 100vh;
+    position: fixed;
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 0;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.school-name {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.nav-item:hover {
+    background-color: #132f5c;
+    color: #ffffff;
+}
+
+.nav-item.active {
+    background-color: #1a3a6d;
+    color: #ffffff;
+}
+
+/* Top Navigation */
+.top-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background-color: white;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-dark);
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bg-light);
+    padding: 8px 15px;
+    border-radius: 8px;
+    flex: 1;
+    max-width: 400px;
+    margin: 0 20px;
+}
+
+.search-bar input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.notification {
+    position: relative;
+    cursor: pointer;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ef4444;
+    color: white;
+    font-size: 0.7rem;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.language-selector, .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    margin-top: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card .card-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-card .card-body {
+    padding: 0;
+}
+
+/* Tables */
+.deadlines-table, .admin-tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.deadlines-table th, .admin-tasks-table th,
+.deadlines-table td, .admin-tasks-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.deadlines-table th, .admin-tasks-table th {
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+/* Progress Indicators */
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.line-progress {
+    flex: 1;
+    height: 6px;
+    background-color: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--accent-color);
+    transition: width 0.3s ease;
+}
+
+/* Status Colors */
+.upcoming { color: var(--primary-color); }
+.overdue { color: var(--red); }
+.completed { color: var(--green); }
+.approaching { color: var(--yellow); }
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.notify-btn, .edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.notify-btn:hover {
+    color: var(--purple);
+}
+
+.edit-btn:hover {
+    color: var(--accent-color);
+}
+
+/* Task Status */
+.task-completed {
+    color: var(--green);
+    font-size: 1.2rem;
+}
+
+.circle-progress {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+}
+
+.circle-progress.red { border-color: var(--red); }
+.circle-progress.green { border-color: var(--green); }
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .sidebar {
+        width: 80px;
+    }
+
+    .school-name, .nav-item span {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .language-selector {
+        display: none;
+    }
+
+    .search-bar {
+        display: none;
+    }
+}
+
+/* Add Quick Links section */
+.quick-links {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.new-badge {
+    background-color: #FF3366;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    margin-left: auto;
+}
+
+/* Admin Tasks Table Specific Styles */
+.admin-tasks-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.admin-tasks-table th,
+.admin-tasks-table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+    background-color: white;
+}
+
+.admin-tasks-table th:first-child,
+.admin-tasks-table td:first-child {
+    padding-left: 2rem;
+    width: 40px;
+}
+
+.admin-tasks-table td.checkbox-cell {
+    padding-right: 0;
+}
+
+.admin-tasks-table td:nth-child(2) {
+    padding-left: 0.5rem;
+}
+
+.admin-tasks-table .due-date {
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.admin-tasks-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-tasks-table tbody tr:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Empty state styling */
+.empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: var(--light-text);
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    appearance: none;
+    -webkit-appearance: none;
+    vertical-align: middle;
+    transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    top: -1px;
+    left: 2px;
+}
+
+/* Modal styles */
+.modal-backdrop.show {
+    z-index: 1040 !important;
+    pointer-events: auto !important;
+}
+
+.modal.fade.show {
+    z-index: 1050 !important;
+    pointer-events: auto !important;
+}
+
+.modal-content {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}

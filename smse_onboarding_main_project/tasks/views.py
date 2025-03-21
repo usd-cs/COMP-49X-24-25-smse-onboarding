@@ -273,7 +273,7 @@ def admin_dashboard(request):
         'admin_tasks': admin_tasks,
     }
 
-    return render(request, 'admin_dashboard/admin_dashboard.html', context)
+    return render(request, 'dashboard/admin/home.html', context)
 
 def custom_login(request):
     return render(request, 'login/login.html')

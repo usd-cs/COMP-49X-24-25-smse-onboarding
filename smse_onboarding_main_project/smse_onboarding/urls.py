@@ -21,18 +21,19 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
-from tasks.views import custom_login, admin_dashboard
+from tasks.views import custom_login
+from dashboard.views import admin_home  # changed admin view name
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', RedirectView.as_view(url='users/login/', permanent=True)),
-    path("home/", include("tasks.urls", namespace="tasks")),
+    path('', RedirectView.as_view(url='dashboard/', permanent=True)),
+    path('home/', include('tasks.urls', namespace='tasks')),  # Keep old tasks URLs
     path('documents/', include('documents.urls', namespace='documents')),
     path('users/', include('users.urls', namespace='users')),
-    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
+    path('admin-dashboard/', admin_home, name='admin_dashboard'),  # Add this back
+    path('dashboard/', include('dashboard.urls', namespace='dashboard')),  # New dashboard URLs
     path('logout/', auth_views.LogoutView.as_view(next_page='users:login'), name='logout'),
     path('social-auth/', include('social_django.urls', namespace='social')),
-    path('dashboard/', include('dashboard.urls', namespace='dashboard')),
 ]
 
 if settings.DEBUG:

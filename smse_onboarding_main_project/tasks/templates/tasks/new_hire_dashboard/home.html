@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+    window.location.href = "{% url 'dashboard:new_hire_home' %}";
+</script>
+<div class="container">
+    <p>Redirecting to dashboard...</p>
+</div>
+{% endblock %}
