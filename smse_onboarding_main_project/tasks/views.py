@@ -10,7 +10,9 @@ from django.conf import settings
 import os
 
 # Import models properly
-from .models import Task, Faculty, FacultyDocument, TaskProgress
+from .models import Task, TaskProgress
+from users.models import Faculty
+from documents.models import FacultyDocument
 
 def get_faculty_from_request(request):
     """
@@ -18,9 +20,9 @@ def get_faculty_from_request(request):
     """
     if request.user.is_authenticated:
         try:
-            return request.user.faculty_profile
-        except AttributeError:
-            pass
+            return Faculty.objects.get(user=request.user)
+        except Faculty.DoesNotExist:
+            return None
     return None
 
 @login_required
@@ -32,7 +34,6 @@ def home(request):
     if not faculty:
         if request.user.is_superuser:
             return redirect('admin_dashboard')
-
         return redirect('login')
 
     tasks = Task.objects.all()
@@ -58,10 +59,18 @@ def home(request):
     if total_assigned_tasks > 0:
         completion_percentage = (completed_tasks_count / total_assigned_tasks) * 100
 
+    # Debug output
+    print("DEBUG: Task Information")
+    print(f"Faculty: {faculty.first_name} {faculty.last_name}")
+    print(f"Total tasks: {tasks.count()}")
+    print(f"Assigned tasks: {assigned_tasks.count()}")
+    print(f"Completed tasks: {completed_tasks_count}")
+
     # Calculate days remaining and set completion status for each task
     for task in tasks:
         # Add faculty-specific completion status
         task.is_completed_by_faculty = task.id in completed_task_ids
+        print(f"Task: {task.title} - Completed: {task.is_completed_by_faculty}")
 
     context = {
         'tasks': tasks,
@@ -75,8 +84,9 @@ def home(request):
         'percentage': round(completion_percentage),
     }
 
-    return render(request, 'new_hire_dashboard/home.html', context)
+    return render(request, 'tasks/new_hire_dashboard/home.html', context)
 
+@login_required
 def complete_task(request, task_id):
     """
     Mark a task as completed for the current faculty.
@@ -156,21 +166,21 @@ def help_guide(request):
 def show_documents(request):
     """Shows documents for the logged-in user"""
     user = request.user
-    
+
     # Get documents uploaded by the current user
     if user.is_staff:
         documents = FacultyDocument.objects.filter(uploaded_by=user)
     else:
         faculty = get_object_or_404(Faculty, user=user)
         documents = FacultyDocument.objects.filter(faculty=faculty)
-    
+
     template_name = 'tasks/admin_document_list.html' if user.is_staff else 'tasks/document_list.html'
-    
+
     context = {
         'documents': documents,
         'user': user,
     }
-    
+
     return render(request, template_name, context)
 
 @login_required
@@ -197,7 +207,7 @@ def upload_document(request):
             )
             document.save()
             messages.success(request, 'Document uploaded successfully!')
-            
+
         except PermissionDenied:
             # Return 403 instead of redirecting
             return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -218,23 +228,23 @@ def delete_document(request, doc_id):
     if request.method == 'POST':
         try:
             document = get_object_or_404(FacultyDocument, document_id=doc_id)
-            
+
             # Check permissions - return 403 if not authorized
-            if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or 
+            if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or
                                             request.user.faculty_profile != document.faculty):
                 return JsonResponse({'error': 'Permission denied'}, status=403)
-            
+
             document.delete()
             messages.success(request, 'Document deleted successfully!')
-            
+
             if request.user.is_staff:
                 return redirect('admin_dashboard')
             return redirect(f"{reverse('tasks:home')}?show_documents=true")
-            
+
         except Exception as e:
             messages.error(request, f'Error deleting document: {str(e)}')
             return JsonResponse({'error': str(e)}, status=400)
-            
+
     if request.user.is_staff:
         return redirect('admin_dashboard')
     return redirect(f"{reverse('tasks:home')}?show_documents=true")
@@ -295,7 +305,7 @@ def admin_dashboard(request):
         # Get all tasks assigned to this faculty
         assigned_tasks = Task.objects.filter(assigned_to=faculty)
         total_tasks = assigned_tasks.count()
-        
+
         # Get completed tasks for this faculty
         completed_tasks = TaskProgress.objects.filter(
             faculty=faculty,
@@ -380,7 +390,7 @@ def admin_dashboard(request):
         'admin_tasks': admin_tasks,
     }
 
-    return render(request, 'admin_dashboard/admin_dashboard.html', context)
+    return render(request, 'dashboard/admin/home.html', context)
 
 def custom_login(request):
     return render(request, 'login/login.html')
@@ -394,7 +404,7 @@ def toggle_admin_task(request, task_id):
     if request.method == 'POST':
         task = get_object_or_404(Task, id=task_id)
         faculty = get_faculty_from_request(request)
-        
+
         if faculty:
             if task.is_completed_by(faculty):
                 task.uncomplete_for_faculty(faculty)
@@ -402,11 +412,11 @@ def toggle_admin_task(request, task_id):
             else:
                 task.complete_for_faculty(faculty)
                 completed = True
-            
+
             return JsonResponse({
                 'status': 'success',
                 'completed': completed,
                 'is_overdue': task.deadline < timezone.now()
             })
-    
+
     return JsonResponse({'status': 'error'}, status=400)

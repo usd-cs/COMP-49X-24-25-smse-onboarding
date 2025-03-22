@@ -1,0 +1,70 @@
+{% load custom_filters %}
+
+<style>
+    .locked-task {
+        opacity: 0.5;
+    }
+</style>
+<div class="card"
+    style="width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;">
+    <ul class="list-group">
+        <!-- Header for the upcoming tasks table -->
+        <li class="list-group-item d-flex">
+            <div style="width: 4.5%"></div>
+            <div style="width: 34%">Task</div>
+            <div style="width: 29%">Due Date</div>
+            <div style="width: 25%">Days Remaining</div>
+        </li>
+
+        {% if tasks %}
+            {% with upcoming_tasks=tasks|upcoming_tasks %}
+                {% if upcoming_tasks %}
+                    <!-- Body for the upcoming tasks table -->
+                    <div class="tasks-list">
+                        {% for task in tasks %}
+                            {% if not task.is_completed_by_faculty and faculty in task.assigned_to.all %}
+                                <li class="list-group-item d-flex align-items-center task-item {% if not task.is_unlocked %}locked-task{% endif %}"
+                                    style="height: 65px;">
+
+                                    <!-- Check mark acts as complete task button -->
+                                    <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="task-completion-form" onsubmit="event.stopPropagation();">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-link p-0"
+                                                style="color: gray;"
+                                                {% if not task.is_unlocked %}disabled{% endif %}>
+                                            <i class="bi bi-check-circle" style="font-size: 1.5rem; margin-right: 10px;"></i>
+                                        </button>
+                                    </form>
+
+                                    <!-- Task labels (Click to open modal) -->
+                                    <!-- Only the task title is clickable to open the modal -->
+                                    <span class="task-text" style="width: 35%; cursor: pointer;"
+                                          data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
+                                        {{ task.title }}
+                                    </span>
+                                    <span class="task-deadline" style="width: 35%; cursor: default;">
+                                        {{ task.deadline }}
+                                    </span>
+                                    <span class="task-status text-danger" style="width: 25%; cursor: default;">
+                                        {% if task.remaining_days >= 0 %}
+                                            {{ task.remaining_days }} days left
+                                        {% else %}
+                                            Overdue
+                                        {% endif %}
+                                    </span>
+                                </li>
+
+                                <!-- Modal is placed here, at the same loop level, not inside <li> -->
+                                {% include 'dashboard/new_hire/components/task_popup.html' %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <li class="list-group-item text-center">No upcoming tasks available.</li>
+                {% endif %}
+            {% endwith %}
+        {% else %}
+            <li class="list-group-item text-center">No tasks available.</li>
+        {% endif %}
+    </ul>
+</div>

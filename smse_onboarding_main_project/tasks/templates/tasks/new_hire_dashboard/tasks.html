@@ -1,0 +1,16 @@
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Your Tasks</h5>
+        <div class="tasks-list">
+            {% for task in tasks %}
+                {% if task.is_completed_by_faculty %}
+                    {% include 'tasks/new_hire_dashboard/completed_task.html' %}
+                {% else %}
+                    {% include 'tasks/new_hire_dashboard/upcoming_task.html' %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% include 'tasks/new_hire_dashboard/task_popup.html' %}

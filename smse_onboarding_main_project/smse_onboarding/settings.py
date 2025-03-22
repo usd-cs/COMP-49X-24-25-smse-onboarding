@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     'social_django',
     'tasks',
     'smse_onboarding',
+    #'tasks.apps.TasksConfig',
+    'documents.apps.DocumentsConfig',
+    'users',
+    'dashboard.apps.DashboardConfig',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -65,9 +69,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'tasks', 'templates'),
+            BASE_DIR / 'templates',
         ],
-        'APP_DIRS': True,
+        'APP_DIRS': True,  # helps templates find in app directories
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -155,9 +159,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
+#STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'tasks', 'static'),  # Correct path to tasks/static
+    BASE_DIR / 'dashboard' / 'static',
 ]
 
 # Default primary key field type
