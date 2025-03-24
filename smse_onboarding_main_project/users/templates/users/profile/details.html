@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Faculty Profile</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>{{ faculty.first_name }} {{ faculty.last_name }}</h4>
+                    <p><strong>Role:</strong> {{ faculty.job_role }}</p>
+                    <p><strong>Department:</strong> {{ faculty.engineering_dept }}</p>
+                    <p><strong>Email:</strong> {{ faculty.email }}</p>
+                    <p><strong>Phone:</strong> {{ faculty.phone }}</p>
+                    <p><strong>Office:</strong> {{ faculty.office_room }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

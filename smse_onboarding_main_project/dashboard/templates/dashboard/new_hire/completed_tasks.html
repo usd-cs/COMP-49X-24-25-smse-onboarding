@@ -1,0 +1,45 @@
+{% load custom_filters %}
+
+<div class="card">
+    <ul class="list-group">
+        <!-- Header -->
+        <li class="list-group-item d-flex">
+            <div style="width: 5%"></div>
+            <div style="width: 40%">Task</div>
+            <div style="width: 30%">Due Date</div>
+            <div style="width: 25%">Status</div>
+        </li>
+
+        {% if tasks %}
+            {% for task in tasks %}
+                {% if task.is_completed_by_faculty %}
+                <li class="list-group-item d-flex align-items-center">
+                    <div style="width: 5%">
+                        <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="task-completion-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link p-0" style="color: green;">
+                                <i class="bi bi-check-circle-fill" style="font-size: 1.5rem;"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div style="width: 40%" class="task-text" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
+                        {{ task.title }}
+                    </div>
+                    <div style="width: 30%" class="task-deadline">
+                        {{ task.deadline }}
+                    </div>
+                    <div style="width: 25%" class="task-status">
+                        Completed
+                    </div>
+                </li>
+                {% endif %}
+            {% endfor %}
+            {% if not tasks|completed_tasks %}
+                <li class="list-group-item text-center">No completed tasks available.</li>
+            {% endif %}
+        {% else %}
+            <li class="list-group-item text-center">No tasks available.</li>
+        {% endif %}
+    </ul>
+</div>
