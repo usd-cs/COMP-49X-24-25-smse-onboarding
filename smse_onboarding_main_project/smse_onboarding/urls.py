@@ -34,6 +34,7 @@ urlpatterns = [
     path('dashboard/', include('dashboard.urls', namespace='dashboard')),  # New dashboard
     path('logout/', auth_views.LogoutView.as_view(next_page='users:login'), name='logout'),  # Global logout
     path('social-auth/', include('social_django.urls', namespace='social')),  # Social authentication
+    path('login/', RedirectView.as_view(url='/users/login/', permanent=True)),
 ]
 
 if settings.DEBUG:

@@ -31,7 +31,7 @@ def new_hire_home(request):
     if not faculty:
         if request.user.is_superuser:
             return redirect('dashboard:admin_home')
-        return redirect('login')
+        return redirect('users:login')
 
     tasks = Task.objects.all()
     documents = FacultyDocument.objects.filter(faculty=faculty)
