@@ -51,4 +51,4 @@ def profile(request):
         return render(request, 'users/profile/details.html', {'faculty': faculty})
     except Faculty.DoesNotExist:
         messages.error(request, 'Faculty profile not found.')
-        return redirect('login')
+        return redirect('users:login')

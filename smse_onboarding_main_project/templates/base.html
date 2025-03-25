@@ -41,7 +41,12 @@
                     <i class="text-white me-3 bi bi-person-circle navbar-brand" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="{% url 'users:profile' %}">Profile</a></li>
-                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                            <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+                                {% csrf_token %}
+                            </form>
+                        </li>
                     </ul>
                 </div>
                 <img src="{% static 'smse_logo_transparent.png' %}" alt="SMSE logo" width="40px" height="40px">
