@@ -27,14 +27,26 @@ from dashboard.views import admin_home  # changed admin view name
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='dashboard/', permanent=True)),
-    path('home/', include('tasks.urls', namespace='tasks')),  # Keep old tasks URLs
-    path('documents/', include('documents.urls', namespace='documents')),
-    path('users/', include('users.urls', namespace='users')),
-    path('admin-dashboard/', admin_home, name='admin_dashboard'),  # Add this back
-    path('dashboard/', include('dashboard.urls', namespace='dashboard')),  # New dashboard URLs
-    path('logout/', auth_views.LogoutView.as_view(next_page='users:login'), name='logout'),
-    path('social-auth/', include('social_django.urls', namespace='social')),
+    path('home/', include('tasks.urls', namespace='tasks')),  # Old tasks URLs
+    path('documents/', include('documents.urls', namespace='documents')),  # Document management
+    path('users/', include('users.urls', namespace='users')),  # User management
+    path('admin-dashboard/', admin_home, name='admin_dashboard'),  # Custom admin dashboard
+    path('dashboard/', include('dashboard.urls', namespace='dashboard')),  # New dashboard
+    path('logout/', auth_views.LogoutView.as_view(next_page='users:login'), name='logout'),  # Global logout
+    path('social-auth/', include('social_django.urls', namespace='social')),  # Social authentication
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',  # Move this before get_username
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
