@@ -34,7 +34,7 @@ def home(request):
     if not faculty:
         if request.user.is_superuser:
             return redirect('admin_dashboard')
-        return redirect('login')
+        return redirect('users:login')
 
     tasks = Task.objects.all()
     documents = FacultyDocument.objects.filter(faculty=faculty)
