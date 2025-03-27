@@ -173,9 +173,9 @@ body {
 /* Sidebar Styles */
 .sidebar {
     width: 280px;
-    background-color: #0A1E3C; /* Dark blue background */
+    background-color: white;
     padding: 20px;
-    color: white;
+    color: black;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -185,6 +185,7 @@ body {
     top: 0;
     z-index: 1000;
     overflow-y: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo-container {
@@ -205,7 +206,7 @@ body {
     font-size: 16px;
     font-weight: 600;
     text-align: center;
-    color: white;
+    color: black;
 }
 
 /* Main Content */
@@ -232,19 +233,19 @@ body {
     gap: 12px;
     padding: 12px 16px;
     border-radius: 8px;
-    color: #ffffff;
+    color: #333333;
     text-decoration: none;
     transition: background-color 0.2s;
 }
 
 .nav-item:hover {
-    background-color: #132f5c;
-    color: #ffffff;
+    background-color: #f0f0f0;
+    color: #0d6efd;
 }
 
 .nav-item.active {
-    background-color: #1a3a6d;
-    color: #ffffff;
+    background-color: #e6f0ff;
+    color: #0d6efd;
 }
 
 .nav-item i {
@@ -255,13 +256,14 @@ body {
 .quick-links {
     margin-top: auto; /* Push to bottom of sidebar */
     padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid #e5e7eb;
 }
 
 .quick-links-title {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
+    color: #333333;
 }
 
 .quick-links-title i {
@@ -276,4 +278,10 @@ body {
     padding: 2px 6px;
     border-radius: 10px;
     margin-left: 5px;
+}
+
+/* Border styles */
+.border-top {
+    border-top: 1px solid var(--border-color) !important;
+    margin-top: 0;
 }
