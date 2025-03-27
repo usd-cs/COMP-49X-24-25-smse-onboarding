@@ -3,10 +3,9 @@ body {
     background-color: #1a1a1a;  /* Dark background */
 }
 
-.main-container {
+/* Allow main content to have a specific background, but don't touch sidebar */
+.main-content {
     background-color: #1a1a1a;  /* Dark background */
-    min-height: 100vh;
-    padding: 30px;
 }
 
 /* Status Card */
