@@ -4,16 +4,6 @@
 {% block title %}New Hire Dashboard{% endblock %}
 
 {% block content %}
-<!-- Preloader to prevent flickering during page load -->
-<div id="preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #1a1a1a; z-index: 9999; display: flex; justify-content: center; align-items: center;">
-    <div style="text-align: center; color: white;">
-        <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="mt-2">Loading dashboard...</p>
-    </div>
-</div>
-
 <div class="dashboard-container">
     <!-- Sidebar -->
     {% include 'dashboard/new_hire/components/sidebar.html' %}
@@ -225,7 +215,7 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
-                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -268,7 +258,7 @@
                                     </div>
                                 </div>
                                 {% endif %}
-                            </div>
+                        </div>
                         </div>
                     </div>
                     
@@ -317,7 +307,7 @@
                                     </div>
                                     <span class="flex-grow-1 ms-2 fw-medium">Work Day</span>
                                 </a>
-                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -339,169 +329,14 @@
             }
         }
         
-        // Note: Removed the forced page reload to prevent flickering
-    });
-    
-    // Smooth preloader fadeout
-    window.addEventListener('load', function() {
-        const preloader = document.getElementById('preloader');
-        if (preloader) {
-            // First ensure all CSS is applied
+        // Force reload the page after a short delay if this is the first load after changes
+        if (!localStorage.getItem('cssRefreshed')) {
+            localStorage.setItem('cssRefreshed', 'true');
             setTimeout(function() {
-                // Start fading out
-                preloader.style.transition = 'opacity 0.5s ease';
-                preloader.style.opacity = '0';
-                
-                // Remove from DOM after transition
-                setTimeout(function() {
-                    preloader.style.display = 'none';
-                }, 500);
-            }, 300);
-        }
-    });
-    
-    // AJAX for task completion without page refresh
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle all task completion forms
-        const taskCompletionForms = document.querySelectorAll('.task-completion-form');
-        
-        taskCompletionForms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Prevent standard form submission
-                
-                const formAction = this.getAttribute('action');
-                const formData = new FormData(this);
-                
-                // Show a subtle loading indicator
-                const button = this.querySelector('button');
-                const originalHTML = button.innerHTML;
-                button.disabled = true;
-                
-                if (button.querySelector('.bi-circle')) {
-                    // For incomplete tasks
-                    button.innerHTML = '<i class="bi bi-hourglass-split text-secondary" style="font-size: 1.2rem;"></i>';
-                } else {
-                    // For completed tasks
-                    button.innerHTML = '<i class="bi bi-hourglass-split text-secondary" style="font-size: 1.2rem;"></i>';
-                }
-                
-                // Submit the form via AJAX
-                fetch(formAction, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw new Error('Network response was not ok');
-                })
-                .then(data => {
-                    // Reload only the necessary parts of the page
-                    if (data.success) {
-                        // Find the task row and update it
-                        const taskRow = button.closest('tr');
-                        if (data.completed) {
-                            // Task was marked as complete
-                            const completedTasksTable = document.querySelector('.table-responsive:nth-of-type(2) tbody');
-                            
-                            // Create new row for completed tasks section
-                            const newRow = document.createElement('tr');
-                            newRow.innerHTML = `
-                                <td>
-                                    <form method="POST" action="${formAction.replace('complete_task', 'continue_task')}" class="task-completion-form">
-                                        <input type="hidden" name="csrfmiddlewaretoken" value="${formData.get('csrfmiddlewaretoken')}">
-                                        <button type="submit" class="btn btn-link p-0">
-                                            <i class="bi bi-check-circle-fill text-success" style="font-size: 1.2rem;"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                                <td class="task-title">${taskRow.querySelector('.task-title').textContent.trim()}</td>
-                                <td>${taskRow.querySelectorAll('td')[2].textContent.trim()}</td>
-                                <td class="text-success">Completed</td>
-                            `;
-                            
-                            // Remove from upcoming tasks
-                            taskRow.remove();
-                            
-                            // Add to completed tasks if there are any
-                            completedTasksTable.appendChild(newRow);
-                            
-                            // Attach the event listener to the new form
-                            const newForm = newRow.querySelector('.task-completion-form');
-                            newForm.addEventListener('submit', arguments.callee);
-                            
-                            // Update progress indicators
-                            updateProgressIndicators(data.completed_count, data.total_count);
-                        } else {
-                            // Task was marked as incomplete
-                            const upcomingTasksTable = document.querySelector('.table-responsive:nth-of-type(1) tbody');
-                            
-                            // Create new row for upcoming tasks section
-                            const newRow = document.createElement('tr');
-                            newRow.innerHTML = `
-                                <td>
-                                    <form method="POST" action="${formAction.replace('continue_task', 'complete_task')}" class="task-completion-form">
-                                        <input type="hidden" name="csrfmiddlewaretoken" value="${formData.get('csrfmiddlewaretoken')}">
-                                        <button type="submit" class="btn btn-link p-0 task-circle-btn">
-                                            <i class="bi bi-circle text-secondary" style="font-size: 1.2rem;"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                                <td class="task-title">${taskRow.querySelector('.task-title').textContent.trim()}</td>
-                                <td>${taskRow.querySelectorAll('td')[2].textContent.trim()}</td>
-                                <td class="text-muted">Overdue</td>
-                            `;
-                            
-                            // Remove from completed tasks
-                            taskRow.remove();
-                            
-                            // Add to upcoming tasks
-                            upcomingTasksTable.appendChild(newRow);
-                            
-                            // Attach the event listener to the new form
-                            const newForm = newRow.querySelector('.task-completion-form');
-                            newForm.addEventListener('submit', arguments.callee);
-                            
-                            // Update progress indicators
-                            updateProgressIndicators(data.completed_count, data.total_count);
-                        }
-                    } else {
-                        // Restore the button if there was an error
-                        button.innerHTML = originalHTML;
-                        button.disabled = false;
-                        console.error('Operation failed');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    // Restore the button if there was an error
-                    button.innerHTML = originalHTML;
-                    button.disabled = false;
-                });
-            });
-        });
-        
-        // Function to update progress indicators
-        function updateProgressIndicators(completedCount, totalCount) {
-            const percentage = Math.round((completedCount / totalCount) * 100);
-            
-            // Update text indicators
-            const completedTextEl = document.querySelector('.d-flex.justify-content-between .text-muted.small:first-child');
-            const percentageTextEl = document.querySelector('.d-flex.justify-content-between .text-muted.small:last-child');
-            
-            if (completedTextEl) completedTextEl.textContent = `${completedCount} completed`;
-            if (percentageTextEl) percentageTextEl.textContent = `${percentage}%`;
-            
-            // Update progress bar
-            const progressBar = document.querySelector('.progress-bar');
-            if (progressBar) {
-                progressBar.style.width = `${percentage}%`;
-                progressBar.setAttribute('aria-valuenow', percentage);
-            }
+                window.location.reload(true);
+            }, 100);
+        } else {
+            localStorage.removeItem('cssRefreshed');
         }
     });
 </script>
