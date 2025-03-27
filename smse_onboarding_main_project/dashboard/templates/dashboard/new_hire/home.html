@@ -353,76 +353,97 @@
 <!-- AJAX for form submissions to prevent page refresh -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Handle task completion forms
-        document.querySelectorAll('.task-completion-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
+        // Initial binding of event handlers
+        attachEventListeners();
+        
+        // Function to reattach event listeners after content update
+        function attachEventListeners() {
+            // Reattach listeners for task completion forms
+            document.querySelectorAll('.task-completion-form').forEach(form => {
+                // Remove any existing listeners
+                const newForm = form.cloneNode(true);
+                form.parentNode.replaceChild(newForm, form);
                 
-                // Show loading state for the specific button only
-                const button = this.querySelector('button');
-                const originalIcon = button.innerHTML;
-                button.disabled = true;
-                button.innerHTML = '<i class="bi bi-hourglass-split text-secondary" style="font-size: 1.2rem;"></i>';
-                
-                // No need to add loading class to whole page for small actions
-                
-                // Send AJAX request
-                fetch(this.action, {
-                    method: 'POST',
-                    body: new FormData(this),
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    credentials: 'same-origin'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Use a technique that avoids full page flashing
-                        // First fetch the page content
-                        fetch(window.location.href)
-                            .then(response => response.text())
-                            .then(html => {
-                                // Extract the task list HTML from the response
-                                const parser = new DOMParser();
-                                const doc = parser.parseFromString(html, 'text/html');
-                                
-                                // Find the updated table content
-                                const newTaskTable = doc.querySelector('.col-md-8 .card');
-                                if (newTaskTable) {
-                                    // Replace just the task table content
-                                    document.querySelector('.col-md-8 .card').innerHTML = newTaskTable.innerHTML;
+                // Add the event listener - using the SAME partial update logic as initial load
+                newForm.addEventListener('submit', function(e) {
+                    // Prevent the event from being handled twice
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    
+                    // Show loading state for the specific button only
+                    const button = this.querySelector('button');
+                    const originalIcon = button.innerHTML;
+                    button.disabled = true;
+                    button.innerHTML = '<i class="bi bi-hourglass-split text-secondary" style="font-size: 1.2rem;"></i>';
+                    
+                    // Send AJAX request - SAME as original event handler
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: new FormData(this),
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // Use the SAME partial update technique as initial load
+                            fetch(window.location.href)
+                                .then(response => response.text())
+                                .then(html => {
+                                    // Extract the task list HTML from the response
+                                    const parser = new DOMParser();
+                                    const doc = parser.parseFromString(html, 'text/html');
                                     
-                                    // Update status card content (for task completion percentage)
-                                    const newStatusCard = doc.querySelector('.col-md-4 .card.mb-3');
-                                    if (newStatusCard) {
-                                        document.querySelector('.col-md-4 .card.mb-3').innerHTML = newStatusCard.innerHTML;
+                                    // Find the updated table content
+                                    const newTaskTable = doc.querySelector('.col-md-8 .card');
+                                    if (newTaskTable) {
+                                        // Replace just the task table content
+                                        document.querySelector('.col-md-8 .card').innerHTML = newTaskTable.innerHTML;
+                                        
+                                        // Update status card content (for task completion percentage)
+                                        const newStatusCard = doc.querySelector('.col-md-4 .card.mb-3');
+                                        if (newStatusCard) {
+                                            document.querySelector('.col-md-4 .card.mb-3').innerHTML = newStatusCard.innerHTML;
+                                        }
+                                        
+                                        // Reattach event listeners
+                                        attachEventListeners();
+                                    } else {
+                                        // Fallback to full page reload if we can't find elements
+                                        window.location.reload();
                                     }
-                                    
-                                    // Reattach event listeners
-                                    attachEventListeners();
-                                } else {
-                                    // Fallback to full page reload if we can't find elements
+                                })
+                                .catch(() => {
+                                    // If something goes wrong, simply reload
                                     window.location.reload();
-                                }
-                            })
-                            .catch(() => {
-                                // If something goes wrong, simply reload
-                                window.location.reload();
-                            });
-                    } else {
-                        throw new Error('Network response was not ok');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    button.disabled = false;
-                    button.innerHTML = originalIcon;
-                    alert('There was a problem with your request. Please try again.');
+                                });
+                        } else {
+                            throw new Error('Network response was not ok');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        button.disabled = false;
+                        button.innerHTML = originalIcon;
+                        alert('There was a problem with your request. Please try again.');
+                    });
                 });
             });
-        });
+            
+            // Initialize modals and other Bootstrap components
+            document.querySelectorAll('[data-bs-toggle="modal"]').forEach(el => {
+                el.addEventListener('click', function() {
+                    const target = document.querySelector(this.getAttribute('data-bs-target'));
+                    if (target) {
+                        new bootstrap.Modal(target).show();
+                    }
+                });
+            });
+        }
         
-        // Same for modal forms but with a slightly different approach
+        // Remove the original direct form binding since we now use attachEventListeners for all forms
+        // Instead, just initialize the modal form handlers which are different
         document.querySelectorAll('.modal form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -468,62 +489,6 @@
                 });
             });
         });
-        
-        // Function to reattach event listeners after content update
-        function attachEventListeners() {
-            // Reattach listeners for task completion forms
-            document.querySelectorAll('.task-completion-form').forEach(form => {
-                // Remove any existing listeners
-                const newForm = form.cloneNode(true);
-                form.parentNode.replaceChild(newForm, form);
-                
-                // Add the event listener
-                newForm.addEventListener('submit', function(e) {
-                    // Prevent the event from being handled twice
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-                    
-                    // Show loading state for the specific button only
-                    const button = this.querySelector('button');
-                    const originalIcon = button.innerHTML;
-                    button.disabled = true;
-                    button.innerHTML = '<i class="bi bi-hourglass-split text-secondary" style="font-size: 1.2rem;"></i>';
-                    
-                    // Same AJAX logic as above...
-                    fetch(this.action, {
-                        method: 'POST',
-                        body: new FormData(this),
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        credentials: 'same-origin'
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            window.location.reload();
-                        } else {
-                            throw new Error('Network response was not ok');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        button.disabled = false;
-                        button.innerHTML = originalIcon;
-                        alert('There was a problem with your request. Please try again.');
-                    });
-                });
-            });
-            
-            // Initialize modals and other Bootstrap components
-            document.querySelectorAll('[data-bs-toggle="modal"]').forEach(el => {
-                el.addEventListener('click', function() {
-                    const target = document.querySelector(this.getAttribute('data-bs-target'));
-                    if (target) {
-                        new bootstrap.Modal(target).show();
-                    }
-                });
-            });
-        }
     });
 </script>
 {% endblock %}

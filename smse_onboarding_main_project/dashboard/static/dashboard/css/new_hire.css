@@ -231,20 +231,20 @@ body {
 
 /* Task action buttons with transitions - but no opacity transition */
 .task-circle-btn {
-    opacity: 0.8;
-    transition: transform 0.2s ease !important;
+    opacity: 0.9;
+    transition: transform 0.15s ease !important;
     position: relative;
 }
 
 .task-circle-btn:hover {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 /* Only apply transition effects for specific actions */
 .ajax-loading .dashboard-container {
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
 }
 
 /* Loading spinner styles */
@@ -261,19 +261,18 @@ body {
 
 /* Add animation for status changes */
 @keyframes statusChange {
-    0% { transform: scale(0.8); opacity: 0.5; }
-    50% { transform: scale(1.2); opacity: 1; }
+    0% { transform: scale(0.95); opacity: 0.7; }
     100% { transform: scale(1); opacity: 1; }
 }
 
 .bi-check-circle-fill, 
 .bi-circle,
 .bi-hourglass-split {
-    transition: all 0.2s ease-in-out;
+    transition: transform 0.15s ease-in-out;
 }
 
 .status-changing {
-    animation: statusChange 0.4s ease;
+    animation: statusChange 0.25s ease;
 }
 
 /* Modal styles */
@@ -297,8 +296,22 @@ body {
 
 /* Make task rows slightly taller */
 .table tr td {
-    padding-top: 12px;
-    padding-bottom: 12px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    transition: none;
+}
+
+/* Additional performance optimizations */
+.table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    will-change: auto;
+}
+
+/* Force hardware acceleration for critical animations */
+.task-title, .task-circle-btn, .bi {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
 }
 
 /* Add border to card in tasks area */
