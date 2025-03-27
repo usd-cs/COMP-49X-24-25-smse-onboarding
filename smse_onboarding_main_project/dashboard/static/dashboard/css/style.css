@@ -277,6 +277,13 @@ body {
     box-shadow: none; /* Remove shadow */
 }
 
+/* Top Bar Styles with Rounded Bottom Corners */
+.top-bar {
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
 .navbar .nav-link {
     color: #333 !important; /* Dark text */
     padding: 0.3rem 0.6rem;
