@@ -320,33 +320,20 @@
 <script>
     // Add a random query parameter to CSS files to force cache refresh, but without showing loading state
     document.addEventListener('DOMContentLoaded', function() {
-        // Make sure we remove any loading class that might be present
+        // Remove loading classes to prevent darkening effect
+        document.body.classList.remove('loading');
         document.querySelector('.dashboard-container').classList.remove('loading');
         
         var timestamp = new Date().getTime();
         var links = document.getElementsByTagName('link');
         
-        // First preload the new stylesheets without applying them
-        var preloadLinks = [];
+        // Apply stylesheets directly without using preload
         for (var i = 0; i < links.length; i++) {
             if (links[i].rel === 'stylesheet') {
                 var href = links[i].href.split('?')[0];
-                var link = document.createElement('link');
-                link.rel = 'preload';
-                link.as = 'style';
-                link.href = href + '?v=' + timestamp;
-                preloadLinks.push({ original: links[i], preload: link });
-                document.head.appendChild(link);
+                links[i].href = href + '?v=' + timestamp;
             }
         }
-        
-        // Only apply the stylesheets after a very short delay
-        setTimeout(function() {
-            // Apply the stylesheets
-            preloadLinks.forEach(function(linkPair) {
-                linkPair.original.href = linkPair.preload.href;
-            });
-        }, 10);
     });
 </script>
 
@@ -355,6 +342,19 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initial binding of event handlers
         attachEventListeners();
+        
+        // Ensure modal backdrop is properly removed after closing
+        document.addEventListener('hidden.bs.modal', function (event) {
+            // Remove any modal backdrops that might still exist
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => {
+                backdrop.remove();
+            });
+            // Ensure body can scroll properly
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }, false);
         
         // Function to reattach event listeners after content update
         function attachEventListeners() {
@@ -436,7 +436,23 @@
                 el.addEventListener('click', function() {
                     const target = document.querySelector(this.getAttribute('data-bs-target'));
                     if (target) {
-                        new bootstrap.Modal(target).show();
+                        const modal = new bootstrap.Modal(target);
+                        modal.show();
+                        
+                        // Ensure close buttons work properly
+                        target.querySelectorAll('.btn-close, .btn-secondary').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                modal.hide();
+                                // Manually remove backdrop and modal state
+                                setTimeout(() => {
+                                    document.body.classList.remove('modal-open');
+                                    document.body.style.overflow = '';
+                                    document.body.style.paddingRight = '';
+                                    const backdrops = document.querySelectorAll('.modal-backdrop');
+                                    backdrops.forEach(backdrop => backdrop.remove());
+                                }, 150);
+                            });
+                        });
                     }
                 });
             });
@@ -472,9 +488,15 @@
                         const modalInstance = bootstrap.Modal.getInstance(modal);
                         modalInstance.hide();
                         
-                        // Simply reload the page since these are less frequent actions
-                        // and it's okay to have a page refresh for major changes
+                        // Ensure modal backdrop and body classes are removed
                         setTimeout(() => {
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                            document.body.style.paddingRight = '';
+                            const backdrops = document.querySelectorAll('.modal-backdrop');
+                            backdrops.forEach(backdrop => backdrop.remove());
+                            
+                            // Simply reload the page since these are less frequent actions
                             window.location.reload();
                         }, 100);
                     } else {

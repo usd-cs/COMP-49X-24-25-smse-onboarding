@@ -4,20 +4,9 @@ body {
     transition: none;
 }
 
-/* Page transitions - helps reduce flash/blink */
-.smoothed {
-    transition: opacity 0.3s ease;
-}
-
-/* Loading state - modified to not affect regular page loads */
-.loading {
-    /* Only use visible effect when explicitly applied by JavaScript */
-    opacity: 1; 
-}
-
-.loading-active {
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
+/* Subtle transitions for UI elements only (not page-wide) */
+.btn, .nav-link, .task-title {
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 /* Allow main content to have a specific background, but don't touch sidebar */
@@ -37,7 +26,8 @@ body {
     box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     z-index: 1060;  /* Increased z-index to ensure it's on top */
     border-bottom: 1px solid #eaeaea;
-    transition: all 0.2s ease;
+    border-radius: 0 0 8px 8px;
+    transition: none;
 }
 
 /* Override any other styles that might affect top bar */
@@ -229,9 +219,9 @@ body {
     color: #0d6efd;
 }
 
-/* Task action buttons with transitions - but no opacity transition */
+/* Task action buttons with transitions - safe hover effects only */
 .task-circle-btn {
-    opacity: 0.9;
+    opacity: 1; /* Keep full opacity for normal state */
     transition: transform 0.15s ease !important;
     position: relative;
 }
@@ -241,12 +231,6 @@ body {
     transform: scale(1.05);
 }
 
-/* Only apply transition effects for specific actions */
-.ajax-loading .dashboard-container {
-    opacity: 0.9;
-    transition: opacity 0.2s ease;
-}
-
 /* Loading spinner styles */
 .spinner-border-sm {
     width: 1rem;
@@ -254,25 +238,24 @@ body {
     border-width: 0.15em;
 }
 
-/* Task row hover effect */
-.table tr {
-    transition: background-color 0.15s ease;
+/* Safe hover transitions that don't affect page state */
+.table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    transition: background-color 0.2s ease;
 }
 
-/* Add animation for status changes */
-@keyframes statusChange {
-    0% { transform: scale(0.95); opacity: 0.7; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
+/* Icon transitions that don't affect opacity */
 .bi-check-circle-fill, 
 .bi-circle,
 .bi-hourglass-split {
-    transition: transform 0.15s ease-in-out;
+    transition: transform 0.15s ease;
 }
 
-.status-changing {
-    animation: statusChange 0.25s ease;
+/* Quick links button transitions */
+.quick-links-card .btn:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 /* Modal styles */
@@ -305,13 +288,6 @@ body {
 .table tr:hover {
     background-color: rgba(0, 0, 0, 0.02);
     will-change: auto;
-}
-
-/* Force hardware acceleration for critical animations */
-.task-title, .task-circle-btn, .bi {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000px;
 }
 
 /* Add border to card in tasks area */
