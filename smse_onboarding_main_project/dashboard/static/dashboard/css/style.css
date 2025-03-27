@@ -5,7 +5,7 @@
     --text-color: black;
     --light-text: #666;
     --border-color: #e5e7eb;
-    --dark-bg: white;
+    --dark-bg: #1a1a1a;
 }
 
 /* General Styles */
@@ -18,7 +18,7 @@
 
 body {
     background-color: var(--dark-bg);
-    color: var(--text-color);
+    color: white;
     min-height: 100vh;
 }
 
@@ -46,10 +46,10 @@ body {
 
 /* Card Styles */
 .card {
-    border-radius: 15px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    height: calc(100% - 20px);
-    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    height: calc(100% - 6px);
+    margin: 3px;
     background-color: white;
     color: var(--text-color);
     border: none;
@@ -167,8 +167,10 @@ body {
 /* Dashboard Container */
 .dashboard-container {
     display: flex;
-    min-height: 100vh;
+    height: 100vh; /* Fixed height instead of min-height */
     position: relative;
+    background-color: var(--dark-bg);
+    overflow: hidden; /* Prevent scrolling */
 }
 
 /* Sidebar Styles */
@@ -213,17 +215,50 @@ body {
 /* Main Content */
 .main-content {
     flex: 1;
-    margin-left: 280px; /* 与侧边栏宽度一致 */
-    min-height: 100vh;
+    margin-left: 280px; /* Same width as sidebar */
+    height: 100vh; /* Fixed height instead of min-height */
     display: flex;
     flex-direction: column;
     background-color: var(--dark-bg);
+    overflow: hidden; /* Prevent scrolling */
 }
 
 /* Dashboard Content */
 .dashboard-content {
-    padding: 20px;
-    padding-top: 65px; /* 调整顶部内边距以适应较低的导航栏 */
+    padding: 12px;
+    padding-top: 45px;
+    padding-bottom: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.dashboard-content .row {
+    flex: 1;
+    margin: 0;
+}
+
+/* Card heights for status and quick links */
+.dashboard-content .col-md-4 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 6px;
+}
+
+.dashboard-content .col-md-8 {
+    padding: 0 6px;
+}
+
+.dashboard-content .col-md-4 .card.mb-3 {
+    flex: 2.8;
+    margin-bottom: 12px !important;
+}
+
+.dashboard-content .col-md-4 .card.mt-3 {
+    flex: 4;
+    margin-top: 12px !important;
 }
 
 /* Navbar Styles */
@@ -233,22 +268,22 @@ body {
     right: 0;
     width: calc(100% - 320px); 
     margin-right: 20px;
-    margin-top: 10px;
+    margin-top: 0; /* Remove top margin */
     margin-left: 20px;
-    border-radius: 8px;
-    z-index: 1030;
-    height: 40px; /* 减少高度约20% */
-    background-color: white !important; /* 改回白色背景 */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    border-radius: 0; /* Remove border radius */
+    z-index: 1065; /* Higher than top bar to ensure navbar elements are visible */
+    height: 35px; /* Match top bar height */
+    background-color: transparent !important; /* Make it transparent */
+    box-shadow: none; /* Remove shadow */
 }
 
 .navbar .nav-link {
-    color: #333 !important; /* 黑色文字 */
+    color: #333 !important; /* Dark text */
     padding: 0.3rem 0.6rem;
 }
 
 .navbar .btn-link {
-    color: #333 !important; /* 黑色文字 */
+    color: #333 !important; /* Dark text */
 }
 
 .navbar .dropdown-toggle::after {
@@ -256,7 +291,7 @@ body {
 }
 
 .navbar .text-secondary {
-    color: #6c757d !important; /* 恢复Bootstrap默认的text-secondary颜色 */
+    color: #6c757d !important; /* Bootstrap default text-secondary color */
 }
 
 /* Navigation Items */
@@ -323,4 +358,9 @@ body {
 .border-top {
     border-top: 1px solid var(--border-color) !important;
     margin-top: 0;
+}
+
+/* Footer Information Area - Remove this entire section */
+.footer-info {
+    display: none; /* Hide the footer info section */
 }
