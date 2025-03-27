@@ -1,11 +1,29 @@
 /* New Hire Dashboard Specific Styles */
 body {
     background-color: #1a1a1a;  /* Dark background */
+    transition: none;
+}
+
+/* Page transitions - helps reduce flash/blink */
+.smoothed {
+    transition: opacity 0.3s ease;
+}
+
+/* Loading state - modified to not affect regular page loads */
+.loading {
+    /* Only use visible effect when explicitly applied by JavaScript */
+    opacity: 1; 
+}
+
+.loading-active {
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
 }
 
 /* Allow main content to have a specific background, but don't touch sidebar */
 .main-content {
     background-color: #1a1a1a;  /* Dark background */
+    transition: none; /* Remove transition to avoid flash */
 }
 
 /* Top Bar Background */
@@ -19,6 +37,7 @@ body {
     box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     z-index: 1060;  /* Increased z-index to ensure it's on top */
     border-bottom: 1px solid #eaeaea;
+    transition: all 0.2s ease;
 }
 
 /* Override any other styles that might affect top bar */
@@ -210,13 +229,51 @@ body {
     color: #0d6efd;
 }
 
+/* Task action buttons with transitions - but no opacity transition */
 .task-circle-btn {
-    opacity: 0.7;
-    transition: opacity 0.2s;
+    opacity: 0.8;
+    transition: transform 0.2s ease !important;
+    position: relative;
 }
 
 .task-circle-btn:hover {
     opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Only apply transition effects for specific actions */
+.ajax-loading .dashboard-container {
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+/* Loading spinner styles */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* Task row hover effect */
+.table tr {
+    transition: background-color 0.15s ease;
+}
+
+/* Add animation for status changes */
+@keyframes statusChange {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.bi-check-circle-fill, 
+.bi-circle,
+.bi-hourglass-split {
+    transition: all 0.2s ease-in-out;
+}
+
+.status-changing {
+    animation: statusChange 0.4s ease;
 }
 
 /* Modal styles */

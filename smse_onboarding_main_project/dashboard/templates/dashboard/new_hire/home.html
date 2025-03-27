@@ -318,25 +318,211 @@
 
 <!-- Force CSS cache refresh -->
 <script>
-    // Add a random query parameter to CSS files to force cache refresh
+    // Add a random query parameter to CSS files to force cache refresh, but without showing loading state
     document.addEventListener('DOMContentLoaded', function() {
+        // Make sure we remove any loading class that might be present
+        document.querySelector('.dashboard-container').classList.remove('loading');
+        
         var timestamp = new Date().getTime();
         var links = document.getElementsByTagName('link');
+        
+        // First preload the new stylesheets without applying them
+        var preloadLinks = [];
         for (var i = 0; i < links.length; i++) {
             if (links[i].rel === 'stylesheet') {
                 var href = links[i].href.split('?')[0];
-                links[i].href = href + '?v=' + timestamp;
+                var link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'style';
+                link.href = href + '?v=' + timestamp;
+                preloadLinks.push({ original: links[i], preload: link });
+                document.head.appendChild(link);
             }
         }
         
-        // Force reload the page after a short delay if this is the first load after changes
-        if (!localStorage.getItem('cssRefreshed')) {
-            localStorage.setItem('cssRefreshed', 'true');
-            setTimeout(function() {
-                window.location.reload(true);
-            }, 100);
-        } else {
-            localStorage.removeItem('cssRefreshed');
+        // Only apply the stylesheets after a very short delay
+        setTimeout(function() {
+            // Apply the stylesheets
+            preloadLinks.forEach(function(linkPair) {
+                linkPair.original.href = linkPair.preload.href;
+            });
+        }, 10);
+    });
+</script>
+
+<!-- AJAX for form submissions to prevent page refresh -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle task completion forms
+        document.querySelectorAll('.task-completion-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Show loading state for the specific button only
+                const button = this.querySelector('button');
+                const originalIcon = button.innerHTML;
+                button.disabled = true;
+                button.innerHTML = '<i class="bi bi-hourglass-split text-secondary" style="font-size: 1.2rem;"></i>';
+                
+                // No need to add loading class to whole page for small actions
+                
+                // Send AJAX request
+                fetch(this.action, {
+                    method: 'POST',
+                    body: new FormData(this),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Use a technique that avoids full page flashing
+                        // First fetch the page content
+                        fetch(window.location.href)
+                            .then(response => response.text())
+                            .then(html => {
+                                // Extract the task list HTML from the response
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                
+                                // Find the updated table content
+                                const newTaskTable = doc.querySelector('.col-md-8 .card');
+                                if (newTaskTable) {
+                                    // Replace just the task table content
+                                    document.querySelector('.col-md-8 .card').innerHTML = newTaskTable.innerHTML;
+                                    
+                                    // Update status card content (for task completion percentage)
+                                    const newStatusCard = doc.querySelector('.col-md-4 .card.mb-3');
+                                    if (newStatusCard) {
+                                        document.querySelector('.col-md-4 .card.mb-3').innerHTML = newStatusCard.innerHTML;
+                                    }
+                                    
+                                    // Reattach event listeners
+                                    attachEventListeners();
+                                } else {
+                                    // Fallback to full page reload if we can't find elements
+                                    window.location.reload();
+                                }
+                            })
+                            .catch(() => {
+                                // If something goes wrong, simply reload
+                                window.location.reload();
+                            });
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    button.disabled = false;
+                    button.innerHTML = originalIcon;
+                    alert('There was a problem with your request. Please try again.');
+                });
+            });
+        });
+        
+        // Same for modal forms but with a slightly different approach
+        document.querySelectorAll('.modal form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const button = this.querySelector('button[type="submit"]');
+                const originalText = button.innerHTML;
+                button.disabled = true;
+                button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+                
+                // Get the modal
+                const modal = this.closest('.modal');
+                
+                // Send AJAX request
+                fetch(this.action, {
+                    method: 'POST',
+                    body: new FormData(this),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Close the modal
+                        const modalInstance = bootstrap.Modal.getInstance(modal);
+                        modalInstance.hide();
+                        
+                        // Simply reload the page since these are less frequent actions
+                        // and it's okay to have a page refresh for major changes
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 100);
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                    alert('There was a problem with your request. Please try again.');
+                });
+            });
+        });
+        
+        // Function to reattach event listeners after content update
+        function attachEventListeners() {
+            // Reattach listeners for task completion forms
+            document.querySelectorAll('.task-completion-form').forEach(form => {
+                // Remove any existing listeners
+                const newForm = form.cloneNode(true);
+                form.parentNode.replaceChild(newForm, form);
+                
+                // Add the event listener
+                newForm.addEventListener('submit', function(e) {
+                    // Prevent the event from being handled twice
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    
+                    // Show loading state for the specific button only
+                    const button = this.querySelector('button');
+                    const originalIcon = button.innerHTML;
+                    button.disabled = true;
+                    button.innerHTML = '<i class="bi bi-hourglass-split text-secondary" style="font-size: 1.2rem;"></i>';
+                    
+                    // Same AJAX logic as above...
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: new FormData(this),
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            throw new Error('Network response was not ok');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        button.disabled = false;
+                        button.innerHTML = originalIcon;
+                        alert('There was a problem with your request. Please try again.');
+                    });
+                });
+            });
+            
+            // Initialize modals and other Bootstrap components
+            document.querySelectorAll('[data-bs-toggle="modal"]').forEach(el => {
+                el.addEventListener('click', function() {
+                    const target = document.querySelector(this.getAttribute('data-bs-target'));
+                    if (target) {
+                        new bootstrap.Modal(target).show();
+                    }
+                });
+            });
         }
     });
 </script>
