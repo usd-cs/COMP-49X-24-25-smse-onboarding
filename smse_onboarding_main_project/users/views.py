@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import login as auth_login, authenticate
 from .models import Faculty
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -10,34 +10,39 @@ from django.contrib.auth.models import User
 
 def login(request):
     """Handle user login"""
-    if request.user.is_authenticated:
-        # Check if user is superuser
-        if request.user.is_superuser:
-            return redirect('admin_dashboard')
+    if request.method == 'POST':
+        # Get username and password from POST data
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-        # Try to get or create faculty profile
-        try:
-            faculty = Faculty.objects.get(user=request.user)
-        except Faculty.DoesNotExist:
-            # Create new faculty profile from Google data
-            faculty = Faculty.objects.create(
-                user=request.user,
-                first_name=request.user.first_name or request.user.email.split('@')[0],
-                last_name=request.user.last_name or '',
-                email=request.user.email,
-                hire_date=timezone.now(),
-                job_role="New Faculty",
-                engineering_dept="SMSE",
-                phone="0000000000",
-                office_room="TBD"
-            )
-            # Create some default tasks for the new faculty
-            from tasks.models import Task
-            default_tasks = Task.objects.all()
-            for task in default_tasks:
-                task.assigned_to.add(faculty)
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            # Redirect based on user type
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+            else:
+                try:
+                    faculty = Faculty.objects.get(user=user)
+                except Faculty.DoesNotExist:
+                    faculty = Faculty.objects.create(
+                        user=user,
+                        first_name=user.first_name or user.email.split('@')[0],
+                        last_name=user.last_name or '',
+                        email=user.email,
+                        hire_date=timezone.now(),
+                        job_role="New Faculty",
+                        engineering_dept="SMSE",
+                        phone="0000000000",
+                        office_room="TBD"
+                    )
+                    from tasks.models import Task
+                    default_tasks = Task.objects.all()
+                    for task in default_tasks:
+                        task.assigned_to.add(faculty)
 
-            messages.info(request, 'Welcome! Please complete your profile.')
+                    messages.info(request, 'Welcome! Please complete your profile.')
 
         return redirect('tasks:home')
 
