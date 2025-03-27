@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Task completion functionality
+    // Task completion functionality for old forms
     const taskForms = document.querySelectorAll('.task-completion-form');
     taskForms.forEach(form => {
         form.addEventListener('submit', function(e) {
@@ -26,6 +26,56 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error:', error);
             });
+        });
+    });
+
+    // New task checkboxes functionality
+    const taskCheckboxes = document.querySelectorAll('.form-check-input');
+    taskCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const taskId = this.id.split('-')[1];
+            const action = this.checked ? 'complete_task' : 'continue_task';
+            const url = `/dashboard/${action}/${taskId}/`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Refresh the page to update the UI
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Revert checkbox state on error
+                this.checked = !this.checked;
+            });
+        });
+    });
+
+    // Task action buttons (three dots menu)
+    const taskActionButtons = document.querySelectorAll('.dropdown-item');
+    taskActionButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (this.textContent.includes('Mark as Complete')) {
+                const checkbox = this.closest('tr').querySelector('.form-check-input');
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change'));
+            } else if (this.textContent.includes('Mark as Incomplete')) {
+                const checkbox = this.closest('tr').querySelector('.form-check-input');
+                checkbox.checked = false;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+            
+            // Handle View Details action here if needed
         });
     });
 });

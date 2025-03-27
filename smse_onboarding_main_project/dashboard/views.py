@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from tasks.models import Task, TaskProgress
 from users.models import Faculty
 from documents.models import FacultyDocument
 from django.utils import timezone
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 def get_faculty_from_request(request):
     """Helper function to get faculty profile from request"""
@@ -174,13 +174,15 @@ def admin_home(request):
 
 @login_required
 def complete_task(request, task_id):
-    """Mark a task as completed for the current faculty."""
+    """
+    Mark a task as completed for the current faculty.
+    """
     if request.method == 'POST':
         try:
-            task = Task.objects.get(pk=task_id)
+            task = get_object_or_404(Task, pk=task_id)
             faculty = get_faculty_from_request(request)
 
-            if faculty:
+            if faculty and task.is_unlocked():
                 # Mark task as completed for this specific faculty
                 TaskProgress.objects.update_or_create(
                     faculty=faculty,
@@ -188,57 +190,69 @@ def complete_task(request, task_id):
                     defaults={'completed': True}
                 )
 
-                return JsonResponse({'status': 'success'})
+                # Check if all faculty have completed this task
+                assigned_faculty_count = task.assigned_to.count()
+                completed_faculty_count = TaskProgress.objects.filter(
+                    task=task,
+                    faculty__in=task.assigned_to.all(),
+                    completed=True
+                ).count()
+
+                # Only update the task's completed status if all assigned faculty have completed it
+                if completed_faculty_count == assigned_faculty_count and not task.completed:
+                    task.completed = True
+                    task.save()
+
+                # If AJAX request, return JSON response
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'status': 'success'})
+                
+                return redirect('dashboard:new_hire_home')
 
         except Task.DoesNotExist:
-            pass
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Task not found'}, status=404)
 
-    return JsonResponse({'status': 'error'}, status=400)
+    # If AJAX request but an error occurred
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'error'}, status=400)
+        
+    return redirect('dashboard:new_hire_home')
 
 @login_required
 def continue_task(request, task_id):
-    """Mark a task as not completed for the current faculty."""
+    """
+    Mark a task as not completed for the current faculty.
+    """
     if request.method == 'POST':
         try:
-            task = Task.objects.get(pk=task_id)
+            task = get_object_or_404(Task, pk=task_id)
             faculty = get_faculty_from_request(request)
-            print(f"DEBUG: Attempting to uncomplete task {task_id} for faculty {faculty}")
 
             if faculty:
-                # Check current completion status
-                current_status = TaskProgress.objects.filter(
-                    faculty=faculty,
-                    task=task,
-                    completed=True
-                ).exists()
-                print(f"DEBUG: Current completion status: {current_status}")
-
-                # Delete the task progress
-                deleted_count = TaskProgress.objects.filter(
+                # Mark task as not completed for this specific faculty
+                TaskProgress.objects.filter(
                     faculty=faculty,
                     task=task
-                ).delete()[0]
-                print(f"DEBUG: Deleted {deleted_count} TaskProgress records")
+                ).delete()
 
-                # Verify the deletion worked
-                new_status = TaskProgress.objects.filter(
-                    faculty=faculty,
-                    task=task,
-                    completed=True
-                ).exists()
-                print(f"DEBUG: New completion status: {new_status}")
+                # Update the task's completed status
+                if task.completed:
+                    task.completed = False
+                    task.save()
 
-                return JsonResponse({
-                    'status': 'success',
-                    'deleted_count': deleted_count,
-                    'task_id': task_id
-                })
+                # If AJAX request, return JSON response
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'status': 'success'})
+                
+                return redirect('dashboard:new_hire_home')
 
         except Task.DoesNotExist:
-            print(f"DEBUG: Task {task_id} not found")
-            pass
-        except Exception as e:
-            print(f"DEBUG: Error in continue_task: {str(e)}")
-            pass
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Task not found'}, status=404)
 
-    return JsonResponse({'status': 'error'}, status=400)
+    # If AJAX request but an error occurred
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'error'}, status=400)
+        
+    return redirect('dashboard:new_hire_home')

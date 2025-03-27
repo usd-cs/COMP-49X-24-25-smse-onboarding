@@ -1,12 +1,63 @@
 /* New Hire Dashboard Specific Styles */
 body {
     background-color: #1a1a1a;  /* Dark background */
+    transition: none;
 }
 
-.main-container {
+/* Subtle transitions for UI elements only (not page-wide) */
+.btn, .nav-link, .task-title {
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Allow main content to have a specific background, but don't touch sidebar */
+.main-content {
     background-color: #1a1a1a;  /* Dark background */
-    min-height: 100vh;
-    padding: 30px;
+    transition: none; /* Remove transition to avoid flash */
+}
+
+/* Top Bar Background */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 280px;
+    right: 0;
+    background-color: white !important;
+    height: 35px !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    z-index: 1060;  /* Increased z-index to ensure it's on top */
+    border-bottom: 1px solid #eaeaea;
+    border-radius: 0 0 8px 8px;
+    transition: none;
+}
+
+/* Override any other styles that might affect top bar */
+.dashboard-container > .main-content:before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 280px;
+    right: 0;
+    height: 35px;
+    background-color: white !important;
+    z-index: 1040;
+}
+
+/* Navbar Style Adjustments */
+.navbar {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Navbar Icons and Text Colors */
+.navbar .nav-link, 
+.navbar .btn-link, 
+.navbar .dropdown-toggle {
+    color: #333 !important;
+}
+
+.navbar .text-secondary,
+.navbar small {
+    color: rgba(0,0,0,0.6) !important;
 }
 
 /* Status Card */
@@ -24,7 +75,7 @@ body {
     background-color: var(--secondary-color);
     color: var(--text-color);
     border-radius: 10px;
-    padding: 20px;
+    padding: 15px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
@@ -41,13 +92,13 @@ body {
 /* Progress Bar */
 .progress {
     height: 8px;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     margin: 10px 0;
 }
 
 .progress-bar {
-    background-color: #4CAF50;
+    background-color: #0d6efd;
     border-radius: 4px;
 }
 
@@ -83,6 +134,7 @@ body {
     background-color: white;
     color: black;
     border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .list-group-item {
@@ -105,4 +157,140 @@ body {
     height: 100%;
     background-color: #4CAF50;
     border-radius: 2px;
+}
+
+/* Status Icons */
+.status-icons a {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    color: #0d6efd;
+    transition: all 0.2s;
+}
+
+.status-icons a:hover {
+    background-color: #e9ecef;
+    color: #0b5ed7;
+}
+
+/* Quick Links */
+.quick-links-card .btn {
+    margin-bottom: 8px;
+    border-radius: 4px;
+    text-align: left;
+    transition: opacity 0.2s;
+}
+
+.quick-links-card .btn:hover {
+    opacity: 0.9;
+}
+
+/* Task Table Styles */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table td {
+    vertical-align: middle;
+    border-color: #f0f0f0;
+}
+
+.task-title {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.task-title:hover {
+    color: #0d6efd;
+}
+
+/* Task action buttons with transitions - safe hover effects only */
+.task-circle-btn {
+    opacity: 1; /* Keep full opacity for normal state */
+    transition: transform 0.15s ease !important;
+    position: relative;
+}
+
+.task-circle-btn:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+/* Loading spinner styles */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* Safe hover transitions that don't affect page state */
+.table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    transition: background-color 0.2s ease;
+}
+
+/* Icon transitions that don't affect opacity */
+.bi-check-circle-fill, 
+.bi-circle,
+.bi-hourglass-split {
+    transition: transform 0.15s ease;
+}
+
+/* Quick links button transitions */
+.quick-links-card .btn:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Modal styles */
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-footer {
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Status colors */
+.text-overdue {
+    color: #dc3545 !important;
+}
+
+/* Make task rows slightly taller */
+.table tr td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    transition: none;
+}
+
+/* Additional performance optimizations */
+.table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    will-change: auto;
+}
+
+/* Add border to card in tasks area */
+.card {
+    border: 1px solid #e0e0e0;
 }

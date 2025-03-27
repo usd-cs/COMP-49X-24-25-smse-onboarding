@@ -14,48 +14,17 @@
 
     <!-- Dashboard CSS -->
     <link href="{% static 'dashboard/css/style.css' %}" rel="stylesheet">
-    <link href="{% static 'dashboard/css/sidebar.css' %}" rel="stylesheet">
+    <link href="{% static 'dashboard/css/admin.css' %}" rel="stylesheet">
     <link href="{% static 'dashboard/css/new_hire.css' %}" rel="stylesheet">
 
     {% block extra_css %}{% endblock %}
 </head>
 <body class="dashboard-body">
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-        <div class="container-fluid">
-            <!-- Left side icon and title -->
-            <div class="d-flex align-items-center">
-                <div class="dropdown">
-                    <i class="text-white me-3 bi bi-list navbar-brand" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                    <ul class="dropdown-menu dropdown-menu-start">
-                        <li><a class="dropdown-item" href="{% url 'tasks:home' %}">Dashboard</a></li>
-                        <li><a class="dropdown-item" href="{% url 'tasks:help_guide' %}">Help & Guide</a></li>
-                    </ul>
-                </div>
-                <span class="navbar-brand">Onboarding Portal</span>
-            </div>
+    {% block navbar %}
+    {% endblock %}
 
-            <!-- Right side icon and logo -->
-            <div class="d-flex align-items-center">
-                <div class="dropdown">
-                    <i class="text-white me-3 bi bi-person-circle navbar-brand" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{% url 'users:profile' %}">Profile</a></li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-                            <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
-                                {% csrf_token %}
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-                <img src="{% static 'smse_logo_transparent.png' %}" alt="SMSE logo" width="40px" height="40px">
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container-fluid mt-4">
+    <!-- Main Content Container -->
+    <div class="{% if block.super == '' %}container-fluid mt-4{% endif %}">
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
