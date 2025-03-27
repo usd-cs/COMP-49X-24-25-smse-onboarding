@@ -180,3 +180,71 @@ body {
 .quick-links-card .btn:hover {
     opacity: 0.9;
 }
+
+/* Task Table Styles */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table td {
+    vertical-align: middle;
+    border-color: #f0f0f0;
+}
+
+.task-title {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.task-title:hover {
+    color: #0d6efd;
+}
+
+.task-circle-btn {
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.task-circle-btn:hover {
+    opacity: 1;
+}
+
+/* Modal styles */
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-footer {
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Status colors */
+.text-overdue {
+    color: #dc3545 !important;
+}
+
+/* Make task rows slightly taller */
+.table tr td {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+/* Add border to card in tasks area */
+.card {
+    border: 1px solid #e0e0e0;
+}

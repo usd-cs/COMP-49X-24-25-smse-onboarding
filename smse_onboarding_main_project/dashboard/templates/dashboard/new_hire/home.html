@@ -70,92 +70,152 @@
                 <!-- Left Column - Task Lists -->
                 <div class="col-md-8">
                     <div class="card h-100">
-                        <div class="card-body p-2">
-                            <h5 class="mb-1">Upcoming Task</h5>
-                            
-                            <div class="row mb-1 mt-2">
-                                <div class="col-6">
-                                    <strong>Tasks</strong>
-                                </div>
-                                <div class="col-3">
-                                    <strong>Due Date</strong>
-                                </div>
-                                <div class="col-3">
-                                    <strong>Days Remaining</strong>
-                                </div>
-                            </div>
-                            <hr class="my-1">
-                            
-                            {% for task in tasks %}
-                                {% if not task.is_completed_by_faculty and faculty in task.assigned_to.all %}
-                                <div class="row py-1">
-                                    <div class="col-6">
-                                        <div class="form-check">
-                                            <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="task-completion-form">
-                                                {% csrf_token %}
-                                                <input class="form-check-input" type="checkbox" id="task-{{ task.id }}">
-                                                <label class="form-check-label" for="task-{{ task.id }}">
+                        <div class="card-body p-3">
+                            <h5 class="card-title mb-3">Upcoming Tasks</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 5%"></th>
+                                            <th style="width: 45%">Task</th>
+                                            <th style="width: 25%">Due Date</th>
+                                            <th style="width: 25%">Days Remaining</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for task in tasks %}
+                                            {% if not task.is_completed_by_faculty and faculty in task.assigned_to.all %}
+                                            <tr>
+                                                <td>
+                                                    <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="task-completion-form">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-link p-0 task-circle-btn">
+                                                            <i class="bi bi-circle text-secondary" style="font-size: 1.2rem;"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                                <td class="task-title" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
                                                     {{ task.title }}
-                                                </label>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">{{ task.deadline|date:"M d, Y" }}</div>
-                                    <div class="col-3 {% if task.remaining_days < 2 %}text-danger{% elif task.remaining_days < 7 %}text-warning{% else %}text-primary{% endif %}">
-                                        {% if task.remaining_days == 1 %}
-                                            1 day left
-                                        {% elif task.remaining_days < 7 %}
-                                            {{ task.remaining_days }} days left
-                                        {% else %}
-                                            {{ task.remaining_days|floatformat:0 }} days left
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                            {% empty %}
-                                <div class="row py-1">
-                                    <div class="col-12 text-center">No upcoming tasks available.</div>
-                                </div>
-                            {% endfor %}
-                            
-                            <h5 class="mt-3 mb-1">Completed Tasks</h5>
-                            
-                            <div class="row mb-1 mt-2">
-                                <div class="col-6">
-                                    <strong>Tasks</strong>
-                                </div>
-                                <div class="col-3">
-                                    <strong>Due Date</strong>
-                                </div>
-                                <div class="col-3">
-                                    <strong>Status</strong>
-                                </div>
+                                                </td>
+                                                <td>{{ task.deadline|date:"M d, Y, g a" }}</td>
+                                                <td class="{% if task.remaining_days < 0 %}text-danger{% elif task.remaining_days < 2 %}text-warning{% else %}text-muted{% endif %}">
+                                                    {% if task.remaining_days < 0 %}
+                                                        Overdue
+                                                    {% elif task.remaining_days == 0 %}
+                                                        Today
+                                                    {% elif task.remaining_days == 1 %}
+                                                        1 day left
+                                                    {% else %}
+                                                        {{ task.remaining_days }} days left
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <!-- Task Modal -->
+                                            <div class="modal fade" id="taskModal{{ task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ task.id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="taskModalLabel{{ task.id }}">{{ task.title }}</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
+                                                            <p><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
+                                                            <p><strong>Days Remaining:</strong> 
+                                                                {% if task.remaining_days < 0 %}
+                                                                    <span class="text-danger">Overdue</span>
+                                                                {% elif task.remaining_days == 0 %}
+                                                                    <span class="text-warning">Due today</span>
+                                                                {% else %}
+                                                                    {{ task.remaining_days }} days
+                                                                {% endif %}
+                                                            </p>
+                                                            <p><strong>Description:</strong></p>
+                                                            <p>{{ task.description }}</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="d-inline">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-primary">Mark as Complete</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        {% empty %}
+                                            <tr>
+                                                <td colspan="4" class="text-center">No upcoming tasks available.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                            <hr class="my-1">
-                            
-                            {% for task in tasks %}
-                                {% if task.is_completed_by_faculty %}
-                                <div class="row py-1">
-                                    <div class="col-6">
-                                        <div class="form-check">
-                                            <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="task-completion-form">
-                                                {% csrf_token %}
-                                                <input class="form-check-input" type="checkbox" checked id="completed-task-{{ task.id }}">
-                                                <label class="form-check-label" for="completed-task-{{ task.id }}">
+
+                            <h5 class="card-title mb-3 mt-4">Completed Tasks</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 5%"></th>
+                                            <th style="width: 45%">Task</th>
+                                            <th style="width: 25%">Due Date</th>
+                                            <th style="width: 25%">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for task in tasks %}
+                                            {% if task.is_completed_by_faculty %}
+                                            <tr>
+                                                <td>
+                                                    <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="task-completion-form">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-link p-0">
+                                                            <i class="bi bi-check-circle-fill text-success" style="font-size: 1.2rem;"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                                <td class="task-title" data-bs-toggle="modal" data-bs-target="#completedTaskModal{{ task.id }}">
                                                     {{ task.title }}
-                                                </label>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">{{ task.deadline|date:"M d, Y" }}</div>
-                                    <div class="col-3 text-success">Complete</div>
-                                </div>
-                                {% endif %}
-                            {% empty %}
-                                <div class="row py-1">
-                                    <div class="col-12 text-center">No completed tasks available.</div>
-                                </div>
-                            {% endfor %}
+                                                </td>
+                                                <td>{{ task.deadline|date:"M d, Y, g a" }}</td>
+                                                <td class="text-success">Completed</td>
+                                            </tr>
+                                            <!-- Completed Task Modal -->
+                                            <div class="modal fade" id="completedTaskModal{{ task.id }}" tabindex="-1" aria-labelledby="completedTaskModalLabel{{ task.id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="completedTaskModalLabel{{ task.id }}">{{ task.title }}</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
+                                                            <p><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
+                                                            <p><strong>Status:</strong> <span class="text-success">Completed</span></p>
+                                                            <p><strong>Description:</strong></p>
+                                                            <p>{{ task.description }}</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="d-inline">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-outline-secondary">Mark as Incomplete</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        {% empty %}
+                                            <tr>
+                                                <td colspan="4" class="text-center">No completed tasks available.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -279,9 +279,17 @@ body {
 
 /* Top Bar Styles with Rounded Bottom Corners */
 .top-bar {
+    position: fixed;
+    top: 0;
+    left: 280px; 
+    right: 0;
+    height: 35px !important;
+    background-color: white !important;
+    z-index: 1060;
+    border-bottom: 1px solid #eaeaea;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .navbar .nav-link {
