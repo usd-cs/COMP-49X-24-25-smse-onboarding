@@ -5,7 +5,7 @@
     --text-color: black;
     --light-text: #666;
     --border-color: #e5e7eb;
-    --dark-bg: black;
+    --dark-bg: white;
 }
 
 /* General Styles */
@@ -18,7 +18,7 @@
 
 body {
     background-color: var(--dark-bg);
-    color: white;
+    color: var(--text-color);
     min-height: 100vh;
 }
 
@@ -168,6 +168,7 @@ body {
 .dashboard-container {
     display: flex;
     min-height: 100vh;
+    position: relative;
 }
 
 /* Sidebar Styles */
@@ -183,7 +184,7 @@ body {
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 1000;
+    z-index: 1050;
     overflow-y: auto;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -212,12 +213,50 @@ body {
 /* Main Content */
 .main-content {
     flex: 1;
-    margin-left: 280px; /* Same width as sidebar */
+    margin-left: 280px; /* 与侧边栏宽度一致 */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-color: var(--dark-bg);
+}
+
+/* Dashboard Content */
+.dashboard-content {
     padding: 20px;
-    background-color: var(--dark-bg); /* Ensure dark background */
+    padding-top: 65px; /* 调整顶部内边距以适应较低的导航栏 */
+}
+
+/* Navbar Styles */
+.navbar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: calc(100% - 320px); 
+    margin-right: 20px;
+    margin-top: 10px;
+    margin-left: 20px;
+    border-radius: 8px;
+    z-index: 1030;
+    height: 40px; /* 减少高度约20% */
+    background-color: white !important; /* 改回白色背景 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+}
+
+.navbar .nav-link {
+    color: #333 !important; /* 黑色文字 */
+    padding: 0.3rem 0.6rem;
+}
+
+.navbar .btn-link {
+    color: #333 !important; /* 黑色文字 */
+}
+
+.navbar .dropdown-toggle::after {
+    color: #777;
+}
+
+.navbar .text-secondary {
+    color: #6c757d !important; /* 恢复Bootstrap默认的text-secondary颜色 */
 }
 
 /* Navigation Items */

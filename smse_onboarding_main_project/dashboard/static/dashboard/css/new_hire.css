@@ -1,11 +1,42 @@
 /* New Hire Dashboard Specific Styles */
 body {
-    background-color: #1a1a1a;  /* Dark background */
+    background-color: white;  /* Light background */
 }
 
 /* Allow main content to have a specific background, but don't touch sidebar */
 .main-content {
-    background-color: #1a1a1a;  /* Dark background */
+    background-color: white;  /* Light background */
+}
+
+/* 顶部菜单栏背景 */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 280px;
+    right: 0;
+    background-color: white !important;
+    height: 35px !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    z-index: 1020;
+    border-bottom: 1px solid #eaeaea;
+}
+
+/* 调整导航栏内容的样式，使其完全匹配截图 */
+.navbar {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* 导航栏图标和文本颜色 */
+.navbar .nav-link, 
+.navbar .btn-link, 
+.navbar .dropdown-toggle {
+    color: #333 !important;
+}
+
+.navbar .text-secondary,
+.navbar small {
+    color: rgba(0,0,0,0.6) !important;
 }
 
 /* Status Card */
