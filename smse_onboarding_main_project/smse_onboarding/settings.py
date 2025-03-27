@@ -39,12 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social_django',
-    'tasks',
-    'smse_onboarding',
-    #'tasks.apps.TasksConfig',
+    'tasks.apps.TasksConfig',
     'documents.apps.DocumentsConfig',
-    'users',
+    'users.apps.UsersConfig',
     'dashboard.apps.DashboardConfig',
+    'smse_onboarding',
 ]
 
 AUTHENTICATION_BACKENDS = [
