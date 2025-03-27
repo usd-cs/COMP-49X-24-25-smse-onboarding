@@ -188,12 +188,36 @@ def complete_task(request, task_id):
                     defaults={'completed': True}
                 )
 
-                return JsonResponse({'status': 'success'})
+                # For AJAX requests, return JSON response with updated data
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    # Count total and completed tasks
+                    assigned_tasks = Task.objects.filter(assigned_to=faculty)
+                    total_tasks = assigned_tasks.count()
+                    completed_tasks = TaskProgress.objects.filter(
+                        faculty=faculty,
+                        completed=True,
+                        task__in=assigned_tasks
+                    ).count()
+                    
+                    return JsonResponse({
+                        'success': True,
+                        'completed': True,
+                        'task_id': task_id,
+                        'completed_count': completed_tasks,
+                        'total_count': total_tasks
+                    })
+                
+                # For regular requests, redirect
+                return redirect('dashboard:new_hire_home')
 
         except Task.DoesNotExist:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': 'Task not found'}, status=404)
             pass
 
-    return JsonResponse({'status': 'error'}, status=400)
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+    return redirect('dashboard:new_hire_home')
 
 @login_required
 def continue_task(request, task_id):
@@ -202,43 +226,45 @@ def continue_task(request, task_id):
         try:
             task = Task.objects.get(pk=task_id)
             faculty = get_faculty_from_request(request)
-            print(f"DEBUG: Attempting to uncomplete task {task_id} for faculty {faculty}")
 
             if faculty:
-                # Check current completion status
-                current_status = TaskProgress.objects.filter(
-                    faculty=faculty,
-                    task=task,
-                    completed=True
-                ).exists()
-                print(f"DEBUG: Current completion status: {current_status}")
-
-                # Delete the task progress
+                # Delete the task progress (mark as incomplete)
                 deleted_count = TaskProgress.objects.filter(
                     faculty=faculty,
                     task=task
                 ).delete()[0]
-                print(f"DEBUG: Deleted {deleted_count} TaskProgress records")
-
-                # Verify the deletion worked
-                new_status = TaskProgress.objects.filter(
-                    faculty=faculty,
-                    task=task,
-                    completed=True
-                ).exists()
-                print(f"DEBUG: New completion status: {new_status}")
-
-                return JsonResponse({
-                    'status': 'success',
-                    'deleted_count': deleted_count,
-                    'task_id': task_id
-                })
+                
+                # For AJAX requests, return JSON response with updated data
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    # Count total and completed tasks
+                    assigned_tasks = Task.objects.filter(assigned_to=faculty)
+                    total_tasks = assigned_tasks.count()
+                    completed_tasks = TaskProgress.objects.filter(
+                        faculty=faculty,
+                        completed=True,
+                        task__in=assigned_tasks
+                    ).count()
+                    
+                    return JsonResponse({
+                        'success': True,
+                        'completed': False,
+                        'task_id': task_id,
+                        'completed_count': completed_tasks,
+                        'total_count': total_tasks
+                    })
+                
+                # For regular requests, redirect
+                return redirect('dashboard:new_hire_home')
 
         except Task.DoesNotExist:
-            print(f"DEBUG: Task {task_id} not found")
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': 'Task not found'}, status=404)
             pass
         except Exception as e:
-            print(f"DEBUG: Error in continue_task: {str(e)}")
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': str(e)}, status=500)
             pass
 
-    return JsonResponse({'status': 'error'}, status=400)
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+    return redirect('dashboard:new_hire_home')
