@@ -1,7 +1,13 @@
 /* New Hire Dashboard Specific Styles */
 body {
-    background-color: #1a1a1a;  /* Dark background */
+    background-color: #eaeaea;  /* Light grey background */
     transition: none;
+    height: 100%;
+    overflow-y: auto;
+}
+
+html {
+    height: 100%;
 }
 
 /* Subtle transitions for UI elements only (not page-wide) */
@@ -11,8 +17,31 @@ body {
 
 /* Allow main content to have a specific background, but don't touch sidebar */
 .main-content {
-    background-color: #1a1a1a;  /* Dark background */
+    background-color: #eaeaea;  /* Match body background color */
     transition: none; /* Remove transition to avoid flash */
+    overflow-y: auto; /* Enable vertical scrolling */
+    height: 100vh; /* Full viewport height */
+    padding-bottom: 30px; /* Add bottom padding for scrolling content */
+}
+
+/* Dashboard container for proper scrolling */
+.dashboard-container {
+    height: 100%;
+    overflow: hidden; /* Hide overflow on container */
+}
+
+/* Dashboard content with scrolling support */
+.dashboard-content {
+    height: auto;
+    min-height: calc(100% - 35px);
+    overflow-y: auto;
+    padding-bottom: 50px; /* Extra padding at bottom to ensure all content is visible when scrolled */
+}
+
+/* Ensure the Quick Links card can expand properly */
+.card-body .d-grid {
+    height: auto !important; /* Override any fixed height constraints */
+    min-height: 50px; /* Minimum height to ensure visibility */
 }
 
 /* Top Bar Background */
@@ -179,15 +208,61 @@ body {
 }
 
 /* Quick Links */
-.quick-links-card .btn {
+.quick-links-card .btn,
+.card-body .d-grid a.btn {
     margin-bottom: 8px;
     border-radius: 4px;
     text-align: left;
-    transition: opacity 0.2s;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    position: relative;
+    overflow: hidden;
+    border: none;
 }
 
-.quick-links-card .btn:hover {
-    opacity: 0.9;
+/* Enhanced Quick Links hover effects */
+.quick-links-card .btn:hover,
+.card-body .d-grid a.btn:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2) !important;
+    filter: brightness(110%) !important;
+    z-index: 10 !important;
+}
+
+/* Click effects */
+.quick-links-card .btn:active,
+.card-body .d-grid a.btn:active {
+    transform: translateY(-1px) scale(0.98) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+    transition-duration: 0.1s !important;
+}
+
+/* Add subtle shine effect */
+.quick-links-card .btn::after,
+.card-body .d-grid a.btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 20%;
+    height: 200%;
+    background: rgba(255,255,255,0.2);
+    transform: rotate(30deg);
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.quick-links-card .btn:hover::after,
+.card-body .d-grid a.btn:hover::after {
+    left: 120%;
+    opacity: 1;
+}
+
+/* Icon hover effects */
+.quick-links-card .btn:hover i,
+.card-body .d-grid a.btn:hover i {
+    transform: scale(1.2) !important;
+    transition: transform 0.3s ease !important;
 }
 
 /* Task Table Styles */
@@ -249,13 +324,6 @@ body {
 .bi-circle,
 .bi-hourglass-split {
     transition: transform 0.15s ease;
-}
-
-/* Quick links button transitions */
-.quick-links-card .btn:hover {
-    transform: translateY(-1px);
-    transition: transform 0.2s ease;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 /* Modal styles */

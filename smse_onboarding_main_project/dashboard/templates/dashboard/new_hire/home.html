@@ -223,26 +223,28 @@
                 <!-- Right Column - Two Separate Cards -->
                 <div class="col-md-4 d-flex flex-column h-100">
                     <!-- Status Card (Top) -->
-                    <div class="card mb-3 flex-grow-1">
+                    <div class="card mb-2 flex-grow-0">
                         <div class="card-body p-2 d-flex flex-column align-items-center justify-content-between">
                             <h5 class="card-title text-center mb-1">Welcome {{ faculty.first_name }}</h5>
                             
                             <div class="d-flex flex-column align-items-center">
-                                <div class="position-relative" style="width: 140px; height: 140px;">
-                                    <div class="rounded-circle position-absolute w-100 h-100 border border-primary" style="border-width: 3px !important; border-color: #0d6efd !important; z-index: 1;"></div>
-                                    <img src="{% static 'dashboard/images/profile.png' %}" alt="Profile" class="rounded-circle position-absolute" style="width: 130px; height: 130px; top: 5px; left: 5px; z-index: 0;" onerror="this.src='{% static 'dashboard/images/profile-placeholder.png' %}'; this.onerror='';">
+                                <div class="position-relative" style="width: 110px; height: 110px;">
+                                    <!-- Replace image with Bootstrap icon -->
+                                    <div class="rounded-circle position-absolute d-flex align-items-center justify-content-center bg-light" style="width: 110px; height: 110px; top: 0; left: 0; z-index: 0;">
+                                        <i class="bi bi-person-fill text-primary" style="font-size: 85px;"></i>
+                                    </div>
                                 </div>
-                                <h5 class="mb-1 mt-3">Dr. {{ faculty.first_name }} {{ faculty.last_name }}</h5>
-                                <p class="text-muted mb-2">{{ faculty.job_role }}</p>
+                                <h5 class="mb-1 mt-2">Dr. {{ faculty.first_name }} {{ faculty.last_name }}</h5>
+                                <p class="text-muted mb-1">{{ faculty.job_role }}</p>
                                 
                                 <div class="d-flex justify-content-center mb-1">
-                                    <a href="#" class="btn btn-light btn-sm rounded-circle mx-1" style="width: 36px; height: 36px; padding: 6px 0;">
+                                    <a href="#" class="btn btn-light btn-sm rounded-circle mx-1" style="width: 32px; height: 32px; padding: 5px 0;">
                                         <i class="bi bi-mortarboard"></i>
                                     </a>
-                                    <a href="#" class="btn btn-light btn-sm rounded-circle mx-1" style="width: 36px; height: 36px; padding: 6px 0;">
+                                    <a href="#" class="btn btn-light btn-sm rounded-circle mx-1" style="width: 32px; height: 32px; padding: 5px 0;">
                                         <i class="bi bi-telephone"></i>
                                     </a>
-                                    <a href="#" class="btn btn-light btn-sm rounded-circle mx-1" style="width: 36px; height: 36px; padding: 6px 0;">
+                                    <a href="#" class="btn btn-light btn-sm rounded-circle mx-1" style="width: 32px; height: 32px; padding: 5px 0;">
                                         <i class="bi bi-envelope"></i>
                                     </a>
                                 </div>
@@ -253,8 +255,18 @@
                                         <span class="text-muted small">{{ num_completed }} completed</span>
                                         <span class="text-muted small">{{ percentage }}%</span>
                                     </div>
-                                    <div class="progress" style="height: 8px;">
+                                    <div class="progress" style="height: 6px;">
                                         <div class="progress-bar bg-info" role="progressbar" style="width: {{ percentage }}%" aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="w-100 text-center">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="text-muted small">3 completed</span>
+                                        <span class="text-muted small">75%</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
                                 {% endif %}
@@ -263,50 +275,51 @@
                     </div>
                     
                     <!-- Quick Links (Bottom) -->
-                    <div class="card mt-3 flex-grow-1">
-                        <div class="card-body py-3 px-3 d-flex flex-column">
-                            <div class="d-grid h-100" style="grid-gap: 6px;">
-                                <a href="https://eager-dancer-7dc.notion.site/SMSE-Admin-Portal-13f4fe003c6f4e7db7ee77eb983a3df6" target="_blank" class="btn d-flex align-items-center py-2 px-3" style="background-color: #6d3c6c; color: white; height: 48px; width: 100%;">
-                                    <div class="d-flex align-items-center justify-content-center" style="width: 36px;">
-                                        <i class="bi bi-building fs-5"></i>
-                                    </div>
-                                    <span class="flex-grow-1 ms-2 fw-medium">Admin</span>
-                                </a>
+                    <div class="card mt-2 flex-grow-0">
+                        <div class="card-body py-2 px-3">
+                            <!-- Equal-sized buttons in 2-column layout -->
+                            <div class="row row-cols-2 g-2">
+                                <div class="col">
+                                    <a href="https://eager-dancer-7dc.notion.site/SMSE-Admin-Portal-13f4fe003c6f4e7db7ee77eb983a3df6" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #6d3c6c; color: white; height: 75px;">
+                                        <i class="bi bi-building mb-1"></i>
+                                        <span class="fw-medium small">Admin</span>
+                                    </a>
+                                </div>
                                 
-                                <a href="https://www.sandiego.edu/its/" target="_blank" class="btn d-flex align-items-center py-2 px-3" style="background-color: #8bb05e; color: white; height: 48px; width: 100%;">
-                                    <div class="d-flex align-items-center justify-content-center" style="width: 36px;">
-                                        <i class="bi bi-pc-display fs-5"></i>
-                                    </div>
-                                    <span class="flex-grow-1 ms-2 fw-medium">IT Dept</span>
-                                </a>
+                                <div class="col">
+                                    <a href="https://www.sandiego.edu/its/" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #8bb05e; color: white; height: 75px;">
+                                        <i class="bi bi-pc-display mb-1"></i>
+                                        <span class="fw-medium small">IT Dept</span>
+                                    </a>
+                                </div>
                                 
-                                <a href="https://www.sandiego.edu/parking/" target="_blank" class="btn d-flex align-items-center py-2 px-3" style="background-color: #2f1f87; color: white; height: 48px; width: 100%;">
-                                    <div class="d-flex align-items-center justify-content-center" style="width: 36px;">
-                                        <i class="bi bi-p-circle fs-5"></i>
-                                    </div>
-                                    <span class="flex-grow-1 ms-2 fw-medium">Parking</span>
-                                </a>
+                                <div class="col">
+                                    <a href="https://www.sandiego.edu/parking/" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #2f1f87; color: white; height: 75px;">
+                                        <i class="bi bi-p-circle mb-1"></i>
+                                        <span class="fw-medium small">Parking</span>
+                                    </a>
+                                </div>
                                 
-                                <a href="https://www.sandiego.edu/maps/" target="_blank" class="btn d-flex align-items-center py-2 px-3" style="background-color: #d6a73b; color: white; height: 48px; width: 100%;">
-                                    <div class="d-flex align-items-center justify-content-center" style="width: 36px;">
-                                        <i class="bi bi-geo-alt fs-5"></i>
-                                    </div>
-                                    <span class="flex-grow-1 ms-2 fw-medium">Campus Map</span>
-                                </a>
+                                <div class="col">
+                                    <a href="https://www.sandiego.edu/maps/" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #d6a73b; color: white; height: 75px;">
+                                        <i class="bi bi-geo-alt mb-1"></i>
+                                        <span class="fw-medium small">Campus Map</span>
+                                    </a>
+                                </div>
                                 
-                                <a href="https://docs.google.com/spreadsheets/d/1tnHnEoI_FmN6qZ5CL7ECX4CdEImqvpe02mTrDKnhWG0/edit?pli=1&gid=1355036769#gid=1355036769" target="_blank" class="btn d-flex align-items-center py-2 px-3" style="background-color: #6fafda; color: white; height: 48px; width: 100%;">
-                                    <div class="d-flex align-items-center justify-content-center" style="width: 36px;">
-                                        <i class="bi bi-telephone fs-5"></i>
-                                    </div>
-                                    <span class="flex-grow-1 ms-2 fw-medium">Directory</span>
-                                </a>
+                                <div class="col">
+                                    <a href="https://docs.google.com/spreadsheets/d/1tnHnEoI_FmN6qZ5CL7ECX4CdEImqvpe02mTrDKnhWG0/edit?pli=1&gid=1355036769#gid=1355036769" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #6fafda; color: white; height: 75px;">
+                                        <i class="bi bi-telephone mb-1"></i>
+                                        <span class="fw-medium small">Directory</span>
+                                    </a>
+                                </div>
                                 
-                                <a href="https://www.myworkday.com/sandiego/d/home.htmld" target="_blank" class="btn d-flex align-items-center py-2 px-3" style="background-color: #9b262e; color: white; height: 48px; width: 100%;">
-                                    <div class="d-flex align-items-center justify-content-center" style="width: 36px;">
-                                        <i class="bi bi-calendar-check fs-5"></i>
-                                    </div>
-                                    <span class="flex-grow-1 ms-2 fw-medium">Work Day</span>
-                                </a>
+                                <div class="col">
+                                    <a href="https://www.myworkday.com/sandiego/d/home.htmld" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #9b262e; color: white; height: 75px;">
+                                        <i class="bi bi-calendar-check mb-1"></i>
+                                        <span class="fw-medium small">Work Day</span>
+                                    </a>
+                                </div>
                         </div>
                         </div>
                     </div>
@@ -334,6 +347,48 @@
                 links[i].href = href + '?v=' + timestamp;
             }
         }
+        
+        // Enhanced hover effect for quick links
+        const style = document.createElement('style');
+        style.textContent = `
+            .quick-link-btn {
+                transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                position: relative;
+                overflow: hidden;
+            }
+            .quick-link-btn::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255,255,255,0.1);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                border-radius: inherit;
+            }
+            .quick-link-btn i {
+                font-size: 1.5rem;
+                transition: transform 0.3s ease;
+            }
+            .quick-link-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
+            .quick-link-btn:hover::after {
+                opacity: 1;
+            }
+            .quick-link-btn:hover i {
+                transform: scale(1.1);
+            }
+            .quick-link-btn:active {
+                transform: translateY(-1px);
+                box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            }
+        `;
+        document.head.appendChild(style);
     });
 </script>
 
@@ -402,10 +457,13 @@
                                         document.querySelector('.col-md-8 .card').innerHTML = newTaskTable.innerHTML;
                                         
                                         // Update status card content (for task completion percentage)
-                                        const newStatusCard = doc.querySelector('.col-md-4 .card.mb-3');
+                                        const newStatusCard = doc.querySelector('.col-md-4 .card.mb-2');
                                         if (newStatusCard) {
-                                            document.querySelector('.col-md-4 .card.mb-3').innerHTML = newStatusCard.innerHTML;
+                                            document.querySelector('.col-md-4 .card.mb-2').innerHTML = newStatusCard.innerHTML;
                                         }
+                                        
+                                        // Calculate and update percentage manually
+                                        updateProgressBar();
                                         
                                         // Reattach event listeners
                                         attachEventListeners();
@@ -458,6 +516,32 @@
             });
         }
         
+        // Function to calculate and update the progress bar manually
+        function updateProgressBar() {
+            // Count total and completed tasks
+            const totalTasks = document.querySelectorAll('.table-responsive table tbody tr').length;
+            const completedTasks = document.querySelectorAll('.bi-check-circle-fill').length;
+            
+            if (totalTasks > 0) {
+                const percentage = Math.round((completedTasks / totalTasks) * 100);
+                
+                // Update the progress bar and text
+                const progressText = document.querySelector('.col-md-4 .card.mb-2 .text-muted:nth-child(2)');
+                const progressBar = document.querySelector('.col-md-4 .card.mb-2 .progress-bar');
+                const completedText = document.querySelector('.col-md-4 .card.mb-2 .text-muted:nth-child(1)');
+                
+                if (progressText && progressBar && completedText) {
+                    progressText.textContent = percentage + '%';
+                    progressBar.style.width = percentage + '%';
+                    progressBar.setAttribute('aria-valuenow', percentage);
+                    completedText.textContent = completedTasks + ' completed';
+                }
+            }
+        }
+        
+        // Call this function on page load to ensure the progress bar is correct
+        updateProgressBar();
+        
         // Remove the original direct form binding since we now use attachEventListeners for all forms
         // Instead, just initialize the modal form handlers which are different
         document.querySelectorAll('.modal form').forEach(form => {
@@ -495,6 +579,9 @@
                             document.body.style.paddingRight = '';
                             const backdrops = document.querySelectorAll('.modal-backdrop');
                             backdrops.forEach(backdrop => backdrop.remove());
+                            
+                            // Update progress bar before reloading
+                            updateProgressBar();
                             
                             // Simply reload the page since these are less frequent actions
                             window.location.reload();
