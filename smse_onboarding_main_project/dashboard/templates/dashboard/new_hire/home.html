@@ -200,6 +200,14 @@
             }
         }
 
+        // Ensure progress circle is updated after page is fully loaded
+        setTimeout(function() {
+            if (typeof forceUpdateProgressCircle === 'function') {
+                forceUpdateProgressCircle();
+                console.log("Force updated progress circle on page load");
+            }
+        }, 500);
+
         // Enhanced hover effect for quick links
         const style = document.createElement('style');
         style.textContent = `
@@ -309,16 +317,31 @@
                                         document.querySelector('.col-md-8 .card').innerHTML = newTaskTable.innerHTML;
 
                                         // Update status card content (for task completion percentage)
-                                        const newStatusCard = doc.querySelector('.col-md-4 .card.mb-2');
+                                        const newStatusCard = doc.querySelector('.col-md-4 .card.shadow-sm');
                                         if (newStatusCard) {
-                                            document.querySelector('.col-md-4 .card.mb-2').innerHTML = newStatusCard.innerHTML;
+                                            document.querySelector('.col-md-4 .card.shadow-sm').innerHTML = newStatusCard.innerHTML;
                                         }
 
                                         // Calculate and update percentage manually
                                         updateProgressBar();
+                                        
+                                        // Ensure progress circle is updated
+                                        if (typeof updateProgressCircle === 'function') {
+                                            updateProgressCircle();
+                                        } else if (typeof forceUpdateProgressCircle === 'function') {
+                                            forceUpdateProgressCircle();
+                                        }
 
                                         // Reattach event listeners
                                         attachEventListeners();
+                                        
+                                        // Initialize any scripts in the status card
+                                        const statusCardScripts = document.querySelectorAll('.col-md-4 .card.shadow-sm script');
+                                        statusCardScripts.forEach(script => {
+                                            if (script.innerHTML) {
+                                                eval(script.innerHTML);
+                                            }
+                                        });
                                     } else {
                                         // Fallback to full page reload if we can't find elements
                                         window.location.reload();
@@ -378,9 +401,9 @@
                 const percentage = Math.round((completedTasks / totalTasks) * 100);
 
                 // Update the progress bar and text
-                const progressText = document.querySelector('.col-md-4 .card.mb-2 .text-muted:nth-child(2)');
-                const progressBar = document.querySelector('.col-md-4 .card.mb-2 .progress-bar');
-                const completedText = document.querySelector('.col-md-4 .card.mb-2 .text-muted:nth-child(1)');
+                const progressText = document.querySelector('.col-md-4 .card.shadow-sm .text-muted:nth-child(2)');
+                const progressBar = document.querySelector('.col-md-4 .card.shadow-sm .progress-bar');
+                const completedText = document.querySelector('.col-md-4 .card.shadow-sm .text-muted:nth-child(1)');
 
                 if (progressText && progressBar && completedText) {
                     progressText.textContent = percentage + '%';
@@ -388,11 +411,25 @@
                     progressBar.setAttribute('aria-valuenow', percentage);
                     completedText.textContent = completedTasks + ' completed';
                 }
+                
+                // Call the new updateProgressCircle function in status_card.html
+                if (typeof updateProgressCircle === 'function') {
+                    updateProgressCircle();
+                } else if (typeof forceUpdateProgressCircle === 'function') {
+                    forceUpdateProgressCircle();
+                }
             }
         }
 
         // Call this function on page load to ensure the progress bar is correct
         updateProgressBar();
+
+        // Set up periodic checking of progress circle status to ensure latest status is always displayed
+        setInterval(function() {
+            if (typeof forceUpdateProgressCircle === 'function') {
+                forceUpdateProgressCircle();
+            }
+        }, 5000); // Check every 5 seconds
 
         // Remove the original direct form binding since we now use attachEventListeners for all forms
         // Instead, just initialize the modal form handlers which are different
