@@ -9,60 +9,8 @@
     {% include 'dashboard/new_hire/components/sidebar.html' %}
 
     <div class="main-content">
-        <!-- Top Bar - White Background -->
-        <div class="top-bar" style="background-color: white !important; height: 35px !important; display: block !important; z-index: 1060;"></div>
-        
-        <!-- Top Navigation Bar -->
-        <nav class="navbar navbar-expand navbar-light px-3" style="z-index: 1065; background-color: transparent !important;">
-            <div class="container-fluid px-0">
-                <div class="navbar-nav ms-auto align-items-center">
-                    <!-- Notification bell -->
-                    <div class="nav-item me-2 position-relative">
-                        <a href="#" class="nav-link py-0">
-                            <i class="bi bi-bell-fill"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
-                                5
-                            </span>
-                        </a>
-                    </div>
-                    
-                    <!-- Language selector -->
-                    <div class="nav-item me-2">
-                        <div class="dropdown">
-                            <button class="btn btn-link dropdown-toggle text-decoration-none d-flex align-items-center p-0" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="d-flex align-items-center" style="width: 20px; height: 20px;">
-                                    <i class="bi bi-globe"></i>
-                                </span>
-                                <span class="ms-1" style="font-size: 0.85rem;">English</span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-                                <li><a class="dropdown-item" href="#">English</a></li>
-                                <li><a class="dropdown-item" href="#">中文</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <!-- User profile -->
-                    <div class="nav-item">
-                        <div class="dropdown">
-                            <button class="btn btn-link dropdown-toggle text-decoration-none d-flex align-items-center p-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{% static 'dashboard/images/profile-placeholder.jpg' %}" alt="User" class="rounded-circle me-1" style="width: 24px; height: 24px;">
-                                <div class="d-flex flex-column align-items-start justify-content-center">
-                                    <span style="font-size: 0.75rem; line-height: 1;">{{ request.user.get_full_name }}</span>
-                                    <small style="font-size: 0.65rem; line-height: 1;">{{ request.user.groups.first.name|default:"User" }}</small>
-                                </div>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        <!-- Include the new top navbar component -->
+        {% include 'dashboard/new_hire/components/top_navbar.html' %}
 
         <!-- Dashboard Content -->
         <div class="dashboard-content pt-4" style="padding-top: 50px !important;">
@@ -121,7 +69,7 @@
                                                         <div class="modal-body">
                                                             <p><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
                                                             <p><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
-                                                            <p><strong>Days Remaining:</strong> 
+                                                            <p><strong>Days Remaining:</strong>
                                                                 {% if task.remaining_days < 0 %}
                                                                     <span class="text-danger">Overdue</span>
                                                                 {% elif task.remaining_days == 0 %}
@@ -219,110 +167,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Right Column - Two Separate Cards -->
                 <div class="col-md-4 d-flex flex-column h-100">
                     <!-- Status Card (Top) -->
-                    <div class="card mb-2 flex-grow-0">
-                        <div class="card-body p-2 d-flex flex-column align-items-center justify-content-between">
-                            <h5 class="card-title text-center mb-1">Welcome {{ faculty.first_name }}</h5>
-                            
-                            <div class="d-flex flex-column align-items-center">
-                                <div class="position-relative" style="width: 110px; height: 110px;">
-                                    <!-- Replace image with Bootstrap icon -->
-                                    <div class="rounded-circle position-absolute d-flex align-items-center justify-content-center bg-light" style="width: 110px; height: 110px; top: 0; left: 0; z-index: 0;">
-                                        <i class="bi bi-person-fill text-primary" style="font-size: 85px;"></i>
-                                    </div>
-                                </div>
-                                <h5 class="mb-1 mt-2">Dr. {{ faculty.first_name }} {{ faculty.last_name }}</h5>
-                                <p class="text-muted mb-1">{{ faculty.job_role }}</p>
-                                
-                                <div class="d-flex justify-content-center mb-1">
-                                    <a href="#" class="btn btn-light btn-sm rounded-circle mx-1" style="width: 32px; height: 32px; padding: 5px 0;">
-                                        <i class="bi bi-mortarboard"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-light btn-sm rounded-circle mx-1" style="width: 32px; height: 32px; padding: 5px 0;">
-                                        <i class="bi bi-telephone"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-light btn-sm rounded-circle mx-1" style="width: 32px; height: 32px; padding: 5px 0;">
-                                        <i class="bi bi-envelope"></i>
-                                    </a>
-                                </div>
-                                
-                                {% if tasks %}
-                                <div class="w-100 text-center">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <span class="text-muted small">{{ num_completed }} completed</span>
-                                        <span class="text-muted small">{{ percentage }}%</span>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ percentage }}%" aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                                {% else %}
-                                <div class="w-100 text-center">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <span class="text-muted small">3 completed</span>
-                                        <span class="text-muted small">75%</span>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                                {% endif %}
-                        </div>
-                        </div>
-                    </div>
-                    
+                    {% include 'dashboard/new_hire/components/status_card.html' %}
+
                     <!-- Quick Links (Bottom) -->
-                    <div class="card mt-2 flex-grow-0">
-                        <div class="card-body py-2 px-3">
-                            <!-- Equal-sized buttons in 2-column layout -->
-                            <div class="row row-cols-2 g-2">
-                                <div class="col">
-                                    <a href="https://eager-dancer-7dc.notion.site/SMSE-Admin-Portal-13f4fe003c6f4e7db7ee77eb983a3df6" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #6d3c6c; color: white; height: 75px;">
-                                        <i class="bi bi-building mb-1"></i>
-                                        <span class="fw-medium small">Admin</span>
-                                    </a>
-                                </div>
-                                
-                                <div class="col">
-                                    <a href="https://www.sandiego.edu/its/" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #8bb05e; color: white; height: 75px;">
-                                        <i class="bi bi-pc-display mb-1"></i>
-                                        <span class="fw-medium small">IT Dept</span>
-                                    </a>
-                                </div>
-                                
-                                <div class="col">
-                                    <a href="https://www.sandiego.edu/parking/" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #2f1f87; color: white; height: 75px;">
-                                        <i class="bi bi-p-circle mb-1"></i>
-                                        <span class="fw-medium small">Parking</span>
-                                    </a>
-                                </div>
-                                
-                                <div class="col">
-                                    <a href="https://www.sandiego.edu/maps/" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #d6a73b; color: white; height: 75px;">
-                                        <i class="bi bi-geo-alt mb-1"></i>
-                                        <span class="fw-medium small">Campus Map</span>
-                                    </a>
-                                </div>
-                                
-                                <div class="col">
-                                    <a href="https://docs.google.com/spreadsheets/d/1tnHnEoI_FmN6qZ5CL7ECX4CdEImqvpe02mTrDKnhWG0/edit?pli=1&gid=1355036769#gid=1355036769" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #6fafda; color: white; height: 75px;">
-                                        <i class="bi bi-telephone mb-1"></i>
-                                        <span class="fw-medium small">Directory</span>
-                                    </a>
-                                </div>
-                                
-                                <div class="col">
-                                    <a href="https://www.myworkday.com/sandiego/d/home.htmld" target="_blank" class="quick-link-btn btn d-flex flex-column align-items-center justify-content-center py-2 h-100 rounded-4" style="background-color: #9b262e; color: white; height: 75px;">
-                                        <i class="bi bi-calendar-check mb-1"></i>
-                                        <span class="fw-medium small">Work Day</span>
-                                    </a>
-                                </div>
-                        </div>
-                        </div>
-                    </div>
+                    {% include 'dashboard/new_hire/components/quick_links.html' %}
                 </div>
             </div>
         </div>
@@ -336,10 +188,10 @@
         // Remove loading classes to prevent darkening effect
         document.body.classList.remove('loading');
         document.querySelector('.dashboard-container').classList.remove('loading');
-        
+
         var timestamp = new Date().getTime();
         var links = document.getElementsByTagName('link');
-        
+
         // Apply stylesheets directly without using preload
         for (var i = 0; i < links.length; i++) {
             if (links[i].rel === 'stylesheet') {
@@ -347,7 +199,7 @@
                 links[i].href = href + '?v=' + timestamp;
             }
         }
-        
+
         // Enhanced hover effect for quick links
         const style = document.createElement('style');
         style.textContent = `
@@ -397,7 +249,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initial binding of event handlers
         attachEventListeners();
-        
+
         // Ensure modal backdrop is properly removed after closing
         document.addEventListener('hidden.bs.modal', function (event) {
             // Remove any modal backdrops that might still exist
@@ -410,7 +262,7 @@
             document.body.style.overflow = '';
             document.body.style.paddingRight = '';
         }, false);
-        
+
         // Function to reattach event listeners after content update
         function attachEventListeners() {
             // Reattach listeners for task completion forms
@@ -418,19 +270,19 @@
                 // Remove any existing listeners
                 const newForm = form.cloneNode(true);
                 form.parentNode.replaceChild(newForm, form);
-                
+
                 // Add the event listener - using the SAME partial update logic as initial load
                 newForm.addEventListener('submit', function(e) {
                     // Prevent the event from being handled twice
                     e.stopImmediatePropagation();
                     e.preventDefault();
-                    
+
                     // Show loading state for the specific button only
                     const button = this.querySelector('button');
                     const originalIcon = button.innerHTML;
                     button.disabled = true;
                     button.innerHTML = '<i class="bi bi-hourglass-split text-secondary" style="font-size: 1.2rem;"></i>';
-                    
+
                     // Send AJAX request - SAME as original event handler
                     fetch(this.action, {
                         method: 'POST',
@@ -449,22 +301,22 @@
                                     // Extract the task list HTML from the response
                                     const parser = new DOMParser();
                                     const doc = parser.parseFromString(html, 'text/html');
-                                    
+
                                     // Find the updated table content
                                     const newTaskTable = doc.querySelector('.col-md-8 .card');
                                     if (newTaskTable) {
                                         // Replace just the task table content
                                         document.querySelector('.col-md-8 .card').innerHTML = newTaskTable.innerHTML;
-                                        
+
                                         // Update status card content (for task completion percentage)
                                         const newStatusCard = doc.querySelector('.col-md-4 .card.mb-2');
                                         if (newStatusCard) {
                                             document.querySelector('.col-md-4 .card.mb-2').innerHTML = newStatusCard.innerHTML;
                                         }
-                                        
+
                                         // Calculate and update percentage manually
                                         updateProgressBar();
-                                        
+
                                         // Reattach event listeners
                                         attachEventListeners();
                                     } else {
@@ -488,7 +340,7 @@
                     });
                 });
             });
-            
+
             // Initialize modals and other Bootstrap components
             document.querySelectorAll('[data-bs-toggle="modal"]').forEach(el => {
                 el.addEventListener('click', function() {
@@ -496,7 +348,7 @@
                     if (target) {
                         const modal = new bootstrap.Modal(target);
                         modal.show();
-                        
+
                         // Ensure close buttons work properly
                         target.querySelectorAll('.btn-close, .btn-secondary').forEach(btn => {
                             btn.addEventListener('click', function() {
@@ -515,21 +367,21 @@
                 });
             });
         }
-        
+
         // Function to calculate and update the progress bar manually
         function updateProgressBar() {
             // Count total and completed tasks
             const totalTasks = document.querySelectorAll('.table-responsive table tbody tr').length;
             const completedTasks = document.querySelectorAll('.bi-check-circle-fill').length;
-            
+
             if (totalTasks > 0) {
                 const percentage = Math.round((completedTasks / totalTasks) * 100);
-                
+
                 // Update the progress bar and text
                 const progressText = document.querySelector('.col-md-4 .card.mb-2 .text-muted:nth-child(2)');
                 const progressBar = document.querySelector('.col-md-4 .card.mb-2 .progress-bar');
                 const completedText = document.querySelector('.col-md-4 .card.mb-2 .text-muted:nth-child(1)');
-                
+
                 if (progressText && progressBar && completedText) {
                     progressText.textContent = percentage + '%';
                     progressBar.style.width = percentage + '%';
@@ -538,25 +390,25 @@
                 }
             }
         }
-        
+
         // Call this function on page load to ensure the progress bar is correct
         updateProgressBar();
-        
+
         // Remove the original direct form binding since we now use attachEventListeners for all forms
         // Instead, just initialize the modal form handlers which are different
         document.querySelectorAll('.modal form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
                 // Show loading state
                 const button = this.querySelector('button[type="submit"]');
                 const originalText = button.innerHTML;
                 button.disabled = true;
                 button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
-                
+
                 // Get the modal
                 const modal = this.closest('.modal');
-                
+
                 // Send AJAX request
                 fetch(this.action, {
                     method: 'POST',
@@ -571,7 +423,7 @@
                         // Close the modal
                         const modalInstance = bootstrap.Modal.getInstance(modal);
                         modalInstance.hide();
-                        
+
                         // Ensure modal backdrop and body classes are removed
                         setTimeout(() => {
                             document.body.classList.remove('modal-open');
@@ -579,10 +431,10 @@
                             document.body.style.paddingRight = '';
                             const backdrops = document.querySelectorAll('.modal-backdrop');
                             backdrops.forEach(backdrop => backdrop.remove());
-                            
+
                             // Update progress bar before reloading
                             updateProgressBar();
-                            
+
                             // Simply reload the page since these are less frequent actions
                             window.location.reload();
                         }, 100);

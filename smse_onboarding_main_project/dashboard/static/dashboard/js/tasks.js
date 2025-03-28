@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
+                    updateCircularProgress();
                     // If we're completing or uncompleting a task, refresh the page
                     // This ensures both tables are updated correctly
                     window.location.reload();
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const taskId = this.id.split('-')[1];
             const action = this.checked ? 'complete_task' : 'continue_task';
             const url = `/dashboard/${action}/${taskId}/`;
-            
+
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
+                    updateCircularProgress();
                     // Refresh the page to update the UI
                     window.location.reload();
                 }
@@ -64,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
     taskActionButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            
+
             if (this.textContent.includes('Mark as Complete')) {
                 const checkbox = this.closest('tr').querySelector('.form-check-input');
                 checkbox.checked = true;
@@ -74,10 +76,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 checkbox.checked = false;
                 checkbox.dispatchEvent(new Event('change'));
             }
-            
+
             // Handle View Details action here if needed
         });
     });
+
+    // Initial progress update
+    updateCircularProgress();
 });
 
 // Helper function to get CSRF token
@@ -94,4 +99,29 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+// Function to update circular progress
+function updateCircularProgress() {
+    const circle = document.querySelector('#progressCircle');
+    if (!circle) return;
+
+    const totalTasks = document.querySelectorAll('.table-responsive table tbody tr').length;
+    const completedTasks = document.querySelectorAll('.bi-check-circle-fill').length;
+
+    if (totalTasks > 0) {
+        const percentage = (completedTasks / totalTasks);
+        const circumference = 2 * Math.PI * 50; // 50 is the radius of the circle
+        const offset = circumference * (1 - percentage);
+
+        // Update the circle
+        circle.style.strokeDasharray = circumference;
+        circle.style.strokeDashoffset = offset;
+
+        // Update the text
+        const progressText = document.querySelector('.progress-text div:last-child');
+        if (progressText) {
+            progressText.textContent = `${completedTasks} of ${totalTasks}`;
+        }
+    }
 }

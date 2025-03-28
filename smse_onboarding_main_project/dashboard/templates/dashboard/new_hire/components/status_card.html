@@ -1,39 +1,202 @@
 {% load custom_filters %}
 {% load static %}
 
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title text-center mb-4">Welcome {{ faculty.first_name }} {{ faculty.last_name }}</h5>
-        
-        <div class="d-flex flex-column align-items-center mb-3">
-            <img src="{% static 'dashboard/images/profile.png' %}" alt="Profile" class="rounded-circle mb-2" style="width: 80px; height: 80px;" onerror="this.src='{% static 'dashboard/images/profile-placeholder.png' %}'; this.onerror='';">
-            <h5 class="mb-1">Dr. {{ faculty.first_name }} {{ faculty.last_name }}</h5>
-            <p class="text-muted mb-3">{{ faculty.job_role }}</p>
-            
-            <div class="d-flex justify-content-center mb-3">
-                <a href="#" class="btn btn-light btn-sm rounded-circle mx-1">
-                    <i class="bi bi-mortarboard"></i>
-                </a>
-                <a href="#" class="btn btn-light btn-sm rounded-circle mx-1">
-                    <i class="bi bi-telephone"></i>
-                </a>
-                <a href="#" class="btn btn-light btn-sm rounded-circle mx-1">
-                    <i class="bi bi-envelope"></i>
-                </a>
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <!-- Three Dots Menu-->
+        <div class="dropdown position-absolute" style="top: 1rem; right: 1.5rem;">
+            <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                    <i class="bi bi-person me-2"></i>Edit Profile
+                </a></li>
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                    <i class="bi bi-file-earmark-text me-2"></i>Documents
+                    {% if documents %}
+                    <span class="badge rounded-pill bg-info ms-2" style="font-size: 0.6rem;">{{ documents|length }}</span>
+                    {% endif %}
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">
+                    <i class="bi bi-gear me-2"></i>Settings
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="welcome-text bold-name mb-3">
+            Welcome, {{ faculty.first_name }}
+        </div>
+
+        <div class="profile-card">
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <!-- Profile Circle Container -->
+                <div class="circle-container d-flex align-items-center">
+                    <div class="position-relative" style="width: 150px; height: 150px;">
+                        <!-- Default Bootstrap Icon -->
+                        <div class="rounded-circle position-absolute d-flex align-items-center justify-content-center bg-light profile-img"
+                             style="width: 150px; height: 150px; top: 0; left: 0; z-index: 0;">
+                            <i class="bi bi-person-fill text-primary" style="font-size: 105px;"></i>
+                        </div>
+
+                        <!-- Profile Image (overlays the icon if available) -->
+                        <img src="{% static 'dashboard/images/profile.png' %}"
+                             alt="Profile"
+                             class="profile-img position-absolute"
+                             style="width: 150px; height: 150px; top: 0; left: 0; z-index: 1;"
+                             onerror="this.style.display='none'">
+                    </div>
+                </div>
+                <div class="text-center mt-2">
+                    <div class="bold-name">Dr. {{ faculty.first_name }} {{ faculty.last_name }}</div>
+                    <div class="job-title">{{ faculty.job_role }}</div>
+                </div>
+            </div>
+
+            <!-- Progress Circle -->
+            <div class="circle-container d-flex align-items-center">
+                <div class="progress-circle">
+                    <svg width="150" height="150">
+                        <circle cx="75" cy="75" r="65" stroke="#e6e6e6" stroke-width="10" fill="none"/>
+                        <circle cx="75" cy="75" r="65"
+                                stroke="#0047ab"
+                                stroke-width="10"
+                                fill="none"
+                                stroke-dasharray="408.4"
+                                id="progressCircle"
+                                stroke-linecap="round"/>
+                    </svg>
+                    <div class="progress-text">
+                        <div>Progress</div>
+                        <div>{{ num_completed }} of {{ num_tasks }}</div>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        {% if tasks %}
-        <div class="text-center">
-            <h6 class="mb-2">Task Progress</h6>
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <span class="text-muted small">{{ num_completed }} completed</span>
-                <span class="text-muted small">{{ percentage }}%</span>
-            </div>
-            <div class="progress mb-4" style="height: 8px;">
-                <div class="progress-bar bg-info" role="progressbar" style="width: {{ percentage }}%" aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-        </div>
-        {% endif %}
     </div>
 </div>
+
+<!-- Document Modal -->
+{% include 'documents/upload_modal.html' %}
+
+<!-- Profile Modal -->
+{% include 'dashboard/new_hire/components/profile_modal.html' %}
+
+<style>
+.welcome-text {
+    position: absolute;
+    top: 1rem;
+    left: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.profile-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 2rem;
+    padding: 0 1rem;
+    gap: 2rem;
+}
+
+.profile-section {
+    margin-top: 0;
+}
+
+.circle-container {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-img {
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #f0f0f0;
+}
+
+.progress-circle {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-circle svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotate(-90deg);
+    z-index: 0;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 16px;
+    width: 100px;
+    z-index: 1;
+}
+
+.progress-text div {
+    line-height: 1.4;
+}
+
+.progress-text div:first-child {
+    margin-bottom: 4px;
+}
+
+.bold-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+.job-title {
+    font-size: 0.9rem;
+    color: gray;
+}
+
+/* Three dots menu button style */
+.dropdown .btn-light {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    line-height: 32px;
+    background-color: transparent;
+    border: none;
+}
+
+.dropdown .btn-light:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-item i {
+    font-size: 1rem;
+}
+</style>
+
+<!-- Initialize tooltips -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+});
+
+</script>
