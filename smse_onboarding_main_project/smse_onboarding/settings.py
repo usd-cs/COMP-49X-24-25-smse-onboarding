@@ -40,8 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'tasks.apps.TasksConfig',
-    'reminders',
-    'smse_onboarding',
     'documents.apps.DocumentsConfig',
     'users.apps.UsersConfig',
     'dashboard.apps.DashboardConfig',
