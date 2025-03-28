@@ -66,16 +66,30 @@ body {
     font-size: 0.9rem;
     border: none;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
     color: white;
+    position: relative;
 }
 
 .quick-link-btn i {
-    font-size: 2rem;
+    font-size: 1.5rem;
     margin-bottom: 8px;
+    transition: transform 0.2s ease;
 }
 
+.quick-link-btn:hover {
+    transform: translateY(-2px);
+    background-color: #001f3f !important; /* Dark navy blue */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.quick-link-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Button background colors */
 .admin-btn { background-color: #50043d; }
 .it-btn { background-color: #4b8a1b; }
 .parking-btn { background-color: #221165; }
@@ -266,7 +280,7 @@ body {
     position: fixed;
     top: 0;
     right: 0;
-    width: calc(100% - 320px); 
+    width: calc(100% - 320px);
     margin-right: 20px;
     margin-top: 0; /* Remove top margin */
     margin-left: 20px;
@@ -281,7 +295,7 @@ body {
 .top-bar {
     position: fixed;
     top: 0;
-    left: 280px; 
+    left: 280px;
     right: 0;
     height: 35px !important;
     background-color: white !important;
