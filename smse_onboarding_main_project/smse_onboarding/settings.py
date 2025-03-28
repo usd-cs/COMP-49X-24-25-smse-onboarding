@@ -27,6 +27,8 @@ SECRET_KEY = 'django-insecure-i)^nvymxnl@fn$+1k!37@w#2+ho3#2lpvokfw(xt&vpbjyw$gu
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'smse-onboarding.dedyn.io:8080',
+    'smse-onboarding.dedyn.io:8000',
     'smse-onboarding.dedyn.io',
     'localhost',
     '127.0.0.1',
@@ -87,6 +89,14 @@ TEMPLATES = [
         },
     },
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://smse-onboarding.dedyn.io:8080',
+    'http://smse-onboarding.dedyn.io:8000',
+    'http://smse-onboarding.dedyn.io',
+]
+
+CSRF_COOKIE_DOMAIN = 'smse-onboarding.dedyn.io'
 
 WSGI_APPLICATION = 'smse_onboarding.wsgi.application'
 
@@ -189,8 +199,3 @@ ALLOWED_DOCUMENT_TYPES = [
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ]
 MAX_UPLOAD_SIZE = 5242880  # 5MB
-
-# Add this to your settings.py
-FIXTURE_DIRS = [
-    BASE_DIR / 'fixtures',
-]
