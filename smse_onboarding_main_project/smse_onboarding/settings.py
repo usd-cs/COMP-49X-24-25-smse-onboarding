@@ -184,3 +184,8 @@ ALLOWED_DOCUMENT_TYPES = [
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ]
 MAX_UPLOAD_SIZE = 5242880  # 5MB
+
+# Add this to your settings.py
+FIXTURE_DIRS = [
+    BASE_DIR / 'fixtures',
+]
