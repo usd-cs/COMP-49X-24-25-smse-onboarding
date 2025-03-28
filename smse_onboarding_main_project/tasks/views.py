@@ -59,23 +59,15 @@ def home(request):
     if total_assigned_tasks > 0:
         completion_percentage = (completed_tasks_count / total_assigned_tasks) * 100
 
-    # Debug output
-    print("DEBUG: Task Information")
-    print(f"Faculty: {faculty.first_name} {faculty.last_name}")
-    print(f"Total tasks: {tasks.count()}")
-    print(f"Assigned tasks: {assigned_tasks.count()}")
-    print(f"Completed tasks: {completed_tasks_count}")
-
     # Calculate days remaining and set completion status for each task
     for task in tasks:
         # Add faculty-specific completion status
         task.is_completed_by_faculty = task.id in completed_task_ids
-        print(f"Task: {task.title} - Completed: {task.is_completed_by_faculty}")
 
     context = {
         'tasks': tasks,
         'faculty': faculty,
-        'documents': documents,  # Add documents to context
+        'documents': documents,
         'completed_tasks_count': completed_tasks_count,
         'total_assigned_tasks': total_assigned_tasks,
         'completion_percentage': round(completion_percentage),
