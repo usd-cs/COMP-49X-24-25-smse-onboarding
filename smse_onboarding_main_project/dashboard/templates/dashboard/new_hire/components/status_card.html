@@ -65,12 +65,13 @@
                                 stroke-width="10"
                                 fill="none"
                                 stroke-dasharray="408.4"
+                                stroke-dashoffset="408.4"
                                 id="progressCircle"
                                 stroke-linecap="round"/>
                     </svg>
                     <div class="progress-text">
                         <div>Progress</div>
-                        <div>{{ num_completed }} of {{ num_tasks }}</div>
+                        <div id="progressText">{{ num_completed }} of {{ num_tasks }}</div>
                     </div>
                 </div>
             </div>
@@ -190,13 +191,87 @@
 }
 </style>
 
-<!-- Initialize tooltips -->
+<!-- Initialize tooltips and progress circle -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Ensure progress circle is initialized after DOM is fully loaded
+    setTimeout(function() {
+        updateProgressCircle();
+        console.log("Progress circle initialized on page load");
+    }, 300);
+
+    // Handle task completion via Ajax
+    document.querySelectorAll('.task-completion-form').forEach(form => {
+        form.addEventListener('submit', function() {
+            // After form submission, update progress
+            setTimeout(updateProgressCircle, 500);
+        });
+    });
+
+    // Add window load event to ensure progress circle is recalculated when page is fully loaded
+    window.addEventListener('load', function() {
+        updateProgressCircle();
+        console.log("Progress circle updated on window load");
     });
 });
 
+// Function to update progress circle
+function updateProgressCircle() {
+    // Count completed tasks from the DOM
+    const completedTasks = document.querySelectorAll('.bi-check-circle-fill').length;
+    const totalTasks = completedTasks + document.querySelectorAll('.task-circle-btn').length;
+    
+    // Server data fallback - if information cannot be found in the DOM
+    const serverCompletedTasks = {{ num_completed|default:0 }};
+    const serverTotalTasks = {{ num_tasks|default:0 }};
+    
+    // Use DOM data or server data, prioritizing DOM data
+    const finalCompletedTasks = (completedTasks > 0) ? completedTasks : serverCompletedTasks;
+    const finalTotalTasks = (totalTasks > 0) ? totalTasks : serverTotalTasks;
+    
+    // Update progress text
+    const progressTextElement = document.getElementById('progressText');
+    if (progressTextElement) {
+        progressTextElement.textContent = finalCompletedTasks + ' of ' + finalTotalTasks;
+    }
+    
+    // Calculate percentage
+    let percentage = 0;
+    if (finalTotalTasks > 0) {
+        percentage = (finalCompletedTasks / finalTotalTasks) * 100;
+    }
+    
+    console.log("Progress calculation:", finalCompletedTasks, "of", finalTotalTasks, "=", percentage + "%");
+    
+    // Update progress circle
+    const progressCircle = document.getElementById('progressCircle');
+    if (progressCircle) {
+        const circumference = 2 * Math.PI * 65; // 2πr where r=65
+        const dashoffset = circumference - (percentage / 100) * circumference;
+        progressCircle.style.strokeDashoffset = dashoffset;
+        progressCircle.style.strokeDasharray = circumference;
+        
+        // Change color based on progress
+        if (percentage === 100) {
+            progressCircle.style.stroke = '#4CAF50'; // Green for complete
+        } else if (percentage >= 75) {
+            progressCircle.style.stroke = '#2196F3'; // Blue for good progress
+        } else if (percentage >= 50) {
+            progressCircle.style.stroke = '#FFC107'; // Yellow/amber for medium progress
+        } else if (percentage >= 25) {
+            progressCircle.style.stroke = '#FF9800'; // Orange for some progress
+        } else {
+            progressCircle.style.stroke = '#0047ab'; // Default blue
+        }
+    }
+}
+
+// Make update function globally available so other scripts can call it
+window.forceUpdateProgressCircle = updateProgressCircle;
 </script>
