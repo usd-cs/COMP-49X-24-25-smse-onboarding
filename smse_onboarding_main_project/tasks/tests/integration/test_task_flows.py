@@ -120,7 +120,7 @@ class TaskFlowTests(TestCase):
         response = self.client.get(reverse('tasks:home'))
         self.assertEqual(response.status_code, 200)
 
-        # Verify we get all tasks
+        # Verify we get all tasks (this matches your view's behavior)
         self.assertEqual(len(response.context['tasks']), Task.objects.all().count())
 
         # Count completed tasks for faculty1
