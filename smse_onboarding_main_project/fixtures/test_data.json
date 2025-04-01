@@ -30,6 +30,56 @@
         }
     },
     {
+        "model": "auth.user",
+        "pk": 4,
+        "fields": {
+            "username": "jenniferolsen",
+            "password": "pbkdf2_sha256$870000$S89MJq4Dsyb7xm3eQaRxSt$/zXMZdB3XYhdG0qcvlU00N4GB6lEAa12+SExveCzoxk=",
+            "email": "jenniferolsen@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 5,
+        "fields": {
+            "username": "hmorgan",
+            "password": "pbkdf2_sha256$870000$fKwWhgDBuHvP7nLJO0bQNU$K9abaa+IYH4yYCyuyfYRNHv/sBCqLryYNPCdH/GkU9k=",
+            "email": "hmorgan@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 6,
+        "fields": {
+            "username": "michelles",
+            "password": "pbkdf2_sha256$870000$kbKb8WNX4rdZM7DqoIJ6Cj$BhVbtqm3ZF1Kp4HyBxmBgiweRvZ4pOevlB83ReAtknE=",
+            "email": "michelles@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 7,
+        "fields": {
+            "username": "pschmid",
+            "password": "pbkdf2_sha256$870000$Z7u7u1TW1E5SqNTMf8fRNo$GQh2g7UX5O1MeYWmwwrGbn85CwpeBRit+0tFzk3Hfg4=",
+            "email": "pschmid@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 8,
+        "fields": {
+            "username": "rsmith1",
+            "password": "pbkdf2_sha256$870000$Q4gESFKUtA7uWo0gWa0j4V$Gjbah7m0HUpb6m4N+RpIuwiJdEp0azNsXwQ1FCVPJOM=",
+            "email": "rsmith1@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
         "model": "users.faculty",
         "pk": 1,
         "fields": {
