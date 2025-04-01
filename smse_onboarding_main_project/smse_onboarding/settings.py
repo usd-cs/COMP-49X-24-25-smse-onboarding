@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'dashboard.apps.DashboardConfig',
     'smse_onboarding',
+    'reminders',
 ]
 
 AUTHENTICATION_BACKENDS = [
