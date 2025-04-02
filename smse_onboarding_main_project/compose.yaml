@@ -2,11 +2,14 @@ services:
   web:
     build:
       context: .
+    ports:
+      - "8000:8000" # 👈 REMOVE when pushing to production
     volumes:
       - .:/usr/local/app
     depends_on:
       - db
     environment:
+      ENVIRONMENT: development
       DJANGO_SETTINGS_MODULE: smse_onboarding.settings
       DATABASE_URL: postgres://postgres:password@db:5432/smse-db
       DB_HOST: db

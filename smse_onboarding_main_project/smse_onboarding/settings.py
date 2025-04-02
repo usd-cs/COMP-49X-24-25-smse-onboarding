@@ -13,6 +13,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
+# TEMPORARY LOCAL DEV OVERRIDES — REMOVE BEFORE PUSHING TO PRODUCTION!!!!!
+if True:  # 👈 change to False or delete when pushing
+    DEBUG = True
+    ALLOWED_HOSTS = ['*']
+    CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+    CSRF_COOKIE_DOMAIN = None
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
