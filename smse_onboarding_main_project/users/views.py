@@ -10,6 +10,15 @@ from django.contrib.auth.models import User
 
 def login(request):
     """Handle user login"""
+    # If already authenticated, direct to appropriate dashboard
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return redirect('admin_dashboard')
+        elif request.user.is_staff:
+            return redirect('dashboard:admin_home')
+        else:
+            return redirect('dashboard:new_hire_home')
+
     if request.method == 'POST':
         # Get username and password from POST data
         username = request.POST.get('username')
@@ -19,9 +28,12 @@ def login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
+
             # Redirect based on user type
             if user.is_superuser:
                 return redirect('admin_dashboard')
+            elif user.is_staff:
+                return redirect('dashboard:admin_home')
             else:
                 try:
                     faculty = Faculty.objects.get(user=user)
@@ -44,7 +56,11 @@ def login(request):
 
                     messages.info(request, 'Welcome! Please complete your profile.')
 
-        return redirect('tasks:home')
+                return redirect('dashboard:new_hire_home')
+
+        # If login failed
+        messages.error(request, 'Invalid username or password.')
+        return redirect('users:login')
 
     return render(request, 'users/auth/login.html')
 
