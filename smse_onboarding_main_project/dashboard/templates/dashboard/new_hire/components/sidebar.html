@@ -34,4 +34,20 @@
             {% csrf_token %}
         </form>
     </nav>
+    
+    <div class="quick-links">
+        <div class="quick-links-title">
+            <i class="bi bi-link-45deg"></i>
+            <span>Quick Links</span>
+            <span class="new-badge">NEW</span>
+        </div>
+        <a href="{% url 'users:show_welcome' %}" class="nav-item">
+            <i class="bi bi-info-circle-fill"></i>
+            <span>Show Welcome Banner</span>
+        </a>
+        <a href="{% url 'users:welcome_info' %}" class="nav-item">
+            <i class="bi bi-journal-text"></i>
+            <span>Welcome Information</span>
+        </a>
+    </div>
 </div>

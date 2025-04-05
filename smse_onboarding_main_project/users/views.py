@@ -12,6 +12,9 @@ def login(request):
     """Handle user login"""
     # If already authenticated, direct to appropriate dashboard
     if request.user.is_authenticated:
+        # Always show welcome banner after login
+        request.session['show_welcome_banner'] = True
+
         if request.user.is_superuser:
             return redirect('admin_dashboard')
         elif request.user.is_staff:
@@ -28,6 +31,9 @@ def login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
+
+            # Always show welcome banner after login
+            request.session['show_welcome_banner'] = True
 
             # Redirect based on user type
             if user.is_superuser:
@@ -73,3 +79,36 @@ def profile(request):
     except Faculty.DoesNotExist:
         messages.error(request, 'Faculty profile not found.')
         return redirect('users:login')
+
+@login_required
+def dismiss_welcome_banner(request):
+    """Dismiss the welcome banner for this session"""
+    request.session['show_welcome_banner'] = False
+    # Get the referer URL to redirect back to the same page
+    referer = request.META.get('HTTP_REFERER', None)
+    if referer:
+        return redirect(referer)
+    elif request.user.is_staff:
+        return redirect('dashboard:admin_home')
+    else:
+        return redirect('dashboard:new_hire_home')
+
+@login_required
+def show_welcome(request):
+    """Show the welcome banner"""
+    # Set session variable to show the banner
+    request.session['show_welcome_banner'] = True
+
+    # Get the referer URL to redirect back to the same page
+    referer = request.META.get('HTTP_REFERER', None)
+    if referer:
+        return redirect(referer)
+    elif request.user.is_staff:
+        return redirect('dashboard:admin_home')
+    else:
+        return redirect('dashboard:new_hire_home')
+
+@login_required
+def welcome_info(request):
+    """Display detailed welcome information page"""
+    return render(request, 'users/welcome_info.html')
