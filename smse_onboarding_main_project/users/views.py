@@ -10,6 +10,18 @@ from django.contrib.auth.models import User
 
 def login(request):
     """Handle user login"""
+    # If already authenticated, direct to appropriate dashboard
+    if request.user.is_authenticated:
+        # Always show welcome banner after login
+        request.session['show_welcome_banner'] = True
+
+        if request.user.is_superuser:
+            return redirect('admin_dashboard')
+        elif request.user.is_staff:
+            return redirect('dashboard:admin_home')
+        else:
+            return redirect('dashboard:new_hire_home')
+
     if request.method == 'POST':
         # Get username and password from POST data
         username = request.POST.get('username')
@@ -19,9 +31,15 @@ def login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
+
+            # Always show welcome banner after login
+            request.session['show_welcome_banner'] = True
+
             # Redirect based on user type
             if user.is_superuser:
                 return redirect('admin_dashboard')
+            elif user.is_staff:
+                return redirect('dashboard:admin_home')
             else:
                 try:
                     faculty = Faculty.objects.get(user=user)
@@ -44,7 +62,11 @@ def login(request):
 
                     messages.info(request, 'Welcome! Please complete your profile.')
 
-        return redirect('tasks:home')
+                return redirect('dashboard:new_hire_home')
+
+        # If login failed
+        messages.error(request, 'Invalid username or password.')
+        return redirect('users:login')
 
     return render(request, 'users/auth/login.html')
 
@@ -55,5 +77,49 @@ def profile(request):
         faculty = Faculty.objects.get(user=request.user)
         return render(request, 'users/profile/details.html', {'faculty': faculty})
     except Faculty.DoesNotExist:
-        messages.error(request, 'Faculty profile not found.')
-        return redirect('users:login')
+        # Create a new faculty profile if one doesn't exist
+        faculty = Faculty.objects.create(
+            user=request.user,
+            first_name=request.user.first_name or request.user.email.split('@')[0],
+            last_name=request.user.last_name or '',
+            email=request.user.email,
+            hire_date=timezone.now(),
+            job_role="New Faculty",
+            engineering_dept="SMSE",
+            phone="0000000000",
+            office_room="TBD"
+        )
+        return render(request, 'users/profile/details.html', {'faculty': faculty})
+
+@login_required
+def dismiss_welcome_banner(request):
+    """Dismiss the welcome banner for this session"""
+    request.session['show_welcome_banner'] = False
+    # Get the referer URL to redirect back to the same page
+    referer = request.META.get('HTTP_REFERER', None)
+    if referer:
+        return redirect(referer)
+    elif request.user.is_staff:
+        return redirect('dashboard:admin_home')
+    else:
+        return redirect('dashboard:new_hire_home')
+
+@login_required
+def show_welcome(request):
+    """Show the welcome banner"""
+    # Set session variable to show the banner
+    request.session['show_welcome_banner'] = True
+
+    # Get the referer URL to redirect back to the same page
+    referer = request.META.get('HTTP_REFERER', None)
+    if referer:
+        return redirect(referer)
+    elif request.user.is_staff:
+        return redirect('dashboard:admin_home')
+    else:
+        return redirect('dashboard:new_hire_home')
+
+@login_required
+def welcome_info(request):
+    """Display detailed welcome information page"""
+    return render(request, 'users/welcome_info.html')

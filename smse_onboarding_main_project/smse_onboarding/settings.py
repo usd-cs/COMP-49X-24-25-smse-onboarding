@@ -197,6 +197,10 @@ LOGIN_URL = '/users/login/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Messages settings
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+MESSAGE_LEVEL = 10  # Set to DEBUG level to show all messages
+
 # Settings for file uploads
 ALLOWED_DOCUMENT_TYPES = [
     'application/pdf',

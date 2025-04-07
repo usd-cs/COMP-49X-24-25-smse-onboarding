@@ -17,7 +17,7 @@ def get_faculty_from_request(request):
 
 def is_admin(user):
     """Check if user is admin"""
-    if user.is_superuser:
+    if user.is_superuser or user.is_staff:
         return True
     try:
         return user.is_authenticated and user.faculty_profile.is_admin
@@ -27,6 +27,10 @@ def is_admin(user):
 @login_required
 def new_hire_home(request):
     """Render the new hire dashboard home page"""
+    # Check if user is staff or admin, redirect to admin dashboard if so
+    if request.user.is_staff or is_admin(request.user):
+        return redirect('dashboard:admin_home')
+
     faculty = get_faculty_from_request(request)
     if not faculty:
         if request.user.is_superuser:
@@ -82,6 +86,10 @@ def admin_home(request):
     """
     Admin dashboard view showing upcoming deadlines and admin tasks
     """
+    # Additional check for admin access - redirect to new_hire_home if not admin
+    if not is_admin(request.user):
+        return redirect('dashboard:new_hire_home')
+
     # Get all faculty members who haven't completed onboarding
     faculty_members = Faculty.objects.filter(completed_onboarding=False)
     faculty_tasks = []
@@ -206,7 +214,7 @@ def complete_task(request, task_id):
                 # If AJAX request, return JSON response
                 if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                     return JsonResponse({'status': 'success'})
-                
+
                 return redirect('dashboard:new_hire_home')
 
         except Task.DoesNotExist:
@@ -216,7 +224,7 @@ def complete_task(request, task_id):
     # If AJAX request but an error occurred
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'status': 'error'}, status=400)
-        
+
     return redirect('dashboard:new_hire_home')
 
 @login_required
@@ -244,7 +252,7 @@ def continue_task(request, task_id):
                 # If AJAX request, return JSON response
                 if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                     return JsonResponse({'status': 'success'})
-                
+
                 return redirect('dashboard:new_hire_home')
 
         except Task.DoesNotExist:
@@ -254,5 +262,5 @@ def continue_task(request, task_id):
     # If AJAX request but an error occurred
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'status': 'error'}, status=400)
-        
+
     return redirect('dashboard:new_hire_home')

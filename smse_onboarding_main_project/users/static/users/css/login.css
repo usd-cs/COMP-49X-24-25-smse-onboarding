@@ -1,0 +1,98 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #dbdde3;
+  font-family: 'Roboto', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Wrapper to center the card */
+.login-page-wrapper {
+  width: 100%;
+  padding: 40px 20px;
+}
+
+/* The card itself */
+.login-card {
+  background-color: #1E1E1E;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Black area at top of card */
+.card-top-black {
+  background-color: #1E1E1E;
+  height: 75px;
+  width: 100%;
+}
+
+/* Blue band with logo + title */
+.blue-band {
+  background-color: #003C70;
+  height: 265px;
+  padding: 30px 40px;
+  gap: 40px;
+}
+
+.logo {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+.portal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 60px;
+  color: #fff;
+  margin: 0;
+  line-height: 70px;
+  text-align: left;
+}
+
+/* Login section */
+.login-content {
+  padding: 60px 40px;
+}
+
+.login-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  color: #b8b5e0;
+  margin-bottom: 40px;
+}
+
+/* Google login button */
+.google-btn {
+  background-color: #003C70;
+  color: #ffffff;
+  font-weight: 500;
+  padding: 20px;
+  border-radius: 63.5px;
+  width: 287px;
+  height: 93px;
+  font-size: 22px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.google-btn:hover {
+  background-color: #e8e8e8;
+}
+
+.google-icon {
+  margin-right: 12px;
+  display: inline-block;
+  vertical-align: middle;
+  background: transparent;
+}
+
+.subtext {
+  font-size: 0.95rem;
+  color: rgba(189, 186, 201, 0.6);
+}

@@ -8,4 +8,7 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='users:login'), name='logout'),
     path('profile/', views.profile, name='profile'),
+    path('dismiss-welcome/', views.dismiss_welcome_banner, name='dismiss_welcome'),
+    path('show-welcome/', views.show_welcome, name='show_welcome'),
+    path('welcome-info/', views.welcome_info, name='welcome_info'),
 ]

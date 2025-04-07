@@ -14,6 +14,26 @@
 
         <!-- Dashboard Content -->
         <div class="dashboard-content pt-4" style="padding-top: 50px !important;">
+            <!-- Welcome Banner -->
+            {% if request.session.show_welcome_banner %}
+            <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="bi bi-info-circle-fill fs-4"></i>
+                    </div>
+                    <div>
+                        <h4 class="alert-heading">Welcome to SMSE Onboarding Portal!</h4>
+                        <p>Hello {{ request.user.first_name }}, we're excited to have you join the School of Engineering team. This portal will guide you through all the necessary steps to complete your onboarding process.</p>
+                        <hr>
+                        <p class="mb-0">Please complete all the assigned tasks to ensure a smooth transition into your new role. If you have any questions, don't hesitate to reach out to your department contact.</p>
+                    </div>
+                </div>
+                <a href="{% url 'users:dismiss_welcome' %}" class="btn-close" aria-label="Close"></a>
+            </div>
+            {% endif %}
+            
+            <h1 class="dashboard-title">Welcome, {{ request.user.first_name }}!</h1>
+
             <div class="row g-2 h-100">
                 <!-- Left Column - Task Lists -->
                 <div class="col-md-8">
@@ -324,7 +344,7 @@
 
                                         // Calculate and update percentage manually
                                         updateProgressBar();
-                                        
+
                                         // Ensure progress circle is updated
                                         if (typeof updateProgressCircle === 'function') {
                                             updateProgressCircle();
@@ -334,7 +354,7 @@
 
                                         // Reattach event listeners
                                         attachEventListeners();
-                                        
+
                                         // Initialize any scripts in the status card
                                         const statusCardScripts = document.querySelectorAll('.col-md-4 .card.shadow-sm script');
                                         statusCardScripts.forEach(script => {
@@ -411,7 +431,7 @@
                     progressBar.setAttribute('aria-valuenow', percentage);
                     completedText.textContent = completedTasks + ' completed';
                 }
-                
+
                 // Call the new updateProgressCircle function in status_card.html
                 if (typeof updateProgressCircle === 'function') {
                     updateProgressCircle();
