@@ -30,6 +30,57 @@
         }
     },
     {
+        "model": "auth.user",
+        "pk": 4,
+        "fields": {
+            "username": "jenniferolsen",
+            "password": "pbkdf2_sha256$870000$S89MJq4Dsyb7xm3eQaRxSt$/zXMZdB3XYhdG0qcvlU00N4GB6lEAa12+SExveCzoxk=",
+            "email": "jenniferolsen@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 5,
+        "fields": {
+            "username": "hmorgan",
+            "password": "pbkdf2_sha256$870000$fKwWhgDBuHvP7nLJO0bQNU$K9abaa+IYH4yYCyuyfYRNHv/sBCqLryYNPCdH/GkU9k=",
+            "email": "hmorgan@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 6,
+        "fields": {
+            "username": "michelles",
+            "password": "pbkdf2_sha256$870000$kbKb8WNX4rdZM7DqoIJ6Cj$BhVbtqm3ZF1Kp4HyBxmBgiweRvZ4pOevlB83ReAtknE=",
+            "email": "michelles@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 7,
+        "fields": {
+            "username": "pschmid",
+            "password": "pbkdf2_sha256$870000$Z7u7u1TW1E5SqNTMf8fRNo$GQh2g7UX5O1MeYWmwwrGbn85CwpeBRit+0tFzk3Hfg4=",
+            "email": "pschmid@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 8,
+        "fields": {
+            "username": "rsmith1",
+            "password": "pbkdf2_sha256$870000$Q4gESFKUtA7uWo0gWa0j4V$Gjbah7m0HUpb6m4N+RpIuwiJdEp0azNsXwQ1FCVPJOM=",
+            "email": "rsmith1@sandiego.edu",
+            "is_active": true
+        }
+    },
+
+    {
         "model": "users.faculty",
         "pk": 1,
         "fields": {
@@ -87,6 +138,106 @@
             "mailing_list_status": true,
             "bio": "Yet another test bio",
             "completed_onboarding": false
+        }
+    },
+    {
+        "model": "users.faculty",
+        "pk": 4,
+        "fields": {
+            "user": 4,
+            "faculty_id": 4,
+            "first_name": "Jennifer",
+            "last_name": "Olsen",
+            "job_role": "Assistant Professor",
+            "engineering_dept": "Computer Science",
+            "email": "jenniferolsen@sandiego.edu",
+            "phone": "6192604892",
+            "zoom_phone": "6192604892",
+            "office_room": "GH103",
+            "hire_date": "2020-08-20T08:00:00-08:00",
+            "mailing_list_status": true,
+            "bio": "Jennifer K. Olsen, PhD, is an assistant professor of computer science at the University of San Diego since 2020.",
+            "completed_onboarding": true
+        }
+    },
+    {
+        "model": "users.faculty",
+        "pk": 5,
+        "fields": {
+            "user": 5,
+            "faculty_id": 5,
+            "first_name": "Hattie",
+            "last_name": "Morgan",
+            "job_role": "Executive Assistant",
+            "engineering_dept": "Administration",
+            "email": "hmorgan@sandiego.edu",
+            "phone": "6198285723",
+            "zoom_phone": "6198285723",
+            "office_room": "BEC344",
+            "hire_date": "2024-02-01T08:00:00-08:00",
+            "mailing_list_status": true,
+            "bio": "Admin user",
+            "completed_onboarding": true
+        }
+    },
+    {
+        "model": "users.faculty",
+        "pk": 6,
+        "fields": {
+            "user": 6,
+            "faculty_id": 6,
+            "first_name": "Michelle",
+            "last_name": "Sztupkay",
+            "job_role": "Marketing and Communication Manager",
+            "engineering_dept": "Administration",
+            "email": "michelles@sandiego.edu",
+            "phone": "6192023706",
+            "zoom_phone": "6192023706",
+            "office_room": "BEC324",
+            "hire_date": "2024-02-01T08:00:00-08:00",
+            "mailing_list_status": true,
+            "bio": "As the manager of marketing and communications, Michelle Sztupkay leads the development and implementation of strategies for branding, marketing and communications for USD's Shiley-Marcos School of Engineering (SMSE).",
+            "completed_onboarding": true
+        }
+    },
+    {
+        "model": "users.faculty",
+        "pk": 7,
+        "fields": {
+            "user": 7,
+            "faculty_id": 7,
+            "first_name": "Paula",
+            "last_name": "Schmid",
+            "job_role": "Executive Assistant to Dean",
+            "engineering_dept": "Administration",
+            "email": "pschmid@sandiego.edu",
+            "phone": "6192602977",
+            "zoom_phone": "6192602977",
+            "office_room": "BEC330",
+            "hire_date": "2024-02-01T08:00:00-08:00",
+            "mailing_list_status": true,
+            "bio": "Admin user",
+            "completed_onboarding": true
+        }
+    },
+    {
+        "model": "users.faculty",
+        "pk": 8,
+        "fields": {
+            "user": 8,
+            "faculty_id": 8,
+            "first_name": "Ryan",
+            "last_name": "Smith",
+            "job_role": "Administrative Assistant",
+            "engineering_dept": "Administration",
+            "email": "rsmith1@sandiego.edu",
+            "phone": "6192602309",
+            "zoom_phone": "6192602309",
+            "office_room": "BEC331",
+            "hire_date": "2024-02-01T08:00:00-08:00",
+            "mailing_list_status": true,
+            "bio": "Admin user",
+            "completed_onboarding": true
         }
     },
 
