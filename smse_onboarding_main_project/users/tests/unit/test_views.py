@@ -224,7 +224,7 @@ class UserViewTests(TestCase):
              patch('django.contrib.auth.login'), \
              patch('django.shortcuts.redirect'):
 
-            response = self.client.post(reverse('users:login'), {
+            _ = self.client.post(reverse('users:login'), {
                 'username': 'testuser',
                 'password': 'password'
             })
@@ -238,7 +238,7 @@ class UserViewTests(TestCase):
              patch('django.contrib.auth.login'), \
              patch('django.shortcuts.redirect'):
 
-            response = self.client.post(reverse('users:login'), {
+            _ = self.client.post(reverse('users:login'), {
                 'username': 'staffuser',
                 'password': 'password'
             })
