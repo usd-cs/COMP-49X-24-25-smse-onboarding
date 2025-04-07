@@ -1,8 +1,7 @@
 {% load static %}
 <div class="sidebar">
     <div class="logo-container">
-       <!-- <img src="{% static 'admin_dashboard/logo.png' %}" alt="SMSE Logo" class="logo" onerror="this.src='{% static 'admin_dashboard/default-logo.png' %}'; this.onerror='';"> -->
-       <!-- <img src="{% static 'dashboard/images/smse_logo_transparent.png' %}" alt="SMSE Logo" class="logo"> -->
+       <img src="{% static 'dashboard/images/smse_logo_transparent.png' %}" alt="SMSE Logo" class="logo">
         <div class="school-name">School of Engineering</div>
     </div>
 
@@ -20,10 +19,6 @@
             <span>Manage Documents</span>
         </a>
         <a href="#" class="nav-item">
-            <i class="bi bi-check2-square"></i>
-            <span>Task Progress</span>
-        </a>
-        <a href="#" class="nav-item">
             <i class="bi bi-bell-fill"></i>
             <span>Notification</span>
         </a>
@@ -33,7 +28,7 @@
         </a>
         <a href="{% url 'admin:index' %}" class="nav-item" target="_blank">
             <i class="bi bi-gear-fill"></i>
-            <span>Management Settings</span>
+            <span> Advanced Admin Settings</span>
         </a>
         <a href="{% url 'logout' %}" class="nav-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <i class="bi bi-box-arrow-right"></i>

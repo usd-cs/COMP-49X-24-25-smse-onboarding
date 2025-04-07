@@ -1,7 +1,7 @@
 :root {
     --primary-color: #1a3a8f;
     --accent-color: #3b82f6;
-    --bg-light: #f5f6fa;
+    --bg-light: #eaeaea;
     --text-dark: #2d3436;
     --text-light: #636e72;
     --border-color: #e5e7eb;
@@ -18,13 +18,27 @@
 body {
     font-family: 'Inter', sans-serif;
     margin: 0;
-    background-color: var(--bg-light);
+    background-color: #eaeaea !important;
     color: var(--text-dark);
+    height: 100%;
+    overflow-y: auto;
+}
+
+html {
+    height: 100%;
+    background-color: #eaeaea !important;
+}
+
+.dashboard-body {
+    background-color: #eaeaea !important;
 }
 
 .dashboard-container {
     display: flex;
     min-height: 100vh;
+    height: 100%;
+    overflow: hidden;
+    background-color: #eaeaea !important;
 }
 
 .main-content {
@@ -33,19 +47,19 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-color: #eaeaea !important;
+    overflow-y: auto;
+    height: 100vh;
+    padding-bottom: 30px;
 }
 
-/* Sidebar Styles */
-.sidebar {
-    width: 280px;
-    background-color: #0A1E3C;
-    padding: 20px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    height: 100vh;
-    position: fixed;
+.dashboard-content {
+    height: auto;
+    min-height: calc(100% - 35px);
+    overflow-y: auto;
+    padding-bottom: 50px;
+    padding-top: 50px !important;
+    background-color: #eaeaea !important;
 }
 
 .logo-container {
@@ -53,13 +67,14 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    padding: 20px 0;
+    padding: 0 0 10px 0;
 }
 
 .logo {
     width: 60px;
     height: 60px;
     border-radius: 50%;
+    margin-top: 10px;
 }
 
 .school-name {
@@ -109,24 +124,6 @@ body {
     color: var(--text-dark);
 }
 
-.search-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: var(--bg-light);
-    padding: 8px 15px;
-    border-radius: 8px;
-    flex: 1;
-    max-width: 400px;
-    margin: 0 20px;
-}
-
-.search-bar input {
-    border: none;
-    background: none;
-    outline: none;
-    width: 100%;
-}
 
 .nav-right {
     display: flex;
