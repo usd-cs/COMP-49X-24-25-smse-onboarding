@@ -95,9 +95,10 @@ CSRF_TRUSTED_ORIGINS = [
     'https://smse-onboarding.dedyn.io:8080',
     'http://smse-onboarding.dedyn.io:8000',
     'http://smse-onboarding.dedyn.io',
+    'http://localhost:8000',
 ]
 
-CSRF_COOKIE_DOMAIN = 'smse-onboarding.dedyn.io'
+CSRF_COOKIE_DOMAIN = [None, 'smse-onboarding.dedyn.io']
 
 WSGI_APPLICATION = 'smse_onboarding.wsgi.application'
 
@@ -196,6 +197,10 @@ LOGIN_URL = '/users/login/'
 # Media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Messages settings
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+MESSAGE_LEVEL = 10  # Set to DEBUG level to show all messages
 
 # Settings for file uploads
 ALLOWED_DOCUMENT_TYPES = [

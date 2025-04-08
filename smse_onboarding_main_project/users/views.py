@@ -77,8 +77,19 @@ def profile(request):
         faculty = Faculty.objects.get(user=request.user)
         return render(request, 'users/profile/details.html', {'faculty': faculty})
     except Faculty.DoesNotExist:
-        messages.error(request, 'Faculty profile not found.')
-        return redirect('users:login')
+        # Create a new faculty profile if one doesn't exist
+        faculty = Faculty.objects.create(
+            user=request.user,
+            first_name=request.user.first_name or request.user.email.split('@')[0],
+            last_name=request.user.last_name or '',
+            email=request.user.email,
+            hire_date=timezone.now(),
+            job_role="New Faculty",
+            engineering_dept="SMSE",
+            phone="0000000000",
+            office_room="TBD"
+        )
+        return render(request, 'users/profile/details.html', {'faculty': faculty})
 
 @login_required
 def dismiss_welcome_banner(request):
