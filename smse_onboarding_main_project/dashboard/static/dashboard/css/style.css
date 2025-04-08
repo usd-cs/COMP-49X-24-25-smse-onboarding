@@ -5,24 +5,25 @@
     --text-color: black;
     --light-text: #666;
     --border-color: #e5e7eb;
-    --dark-bg: #1a1a1a;
+    --dark-bg: #eaeaea;
 }
 
 /* General Styles */
 * {
     margin: 0;
-    padding: 0;
+    padding: 20;
     box-sizing: border-box;
     font-family: 'Inter', sans-serif;
 }
 
 body {
-    background-color: var(--dark-bg);
-    color: white;
+    background-color: #eaeaea;
+    color: var(--text-color);
     min-height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-/* Navbar Styles */
+/* Navbar Styles - basic, not topnav specific */
 .navbar-custom {
     background-color: var(--primary-color);
     padding: 0.5rem 1rem;
@@ -40,8 +41,9 @@ body {
 /* Main Container */
 .main-container {
     padding: 20px;
-    height: calc(100vh - 56px); /* the height of the page minus the navbar */
-    background-color: var(--dark-bg);
+    height: calc(100vh - 56px);
+    background-color: #eaeaea;
+    width: 100%;
 }
 
 /* Card Styles */
@@ -53,6 +55,7 @@ body {
     background-color: white;
     color: var(--text-color);
     border: none;
+    max-width: 100%; /* Ensure cards don't overflow */
 }
 
 /* Quick Links */
@@ -183,69 +186,30 @@ body {
     display: flex;
     height: 100vh; /* Fixed height instead of min-height */
     position: relative;
-    background-color: var(--dark-bg);
+    background-color: #eaeaea;
     overflow: hidden; /* Prevent scrolling */
-}
-
-/* Sidebar Styles */
-.sidebar {
-    width: 280px;
-    background-color: white;
-    padding: 20px;
-    color: black;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 1050;
-    overflow-y: auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.logo-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.logo {
-    width: 80px;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-.school-name {
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    color: black;
 }
 
 /* Main Content */
 .main-content {
     flex: 1;
-    margin-left: 280px; /* Same width as sidebar */
-    height: 100vh; /* Fixed height instead of min-height */
+    margin-left: 280px; /* Match sidebar width from sidebar.css */
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: var(--dark-bg);
-    overflow: hidden; /* Prevent scrolling */
+    background-color: #eaeaea;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 /* Dashboard Content */
 .dashboard-content {
     padding: 12px;
-    padding-top: 45px;
+    padding-top: 50px; /* Increased from 45px to match what was in the inline style */
     padding-bottom: 15px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 .dashboard-content .row {
@@ -275,121 +239,13 @@ body {
     margin-top: 12px !important;
 }
 
-/* Navbar Styles */
-.navbar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: calc(100% - 320px);
-    margin-right: 20px;
-    margin-top: 0; /* Remove top margin */
-    margin-left: 20px;
-    border-radius: 0; /* Remove border radius */
-    z-index: 1065; /* Higher than top bar to ensure navbar elements are visible */
-    height: 35px; /* Match top bar height */
-    background-color: transparent !important; /* Make it transparent */
-    box-shadow: none; /* Remove shadow */
-}
-
-/* Top Bar Styles with Rounded Bottom Corners */
-.top-bar {
-    position: fixed;
-    top: 0;
-    left: 280px;
-    right: 0;
-    height: 35px !important;
-    background-color: white !important;
-    z-index: 1060;
-    border-bottom: 1px solid #eaeaea;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.navbar .nav-link {
-    color: #333 !important; /* Dark text */
-    padding: 0.3rem 0.6rem;
-}
-
-.navbar .btn-link {
-    color: #333 !important; /* Dark text */
-}
-
-.navbar .dropdown-toggle::after {
-    color: #777;
-}
-
-.navbar .text-secondary {
-    color: #6c757d !important; /* Bootstrap default text-secondary color */
-}
-
-/* Navigation Items */
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: 8px;
-    color: #333333;
-    text-decoration: none;
-    transition: background-color 0.2s;
-}
-
-.nav-item:hover {
-    background-color: #f0f0f0;
-    color: #0d6efd;
-}
-
-.nav-item.active {
-    background-color: #e6f0ff;
-    color: #0d6efd;
-}
-
-.nav-item i {
-    font-size: 18px;
-}
-
-/* Quick Links */
-.quick-links {
-    margin-top: auto; /* Push to bottom of sidebar */
-    padding-top: 20px;
-    border-top: 1px solid #e5e7eb;
-}
-
-.quick-links-title {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    color: #333333;
-}
-
-.quick-links-title i {
-    margin-right: 5px;
-    font-size: 18px;
-}
-
-.new-badge {
-    background-color: #4caf50;
-    color: white;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 10px;
-    margin-left: 5px;
-}
-
 /* Border styles */
 .border-top {
     border-top: 1px solid var(--border-color) !important;
     margin-top: 0;
 }
 
-/* Footer Information Area - Remove this entire section */
+/* Footer Information Area */
 .footer-info {
     display: none; /* Hide the footer info section */
 }

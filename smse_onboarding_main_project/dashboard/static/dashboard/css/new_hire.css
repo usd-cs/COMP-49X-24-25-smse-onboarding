@@ -44,22 +44,7 @@ html {
     min-height: 50px; /* Minimum height to ensure visibility */
 }
 
-/* Top Bar Background */
-.top-bar {
-    position: fixed;
-    top: 0;
-    left: 280px;
-    right: 0;
-    background-color: white !important;
-    height: 35px !important;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-    z-index: 1060;  /* Increased z-index to ensure it's on top */
-    border-bottom: 1px solid #eaeaea;
-    border-radius: 0 0 8px 8px;
-    transition: none;
-}
-
-/* Override any other styles that might affect top bar */
+/* Override any other styles that might affect top bar - keeping this reference only */
 .dashboard-container > .main-content:before {
     content: "";
     position: fixed;
@@ -69,24 +54,6 @@ html {
     height: 35px;
     background-color: white !important;
     z-index: 1040;
-}
-
-/* Navbar Style Adjustments */
-.navbar {
-    background-color: transparent !important;
-    box-shadow: none !important;
-}
-
-/* Navbar Icons and Text Colors */
-.navbar .nav-link, 
-.navbar .btn-link, 
-.navbar .dropdown-toggle {
-    color: #333 !important;
-}
-
-.navbar .text-secondary,
-.navbar small {
-    color: rgba(0,0,0,0.6) !important;
 }
 
 /* Status Card */
@@ -320,7 +287,7 @@ html {
 }
 
 /* Icon transitions that don't affect opacity */
-.bi-check-circle-fill, 
+.bi-check-circle-fill,
 .bi-circle,
 .bi-hourglass-split {
     transition: transform 0.15s ease;
