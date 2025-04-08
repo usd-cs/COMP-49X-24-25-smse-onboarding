@@ -72,7 +72,6 @@
                                         {% endif %}
                                         <div class="faculty-info">
                                             <span class="faculty-name">{{ faculty.first_name }} {{ faculty.last_name }}</span>
-                                            <span class="faculty-id">ID: {{ faculty.faculty_id }}</span>
                                         </div>
                                     </div>
                                 </td>
@@ -121,29 +120,29 @@
     </div>
     <div class="profile-content">
         <div class="profile-section">
-            <h5 class="profile-section-title">Contact Information</h5>
+            <h5 class="profile-section-title">CONTACT INFORMATION</h5>
             <div class="profile-info-item">
                 <i class="bi bi-envelope"></i>
                 <span class="profile-info-label">Email</span>
-                <span class="profile-info-value">faculty@sandiego.edu</span>
+                <span class="profile-info-value"></span>
             </div>
             <div class="profile-info-item">
                 <i class="bi bi-building"></i>
                 <span class="profile-info-label">Department</span>
-                <span class="profile-info-value">Computer Science</span>
+                <span class="profile-info-value"></span>
             </div>
         </div>
         <div class="profile-section">
-            <h5 class="profile-section-title">Status Information</h5>
+            <h5 class="profile-section-title">STATUS INFORMATION</h5>
             <div class="profile-info-item">
                 <i class="bi bi-calendar"></i>
                 <span class="profile-info-label">Start Date</span>
-                <span class="profile-info-value">Jan 1, 2024</span>
+                <span class="profile-info-value"></span>
             </div>
             <div class="profile-info-item">
                 <i class="bi bi-check-circle"></i>
                 <span class="profile-info-label">Onboarding Status</span>
-                <span class="profile-info-value">In Progress</span>
+                <span class="profile-info-value"></span>
             </div>
         </div>
     </div>
@@ -153,7 +152,51 @@
 {% block extra_js %}
 <script>
     function showProfile(facultyId) {
+        console.log('Showing profile for faculty ID:', facultyId); // Add debugging
         const profileCard = document.getElementById('facultyProfileCard');
+        const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
+        
+        console.log('Found faculty row:', facultyRow); // Add debugging
+        
+        if (!facultyRow) {
+            console.log('Faculty row not found'); // Add debugging
+            return;
+        }
+        
+        // Get faculty information from the table row
+        const name = facultyRow.querySelector('.faculty-name').textContent;
+        const email = facultyRow.querySelector('.email-cell').textContent;
+        const department = facultyRow.querySelector('.department-cell').textContent;
+        const startDate = facultyRow.querySelector('.date-cell').textContent;
+        const status = facultyRow.querySelector('.status-badge').textContent.trim();
+        const avatar = facultyRow.querySelector('.faculty-avatar').textContent.trim();
+        
+        console.log('Faculty info:', { name, email, department, startDate, status, avatar }); // Add debugging
+        
+        // Update profile card with faculty information
+        profileCard.querySelector('.profile-header .faculty-name').textContent = name;
+        
+        // Update avatar with initials if available
+        const profileImage = profileCard.querySelector('.profile-header .profile-image');
+        if (avatar && avatar.length > 0) {
+            profileImage.innerHTML = avatar;
+        } else {
+            profileImage.innerHTML = '<i class="bi bi-person"></i>';
+        }
+        
+        profileCard.querySelector('.profile-header .faculty-title').textContent = department;
+        
+        // Update contact information
+        const contactSection = profileCard.querySelector('.profile-content .profile-section:nth-child(1)');
+        contactSection.querySelector('.profile-info-item:nth-child(1) .profile-info-value').textContent = email;
+        contactSection.querySelector('.profile-info-item:nth-child(2) .profile-info-value').textContent = department;
+        
+        // Update status information
+        const statusSection = profileCard.querySelector('.profile-content .profile-section:nth-child(2)');
+        statusSection.querySelector('.profile-info-item:nth-child(1) .profile-info-value').textContent = startDate;
+        statusSection.querySelector('.profile-info-item:nth-child(2) .profile-info-value').textContent = status;
+
+        // Show the profile card
         profileCard.classList.add('active');
     }
 
@@ -162,14 +205,16 @@
         profileCard.classList.remove('active');
     }
 
+    // Close profile card when clicking outside
     document.addEventListener('click', function(event) {
         const profileCard = document.getElementById('facultyProfileCard');
         if (!event.target.closest('.faculty-profile-card') && 
-            !event.target.closest('.action-buttons')) {
+            !event.target.closest('.action-button')) {
             profileCard.classList.remove('active');
         }
     });
 
+    // Search functionality
     document.getElementById('facultySearch').addEventListener('input', function(e) {
         const searchText = e.target.value.toLowerCase();
         const rows = document.querySelectorAll('.faculty-table tbody tr');
