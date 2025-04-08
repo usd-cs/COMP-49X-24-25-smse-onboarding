@@ -9,6 +9,7 @@
         display: flex;
         min-height: 100vh;
         background-color: #f8f9fa;
+        overflow: hidden; /* Prevent body scroll */
     }
 
     .main-content {
@@ -17,13 +18,17 @@
         margin-left: 240px;
         background-color: #f8f9fa;
         min-width: 0;
+        height: 100vh; /* Full viewport height */
+        overflow-y: auto; /* Enable scrolling */
+        position: relative; /* For proper scroll containment */
     }
 
     .content-wrapper {
-        padding-top: 80px;
+        padding-top: 32px;
         display: flex;
         flex-direction: column;
         gap: 24px;
+        padding-bottom: 24px; /* Add bottom padding for last item */
     }
 
     /* Title Section */
@@ -85,95 +90,136 @@
         border: none;
     }
 
-    /* Faculty Cards Section */
+    /* Faculty Section */
     .faculty-section {
-        background-color: transparent;
-        padding: 0;
-    }
-
-    .faculty-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-        width: 100%;
-    }
-
-    .faculty-card {
         background-color: white;
         border-radius: 12px;
-        padding: 20px;
+        padding: 24px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
+        overflow-x: auto;
     }
 
-    .faculty-header {
-        display: flex;
-        align-items: center;
-        gap: 16px;
+    .faculty-table {
+        width: 100%;
+        min-width: 800px;
+    }
+
+    .faculty-table .table {
+        margin-bottom: 0;
+    }
+
+    .faculty-table th {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .faculty-table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    .faculty-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* Name cell with avatar */
+    .name-cell {
+        min-width: 250px;
     }
 
     .faculty-avatar {
-        width: 48px;
-        height: 48px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 500;
-        font-size: 1.2rem;
+        font-size: 1rem;
         background-color: #1976d2;
         color: white;
-        flex-shrink: 0;
+        margin-right: 12px;
     }
 
     .faculty-info {
-        flex-grow: 1;
-        min-width: 0;
+        display: inline-flex;
+        flex-direction: column;
     }
 
     .faculty-name {
         font-weight: 600;
         color: #2c3e50;
-        margin: 0;
-        font-size: 1.1rem;
+        margin-bottom: 2px;
     }
 
     .faculty-id {
         font-size: 0.85rem;
         color: #6c757d;
-        margin-top: 2px;
     }
 
-    .faculty-details {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
+    /* Email cell */
+    .email-cell {
+        min-width: 200px;
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
-    .detail-item {
+    /* Department cell */
+    .department-cell {
+        min-width: 150px;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Status cell */
+    .status-cell {
+        min-width: 120px;
+    }
+
+    /* Date cell */
+    .date-cell {
+        min-width: 120px;
+        white-space: nowrap;
+    }
+
+    /* Actions cell */
+    .actions-cell {
+        min-width: 150px;
+        white-space: nowrap;
+    }
+
+    .action-buttons {
         display: flex;
-        align-items: center;
         gap: 8px;
-        color: #6c757d;
-        font-size: 0.9rem;
     }
 
-    .detail-item i {
-        width: 16px;
+    .action-button {
+        border: none;
+        background: none;
+        color: #6c757d;
+        padding: 8px;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+
+    .action-button:hover {
+        background-color: #e3f2fd;
         color: #1976d2;
     }
 
-    .detail-label {
-        font-weight: 500;
-        min-width: 80px;
-    }
-
-    .detail-value {
-        color: #2c3e50;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .action-button i {
+        font-size: 1.1rem;
     }
 
     .status-badge {
@@ -210,37 +256,6 @@
 
     .status-active::before {
         background-color: #2e7d32;
-    }
-
-    .card-actions {
-        display: flex;
-        gap: 8px;
-        margin-top: auto;
-        padding-top: 16px;
-        border-top: 1px solid #f1f1f1;
-    }
-
-    .action-button {
-        flex: 1;
-        padding: 8px;
-        border: none;
-        border-radius: 8px;
-        background: none;
-        color: #6c757d;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .action-button:hover {
-        background-color: #e3f2fd;
-        color: #1976d2;
-    }
-
-    .action-button i {
-        font-size: 1.1rem;
     }
 
     .header-buttons {
@@ -282,40 +297,67 @@
     /* Faculty Profile Card Styles */
     .faculty-profile-card {
         position: fixed;
-        top: 0;
-        left: -400px; /* Start off-screen */
+        top: 80px; /* Add some space from top */
+        right: -400px;
         width: 400px;
-        height: 100vh;
+        height: calc(100vh - 160px); /* Reduce height and add margin from top and bottom */
         background-color: white;
-        box-shadow: 2px 0 8px rgba(0,0,0,0.1);
-        transition: left 0.3s ease;
+        box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+        transition: right 0.3s ease;
         z-index: 1000;
         overflow-y: auto;
+        border-radius: 12px 0 0 12px;
+        margin: 20px 0; /* Add margin top and bottom */
     }
 
     .faculty-profile-card.active {
-        left: 0; /* Slide in when active */
+        right: 0;
     }
 
     .profile-header {
-        padding: 32px 24px;
+        padding: 24px;
         text-align: center;
         background: linear-gradient(135deg, #1976d2, #1565c0);
         color: white;
+        border-radius: 12px 0 0 0;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
     }
 
     .profile-image {
-        width: 120px;
-        height: 120px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
         margin-bottom: 16px;
-        border: 4px solid rgba(255,255,255,0.2);
+        background-color: rgba(255,255,255,0.1);
+        border: 3px solid #FFD700; /* Gold border */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+        position: relative;
+    }
+
+    .profile-image::after {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: -6px;
+        right: -6px;
+        bottom: -6px;
+        border-radius: 50%;
     }
 
     .profile-header .faculty-name {
         font-size: 1.5rem;
         margin: 0;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
+        font-weight: 600;
     }
 
     .profile-header .faculty-title {
@@ -325,7 +367,67 @@
     }
 
     .profile-content {
-        padding: 24px;
+        padding: 32px 24px 24px;
+    }
+
+    .profile-section {
+        margin-bottom: 24px;
+    }
+
+    .profile-section-title {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+    }
+
+    .profile-info-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    .profile-info-item:last-child {
+        border-bottom: none;
+    }
+
+    .profile-info-item i {
+        color: #1976d2;
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    .profile-info-label {
+        font-size: 0.9rem;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .profile-info-value {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-left: auto;
+    }
+
+    .close-profile-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: none;
+        border: none;
+        color: white;
+        opacity: 0.8;
+        cursor: pointer;
+        padding: 4px;
+        transition: opacity 0.2s;
+    }
+
+    .close-profile-btn:hover {
+        opacity: 1;
     }
 
     @media (max-width: 768px) {
@@ -338,8 +440,8 @@
             padding-top: 60px;
         }
 
-        .faculty-grid {
-            grid-template-columns: 1fr;
+        .faculty-table {
+            overflow-x: auto;
         }
     }
 </style>
@@ -382,63 +484,63 @@
                 </div>
             </div>
 
-            <!-- Faculty Cards Section -->
+            <!-- Faculty Table Section -->
             <div class="faculty-section">
-                <div class="faculty-grid">
-                    {% for faculty in faculty_members %}
-                    <div class="faculty-card" data-faculty-id="{{ faculty.id }}">
-                        <div class="faculty-header">
-                            {% if faculty.profile_image %}
-                                <img src="{{ faculty.profile_image.url }}" alt="Profile" class="faculty-avatar">
-                            {% else %}
-                                <div class="faculty-avatar">
-                                    {{ faculty.first_name|first }}{{ faculty.last_name|first }}
-                                </div>
-                            {% endif %}
-                            <div class="faculty-info">
-                                <h3 class="faculty-name">{{ faculty.first_name }} {{ faculty.last_name }}</h3>
-                                <div class="faculty-id">ID: {{ faculty.faculty_id }}</div>
-                            </div>
-                        </div>
-
-                        <div class="faculty-details">
-                            <div class="detail-item">
-                                <i class="bi bi-envelope"></i>
-                                <span class="detail-value">{{ faculty.email }}</span>
-                            </div>
-                            {% if faculty.department %}
-                            <div class="detail-item">
-                                <i class="bi bi-building"></i>
-                                <span class="detail-value">{{ faculty.department }}</span>
-                            </div>
-                            {% endif %}
-                            <div class="detail-item">
-                                <i class="bi bi-calendar"></i>
-                                <span class="detail-value">{{ faculty.start_date|date:"M d, Y" }}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="status-badge {% if faculty.completed_onboarding %}status-active{% else %}status-onboarding{% endif %}">
-                                    {% if faculty.completed_onboarding %}Active{% else %}Onboarding{% endif %}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="card-actions">
-                            <button class="action-button" onclick="showProfile({{ faculty.id }})" title="View Profile">
-                                <i class="bi bi-person-lines-fill"></i>
-                                <span>Profile</span>
-                            </button>
-                            <button class="action-button" title="Send Email">
-                                <i class="bi bi-envelope"></i>
-                                <span>Email</span>
-                            </button>
-                            <button class="action-button" title="Edit">
-                                <i class="bi bi-pencil"></i>
-                                <span>Edit</span>
-                            </button>
-                        </div>
-                    </div>
-                    {% endfor %}
+                <div class="faculty-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>NAME</th>
+                                <th>EMAIL</th>
+                                <th>DEPARTMENT</th>
+                                <th>STATUS</th>
+                                <th>START DATE</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for faculty in faculty_members %}
+                            <tr data-faculty-id="{{ faculty.id }}">
+                                <td class="name-cell">
+                                    <div class="d-flex align-items-center">
+                                        {% if faculty.profile_image %}
+                                            <img src="{{ faculty.profile_image.url }}" alt="Profile" class="faculty-avatar">
+                                        {% else %}
+                                            <div class="faculty-avatar">
+                                                {{ faculty.first_name|first }}{{ faculty.last_name|first }}
+                                            </div>
+                                        {% endif %}
+                                        <div class="faculty-info">
+                                            <span class="faculty-name">{{ faculty.first_name }} {{ faculty.last_name }}</span>
+                                            <span class="faculty-id">ID: {{ faculty.faculty_id }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="email-cell">{{ faculty.email }}</td>
+                                <td class="department-cell">{{ faculty.department }}</td>
+                                <td class="status-cell">
+                                    <span class="status-badge {% if faculty.completed_onboarding %}status-active{% else %}status-onboarding{% endif %}">
+                                        {% if faculty.completed_onboarding %}Active{% else %}Onboarding{% endif %}
+                                    </span>
+                                </td>
+                                <td class="date-cell">{{ faculty.start_date|date:"M d, Y" }}</td>
+                                <td class="actions-cell">
+                                    <div class="action-buttons">
+                                        <button class="action-button" onclick="showProfile({{ faculty.id }})" title="View Profile">
+                                            <i class="bi bi-person-lines-fill"></i>
+                                        </button>
+                                        <button class="action-button" title="Send Email">
+                                            <i class="bi bi-envelope"></i>
+                                        </button>
+                                        <button class="action-button" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -448,12 +550,42 @@
 <!-- Faculty Profile Card -->
 <div class="faculty-profile-card" id="facultyProfileCard">
     <div class="profile-header">
-        <img src="{% static 'default_profile.jpg' %}" alt="Profile" class="profile-image">
+        <button class="close-profile-btn" onclick="closeProfile()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+        <div class="profile-image">
+            <i class="bi bi-person"></i>
+        </div>
         <h4 class="faculty-name">Faculty Name</h4>
         <p class="faculty-title">Position Title</p>
     </div>
     <div class="profile-content">
-        <!-- Profile content will be loaded dynamically -->
+        <div class="profile-section">
+            <h5 class="profile-section-title">Contact Information</h5>
+            <div class="profile-info-item">
+                <i class="bi bi-envelope"></i>
+                <span class="profile-info-label">Email</span>
+                <span class="profile-info-value">faculty@sandiego.edu</span>
+            </div>
+            <div class="profile-info-item">
+                <i class="bi bi-building"></i>
+                <span class="profile-info-label">Department</span>
+                <span class="profile-info-value">Computer Science</span>
+            </div>
+        </div>
+        <div class="profile-section">
+            <h5 class="profile-section-title">Status Information</h5>
+            <div class="profile-info-item">
+                <i class="bi bi-calendar"></i>
+                <span class="profile-info-label">Start Date</span>
+                <span class="profile-info-value">Jan 1, 2024</span>
+            </div>
+            <div class="profile-info-item">
+                <i class="bi bi-check-circle"></i>
+                <span class="profile-info-label">Onboarding Status</span>
+                <span class="profile-info-value">In Progress</span>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -463,6 +595,11 @@
     function showProfile(facultyId) {
         const profileCard = document.getElementById('facultyProfileCard');
         profileCard.classList.add('active');
+    }
+
+    function closeProfile() {
+        const profileCard = document.getElementById('facultyProfileCard');
+        profileCard.classList.remove('active');
     }
 
     document.addEventListener('click', function(event) {
@@ -475,11 +612,11 @@
 
     document.getElementById('facultySearch').addEventListener('input', function(e) {
         const searchText = e.target.value.toLowerCase();
-        const cards = document.querySelectorAll('.faculty-card');
+        const rows = document.querySelectorAll('.faculty-table tbody tr');
         
-        cards.forEach(card => {
-            const text = card.textContent.toLowerCase();
-            card.style.display = text.includes(searchText) ? '' : 'none';
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchText) ? '' : 'none';
         });
     });
 </script>
