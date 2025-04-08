@@ -224,6 +224,8 @@ class UserViewTests(TestCase):
              patch('django.contrib.auth.login'), \
              patch('django.shortcuts.redirect'):
 
+
+            # Using _ to indicate we're intentionally not using the response
             _ = self.client.post(reverse('users:login'), {
                 'username': 'testuser',
                 'password': 'password'
@@ -237,6 +239,9 @@ class UserViewTests(TestCase):
         with patch('django.contrib.auth.authenticate', return_value=self.mock_staff_user), \
              patch('django.contrib.auth.login'), \
              patch('django.shortcuts.redirect'):
+
+
+            # Using _ to indicate we're intentionally not using the response
 
             _ = self.client.post(reverse('users:login'), {
                 'username': 'staffuser',

@@ -12,10 +12,15 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Dashboard CSS -->
+    <!-- Base Dashboard CSS -->
     <link href="{% static 'dashboard/css/style.css' %}" rel="stylesheet">
-    <link href="{% static 'dashboard/css/admin.css' %}" rel="stylesheet">
-    <link href="{% static 'dashboard/css/new_hire.css' %}" rel="stylesheet">
+
+    <!-- Dashboard-specific CSS (loaded in templates) -->
+    {% block dashboard_css %}{% endblock %}
+
+    <!-- Shared Dashboard Components CSS -->
+    <link href="{% static 'dashboard/css/sidebar.css' %}" rel="stylesheet">
+    <link href="{% static 'dashboard/css/topnav.css' %}" rel="stylesheet">
 
     {% block extra_css %}{% endblock %}
 </head>
