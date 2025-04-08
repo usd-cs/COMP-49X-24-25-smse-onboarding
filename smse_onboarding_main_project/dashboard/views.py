@@ -5,6 +5,7 @@ from users.models import Faculty
 from documents.models import FacultyDocument
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponse
+from django.contrib import messages
 
 def get_faculty_from_request(request):
     """Helper function to get faculty profile from request"""
@@ -60,10 +61,17 @@ def new_hire_home(request):
     if total_assigned_tasks > 0:
         completion_percentage = (completed_tasks_count / total_assigned_tasks) * 100
 
-    # Add completion status to each task
+    # Add completion status and prerequisite info to each task
     for task in tasks:
         task.is_completed_by_faculty = task.id in completed_task_ids
-        print(f"DEBUG: Task {task.id} - {task.title} - Completed: {task.is_completed_by_faculty}")
+        # Check prerequisite task status
+        if task.prerequisite_task:
+            task.prereq_completed = task.prerequisite_task.id in completed_task_ids
+            task.can_complete = task.prereq_completed and not task.is_completed_by_faculty
+        else:
+            task.prereq_completed = True
+            task.can_complete = not task.is_completed_by_faculty
+        print(f"DEBUG: Task {task.id} - {task.title} - Completed: {task.is_completed_by_faculty} - Can Complete: {task.can_complete}")
 
     context = {
         'tasks': tasks,
@@ -190,7 +198,23 @@ def complete_task(request, task_id):
             task = get_object_or_404(Task, pk=task_id)
             faculty = get_faculty_from_request(request)
 
-            if faculty and task.is_unlocked():
+            if faculty:
+                # Check if prerequisite task is completed
+                if task.prerequisite_task:
+                    prereq_completed = TaskProgress.objects.filter(
+                        faculty=faculty,
+                        task=task.prerequisite_task,
+                        completed=True
+                    ).exists()
+                    if not prereq_completed:
+                        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'Please complete the prerequisite task first'
+                            }, status=400)
+                        messages.error(request, 'Please complete the prerequisite task first')
+                        return redirect('dashboard:new_hire_home')
+
                 # Mark task as completed for this specific faculty
                 TaskProgress.objects.update_or_create(
                     faculty=faculty,
@@ -215,11 +239,13 @@ def complete_task(request, task_id):
                 if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                     return JsonResponse({'status': 'success'})
 
+                messages.success(request, 'Task completed successfully')
                 return redirect('dashboard:new_hire_home')
 
         except Task.DoesNotExist:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'error', 'message': 'Task not found'}, status=404)
+            messages.error(request, 'Task not found')
 
     # If AJAX request but an error occurred
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

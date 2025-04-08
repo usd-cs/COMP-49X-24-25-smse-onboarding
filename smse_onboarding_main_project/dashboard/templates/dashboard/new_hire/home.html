@@ -59,13 +59,16 @@
                                                 <td>
                                                     <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="task-completion-form">
                                                         {% csrf_token %}
-                                                        <button type="submit" class="btn btn-link p-0 task-circle-btn">
-                                                            <i class="bi bi-circle text-secondary" style="font-size: 1.2rem;"></i>
+                                                        <button type="submit" class="btn btn-link p-0 task-circle-btn" {% if not task.can_complete %}disabled title="Complete prerequisite task first"{% endif %}>
+                                                            <i class="bi bi-circle {% if not task.can_complete %}text-muted{% else %}text-secondary{% endif %}" style="font-size: 1.2rem;"></i>
                                                         </button>
                                                     </form>
                                                 </td>
                                                 <td class="task-title" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
                                                     {{ task.title }}
+                                                    {% if task.prerequisite_task and not task.prereq_completed %}
+                                                        <span class="badge bg-warning text-dark ms-2">Prerequisite Required</span>
+                                                    {% endif %}
                                                 </td>
                                                 <td>{{ task.deadline|date:"M d, Y, g a" }}</td>
                                                 <td class="{% if task.remaining_days < 0 %}text-danger{% elif task.remaining_days < 2 %}text-warning{% else %}text-muted{% endif %}">
@@ -91,6 +94,15 @@
                                                         <div class="modal-body">
                                                             <p><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
                                                             <p><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
+                                                            {% if task.prerequisite_task %}
+                                                                <p><strong>Prerequisite Task:</strong> {{ task.prerequisite_task.title }}
+                                                                    {% if task.prereq_completed %}
+                                                                        <span class="badge bg-success">Completed</span>
+                                                                    {% else %}
+                                                                        <span class="badge bg-warning text-dark">Not Completed</span>
+                                                                    {% endif %}
+                                                                </p>
+                                                            {% endif %}
                                                             <p><strong>Days Remaining:</strong>
                                                                 {% if task.remaining_days < 0 %}
                                                                     <span class="text-danger">Overdue</span>
@@ -107,7 +119,12 @@
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                             <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="d-inline">
                                                                 {% csrf_token %}
-                                                                <button type="submit" class="btn btn-primary">Mark as Complete</button>
+                                                                <button type="submit" class="btn btn-primary" {% if not task.can_complete %}disabled{% endif %}>
+                                                                    Mark as Complete
+                                                                    {% if not task.can_complete %}
+                                                                        (Complete prerequisite first)
+                                                                    {% endif %}
+                                                                </button>
                                                             </form>
                                                         </div>
                                                     </div>
