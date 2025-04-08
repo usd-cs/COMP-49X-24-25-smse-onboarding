@@ -92,13 +92,19 @@ TEMPLATES = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    #'https://smse-onboarding.dedyn.io:8080',
-    #'http://smse-onboarding.dedyn.io:8000',
+    # 'https://smse-onboarding.dedyn.io:8080',
+    # 'https://smse-onboarding.dedyn.io:8000',
+    'https://smse-onboarding.dedyn.io',
+    # 'http://smse-onboarding.dedyn.io:8080',
+    # 'http://smse-onboarding.dedyn.io:8000',
     'http://smse-onboarding.dedyn.io',
     'http://localhost:8000',
 ]
 
 CSRF_COOKIE_DOMAIN = 'smse-onboarding.dedyn.io'
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_USE_SESSIONS = True
 
 WSGI_APPLICATION = 'smse_onboarding.wsgi.application'
 
