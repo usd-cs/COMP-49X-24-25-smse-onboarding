@@ -1,0 +1,491 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Faculty Directory{% endblock %}
+
+{% block dashboard_css %}
+<style>
+    .dashboard-container {
+        display: flex;
+        min-height: 100vh;
+        background-color: #f8f9fa;
+    }
+
+    .main-content {
+        flex-grow: 1;
+        padding: 20px 32px;
+        margin-left: 240px;
+        background-color: #f8f9fa;
+        min-width: 0;
+        overflow-x: auto;
+    }
+
+    .content-wrapper {
+        padding-top: 80px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        min-width: 320px;
+    }
+
+    /* Title Section */
+    .title-section {
+        background-color: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        width: 100%;
+    }
+
+    .title-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .page-title {
+        font-size: clamp(1.25rem, 4vw, 1.75rem);
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+    }
+
+    /* Search Section */
+    .search-section {
+        background-color: white;
+        border-radius: 12px;
+        padding: clamp(16px, 3vw, 24px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        width: 100%;
+    }
+
+    .search-container {
+        max-width: 100%;
+    }
+
+    .search-container .input-group {
+        background: #f8f9fa;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    .search-container input {
+        border: none;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.95rem;
+        background-color: #f8f9fa;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .search-container input:focus {
+        box-shadow: none;
+        background-color: #f8f9fa;
+    }
+
+    .search-container .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+    }
+
+    /* Faculty Cards Section */
+    .faculty-section {
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .faculty-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+        gap: clamp(12px, 2vw, 20px);
+        width: 100%;
+    }
+
+    .faculty-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: clamp(16px, 3vw, 20px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-width: 0;
+    }
+
+    .faculty-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .faculty-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        font-size: 1.2rem;
+        background-color: #1976d2;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .faculty-info {
+        flex-grow: 1;
+        min-width: 0;
+    }
+
+    .faculty-name {
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .faculty-id {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 2px;
+    }
+
+    .faculty-details {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #6c757d;
+        font-size: 0.9rem;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .detail-item i {
+        width: 16px;
+        color: #1976d2;
+    }
+
+    .detail-label {
+        font-weight: 500;
+        min-width: 80px;
+    }
+
+    .detail-value {
+        color: #2c3e50;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .status-badge::before {
+        content: '';
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 6px;
+    }
+    
+    .status-onboarding {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .status-onboarding::before {
+        background-color: #1976d2;
+    }
+    
+    .status-active {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .status-active::before {
+        background-color: #2e7d32;
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid #f1f1f1;
+        flex-wrap: nowrap;
+    }
+
+    .action-button {
+        flex: 1;
+        padding: 8px;
+        min-width: 0;
+        white-space: nowrap;
+    }
+
+    .action-button:hover {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .action-button i {
+        font-size: 1.1rem;
+    }
+
+    .action-button span {
+        display: none;
+    }
+
+    .header-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+
+    .btn {
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: clamp(0.375rem, 2vw, 0.5rem) clamp(0.75rem, 2vw, 1rem);
+    }
+
+    .btn-primary {
+        background-color: #1976d2;
+        border-color: #1976d2;
+        padding: 0.5rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary:hover {
+        background-color: #1565c0;
+        border-color: #1565c0;
+    }
+
+    .btn-outline-primary {
+        color: #1976d2;
+        border-color: #1976d2;
+        padding: 0.5rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #1976d2;
+        border-color: #1976d2;
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            margin-left: 0;
+            padding: 16px;
+        }
+
+        .content-wrapper {
+            padding-top: 60px;
+        }
+
+        .faculty-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .header-buttons {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .btn i {
+            margin-right: 0;
+        }
+
+        .btn span {
+            display: none;
+        }
+    }
+
+    @media (min-width: 480px) {
+        .action-button span {
+            display: inline;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .title-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-buttons {
+            justify-content: flex-start;
+        }
+
+        .search-container .btn span {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    {% include 'dashboard/admin/components/sidebar.html' %}
+    
+    <div class="main-content">
+        {% include 'dashboard/admin/components/topnav.html' %}
+        
+        <div class="content-wrapper">
+            <!-- Title Section -->
+            <div class="title-section">
+                <div class="title-content">
+                    <h1 class="page-title">Faculty Directory</h1>
+                    <div class="header-buttons">
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-download"></i>
+                            Export CSV
+                        </button>
+                        <button class="btn btn-primary">
+                            <i class="bi bi-plus-lg"></i>
+                            Add Faculty
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search faculty by name, email, or department..." id="facultySearch">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Cards Section -->
+            <div class="faculty-section">
+                <div class="faculty-grid">
+                    {% for faculty in faculty_members %}
+                    <div class="faculty-card" data-faculty-id="{{ faculty.id }}">
+                        <div class="faculty-header">
+                            {% if faculty.profile_image %}
+                                <img src="{{ faculty.profile_image.url }}" alt="Profile" class="faculty-avatar">
+                            {% else %}
+                                <div class="faculty-avatar">
+                                    {{ faculty.first_name|first }}{{ faculty.last_name|first }}
+                                </div>
+                            {% endif %}
+                            <div class="faculty-info">
+                                <h3 class="faculty-name">{{ faculty.first_name }} {{ faculty.last_name }}</h3>
+                                <div class="faculty-id">ID: {{ faculty.faculty_id }}</div>
+                            </div>
+                        </div>
+
+                        <div class="faculty-details">
+                            <div class="detail-item">
+                                <i class="bi bi-envelope"></i>
+                                <span class="detail-value">{{ faculty.email }}</span>
+                            </div>
+                            {% if faculty.department %}
+                            <div class="detail-item">
+                                <i class="bi bi-building"></i>
+                                <span class="detail-value">{{ faculty.department }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="detail-item">
+                                <i class="bi bi-calendar"></i>
+                                <span class="detail-value">{{ faculty.start_date|date:"M d, Y" }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="status-badge {% if faculty.completed_onboarding %}status-active{% else %}status-onboarding{% endif %}">
+                                    {% if faculty.completed_onboarding %}Active{% else %}Onboarding{% endif %}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <button class="action-button" onclick="showProfile({{ faculty.id }})" title="View Profile">
+                                <i class="bi bi-person-lines-fill"></i>
+                                <span>Profile</span>
+                            </button>
+                            <button class="action-button" title="Send Email">
+                                <i class="bi bi-envelope"></i>
+                                <span>Email</span>
+                            </button>
+                            <button class="action-button" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                                <span>Edit</span>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Faculty Profile Card -->
+<div class="faculty-profile-card" id="facultyProfileCard">
+    <div class="profile-header">
+        <img src="{% static 'default_profile.jpg' %}" alt="Profile" class="profile-image">
+        <h4 class="faculty-name">Faculty Name</h4>
+        <p class="faculty-title">Position Title</p>
+    </div>
+    <div class="profile-content">
+        <!-- Profile content will be loaded dynamically -->
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showProfile(facultyId) {
+        const profileCard = document.getElementById('facultyProfileCard');
+        profileCard.classList.add('active');
+    }
+
+    document.addEventListener('click', function(event) {
+        const profileCard = document.getElementById('facultyProfileCard');
+        if (!event.target.closest('.faculty-profile-card') && 
+            !event.target.closest('.action-buttons')) {
+            profileCard.classList.remove('active');
+        }
+    });
+
+    document.getElementById('facultySearch').addEventListener('input', function(e) {
+        const searchText = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.faculty-card');
+        
+        cards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(searchText) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %} 

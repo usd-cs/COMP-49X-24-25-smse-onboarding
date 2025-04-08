@@ -14,6 +14,7 @@ urlpatterns = [
     path('', dashboard_router, name='dashboard_router'),
     path('newhire/', views.new_hire_home, name='new_hire_home'),
     path('admin/', views.admin_home, name='admin_home'),
+    path('faculty-directory/', views.faculty_directory, name='faculty_directory'),
     path('complete-task/<int:task_id>/', views.complete_task, name='complete_task'),
     path('continue-task/<int:task_id>/', views.continue_task, name='continue_task'),
 ]

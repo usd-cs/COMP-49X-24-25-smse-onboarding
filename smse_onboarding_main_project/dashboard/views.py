@@ -290,3 +290,18 @@ def continue_task(request, task_id):
         return JsonResponse({'status': 'error'}, status=400)
 
     return redirect('dashboard:new_hire_home')
+
+@login_required
+@user_passes_test(is_admin)
+def faculty_directory(request):
+    """
+    View for displaying all faculty members in a directory format
+    """
+    # Get all faculty members
+    faculty_members = Faculty.objects.all().order_by('first_name')
+    
+    context = {
+        'faculty_members': faculty_members,
+    }
+    
+    return render(request, 'dashboard/admin/faculty_directory.html', context)
