@@ -117,15 +117,22 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                            <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="d-inline">
-                                                                {% csrf_token %}
-                                                                <button type="submit" class="btn btn-primary" {% if not task.can_complete %}disabled{% endif %}>
-                                                                    Mark as Complete
-                                                                    {% if not task.can_complete %}
-                                                                        (Complete prerequisite first)
-                                                                    {% endif %}
-                                                                </button>
-                                                            </form>
+                                                            {% if not task.is_completed_by_faculty %}
+                                                                <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="d-inline modal-form">
+                                                                    {% csrf_token %}
+                                                                    <button type="submit" class="btn btn-primary" {% if not task.can_complete %}disabled{% endif %}>
+                                                                        Mark as Complete
+                                                                        {% if not task.can_complete %}
+                                                                            (Complete prerequisite first)
+                                                                        {% endif %}
+                                                                    </button>
+                                                                </form>
+                                                            {% else %}
+                                                                <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="d-inline modal-form">
+                                                                    {% csrf_token %}
+                                                                    <button type="submit" class="btn btn-outline-secondary">Mark as Incomplete</button>
+                                                                </form>
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -188,7 +195,7 @@
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                             <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="d-inline">
                                                                 {% csrf_token %}
-                                                                <button type="submit" class="btn btn-outline-secondary">Mark as Incomplete</button>
+                                                                <button type="submit" class="btn btn-outline-secondary" onclick="this.form.submit(); return false;">Mark as Incomplete</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -297,234 +304,64 @@
         // Initial binding of event handlers
         attachEventListeners();
 
-        // Ensure modal backdrop is properly removed after closing
-        document.addEventListener('hidden.bs.modal', function (event) {
-            // Remove any modal backdrops that might still exist
-            const backdrops = document.querySelectorAll('.modal-backdrop');
-            backdrops.forEach(backdrop => {
-                backdrop.remove();
-            });
-            // Ensure body can scroll properly
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-        }, false);
-
         // Function to reattach event listeners after content update
         function attachEventListeners() {
-            // Reattach listeners for task completion forms
-            document.querySelectorAll('.task-completion-form').forEach(form => {
+            // Reattach listeners for task completion forms in the table (not in modals)
+            document.querySelectorAll('.task-completion-form:not(.modal form)').forEach(form => {
                 // Remove any existing listeners
                 const newForm = form.cloneNode(true);
                 form.parentNode.replaceChild(newForm, form);
 
-                // Add the event listener - using the SAME partial update logic as initial load
-                newForm.addEventListener('submit', function(e) {
-                    // Prevent the event from being handled twice
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-
-                    // Show loading state for the specific button only
-                    const button = this.querySelector('button');
-                    const originalIcon = button.innerHTML;
-                    button.disabled = true;
-                    button.innerHTML = '<i class="bi bi-hourglass-split text-secondary" style="font-size: 1.2rem;"></i>';
-
-                    // Send AJAX request - SAME as original event handler
-                    fetch(this.action, {
-                        method: 'POST',
-                        body: new FormData(this),
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        credentials: 'same-origin'
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            // Use the SAME partial update technique as initial load
-                            fetch(window.location.href)
-                                .then(response => response.text())
-                                .then(html => {
-                                    // Extract the task list HTML from the response
-                                    const parser = new DOMParser();
-                                    const doc = parser.parseFromString(html, 'text/html');
-
-                                    // Find the updated table content
-                                    const newTaskTable = doc.querySelector('.col-md-8 .card');
-                                    if (newTaskTable) {
-                                        // Replace just the task table content
-                                        document.querySelector('.col-md-8 .card').innerHTML = newTaskTable.innerHTML;
-
-                                        // Update status card content (for task completion percentage)
-                                        const newStatusCard = doc.querySelector('.col-md-4 .card.shadow-sm');
-                                        if (newStatusCard) {
-                                            document.querySelector('.col-md-4 .card.shadow-sm').innerHTML = newStatusCard.innerHTML;
-                                        }
-
-                                        // Calculate and update percentage manually
-                                        updateProgressBar();
-
-                                        // Ensure progress circle is updated
-                                        if (typeof updateProgressCircle === 'function') {
-                                            updateProgressCircle();
-                                        } else if (typeof forceUpdateProgressCircle === 'function') {
-                                            forceUpdateProgressCircle();
-                                        }
-
-                                        // Reattach event listeners
-                                        attachEventListeners();
-
-                                        // Initialize any scripts in the status card
-                                        const statusCardScripts = document.querySelectorAll('.col-md-4 .card.shadow-sm script');
-                                        statusCardScripts.forEach(script => {
-                                            if (script.innerHTML) {
-                                                eval(script.innerHTML);
-                                            }
-                                        });
-                                    } else {
-                                        // Fallback to full page reload if we can't find elements
-                                        window.location.reload();
-                                    }
-                                })
-                                .catch(() => {
-                                    // If something goes wrong, simply reload
-                                    window.location.reload();
-                                });
-                        } else {
-                            throw new Error('Network response was not ok');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        button.disabled = false;
-                        button.innerHTML = originalIcon;
-                        alert('There was a problem with your request. Please try again.');
-                    });
-                });
+                // Add the event listener
+                newForm.addEventListener('submit', handleFormSubmit);
             });
 
-            // Initialize modals and other Bootstrap components
+            // Initialize modals
             document.querySelectorAll('[data-bs-toggle="modal"]').forEach(el => {
                 el.addEventListener('click', function() {
                     const target = document.querySelector(this.getAttribute('data-bs-target'));
                     if (target) {
                         const modal = new bootstrap.Modal(target);
                         modal.show();
-
-                        // Ensure close buttons work properly
-                        target.querySelectorAll('.btn-close, .btn-secondary').forEach(btn => {
-                            btn.addEventListener('click', function() {
-                                modal.hide();
-                                // Manually remove backdrop and modal state
-                                setTimeout(() => {
-                                    document.body.classList.remove('modal-open');
-                                    document.body.style.overflow = '';
-                                    document.body.style.paddingRight = '';
-                                    const backdrops = document.querySelectorAll('.modal-backdrop');
-                                    backdrops.forEach(backdrop => backdrop.remove());
-                                }, 150);
-                            });
-                        });
                     }
                 });
             });
         }
 
-        // Function to calculate and update the progress bar manually
-        function updateProgressBar() {
-            // Count total and completed tasks
-            const totalTasks = document.querySelectorAll('.table-responsive table tbody tr').length;
-            const completedTasks = document.querySelectorAll('.bi-check-circle-fill').length;
-
-            if (totalTasks > 0) {
-                const percentage = Math.round((completedTasks / totalTasks) * 100);
-
-                // Update the progress bar and text
-                const progressText = document.querySelector('.col-md-4 .card.shadow-sm .text-muted:nth-child(2)');
-                const progressBar = document.querySelector('.col-md-4 .card.shadow-sm .progress-bar');
-                const completedText = document.querySelector('.col-md-4 .card.shadow-sm .text-muted:nth-child(1)');
-
-                if (progressText && progressBar && completedText) {
-                    progressText.textContent = percentage + '%';
-                    progressBar.style.width = percentage + '%';
-                    progressBar.setAttribute('aria-valuenow', percentage);
-                    completedText.textContent = completedTasks + ' completed';
+        // Handle form submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
-
-                // Call the new updateProgressCircle function in status_card.html
-                if (typeof updateProgressCircle === 'function') {
-                    updateProgressCircle();
-                } else if (typeof forceUpdateProgressCircle === 'function') {
-                    forceUpdateProgressCircle();
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    throw new Error('Network response was not ok');
                 }
-            }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was a problem with your request. Please try again.');
+            });
         }
 
-        // Call this function on page load to ensure the progress bar is correct
-        updateProgressBar();
-
-        // Set up periodic checking of progress circle status to ensure latest status is always displayed
-        setInterval(function() {
-            if (typeof forceUpdateProgressCircle === 'function') {
-                forceUpdateProgressCircle();
-            }
-        }, 5000); // Check every 5 seconds
-
-        // Remove the original direct form binding since we now use attachEventListeners for all forms
-        // Instead, just initialize the modal form handlers which are different
-        document.querySelectorAll('.modal form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                // Show loading state
-                const button = this.querySelector('button[type="submit"]');
-                const originalText = button.innerHTML;
-                button.disabled = true;
-                button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
-
-                // Get the modal
-                const modal = this.closest('.modal');
-
-                // Send AJAX request
-                fetch(this.action, {
-                    method: 'POST',
-                    body: new FormData(this),
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    credentials: 'same-origin'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Close the modal
-                        const modalInstance = bootstrap.Modal.getInstance(modal);
-                        modalInstance.hide();
-
-                        // Ensure modal backdrop and body classes are removed
-                        setTimeout(() => {
-                            document.body.classList.remove('modal-open');
-                            document.body.style.overflow = '';
-                            document.body.style.paddingRight = '';
-                            const backdrops = document.querySelectorAll('.modal-backdrop');
-                            backdrops.forEach(backdrop => backdrop.remove());
-
-                            // Update progress bar before reloading
-                            updateProgressBar();
-
-                            // Simply reload the page since these are less frequent actions
-                            window.location.reload();
-                        }, 100);
-                    } else {
-                        throw new Error('Network response was not ok');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    button.disabled = false;
-                    button.innerHTML = originalText;
-                    alert('There was a problem with your request. Please try again.');
-                });
-            });
+        // Remove modal backdrop when modal is hidden
+        document.addEventListener('hidden.bs.modal', function (event) {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
         });
     });
 </script>
