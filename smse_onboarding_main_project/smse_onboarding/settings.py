@@ -91,36 +91,14 @@ TEMPLATES = [
     },
 ]
 
-# Security settings
 CSRF_TRUSTED_ORIGINS = [
-    'https://smse-onboarding.dedyn.io',
+    #'https://smse-onboarding.dedyn.io:8080',
+    #'http://smse-onboarding.dedyn.io:8000',
+    'http://smse-onboarding.dedyn.io',
+    'http://localhost:8000',
 ]
 
-# CSRF settings
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_DOMAIN = 'smse-onboarding.dedyn.io'
-
-# Session settings
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_DOMAIN = 'smse-onboarding.dedyn.io'
-
-# Security middleware settings
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Only enable SSL redirect in production
-if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-
-# Use X-Forwarded-Host header
-USE_X_FORWARDED_HOST = True
-USE_X_FORWARDED_PORT = True
 
 WSGI_APPLICATION = 'smse_onboarding.wsgi.application'
 
