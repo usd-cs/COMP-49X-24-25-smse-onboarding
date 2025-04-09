@@ -1,5 +1,5 @@
 from selenium.webdriver.common.by import By
-from .base_test import BaseE2ETest
+from tests.end2end.base_test import BaseE2ETest
 
 class LoginTest(BaseE2ETest):
     """End-to-end tests for login functionality"""
