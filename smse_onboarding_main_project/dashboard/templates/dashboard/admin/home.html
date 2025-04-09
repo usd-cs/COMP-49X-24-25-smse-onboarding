@@ -22,21 +22,49 @@
         {% include 'dashboard/admin/components/topnav.html' %}
 
         <div class="dashboard-content pt-4" style="background-color: #eaeaea !important;">
-            <!-- Welcome Banner -->
+            <!-- Welcome Modal -->
             {% if request.session.show_welcome_banner %}
-            <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
-                <div class="d-flex align-items-center">
-                    <div class="me-3">
-                        <i class="bi bi-info-circle-fill fs-4"></i>
-                    </div>
-                    <div>
-                        <h4 class="alert-heading">Welcome to SMSE Admin Dashboard!</h4>
-                        <p>Hello {{ request.user.first_name }}, you are logged in as an administrator. This dashboard allows you to manage new hire onboarding processes, track progress, and ensure all tasks are completed on time.</p>
-                        <hr>
-                        <p class="mb-0">You can monitor task completion rates, manage documents, and oversee the entire onboarding process from this central dashboard.</p>
+            <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-modal-type="welcome">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="welcomeModalLabel">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                Welcome to SMSE Admin Dashboard!
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <img src="{% static 'dashboard/images/smse_logo_transparent.png' %}" alt="SMSE Logo" class="img-fluid mb-3" style="max-height: 150px;">
+                                </div>
+                                <div class="col-md-8">
+                                    <h4 class="mb-3">Hello {{ request.user.first_name }}!</h4>
+                                    <p>You are logged in as an administrator. This dashboard allows you to manage new hire onboarding processes, track progress, and ensure all tasks are completed on time.</p>
+                                    
+                                    <div class="alert alert-info mt-3">
+                                        <h5 class="alert-heading">Administrative Features</h5>
+                                        <ul class="mb-0">
+                                            <li>Monitor task completion rates</li>
+                                            <li>Manage documents and requirements</li>
+                                            <li>Track faculty onboarding progress</li>
+                                            <li>Oversee the entire onboarding process</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="{% url 'users:welcome_info' %}" class="btn btn-outline-primary me-auto">
+                                <i class="bi bi-info-circle me-2"></i>Learn More
+                            </a>
+                            <a href="{% url 'users:dismiss_welcome' %}" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Got it!
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <a href="{% url 'users:dismiss_welcome' %}" class="btn-close" aria-label="Close"></a>
             </div>
             {% endif %}
 
@@ -45,4 +73,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show welcome modal if it exists
+        const welcomeModal = document.getElementById('welcomeModal');
+        if (welcomeModal) {
+            const modal = new bootstrap.Modal(welcomeModal);
+            modal.show();
+        }
+    });
+</script>
 {% endblock %}
