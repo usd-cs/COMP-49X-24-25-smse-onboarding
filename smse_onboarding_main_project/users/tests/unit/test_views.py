@@ -192,7 +192,7 @@ class UserViewTests(TestCase):
 
         # Mock the user authentication
         with patch('django.contrib.auth.middleware.get_user', return_value=self.mock_regular_user):
-            response = self.client.get(reverse('users:newhire_help_guide'))
+            response = self.client.get(reverse('users:welcome_info'))
 
             # Should return 200 OK
             self.assertEqual(response.status_code, 200)
