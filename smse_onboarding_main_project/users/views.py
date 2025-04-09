@@ -5,6 +5,9 @@ from django.contrib.auth import login as auth_login, authenticate
 from .models import Faculty
 from django.utils import timezone
 from django.contrib.auth.models import User
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 
@@ -14,6 +17,7 @@ def login(request):
     if request.user.is_authenticated:
         # Always show welcome banner after login
         request.session['show_welcome_banner'] = True
+        logger.debug(f"User {request.user.email} already authenticated, setting show_welcome_banner=True")
 
         if request.user.is_superuser:
             return redirect('admin_dashboard')
@@ -31,9 +35,11 @@ def login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
+            logger.debug(f"User {user.email} successfully logged in")
 
             # Always show welcome banner after login
             request.session['show_welcome_banner'] = True
+            logger.debug(f"Setting show_welcome_banner=True for user {user.email}")
 
             # Redirect based on user type
             if user.is_superuser:
@@ -53,7 +59,8 @@ def login(request):
                         job_role="New Faculty",
                         engineering_dept="SMSE",
                         phone="0000000000",
-                        office_room="TBD"
+                        office_room="TBD",
+                        last_welcome_shown=timezone.now()
                     )
                     from tasks.models import Task
                     default_tasks = Task.objects.all()
@@ -95,6 +102,7 @@ def profile(request):
 def dismiss_welcome_banner(request):
     """Dismiss the welcome banner for this session"""
     request.session['show_welcome_banner'] = False
+    logger.debug(f"User {request.user.email} dismissed welcome banner")
     # Get the referer URL to redirect back to the same page
     referer = request.META.get('HTTP_REFERER', None)
     if referer:
@@ -109,6 +117,7 @@ def show_welcome(request):
     """Show the welcome banner"""
     # Set session variable to show the banner
     request.session['show_welcome_banner'] = True
+    logger.debug(f"User {request.user.email} requested to show welcome banner")
 
     # Get the referer URL to redirect back to the same page
     referer = request.META.get('HTTP_REFERER', None)
