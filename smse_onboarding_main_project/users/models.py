@@ -22,6 +22,7 @@ class Faculty(models.Model):
     mailing_list_status = models.BooleanField(default=False)
     bio = models.TextField(blank=True)
     completed_onboarding = models.BooleanField(default=False)  # helps flag new hires from reg
+    last_welcome_shown = models.DateTimeField(null=True, blank=True)
 
     objects: Manager[Any] = models.Manager()
 

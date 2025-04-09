@@ -197,8 +197,8 @@ class UserViewTests(TestCase):
             # Should return 200 OK
             self.assertEqual(response.status_code, 200)
 
-            # Should use the welcome_info.html template
-            self.assertTemplateUsed(response, 'users/welcome_info.html')
+            # Should use the newhire_help_guide.html template
+            self.assertTemplateUsed(response, 'users/newhire_help_guide.html')
 
     def test_welcome_info_view_for_admin_user(self):
         """Test welcome_info view renders the correct template for admin users."""
@@ -214,8 +214,8 @@ class UserViewTests(TestCase):
             # Should return 200 OK
             self.assertEqual(response.status_code, 200)
 
-            # Should use the welcome_info.html template
-            self.assertTemplateUsed(response, 'users/welcome_info.html')
+            # Should use the newhire_help_guide.html template
+            self.assertTemplateUsed(response, 'users/newhire_help_guide.html')
 
     '''
     def test_login_sets_welcome_banner_for_regular_user(self):
