@@ -5,7 +5,7 @@ class LoginTest(BaseE2ETest):
     """End-to-end tests for login functionality"""
 
     def test_login_page_loads(self):
-        """Test that the login page loads correctly"""
+        """Test that the login page loads correctly.."""
         print("\nTesting login page load...")
 
         # Navigate to login page
