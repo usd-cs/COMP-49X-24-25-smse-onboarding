@@ -31,7 +31,9 @@ def create_faculty_profile(sender, instance, created, **kwargs):
             task.assigned_to.add(faculty)
 
 @receiver(user_logged_in)
-def set_welcome_banner(sender, request, user, **kwargs):
-    """Set the welcome banner when a user logs in"""
-    request.session['show_welcome_banner'] = True
-    logger.debug(f"User {user.email} logged in, setting show_welcome_banner=True")
+def set_welcome_banner(sender, user, request, **kwargs):
+    """Set welcome banner when user logs in"""
+    # Only set welcome banner if it's not already set
+    if 'show_welcome_banner' not in request.session:
+        request.session['show_welcome_banner'] = True
+        logger.debug(f"Setting welcome banner for user {user.email}")

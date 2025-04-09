@@ -15,10 +15,6 @@ def login(request):
     """Handle user login"""
     # If already authenticated, direct to appropriate dashboard
     if request.user.is_authenticated:
-        # Always show welcome banner after login
-        request.session['show_welcome_banner'] = True
-        logger.debug(f"User {request.user.email} already authenticated, setting show_welcome_banner=True")
-
         if request.user.is_superuser:
             return redirect('admin_dashboard')
         elif request.user.is_staff:
@@ -37,7 +33,7 @@ def login(request):
             auth_login(request, user)
             logger.debug(f"User {user.email} successfully logged in")
 
-            # Always show welcome banner after login
+            # Set welcome banner only on when user logs in
             request.session['show_welcome_banner'] = True
             logger.debug(f"Setting show_welcome_banner=True for user {user.email}")
 
@@ -131,4 +127,9 @@ def show_welcome(request):
 @login_required
 def welcome_info(request):
     """Display detailed welcome information page"""
-    return render(request, 'users/welcome_info.html')
+    return render(request, 'users/newhire_help_guide.html')
+
+@login_required
+def admin_help_guide(request):
+    """Display the admin help guide page"""
+    return render(request, 'users/admin_help_guide.html')

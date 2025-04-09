@@ -19,7 +19,7 @@
         <!-- Dashboard Content -->
         <div class="dashboard-content pt-4" style="padding-top: 50px !important;">
             <!-- Welcome Modal -->
-            {% if request.session.show_welcome_banner %}
+            {% if request.session.show_welcome_banner is True %}
             <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-modal-type="welcome">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -38,7 +38,7 @@
                                 <div class="col-md-8">
                                     <h4 class="mb-3">Hello {{ request.user.first_name }}!</h4>
                                     <p>We're excited to have you join the School of Engineering team. This portal will guide you through all the necessary steps to complete your onboarding process.</p>
-                                    
+
                                     <div class="alert alert-info mt-3">
                                         <h5 class="alert-heading">Getting Started</h5>
                                         <ul class="mb-0">
@@ -365,10 +365,10 @@
         // Handle form submission
         function handleFormSubmit(e) {
             e.preventDefault();
-            
+
             const form = e.target;
             const formData = new FormData(form);
-            
+
             fetch(form.action, {
                 method: 'POST',
                 body: formData,

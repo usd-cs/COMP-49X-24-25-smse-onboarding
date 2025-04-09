@@ -96,3 +96,66 @@ body {
   font-size: 0.95rem;
   color: rgba(189, 186, 201, 0.6);
 }
+
+/* Welcome Info Page Styles */
+.container-fluid {
+  max-width: 100%;
+  padding: 0 20px;
+}
+
+.card {
+  height: auto !important;
+  margin-bottom: 0 !important;
+}
+
+.card-body {
+  padding: 1rem !important;
+  margin: 0 !important;
+}
+
+/* Ensure no external styles override these settings */
+.card-body * {
+  margin-bottom: 0 !important;
+}
+
+.alert {
+  border-radius: 8px;
+  border: none;
+}
+
+.alert-info {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+}
+
+.card-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1a237e;
+}
+
+.card-text {
+  color: #424242;
+  line-height: 1.6;
+}
+
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 0 15px;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1.75rem;
+  }
+}

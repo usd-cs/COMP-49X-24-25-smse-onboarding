@@ -23,7 +23,7 @@
 
         <div class="dashboard-content pt-4" style="background-color: #eaeaea !important;">
             <!-- Welcome Modal -->
-            {% if request.session.show_welcome_banner %}
+            {% if request.session.show_welcome_banner is True %}
             <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-modal-type="welcome">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -42,7 +42,7 @@
                                 <div class="col-md-8">
                                     <h4 class="mb-3">Hello {{ request.user.first_name }}!</h4>
                                     <p>You are logged in as an administrator. This dashboard allows you to manage new hire onboarding processes, track progress, and ensure all tasks are completed on time.</p>
-                                    
+
                                     <div class="alert alert-info mt-3">
                                         <h5 class="alert-heading">Administrative Features</h5>
                                         <ul class="mb-0">
