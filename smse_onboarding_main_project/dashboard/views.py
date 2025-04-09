@@ -207,6 +207,12 @@ def complete_task(request, task_id):
                         completed=True
                     ).exists()
                     if not prereq_completed:
+                        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'Please complete the prerequisite task first'
+                            }, status=400)
+                        messages.error(request, 'Please complete the prerequisite task first')
                         return redirect('dashboard:new_hire_home')
 
                 # Mark task as completed for this specific faculty
@@ -229,10 +235,21 @@ def complete_task(request, task_id):
                     task.completed = True
                     task.save()
 
+                # If AJAX request, return JSON response
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'status': 'success'})
+
+                messages.success(request, 'Task completed successfully')
                 return redirect('dashboard:new_hire_home')
 
         except Task.DoesNotExist:
-            pass
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Task not found'}, status=404)
+            messages.error(request, 'Task not found')
+
+    # If AJAX request but an error occurred
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'error'}, status=400)
 
     return redirect('dashboard:new_hire_home')
 
@@ -258,23 +275,19 @@ def continue_task(request, task_id):
                     task.completed = False
                     task.save()
 
-                # Check if this task is a prerequisite for any other tasks
-                dependent_tasks = Task.objects.filter(prerequisite_task=task)
-                for dependent_task in dependent_tasks:
-                    # If any faculty has completed a dependent task, mark it as incomplete
-                    TaskProgress.objects.filter(
-                        task=dependent_task,
-                        faculty=faculty,
-                        completed=True
-                    ).delete()
-                    if dependent_task.completed:
-                        dependent_task.completed = False
-                        dependent_task.save()
+                # If AJAX request, return JSON response
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'status': 'success'})
 
                 return redirect('dashboard:new_hire_home')
 
         except Task.DoesNotExist:
-            pass
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Task not found'}, status=404)
+
+    # If AJAX request but an error occurred
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'error'}, status=400)
 
     return redirect('dashboard:new_hire_home')
 
@@ -286,6 +299,12 @@ def faculty_directory(request):
     """
     # Get all faculty members
     faculty_members = Faculty.objects.all().order_by('first_name')
+    
+    # Format the faculty data for the template
+    for faculty in faculty_members:
+        faculty.department = faculty.engineering_dept
+        faculty.start_date = faculty.hire_date
+        faculty.profile_image = None  # We'll use initials instead
     
     context = {
         'faculty_members': faculty_members,

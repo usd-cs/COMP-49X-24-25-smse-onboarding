@@ -60,38 +60,55 @@
                         </thead>
                         <tbody>
                             {% for faculty in faculty_members %}
-                            <tr data-faculty-id="{{ faculty.id }}">
-                                <td class="name-cell">
+                            <tr data-faculty-id="{{ faculty.pk }}" 
+                                data-faculty-first-name="{{ faculty.first_name }}"
+                                data-faculty-last-name="{{ faculty.last_name }}"
+                                data-faculty-email="{{ faculty.email }}"
+                                data-faculty-department="{{ faculty.department }}"
+                                data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
+                                data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
+                                class="faculty-row">
+                                <td>
                                     <div class="d-flex align-items-center">
-                                        {% if faculty.profile_image %}
-                                            <img src="{{ faculty.profile_image.url }}" alt="Profile" class="faculty-avatar">
-                                        {% else %}
-                                            <div class="faculty-avatar">
-                                                {{ faculty.first_name|first }}{{ faculty.last_name|first }}
-                                            </div>
-                                        {% endif %}
-                                        <div class="faculty-info">
-                                            <span class="faculty-name">{{ faculty.first_name }} {{ faculty.last_name }}</span>
+                                        <div class="faculty-avatar">
+                                            {% if faculty.profile_image %}
+                                                <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }}">
+                                            {% else %}
+                                                <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="ms-3">
+                                            <p class="fw-bold mb-1">{{ faculty.first_name }} {{ faculty.last_name }}</p>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="email-cell">{{ faculty.email }}</td>
-                                <td class="department-cell">{{ faculty.department }}</td>
-                                <td class="status-cell">
-                                    <span class="status-badge {% if faculty.completed_onboarding %}status-active{% else %}status-onboarding{% endif %}">
-                                        {% if faculty.completed_onboarding %}Active{% else %}Onboarding{% endif %}
+                                <td>
+                                    <p class="text-muted mb-0">{{ faculty.email }}</p>
+                                </td>
+                                <td>
+                                    <p class="text-muted mb-0">{{ faculty.department }}</p>
+                                </td>
+                                <td>
+                                    <p class="text-muted mb-0">{{ faculty.start_date|date:"M d, Y" }}</p>
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill {% if faculty.completed_onboarding %}bg-success{% else %}bg-warning{% endif %}">
+                                        {% if faculty.completed_onboarding %}
+                                            Completed
+                                        {% else %}
+                                            Pending
+                                        {% endif %}
                                     </span>
                                 </td>
-                                <td class="date-cell">{{ faculty.start_date|date:"M d, Y" }}</td>
-                                <td class="actions-cell">
+                                <td>
                                     <div class="action-buttons">
-                                        <button class="action-button" onclick="showProfile({{ faculty.id }})" title="View Profile">
+                                        <button class="btn btn-link btn-sm" onclick="showProfile({{ faculty.pk }})" title="View Profile">
                                             <i class="bi bi-person-lines-fill"></i>
                                         </button>
-                                        <button class="action-button" title="Send Email">
+                                        <button class="btn btn-link btn-sm" title="Send Email">
                                             <i class="bi bi-envelope"></i>
                                         </button>
-                                        <button class="action-button" title="Edit">
+                                        <button class="btn btn-link btn-sm" title="Edit">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                     </div>
@@ -115,34 +132,34 @@
         <div class="profile-image">
             <i class="bi bi-person"></i>
         </div>
-        <h4 class="faculty-name">Faculty Name</h4>
-        <p class="faculty-title">Position Title</p>
+        <h4 class="faculty-name" id="profileFacultyName"></h4>
+        <p class="faculty-title" id="profileFacultyDepartment"></p>
     </div>
     <div class="profile-content">
         <div class="profile-section">
-            <h5 class="profile-section-title">CONTACT INFORMATION</h5>
+            <h5 class="profile-section-title">Contact Information</h5>
             <div class="profile-info-item">
                 <i class="bi bi-envelope"></i>
                 <span class="profile-info-label">Email</span>
-                <span class="profile-info-value"></span>
+                <span class="profile-info-value" id="profileFacultyEmail"></span>
             </div>
             <div class="profile-info-item">
                 <i class="bi bi-building"></i>
                 <span class="profile-info-label">Department</span>
-                <span class="profile-info-value"></span>
+                <span class="profile-info-value" id="profileFacultyDeptInfo"></span>
             </div>
         </div>
         <div class="profile-section">
-            <h5 class="profile-section-title">STATUS INFORMATION</h5>
+            <h5 class="profile-section-title">Status Information</h5>
             <div class="profile-info-item">
                 <i class="bi bi-calendar"></i>
                 <span class="profile-info-label">Start Date</span>
-                <span class="profile-info-value"></span>
+                <span class="profile-info-value" id="profileFacultyStartDate"></span>
             </div>
             <div class="profile-info-item">
                 <i class="bi bi-check-circle"></i>
                 <span class="profile-info-label">Onboarding Status</span>
-                <span class="profile-info-value"></span>
+                <span class="profile-info-value" id="profileFacultyStatus"></span>
             </div>
         </div>
     </div>
@@ -152,51 +169,46 @@
 {% block extra_js %}
 <script>
     function showProfile(facultyId) {
-        console.log('Showing profile for faculty ID:', facultyId); // Add debugging
         const profileCard = document.getElementById('facultyProfileCard');
         const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
         
-        console.log('Found faculty row:', facultyRow); // Add debugging
-        
-        if (!facultyRow) {
-            console.log('Faculty row not found'); // Add debugging
-            return;
-        }
-        
-        // Get faculty information from the table row
-        const name = facultyRow.querySelector('.faculty-name').textContent;
-        const email = facultyRow.querySelector('.email-cell').textContent;
-        const department = facultyRow.querySelector('.department-cell').textContent;
-        const startDate = facultyRow.querySelector('.date-cell').textContent;
-        const status = facultyRow.querySelector('.status-badge').textContent.trim();
-        const avatar = facultyRow.querySelector('.faculty-avatar').textContent.trim();
-        
-        console.log('Faculty info:', { name, email, department, startDate, status, avatar }); // Add debugging
-        
-        // Update profile card with faculty information
-        profileCard.querySelector('.profile-header .faculty-name').textContent = name;
-        
-        // Update avatar with initials if available
-        const profileImage = profileCard.querySelector('.profile-header .profile-image');
-        if (avatar && avatar.length > 0) {
-            profileImage.innerHTML = avatar;
-        } else {
-            profileImage.innerHTML = '<i class="bi bi-person"></i>';
-        }
-        
-        profileCard.querySelector('.profile-header .faculty-title').textContent = department;
-        
-        // Update contact information
-        const contactSection = profileCard.querySelector('.profile-content .profile-section:nth-child(1)');
-        contactSection.querySelector('.profile-info-item:nth-child(1) .profile-info-value').textContent = email;
-        contactSection.querySelector('.profile-info-item:nth-child(2) .profile-info-value').textContent = department;
-        
-        // Update status information
-        const statusSection = profileCard.querySelector('.profile-content .profile-section:nth-child(2)');
-        statusSection.querySelector('.profile-info-item:nth-child(1) .profile-info-value').textContent = startDate;
-        statusSection.querySelector('.profile-info-item:nth-child(2) .profile-info-value').textContent = status;
+        if (facultyRow) {
+            // Get faculty information from data attributes
+            const firstName = facultyRow.dataset.facultyFirstName;
+            const lastName = facultyRow.dataset.facultyLastName;
+            const email = facultyRow.dataset.facultyEmail;
+            const department = facultyRow.dataset.facultyDepartment;
+            const startDate = facultyRow.dataset.facultyStartDate;
+            const status = facultyRow.dataset.facultyStatus;
 
-        // Show the profile card
+            // Update profile card with faculty information
+            document.getElementById('profileFacultyName').textContent = `${firstName} ${lastName}`;
+            document.getElementById('profileFacultyDepartment').textContent = department;
+            document.getElementById('profileFacultyEmail').textContent = email;
+            document.getElementById('profileFacultyDeptInfo').textContent = department;
+            document.getElementById('profileFacultyStartDate').textContent = startDate;
+            
+            // Update status with appropriate styling
+            const statusElement = document.getElementById('profileFacultyStatus');
+            const isCompleted = status === 'Completed';
+            statusElement.className = 'profile-info-value ' + (isCompleted ? 'text-success' : 'text-warning');
+            statusElement.innerHTML = `<span class="status-dot ${isCompleted ? 'bg-success' : 'bg-warning'}"></span>${status}`;
+
+            // Update profile image with initials
+            const profileImage = profileCard.querySelector('.profile-image');
+            if (profileImage) {
+                profileImage.innerHTML = '';
+                const initials = `${firstName[0]}${lastName[0]}`;
+                profileImage.textContent = initials;
+                profileImage.style.backgroundColor = '#1976d2';
+                profileImage.style.color = 'white';
+                profileImage.style.display = 'flex';
+                profileImage.style.alignItems = 'center';
+                profileImage.style.justifyContent = 'center';
+                profileImage.style.fontSize = '2rem';
+            }
+        }
+
         profileCard.classList.add('active');
     }
 
@@ -205,16 +217,14 @@
         profileCard.classList.remove('active');
     }
 
-    // Close profile card when clicking outside
     document.addEventListener('click', function(event) {
         const profileCard = document.getElementById('facultyProfileCard');
         if (!event.target.closest('.faculty-profile-card') && 
-            !event.target.closest('.action-button')) {
+            !event.target.closest('.action-buttons')) {
             profileCard.classList.remove('active');
         }
     });
 
-    // Search functionality
     document.getElementById('facultySearch').addEventListener('input', function(e) {
         const searchText = e.target.value.toLowerCase();
         const rows = document.querySelectorAll('.faculty-table tbody tr');

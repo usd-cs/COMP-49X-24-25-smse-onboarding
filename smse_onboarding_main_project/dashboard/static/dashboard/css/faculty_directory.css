@@ -403,6 +403,32 @@
     font-size: 0.9rem;
     color: #6c757d;
     margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.bg-success {
+    background-color: #2e7d32;
+}
+
+.bg-primary {
+    background-color: #1976d2;
+}
+
+.text-success {
+    color: #2e7d32 !important;
+}
+
+.text-primary {
+    color: #1976d2 !important;
 }
 
 .close-profile-btn {
