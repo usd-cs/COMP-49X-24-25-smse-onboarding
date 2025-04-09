@@ -55,8 +55,7 @@ def login(request):
                         job_role="New Faculty",
                         engineering_dept="SMSE",
                         phone="0000000000",
-                        office_room="TBD",
-                        last_welcome_shown=timezone.now()
+                        office_room="TBD"
                     )
                     from tasks.models import Task
                     default_tasks = Task.objects.all()
