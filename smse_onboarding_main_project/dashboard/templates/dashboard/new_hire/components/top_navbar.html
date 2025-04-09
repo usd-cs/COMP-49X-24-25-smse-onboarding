@@ -13,6 +13,13 @@
 
         <!-- Right-aligned items -->
         <div class="navbar-nav ms-auto align-items-center">
+            <!-- Help button -->
+            <div class="nav-item me-3">
+                <a href="{% url 'users:welcome_info' %}" class="nav-link" title="Help & Information">
+                    <i class="bi bi-question-circle-fill"></i>
+                </a>
+            </div>
+
             <!-- Notification bell -->
             <div class="nav-item me-3 position-relative">
                 <a href="#" class="nav-link">
