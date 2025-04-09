@@ -192,7 +192,7 @@ class UserViewTests(TestCase):
 
         # Mock the user authentication
         with patch('django.contrib.auth.middleware.get_user', return_value=self.mock_regular_user):
-            response = self.client.get(reverse('users:welcome_info'))
+            response = self.client.get(reverse('users:newhire_help_guide'))
 
             # Should return 200 OK
             self.assertEqual(response.status_code, 200)
@@ -209,13 +209,13 @@ class UserViewTests(TestCase):
 
         # Mock the user authentication
         with patch('django.contrib.auth.middleware.get_user', return_value=self.mock_staff_user):
-            response = self.client.get(reverse('users:welcome_info'))
+            response = self.client.get(reverse('users:admin_help_guide'))
 
             # Should return 200 OK
             self.assertEqual(response.status_code, 200)
 
-            # Should use the newhire_help_guide.html template
-            self.assertTemplateUsed(response, 'users/newhire_help_guide.html')
+            # Should use the admin_help_guide.html template
+            self.assertTemplateUsed(response, 'users/admin_help_guide.html')
 
     '''
     def test_login_sets_welcome_banner_for_regular_user(self):
