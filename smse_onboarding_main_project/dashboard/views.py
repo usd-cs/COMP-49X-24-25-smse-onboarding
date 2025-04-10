@@ -6,6 +6,7 @@ from documents.models import FacultyDocument
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
+from datetime import datetime
 
 def get_faculty_from_request(request):
     """Helper function to get faculty profile from request"""
@@ -38,12 +39,10 @@ def new_hire_home(request):
             return redirect('dashboard:admin_home')
         return redirect('users:login')
 
-    tasks = Task.objects.all()
-    documents = FacultyDocument.objects.filter(faculty=faculty)
-
     # Get all tasks assigned to this faculty
-    assigned_tasks = tasks.filter(assigned_to=faculty)
-    total_assigned_tasks = assigned_tasks.count()
+    tasks = Task.objects.filter(assigned_to=faculty)
+    documents = FacultyDocument.objects.filter(faculty=faculty)
+    total_assigned_tasks = tasks.count()
 
     # Get completed tasks for this faculty
     completed_task_ids = set(
@@ -71,10 +70,14 @@ def new_hire_home(request):
         else:
             task.prereq_completed = True
             task.can_complete = not task.is_completed_by_faculty
-        print(f"DEBUG: Task {task.id} - {task.title} - Completed: {task.is_completed_by_faculty} - Can Complete: {task.can_complete}")
+
+    # Separate tasks into upcoming and completed
+    completed_tasks = [task for task in tasks if task.is_completed_by_faculty]
+    upcoming_tasks = [task for task in tasks if not task.is_completed_by_faculty]
 
     context = {
-        'tasks': tasks,
+        'tasks': upcoming_tasks,
+        'completed_tasks': completed_tasks,
         'faculty': faculty,
         'documents': documents,
         'show_documents': True,
@@ -212,7 +215,6 @@ def complete_task(request, task_id):
                                 'status': 'error',
                                 'message': 'Please complete the prerequisite task first'
                             }, status=400)
-                        messages.error(request, 'Please complete the prerequisite task first')
                         return redirect('dashboard:new_hire_home')
 
                 # Mark task as completed for this specific faculty
@@ -239,13 +241,11 @@ def complete_task(request, task_id):
                 if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                     return JsonResponse({'status': 'success'})
 
-                messages.success(request, 'Task completed successfully')
                 return redirect('dashboard:new_hire_home')
 
         except Task.DoesNotExist:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'error', 'message': 'Task not found'}, status=404)
-            messages.error(request, 'Task not found')
 
     # If AJAX request but an error occurred
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -305,9 +305,61 @@ def faculty_directory(request):
         faculty.department = faculty.engineering_dept
         faculty.start_date = faculty.hire_date
         faculty.profile_image = None  # We'll use initials instead
+        faculty.extension = getattr(faculty, 'phone_extension', None)  # Add extension field
     
     context = {
         'faculty_members': faculty_members,
     }
     
     return render(request, 'dashboard/admin/faculty_directory.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def faculty_tasks(request, faculty_id):
+    """API endpoint to get task data for a specific faculty member"""
+    try:
+        faculty = Faculty.objects.get(pk=faculty_id)
+        
+        # Get all tasks assigned to this faculty
+        assigned_tasks = Task.objects.filter(assigned_to=faculty)
+        completed_task_ids = TaskProgress.objects.filter(
+            faculty=faculty,
+            completed=True
+        ).values_list('task_id', flat=True)
+
+        # Format upcoming tasks
+        upcoming_tasks = []
+        for task in assigned_tasks.exclude(id__in=completed_task_ids):
+            days_left = (task.deadline - timezone.now()).days
+            days_text = f"{days_left} days left" if days_left > 1 else "1 day left" if days_left == 1 else "Due today"
+            
+            upcoming_tasks.append({
+                'title': task.title,
+                'due_date': task.deadline.strftime('%b %d, %Y'),
+                'days_left': days_text,
+                'description': task.description
+            })
+
+        # Format completed tasks
+        completed_tasks = []
+        for task in assigned_tasks.filter(id__in=completed_task_ids):
+            completed_date = TaskProgress.objects.get(
+                faculty=faculty,
+                task=task,
+                completed=True
+            ).completion_date
+            
+            completed_tasks.append({
+                'title': task.title,
+                'completed_date': completed_date.strftime('%b %d, %Y'),
+                'description': task.description
+            })
+
+        return JsonResponse({
+            'upcoming_tasks': upcoming_tasks,
+            'completed_tasks': completed_tasks
+        })
+    except Faculty.DoesNotExist:
+        return JsonResponse({'error': 'Faculty not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

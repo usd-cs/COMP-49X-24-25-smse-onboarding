@@ -10,6 +10,7 @@
 {% block content %}
 <div class="dashboard-container">
     {% include 'dashboard/admin/components/sidebar.html' %}
+    {% include 'dashboard/admin/components/newhire_task_progress.html' %}
     
     <div class="main-content">
         {% include 'dashboard/admin/components/topnav.html' %}
@@ -63,11 +64,14 @@
                             <tr data-faculty-id="{{ faculty.pk }}" 
                                 data-faculty-first-name="{{ faculty.first_name }}"
                                 data-faculty-last-name="{{ faculty.last_name }}"
-                                data-faculty-email="{{ faculty.email }}"
+                                data-faculty-email="{{ faculty.email|default:'None' }}"
                                 data-faculty-department="{{ faculty.department }}"
                                 data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
                                 data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
-                                class="faculty-row">
+                                data-faculty-extension="{{ faculty.extension|default:'None' }}"
+                                class="faculty-row"
+                                style="cursor: pointer;"
+                                onclick="showTaskProgress(event, {{ faculty.pk }})">
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="faculty-avatar">
@@ -144,6 +148,11 @@
                 <span class="profile-info-value" id="profileFacultyEmail"></span>
             </div>
             <div class="profile-info-item">
+                <i class="bi bi-telephone"></i>
+                <span class="profile-info-label">Extension</span>
+                <span class="profile-info-value" id="profileFacultyExtension"></span>
+            </div>
+            <div class="profile-info-item">
                 <i class="bi bi-building"></i>
                 <span class="profile-info-label">Department</span>
                 <span class="profile-info-value" id="profileFacultyDeptInfo"></span>
@@ -177,6 +186,7 @@
             const firstName = facultyRow.dataset.facultyFirstName;
             const lastName = facultyRow.dataset.facultyLastName;
             const email = facultyRow.dataset.facultyEmail;
+            const extension = facultyRow.dataset.facultyExtension;
             const department = facultyRow.dataset.facultyDepartment;
             const startDate = facultyRow.dataset.facultyStartDate;
             const status = facultyRow.dataset.facultyStatus;
@@ -185,6 +195,7 @@
             document.getElementById('profileFacultyName').textContent = `${firstName} ${lastName}`;
             document.getElementById('profileFacultyDepartment').textContent = department;
             document.getElementById('profileFacultyEmail').textContent = email;
+            document.getElementById('profileFacultyExtension').textContent = extension;
             document.getElementById('profileFacultyDeptInfo').textContent = department;
             document.getElementById('profileFacultyStartDate').textContent = startDate;
             
@@ -234,5 +245,104 @@
             row.style.display = text.includes(searchText) ? '' : 'none';
         });
     });
+
+    function showTaskProgress(event, facultyId) {
+        // Don't trigger if clicking action buttons
+        if (event.target.closest('.action-buttons')) {
+            return;
+        }
+
+        const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
+        
+        if (facultyRow) {
+            // Get faculty information from data attributes
+            const firstName = facultyRow.dataset.facultyFirstName;
+            const lastName = facultyRow.dataset.facultyLastName;
+            const email = facultyRow.dataset.facultyEmail;
+            const department = facultyRow.dataset.facultyDepartment;
+            const startDate = facultyRow.dataset.facultyStartDate;
+            const status = facultyRow.dataset.facultyStatus;
+
+            // Update faculty information
+            document.getElementById('facultyNameTitle').textContent = `${firstName} ${lastName}`;
+            document.getElementById('facultyDepartmentInfo').textContent = department;
+            document.getElementById('facultyEmail').textContent = email;
+
+            // Fetch task data from the backend
+            fetch(`/dashboard/api/faculty/${facultyId}/tasks/`)
+                .then(response => response.json())
+                .then(data => {
+                    const tasks = {
+                        upcoming: data.upcoming_tasks || [],
+                        completed: data.completed_tasks || []
+                    };
+
+                    // Update progress information
+                    const totalTasks = tasks.upcoming.length + tasks.completed.length;
+                    const completedTasks = tasks.completed.length;
+                    const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+                    document.getElementById('completionPercentage').textContent = `${progressPercentage}%`;
+                    document.getElementById('progressBar').style.width = `${progressPercentage}%`;
+                    document.getElementById('tasksCompleteCount').textContent = `${completedTasks}/${totalTasks} complete`;
+
+                    // Update upcoming tasks
+                    const upcomingTasksList = document.getElementById('upcomingTasksList');
+                    if (tasks.upcoming.length === 0) {
+                        upcomingTasksList.innerHTML = `
+                            <div class="alert alert-info mb-0">
+                                No upcoming tasks at this moment
+                            </div>
+                        `;
+                    } else {
+                        upcomingTasksList.innerHTML = tasks.upcoming.map(task => `
+                            <div class="task-item">
+                                <div class="task-info">
+                                    <div class="task-title">${task.title}</div>
+                                    <div class="task-meta">
+                                        <span>Due: ${task.due_date}</span>
+                                        <span class="ms-2 task-due">${task.days_left}</span>
+                                    </div>
+                                </div>
+                                <span class="task-status pending">Pending</span>
+                                <button class="task-menu ms-2" title="More Info">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                            </div>
+                        `).join('');
+                    }
+
+                    // Update completed tasks
+                    const completedTasksList = document.getElementById('completedTasksList');
+                    if (tasks.completed.length === 0) {
+                        completedTasksList.innerHTML = `
+                            <div class="alert alert-info mb-0">
+                                No completed tasks at this moment
+                            </div>
+                        `;
+                    } else {
+                        completedTasksList.innerHTML = tasks.completed.map(task => `
+                            <div class="task-item">
+                                <div class="task-info">
+                                    <div class="task-title">${task.title}</div>
+                                    <div class="task-meta">Completed: ${task.completed_date}</div>
+                                </div>
+                                <span class="task-status completed">Completed</span>
+                                <button class="task-menu ms-2" title="More Info">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                            </div>
+                        `).join('');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching task data:', error);
+                });
+
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('newhireTaskProgress'));
+            modal.show();
+        }
+    }
 </script>
 {% endblock %} 
