@@ -14,7 +14,7 @@
             <i class="bi bi-people-fill"></i>
             <span>Faculty Directory</span>
         </a>
-        <a href="#" class="nav-item" data-bs-toggle="modal" data-bs-target="#documentsModal">
+        <a href="{% url 'documents:show_documents' %}" class="nav-item">
             <i class="bi bi-file-earmark-text"></i>
             <span>Manage Documents</span>
         </a>
@@ -47,3 +47,6 @@
         </a>
     </div>
 </div>
+
+<!-- Document Modal -->
+{% include 'documents/document_modal.html' %}
