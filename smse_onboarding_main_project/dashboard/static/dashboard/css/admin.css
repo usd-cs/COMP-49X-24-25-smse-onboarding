@@ -784,6 +784,42 @@ tr:has(.task-completed) td {
     transition: color 0.2s ease;
 }
 
+input[type="checkbox"]:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    top: -1px;
+    left: 2px;
+}
+
+/* Modal styles */
+.modal-backdrop.show {
+    z-index: 1040 !important;
+    pointer-events: auto !important;
+}
+
+.modal.fade.show {
+    z-index: 1050 !important;
+    pointer-events: auto !important;
+}
+
+.modal-content {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* Task title hover effect */
+.task-title-text {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
 .task-title-text:hover {
     color: #0d6efd;
 }
