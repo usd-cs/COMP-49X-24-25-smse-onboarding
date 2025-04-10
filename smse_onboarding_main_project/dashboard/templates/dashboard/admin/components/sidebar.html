@@ -11,11 +11,11 @@
             <i class="bi bi-house-fill"></i>
             <span>Dashboard</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="{% url 'dashboard:faculty_directory' %}" class="nav-item {% if request.resolver_match.url_name == 'faculty_directory' %}active{% endif %}">
             <i class="bi bi-people-fill"></i>
             <span>Faculty Directory</span>
         </a>
-        <a href="#" class="nav-item" data-bs-toggle="modal" data-bs-target="#documentsModal">
+        <a href="{% url 'documents:show_documents' %}" class="nav-item">
             <i class="bi bi-file-earmark-text"></i>
             <span>Manage Documents</span>
         </a>
@@ -49,5 +49,5 @@
     </div>
 </div>
 
-<!-- Dark overlay for mobile -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<!-- Document Modal -->
+{% include 'documents/document_modal.html' %}

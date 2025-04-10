@@ -12,7 +12,7 @@
                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
                     <i class="bi bi-person me-2"></i>Edit Profile
                 </a></li>
-                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#documentModal">
                     <i class="bi bi-file-earmark-text me-2"></i>Documents
                     {% if documents %}
                     <span class="badge rounded-pill bg-info ms-2" style="font-size: 0.6rem;">{{ documents|length }}</span>
@@ -81,7 +81,7 @@
 </div>
 
 <!-- Document Modal -->
-{% include 'documents/upload_modal.html' %}
+{% include 'documents/document_modal.html' %}
 
 <!-- Profile Modal -->
 {% include 'dashboard/new_hire/components/profile_modal.html' %}
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
-    
+
     // Ensure progress circle is initialized after DOM is fully loaded
     setTimeout(function() {
         updateProgressCircle();
@@ -276,28 +276,29 @@ function updateProgressCircle() {
     // Count completed tasks from the DOM
     const completedTasks = document.querySelectorAll('.bi-check-circle-fill').length;
     const totalTasks = completedTasks + document.querySelectorAll('.task-circle-btn').length;
-    
+
     // Server data fallback - if information cannot be found in the DOM
     const serverCompletedTasks = {{ num_completed|default:0 }};
     const serverTotalTasks = {{ num_tasks|default:0 }};
-    
+
     // Use DOM data or server data, prioritizing DOM data
     const finalCompletedTasks = (completedTasks > 0) ? completedTasks : serverCompletedTasks;
     const finalTotalTasks = (totalTasks > 0) ? totalTasks : serverTotalTasks;
-    
+
     // Update progress text
     const progressTextElement = document.getElementById('progressText');
     if (progressTextElement) {
         progressTextElement.textContent = finalCompletedTasks + ' of ' + finalTotalTasks;
     }
-    
+
     // Calculate percentage
     let percentage = 0;
     if (finalTotalTasks > 0) {
         percentage = (finalCompletedTasks / finalTotalTasks) * 100;
     }
-    
+
     console.log("Progress calculation:", finalCompletedTasks, "of", finalTotalTasks, "=", percentage + "%");
+<<<<<<< HEAD
     
     // Calculate actual dashoffset based on percentage
     const circle = document.getElementById('progressCircle');
@@ -312,6 +313,29 @@ function updateProgressCircle() {
         circle.style.transition = "stroke-dashoffset 0.5s ease-in-out";
         circle.style.strokeDasharray = circumference;
         circle.style.strokeDashoffset = dashoffset;
+=======
+
+    // Update progress circle
+    const progressCircle = document.getElementById('progressCircle');
+    if (progressCircle) {
+        const circumference = 2 * Math.PI * 65; // 2πr where r=65
+        const dashoffset = circumference - (percentage / 100) * circumference;
+        progressCircle.style.strokeDashoffset = dashoffset;
+        progressCircle.style.strokeDasharray = circumference;
+
+        // Change color based on progress
+        if (percentage === 100) {
+            progressCircle.style.stroke = '#4CAF50'; // Green for complete
+        } else if (percentage >= 75) {
+            progressCircle.style.stroke = '#2196F3'; // Blue for good progress
+        } else if (percentage >= 50) {
+            progressCircle.style.stroke = '#FFC107'; // Yellow/amber for medium progress
+        } else if (percentage >= 25) {
+            progressCircle.style.stroke = '#FF9800'; // Orange for some progress
+        } else {
+            progressCircle.style.stroke = '#0047ab'; // Default blue
+        }
+>>>>>>> origin/main
     }
 }
 
