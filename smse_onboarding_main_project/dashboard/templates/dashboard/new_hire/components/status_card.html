@@ -246,6 +246,12 @@
 <!-- Initialize tooltips and progress circle -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
     // Ensure progress circle is initialized after DOM is fully loaded
     setTimeout(function() {
         updateProgressCircle();
