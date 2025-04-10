@@ -5,6 +5,9 @@ from django.contrib.auth import login as auth_login, authenticate
 from .models import Faculty
 from django.utils import timezone
 from django.contrib.auth.models import User
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 
@@ -12,9 +15,6 @@ def login(request):
     """Handle user login"""
     # If already authenticated, direct to appropriate dashboard
     if request.user.is_authenticated:
-        # Always show welcome banner after login
-        request.session['show_welcome_banner'] = True
-
         if request.user.is_superuser:
             return redirect('admin_dashboard')
         elif request.user.is_staff:
@@ -31,9 +31,11 @@ def login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
+            logger.debug(f"User {user.email} successfully logged in")
 
-            # Always show welcome banner after login
+            # Set welcome banner only on when user logs in
             request.session['show_welcome_banner'] = True
+            logger.debug(f"Setting show_welcome_banner=True for user {user.email}")
 
             # Redirect based on user type
             if user.is_superuser:
@@ -95,6 +97,7 @@ def profile(request):
 def dismiss_welcome_banner(request):
     """Dismiss the welcome banner for this session"""
     request.session['show_welcome_banner'] = False
+    logger.debug(f"User {request.user.email} dismissed welcome banner")
     # Get the referer URL to redirect back to the same page
     referer = request.META.get('HTTP_REFERER', None)
     if referer:
@@ -109,6 +112,7 @@ def show_welcome(request):
     """Show the welcome banner"""
     # Set session variable to show the banner
     request.session['show_welcome_banner'] = True
+    logger.debug(f"User {request.user.email} requested to show welcome banner")
 
     # Get the referer URL to redirect back to the same page
     referer = request.META.get('HTTP_REFERER', None)
@@ -122,4 +126,9 @@ def show_welcome(request):
 @login_required
 def welcome_info(request):
     """Display detailed welcome information page"""
-    return render(request, 'users/welcome_info.html')
+    return render(request, 'users/newhire_help_guide.html')
+
+@login_required
+def admin_help_guide(request):
+    """Display the admin help guide page"""
+    return render(request, 'users/admin_help_guide.html')

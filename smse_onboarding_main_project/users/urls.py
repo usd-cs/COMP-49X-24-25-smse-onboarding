@@ -11,4 +11,5 @@ urlpatterns = [
     path('dismiss-welcome/', views.dismiss_welcome_banner, name='dismiss_welcome'),
     path('show-welcome/', views.show_welcome, name='show_welcome'),
     path('welcome-info/', views.welcome_info, name='welcome_info'),
+    path('admin-help-guide/', views.admin_help_guide, name='admin_help_guide'),
 ]

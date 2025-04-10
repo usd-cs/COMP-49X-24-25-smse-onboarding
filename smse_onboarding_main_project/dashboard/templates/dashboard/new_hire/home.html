@@ -18,21 +18,49 @@
 
         <!-- Dashboard Content -->
         <div class="dashboard-content pt-4" style="padding-top: 50px !important;">
-            <!-- Welcome Banner -->
-            {% if request.session.show_welcome_banner %}
-            <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
-                <div class="d-flex align-items-center">
-                    <div class="me-3">
-                        <i class="bi bi-info-circle-fill fs-4"></i>
-                    </div>
-                    <div>
-                        <h4 class="alert-heading">Welcome to SMSE Onboarding Portal!</h4>
-                        <p>Hello {{ request.user.first_name }}, we're excited to have you join the School of Engineering team. This portal will guide you through all the necessary steps to complete your onboarding process.</p>
-                        <hr>
-                        <p class="mb-0">Please complete all the assigned tasks to ensure a smooth transition into your new role. If you have any questions, don't hesitate to reach out to your department contact.</p>
+            <!-- Welcome Modal -->
+            {% if request.session.show_welcome_banner is True %}
+            <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-modal-type="welcome">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="welcomeModalLabel">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                Welcome to SMSE Onboarding Portal!
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <img src="{% static 'dashboard/images/smse_logo_transparent.png' %}" alt="SMSE Logo" class="img-fluid mb-3" style="max-height: 150px;">
+                                </div>
+                                <div class="col-md-8">
+                                    <h4 class="mb-3">Hello {{ request.user.first_name }}!</h4>
+                                    <p>We're excited to have you join the School of Engineering team. This portal will guide you through all the necessary steps to complete your onboarding process.</p>
+
+                                    <div class="alert alert-info mt-3">
+                                        <h5 class="alert-heading">Getting Started</h5>
+                                        <ul class="mb-0">
+                                            <li>Complete your profile information</li>
+                                            <li>View and complete assigned tasks</li>
+                                            <li>Upload required documents</li>
+                                            <li>Track your onboarding progress</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="{% url 'users:welcome_info' %}" class="btn btn-outline-primary me-auto">
+                                <i class="bi bi-info-circle me-2"></i>Learn More
+                            </a>
+                            <a href="{% url 'users:dismiss_welcome' %}" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Got it!
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <a href="{% url 'users:dismiss_welcome' %}" class="btn-close" aria-label="Close"></a>
             </div>
             {% endif %}
 
@@ -229,11 +257,17 @@
 
 <!-- Force CSS cache refresh -->
 <script>
-    // Add a random query parameter to CSS files to force cache refresh, but without showing loading state
     document.addEventListener('DOMContentLoaded', function() {
-        // Remove loading classes to prevent darkening effect
+        // Remove loading classes
         document.body.classList.remove('loading');
         document.querySelector('.dashboard-container').classList.remove('loading');
+
+        // Show welcome modal if it exists
+        const welcomeModal = document.getElementById('welcomeModal');
+        if (welcomeModal) {
+            const modal = new bootstrap.Modal(welcomeModal);
+            modal.show();
+        }
 
         var timestamp = new Date().getTime();
         var links = document.getElementsByTagName('link');
@@ -331,10 +365,10 @@
         // Handle form submission
         function handleFormSubmit(e) {
             e.preventDefault();
-            
+
             const form = e.target;
             const formData = new FormData(form);
-            
+
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
