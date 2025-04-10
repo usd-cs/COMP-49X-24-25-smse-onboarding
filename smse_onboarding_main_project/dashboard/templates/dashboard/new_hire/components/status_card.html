@@ -298,29 +298,12 @@ function updateProgressCircle() {
     }
 
     console.log("Progress calculation:", finalCompletedTasks, "of", finalTotalTasks, "=", percentage + "%");
-<<<<<<< HEAD
-    
-    // Update progress circle
-    const progressCircle = document.getElementById('progressCircle');
-    if (progressCircle) {
-        const radius = parseFloat(progressCircle.getAttribute('r'));
-        const circumference = 2 * Math.PI * radius;
-        
-        // Calculate dashoffset
-        const dashoffset = circumference - (percentage / 100) * circumference;
-        
-        // Animate the progress circle
-        circle.style.transition = "stroke-dashoffset 0.5s ease-in-out";
-        circle.style.strokeDasharray = circumference;
-        circle.style.strokeDashoffset = dashoffset;
-=======
 
     // Update progress circle
     const progressCircle = document.getElementById('progressCircle');
     if (progressCircle) {
         const circumference = 2 * Math.PI * 65; // 2πr where r=65
         const dashoffset = circumference - (percentage / 100) * circumference;
-        progressCircle.style.strokeDashoffset = dashoffset;
         progressCircle.style.strokeDasharray = circumference;
         progressCircle.style.strokeDashoffset = dashoffset;
 
@@ -336,7 +319,6 @@ function updateProgressCircle() {
         } else {
             progressCircle.style.stroke = '#0047ab'; // Default blue
         }
->>>>>>> origin/main
     }
 }
 
