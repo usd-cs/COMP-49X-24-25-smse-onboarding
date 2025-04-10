@@ -49,7 +49,7 @@
     <!-- Custom JS -->
     <script src="{% static 'dashboard/js/tasks.js' %}"></script>
 
-    {% block extra_js %}
+    {% block tooltip_js %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tooltips = document.querySelectorAll('.tt');
@@ -61,5 +61,7 @@
         });
     </script>
     {% endblock %}
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
