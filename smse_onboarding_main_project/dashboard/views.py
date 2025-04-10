@@ -42,7 +42,6 @@ def new_hire_home(request):
     # Get all tasks assigned to this faculty
     tasks = Task.objects.filter(assigned_to=faculty)
     documents = FacultyDocument.objects.filter(faculty=faculty)
-    total_assigned_tasks = tasks.count()
 
     # Get completed tasks for this faculty
     completed_task_ids = set(
@@ -51,14 +50,6 @@ def new_hire_home(request):
             completed=True
         ).values_list('task_id', flat=True)
     )
-
-    # Count completed tasks
-    completed_tasks_count = len(completed_task_ids)
-
-    # Calculate completion percentage
-    completion_percentage = 0
-    if total_assigned_tasks > 0:
-        completion_percentage = (completed_tasks_count / total_assigned_tasks) * 100
 
     # Add completion status and prerequisite info to each task
     for task in tasks:
@@ -74,6 +65,15 @@ def new_hire_home(request):
     # Separate tasks into upcoming and completed
     completed_tasks = [task for task in tasks if task.is_completed_by_faculty]
     upcoming_tasks = [task for task in tasks if not task.is_completed_by_faculty]
+
+    # Count tasks
+    total_assigned_tasks = len(tasks)
+    completed_tasks_count = len(completed_tasks)
+
+    # Calculate completion percentage
+    completion_percentage = 0
+    if total_assigned_tasks > 0:
+        completion_percentage = (completed_tasks_count / total_assigned_tasks) * 100
 
     context = {
         'tasks': upcoming_tasks,
