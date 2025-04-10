@@ -91,11 +91,115 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Show welcome modal if it exists
+        // Emergency fix - Add global click event listener
+        document.body.addEventListener('click', function(e) {
+            // Find the click target
+            const target = e.target;
+            
+            // Check if close button was clicked
+            if (target.classList.contains('btn-close') && target.closest('.modal')) {
+                console.log("Close button click detected");
+                const modal = target.closest('.modal');
+                
+                // Manually close modal
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                document.body.classList.remove('modal-open');
+                document.body.style.paddingRight = '';
+                document.body.style.overflow = '';
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                
+                e.stopPropagation();
+                return;
+            }
+            
+            // Check if Got it! button was clicked
+            if (target.textContent.includes('Got it!') || 
+                (target.closest('a') && target.closest('a').textContent.includes('Got it!'))) {
+                console.log("'Got it!' button click detected");
+                
+                // Try to find dismiss_welcome URL
+                const btn = target.tagName === 'A' ? target : target.closest('a');
+                if (btn && btn.href && btn.href.includes('dismiss_welcome')) {
+                    // Submit dismiss request
+                    fetch(btn.href, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    }).then(() => {
+                        console.log("Welcome banner dismissed via direct click handler");
+                    });
+                    
+                    // Manually close modal
+                    const modal = btn.closest('.modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                        modal.classList.remove('show');
+                        document.body.classList.remove('modal-open');
+                        document.body.style.paddingRight = '';
+                        document.body.style.overflow = '';
+                        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                    }
+                    
+                    e.stopPropagation();
+                    return;
+                }
+            }
+        }, true); // Use capture phase to ensure we get the event before other handlers
+        
+        // Fix for welcome modal
         const welcomeModal = document.getElementById('welcomeModal');
         if (welcomeModal) {
-            const modal = new bootstrap.Modal(welcomeModal);
-            modal.show();
+            try {
+                // Ensure Bootstrap is available
+                if (typeof bootstrap !== 'undefined') {
+                    // Try standard Bootstrap modal initialization
+                    const modal = new bootstrap.Modal(welcomeModal);
+                    modal.show();
+                } else {
+                    console.error("Bootstrap is not defined - using fallback solution");
+                    // Fallback solution if Bootstrap is not available
+                    welcomeModal.style.display = 'block';
+                    welcomeModal.classList.add('show');
+                    document.body.classList.add('modal-open');
+                    
+                    // Create backdrop
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    document.body.appendChild(backdrop);
+                    
+                    // Setup close buttons
+                    welcomeModal.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            welcomeModal.style.display = 'none';
+                            welcomeModal.classList.remove('show');
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                            document.body.style.paddingRight = '';
+                            backdrop.remove();
+                        });
+                    });
+                    
+                    // Setup 'Got it!' button
+                    const gotItBtn = welcomeModal.querySelector('.modal-footer .btn-primary');
+                    if (gotItBtn) {
+                        gotItBtn.addEventListener('click', function() {
+                            // The link will handle the navigation/dismiss, but we still need to handle the modal UI
+                            setTimeout(() => {
+                                welcomeModal.style.display = 'none';
+                                welcomeModal.classList.remove('show');
+                                document.body.classList.remove('modal-open');
+                                document.body.style.overflow = '';
+                                document.body.style.paddingRight = '';
+                                if (backdrop) backdrop.remove();
+                            }, 100);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error initializing welcome modal:", error);
+            }
         }
         
         // Elements
@@ -150,6 +254,38 @@
                 }
             }
         });
+        
+        // Add CSS fix for modals
+        const style = document.createElement('style');
+        style.textContent = `
+            /* Fix for modal z-index and pointer events */
+            .modal {
+                z-index: 10055 !important;
+            }
+            .modal-backdrop {
+                z-index: 10050 !important;
+            }
+            .modal-dialog {
+                pointer-events: auto !important;
+            }
+            .modal-content {
+                pointer-events: auto !important;
+            }
+            
+            /* Emergency style fix */
+            #welcomeModal .btn-close,
+            #welcomeModal .modal-footer .btn {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+                position: relative !important;
+                z-index: 19999 !important;
+            }
+            
+            #welcomeModal .modal-content {
+                pointer-events: auto !important;
+            }
+        `;
+        document.head.appendChild(style);
     });
 </script>
 {% endblock %}
