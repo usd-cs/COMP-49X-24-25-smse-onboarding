@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import FileResponse
+from django.http import FileResponse, JsonResponse
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
@@ -24,6 +24,13 @@ def show_documents(request, faculty_id=None):
         else:
             faculty = get_object_or_404(Faculty, user=user)
             documents = FacultyDocument.objects.filter(faculty=faculty)
+
+    # Check if this is an AJAX request for modal content
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'documents/modal_content.html', {
+            'documents': documents,
+            'faculty': faculty if faculty_id else None
+        })
 
     return render(request, 'documents/list.html', {
         'documents': documents,
@@ -49,7 +56,7 @@ def upload_document(request):
         )
         document.save()
         messages.success(request, 'Document uploaded successfully!')
-        return redirect('documents:show_documents')
+        return JsonResponse({'status': 'success'})
 
     # For GET request, show the document list with modal
     faculties = Faculty.objects.all() if request.user.is_staff else None
@@ -73,7 +80,8 @@ def delete_document(request, doc_id):
 
         document.delete()
         messages.success(request, 'Document deleted successfully!')
-    return redirect('documents:show_documents')
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
 
 @login_required
 def download_document(request, doc_id):
@@ -104,4 +112,4 @@ def download_document(request, doc_id):
         return response
     else:
         messages.error(request, 'File not found.')
-        return redirect('documents:show_documents')
+        return JsonResponse({'status': 'error', 'message': 'File not found'}, status=404)

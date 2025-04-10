@@ -12,7 +12,7 @@
                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
                     <i class="bi bi-person me-2"></i>Edit Profile
                 </a></li>
-                <li><a class="dropdown-item" href="{% url 'documents:show_documents' %}">
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#documentModal">
                     <i class="bi bi-file-earmark-text me-2"></i>Documents
                     {% if documents %}
                     <span class="badge rounded-pill bg-info ms-2" style="font-size: 0.6rem;">{{ documents|length }}</span>
@@ -78,6 +78,9 @@
         </div>
     </div>
 </div>
+
+<!-- Document Modal -->
+{% include 'documents/document_modal.html' %}
 
 <!-- Profile Modal -->
 {% include 'dashboard/new_hire/components/profile_modal.html' %}

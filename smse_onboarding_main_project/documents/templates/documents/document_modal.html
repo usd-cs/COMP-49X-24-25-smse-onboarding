@@ -1,57 +1,52 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="card h-100">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="card-title">My Documents</h5>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                <i class="bi bi-upload"></i> Upload New Document
-            </button>
-        </div>
-
-        {% if messages %}
-        <div class="messages mb-4">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
+<!-- Document Modal -->
+<div class="modal fade" id="documentModal" tabindex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="documentModalLabel">My Documents</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+            <div class="modal-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                        <i class="bi bi-upload"></i> Upload New Document
+                    </button>
+                </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Upload Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for doc in documents %}
-                    <tr>
-                        <td>{{ doc.title }}</td>
-                        <td>{{ doc.uploaded_at|date:"M d, Y" }}</td>
-                        <td>
-                            <a href="{{ doc.file.url }}" class="btn btn-sm btn-info" target="_blank">
-                                <i class="bi bi-eye"></i> View
-                            </a>
-                            <a href="{% url 'documents:delete_document' doc.document_id %}"
-                               class="btn btn-sm btn-danger"
-                               onclick="return confirm('Are you sure you want to delete this document?')">
-                                <i class="bi bi-trash"></i> Delete
-                            </a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-center">No documents found.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Upload Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doc in documents %}
+                            <tr>
+                                <td>{{ doc.title }}</td>
+                                <td>{{ doc.uploaded_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <a href="{{ doc.file.url }}" class="btn btn-sm btn-info" target="_blank">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                    <a href="{% url 'documents:delete_document' doc.document_id %}"
+                                       class="btn btn-sm btn-danger delete-document"
+                                       data-doc-id="{{ doc.document_id }}">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">No documents found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -123,12 +118,12 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Close the modal
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
-                    modal.hide();
+                    // Close the upload modal
+                    const uploadModal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+                    uploadModal.hide();
 
-                    // Reload the page to show the new document
-                    window.location.reload();
+                    // Refresh the document list
+                    loadDocumentList();
                 }
             })
             .catch(error => {
@@ -138,10 +133,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Handle document deletion
-    document.querySelectorAll('.btn-danger').forEach(button => {
+    document.querySelectorAll('.delete-document').forEach(button => {
         button.addEventListener('click', function(e) {
+            e.preventDefault();
             if (confirm('Are you sure you want to delete this document?')) {
-                fetch(this.href, {
+                const docId = this.dataset.docId;
+                fetch(`/documents/delete/${docId}/`, {
                     method: 'POST',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
@@ -159,9 +156,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Error:', error);
                 });
             }
-            e.preventDefault();
         });
     });
+
+    // Function to load document list
+    function loadDocumentList() {
+        fetch('/documents/', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newTable = doc.querySelector('.table-responsive');
+            if (newTable) {
+                const currentTable = document.querySelector('.table-responsive');
+                currentTable.innerHTML = newTable.innerHTML;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
 });
 </script>
-{% endblock %}
