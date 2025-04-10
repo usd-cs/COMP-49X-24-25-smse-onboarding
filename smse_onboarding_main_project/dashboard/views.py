@@ -70,7 +70,7 @@ def new_hire_home(request):
     # Separate tasks into upcoming and completed
     completed_tasks = [task for task in tasks if task.is_completed_by_faculty]
     upcoming_tasks = [task for task in tasks if not task.is_completed_by_faculty]
-
+    print(upcoming_tasks)
     # Count tasks
     total_assigned_tasks = len(tasks)
     completed_tasks_count = len(completed_tasks)
@@ -81,7 +81,7 @@ def new_hire_home(request):
         completion_percentage = (completed_tasks_count / total_assigned_tasks) * 100
 
     context = {
-        'tasks': upcoming_tasks,
+        'upcoming_tasks': upcoming_tasks,
         'completed_tasks': completed_tasks,
         'faculty': faculty,
         'documents': documents,

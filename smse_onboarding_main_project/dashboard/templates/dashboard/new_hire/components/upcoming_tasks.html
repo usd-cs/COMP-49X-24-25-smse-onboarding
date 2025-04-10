@@ -12,8 +12,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for task in tasks %}
-                {% if not task.is_completed_by_faculty and faculty in task.assigned_to.all %}
+            {% for task in upcoming_tasks %}
                 <tr>
                     <td>
                         <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="task-completion-form">
@@ -100,7 +99,6 @@
                         </div>
                     </div>
                 </div>
-                {% endif %}
             {% empty %}
                 <tr>
                     <td colspan="4" class="text-center">No upcoming tasks available.</td>
