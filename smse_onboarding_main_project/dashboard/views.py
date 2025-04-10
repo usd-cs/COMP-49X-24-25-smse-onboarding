@@ -7,6 +7,9 @@ from django.utils import timezone
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 def get_faculty_from_request(request):
     """Helper function to get faculty profile from request"""
@@ -29,6 +32,8 @@ def is_admin(user):
 @login_required
 def new_hire_home(request):
     """Render the new hire dashboard home page"""
+    logger.debug(f"New hire home view - User: {request.user.email}, Session: {request.session.get('show_welcome_banner')}")
+
     # Check if user is staff or admin, redirect to admin dashboard if so
     if request.user.is_staff or is_admin(request.user):
         return redirect('dashboard:admin_home')
@@ -97,6 +102,8 @@ def admin_home(request):
     """
     Admin dashboard view showing upcoming deadlines and admin tasks
     """
+    logger.debug(f"Admin home view - User: {request.user.email}, Session: {request.session.get('show_welcome_banner')}")
+
     # Additional check for admin access - redirect to new_hire_home if not admin
     if not is_admin(request.user):
         return redirect('dashboard:new_hire_home')

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Help & Information{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-11">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <!-- Back button with house icon -->
+                    <a href="javascript:history.back()" class="btn btn-link text-secondary mb-4" title="Back to Dashboard">
+                        <i class="bi bi-house-fill fs-4"></i>
+                    </a>
+
+                    <div class="row">
+                        <!-- Left Column - Welcome Message -->
+                        <div class="col-md-4">
+                            <h1 class="card-title mb-4">Welcome to SMSE Onboarding</h1>
+                            <div class="alert alert-info">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <i class="bi bi-info-circle-fill fs-3"></i>
+                                    </div>
+                                    <div>
+                                        <h4>Hello, {{ request.user.first_name }}!</h4>
+                                        <p>Welcome to the School of Engineering onboarding portal. This system is designed to help you complete all necessary tasks for a smooth transition.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column - Getting Started Cards -->
+                        <div class="col-md-8">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-0 shadow-sm">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><i class="bi bi-check2-square text-primary me-2"></i>Complete Your Tasks</h5>
+                                            <p class="card-text">Check your dashboard for assigned tasks. Each task has instructions and deadlines. Complete them in a timely manner.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-0 shadow-sm">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><i class="bi bi-file-earmark-text text-primary me-2"></i>Manage Documents</h5>
+                                            <p class="card-text">Review and upload all required documents. These may include biographical information and resumes.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-0 shadow-sm">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><i class="bi bi-people-fill text-primary me-2"></i>Connect with Faculty</h5>
+                                            <p class="card-text">Explore the faculty directory to meet your colleagues and learn about the department structure.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-0 shadow-sm">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><i class="bi bi-question-circle-fill text-primary me-2"></i>Get Help</h5>
+                                            <p class="card-text">If you have questions or need assistance, reach out to your department contact or use the help resources available in the portal.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="mt-4">Important Deadlines</h3>
+                                <p>Be sure to complete all tasks by their respective deadlines. Some tasks depend on other tasks being completed first.</p>
+                            <div class="text-left mt-4">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

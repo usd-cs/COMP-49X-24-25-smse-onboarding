@@ -110,7 +110,12 @@ WSGI_APPLICATION = 'smse_onboarding.wsgi.application'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='757103126544-eo45sod0pu6hg2iiqlnvs3kp6o20kikd.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://smse-onboarding.dedyn.io:8080/social-auth/complete/google-oauth2/'
+
+# Use different redirect URI based on environment
+if DEBUG:
+    SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'http://127.0.0.1:8000/social-auth/complete/google-oauth2/'
+else:
+    SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://smse-onboarding.dedyn.io:8080/social-auth/complete/google-oauth2/'
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
@@ -215,3 +220,35 @@ ALLOWED_DOCUMENT_TYPES = [
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ]
 MAX_UPLOAD_SIZE = 5242880  # 5MB
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'users': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'dashboard': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
