@@ -55,7 +55,11 @@
                                     <tbody>
                                         {% if not tasks|length %}
                                             <tr>
-                                                <td colspan="4" class="text-center">No upcoming tasks at this moment</td>
+                                                <td colspan="4" class="text-center">
+                                                    <div class="alert alert-info mb-0">
+                                                        No upcoming tasks at this moment
+                                                    </div>
+                                                </td>
                                             </tr>
                                         {% else %}
                                             {% for task in tasks %}
@@ -167,7 +171,11 @@
                                     <tbody>
                                         {% if not completed_tasks|length %}
                                             <tr>
-                                                <td colspan="4" class="text-center">No completed tasks at this moment</td>
+                                                <td colspan="4" class="text-center">
+                                                    <div class="alert alert-info mb-0">
+                                                        No completed tasks at this moment
+                                                    </div>
+                                                </td>
                                             </tr>
                                         {% else %}
                                             {% for task in completed_tasks %}

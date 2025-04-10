@@ -322,16 +322,28 @@ def faculty_tasks(request, faculty_id):
         
         # Get all tasks assigned to this faculty
         assigned_tasks = Task.objects.filter(assigned_to=faculty)
-        completed_task_ids = TaskProgress.objects.filter(
+        
+        # Get completed task progress records
+        task_progress_records = TaskProgress.objects.filter(
             faculty=faculty,
             completed=True
-        ).values_list('task_id', flat=True)
+        )
+        
+        # Create a set of completed task IDs for faster lookups
+        completed_task_ids = set(task_progress_records.values_list('task_id', flat=True))
 
         # Format upcoming tasks
         upcoming_tasks = []
         for task in assigned_tasks.exclude(id__in=completed_task_ids):
             days_left = (task.deadline - timezone.now()).days
-            days_text = f"{days_left} days left" if days_left > 1 else "1 day left" if days_left == 1 else "Due today"
+            if days_left < 0:
+                days_text = "Overdue"
+            elif days_left == 0:
+                days_text = "Due today"
+            elif days_left == 1:
+                days_text = "1 day left"
+            else:
+                days_text = f"{days_left} days left"
             
             upcoming_tasks.append({
                 'title': task.title,
@@ -343,17 +355,24 @@ def faculty_tasks(request, faculty_id):
         # Format completed tasks
         completed_tasks = []
         for task in assigned_tasks.filter(id__in=completed_task_ids):
-            completed_date = TaskProgress.objects.get(
-                faculty=faculty,
-                task=task,
-                completed=True
-            ).completion_date
-            
-            completed_tasks.append({
-                'title': task.title,
-                'completed_date': completed_date.strftime('%b %d, %Y'),
-                'description': task.description
-            })
+            try:
+                task_progress = task_progress_records.get(task=task)
+                
+                # Use current date if completion_date is not available
+                completion_date = getattr(task_progress, 'completion_date', timezone.now())
+                
+                completed_tasks.append({
+                    'title': task.title,
+                    'completed_date': completion_date.strftime('%b %d, %Y'),
+                    'description': task.description
+                })
+            except TaskProgress.DoesNotExist:
+                # Fallback if there's an issue with the task progress record
+                completed_tasks.append({
+                    'title': task.title,
+                    'completed_date': 'Date unknown',
+                    'description': task.description
+                })
 
         return JsonResponse({
             'upcoming_tasks': upcoming_tasks,

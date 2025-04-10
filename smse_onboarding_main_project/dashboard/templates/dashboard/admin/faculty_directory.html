@@ -272,6 +272,7 @@
             fetch(`/dashboard/api/faculty/${facultyId}/tasks/`)
                 .then(response => response.json())
                 .then(data => {
+                    console.log("Task data received:", data); // Debug log
                     const tasks = {
                         upcoming: data.upcoming_tasks || [],
                         completed: data.completed_tasks || []
@@ -325,7 +326,7 @@
                             <div class="task-item">
                                 <div class="task-info">
                                     <div class="task-title">${task.title}</div>
-                                    <div class="task-meta">Completed: ${task.completed_date}</div>
+                                    <div class="task-meta">Completed: ${task.completed_date || 'Unknown date'}</div>
                                 </div>
                                 <span class="task-status completed">Completed</span>
                                 <button class="task-menu ms-2" title="More Info">
