@@ -1,45 +1,69 @@
 {% load custom_filters %}
 
-<div class="card">
-    <ul class="list-group">
-        <!-- Header -->
-        <li class="list-group-item d-flex">
-            <div style="width: 5%"></div>
-            <div style="width: 40%">Task</div>
-            <div style="width: 30%">Due Date</div>
-            <div style="width: 25%">Status</div>
-        </li>
-
-        {% if tasks %}
+<h5 class="card-title mb-3 mt-4">Completed Tasks</h5>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th style="width: 5%"></th>
+                <th style="width: 45%">Task</th>
+                <th style="width: 25%">Due Date</th>
+                <th style="width: 25%">Status</th>
+            </tr>
+        </thead>
+        <tbody>
             {% for task in tasks %}
                 {% if task.is_completed_by_faculty %}
-                <li class="list-group-item d-flex align-items-center">
-                    <div style="width: 5%">
-                        <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="task-completion-form">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-link p-0" style="color: green;">
-                                <i class="bi bi-check-circle-fill" style="font-size: 1.5rem;"></i>
-                            </button>
-                        </form>
+                <tr>
+                    <td>
+                        <span class="tt" data-bs-placement="bottom" data-bs-title="Set Task as Incomplete">
+                            <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="task-completion-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link p-0">
+                                    <i class="bi bi-check-circle-fill text-success" style="font-size: 1.2rem;"></i>
+                                </button>
+                            </form>
+                        </span>
+                    </td>
+                    <td class="task-title" data-bs-toggle="modal" data-bs-target="#completedTaskModal{{ task.id }}">
+                        <span class="tt" data-bs-placement="bottom" data-bs-title="See Task Details">
+                            {{ task.title }}
+                        </span>
+                    </td>
+                    <td>{{ task.deadline|date:"M d, Y, g a" }}</td>
+                    <td class="text-success">Completed</td>
+                </tr>
+                <!-- Completed Task Modal -->
+                <div class="modal fade" id="completedTaskModal{{ task.id }}" tabindex="-1" aria-labelledby="completedTaskModalLabel{{ task.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="completedTaskModalLabel{{ task.id }}">{{ task.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
+                                <p><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
+                                <p><strong>Status:</strong> <span class="text-success">Completed</span></p>
+                                <p><strong>Description:</strong></p>
+                                <p>{{ task.description }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-secondary" onclick="this.form.submit(); return false;">Mark as Incomplete</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-
-                    <div style="width: 40%" class="task-text" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
-                        {{ task.title }}
-                    </div>
-                    <div style="width: 30%" class="task-deadline">
-                        {{ task.deadline }}
-                    </div>
-                    <div style="width: 25%" class="task-status">
-                        Completed
-                    </div>
-                </li>
+                </div>
                 {% endif %}
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No completed tasks available.</td>
+                </tr>
             {% endfor %}
-            {% if not tasks|completed_tasks %}
-                <li class="list-group-item text-center">No completed tasks available.</li>
-            {% endif %}
-        {% else %}
-            <li class="list-group-item text-center">No tasks available.</li>
-        {% endif %}
-    </ul>
+        </tbody>
+    </table>
 </div>
