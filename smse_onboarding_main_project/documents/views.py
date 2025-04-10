@@ -20,68 +20,101 @@ def show_documents(request, faculty_id=None):
         documents = FacultyDocument.objects.filter(faculty=faculty)
     else:
         if user.is_staff:
-            documents = FacultyDocument.objects.all()
+            # For admin users, show all documents sorted by most recent
+            documents = FacultyDocument.objects.all().order_by('-uploaded_at')
+            faculties = Faculty.objects.all()
+            
+            context = {
+                'documents': documents,
+                'faculties': faculties,
+            }
+            return render(request, 'documents/list.html', context)
         else:
+            # For regular users, show only their documents
             faculty = get_object_or_404(Faculty, user=user)
             documents = FacultyDocument.objects.filter(faculty=faculty)
+            context = {
+                'documents': documents,
+                'faculty': faculty
+            }
+            return render(request, 'documents/list.html', context)
 
-    # Check if this is an AJAX request for modal content
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return render(request, 'documents/modal_content.html', {
-            'documents': documents,
-            'faculty': faculty if faculty_id else None
-        })
-
+    # This part only handles the faculty_id case
     return render(request, 'documents/list.html', {
         'documents': documents,
-        'faculty': faculty if faculty_id else None
+        'faculty': faculty if faculty_id else None,
+        'faculties': Faculty.objects.all() if user.is_staff else None
     })
 
 @login_required
 def upload_document(request):
     """View for uploading documents"""
     if request.method == 'POST':
-        faculty_id = request.POST.get('faculty')
+        try:
+            faculty_id = request.POST.get('faculty')
 
-        if not request.user.is_staff:
-            faculty = get_object_or_404(Faculty, user=request.user)
-            if str(faculty.faculty_id) != faculty_id:
-                raise PermissionDenied
+            if not request.user.is_staff:
+                faculty = get_object_or_404(Faculty, user=request.user)
+                if str(faculty.faculty_id) != faculty_id:
+                    raise PermissionDenied
 
-        document = FacultyDocument(
-            faculty_id=faculty_id,
-            title=request.POST.get('title'),
-            file=request.FILES['document'],
-            uploaded_by=request.user
-        )
-        document.save()
-        messages.success(request, 'Document uploaded successfully!')
-        return JsonResponse({'status': 'success'})
+            document = FacultyDocument(
+                faculty_id=faculty_id,
+                title=request.POST.get('title'),
+                file=request.FILES['document'],
+                uploaded_by=request.user
+            )
+            document.save()
+            
+            # Return JSON response for AJAX requests
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'success'})
+            
+            # For regular form submissions, redirect without messages
+            return redirect('documents:show_documents')
+        except Exception as e:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            return redirect('documents:show_documents')
 
-    # For GET request, show the document list with modal
-    faculties = Faculty.objects.all() if request.user.is_staff else None
-    documents = FacultyDocument.objects.filter(faculty=request.user.faculty_profile) if not request.user.is_staff else FacultyDocument.objects.all()
+    # For GET request, show the document list with upload form
+    context = {}
+    
+    if request.user.is_staff:
+        context['faculties'] = Faculty.objects.all()
+        context['documents'] = FacultyDocument.objects.all().order_by('-uploaded_at')
+    else:
+        faculty = get_object_or_404(Faculty, user=request.user)
+        context['documents'] = FacultyDocument.objects.filter(faculty=faculty)
 
-    return render(request, 'documents/list.html', {
-        'documents': documents,
-        'faculties': faculties
-    })
+    return render(request, 'documents/list.html', context)
 
 @login_required
 def delete_document(request, doc_id):
     """View for deleting documents"""
     if request.method == 'POST':
-        document = get_object_or_404(FacultyDocument, document_id=doc_id)
+        try:
+            document = get_object_or_404(FacultyDocument, document_id=doc_id)
 
-        # Check permissions
-        if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or
+            # Check permissions
+            if not request.user.is_staff and (not hasattr(request.user, 'faculty_profile') or
                                          request.user.faculty_profile != document.faculty):
-            raise PermissionDenied
+                raise PermissionDenied
 
-        document.delete()
-        messages.success(request, 'Document deleted successfully!')
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error'}, status=400)
+            document.delete()
+            
+            # Return JSON response for AJAX requests
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'success'})
+            
+            # For regular form submissions, redirect without messages
+            return redirect('documents:show_documents')
+        except Exception as e:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            return redirect('documents:show_documents')
+
+    return redirect('documents:show_documents')
 
 @login_required
 def download_document(request, doc_id):

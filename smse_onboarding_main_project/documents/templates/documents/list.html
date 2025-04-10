@@ -4,7 +4,12 @@
 <div class="card h-100">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="card-title">My Documents</h5>
+            <div class="d-flex align-items-center">
+                <a href="{% if user.is_staff %}{% url 'dashboard:admin_home' %}{% else %}{% url 'dashboard:new_hire_home' %}{% endif %}" class="btn btn-outline-secondary me-3">
+                    <i class="bi bi-house-fill"></i> Back to Dashboard
+                </a>
+                <h5 class="card-title mb-0">{% if user.is_staff %}All Documents{% else %}My Documents{% endif %}</h5>
+            </div>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
                 <i class="bi bi-upload"></i> Upload New Document
             </button>
@@ -24,6 +29,9 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
+                        {% if user.is_staff %}
+                        <th>Faculty</th>
+                        {% endif %}
                         <th>Title</th>
                         <th>Upload Date</th>
                         <th>Actions</th>
@@ -32,6 +40,9 @@
                 <tbody>
                     {% for doc in documents %}
                     <tr>
+                        {% if user.is_staff %}
+                        <td>{{ doc.faculty.first_name }} {{ doc.faculty.last_name }}</td>
+                        {% endif %}
                         <td>{{ doc.title }}</td>
                         <td>{{ doc.uploaded_at|date:"M d, Y" }}</td>
                         <td>
@@ -47,7 +58,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="text-center">No documents found.</td>
+                        <td colspan="{% if user.is_staff %}4{% else %}3{% endif %}" class="text-center">No documents found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -127,8 +138,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
                     modal.hide();
 
-                    // Reload the page to show the new document
-                    window.location.reload();
+                    // Reload the page to show the new document without showing messages
+                    window.location.href = window.location.pathname;
                 }
             })
             .catch(error => {
