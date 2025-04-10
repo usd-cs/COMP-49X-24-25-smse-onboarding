@@ -69,9 +69,7 @@
                                 data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
                                 data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
                                 data-faculty-extension="{{ faculty.extension|default:'None' }}"
-                                class="faculty-row"
-                                style="cursor: pointer;"
-                                onclick="showTaskProgress(event, {{ faculty.pk }})">
+                                class="faculty-row">
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="faculty-avatar">
@@ -81,7 +79,7 @@
                                                 <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
                                             {% endif %}
                                         </div>
-                                        <div class="ms-3">
+                                        <div class="ms-3" style="cursor: pointer;" onclick="showTaskProgress(event, {{ faculty.pk }})">
                                             <p class="fw-bold mb-1">{{ faculty.first_name }} {{ faculty.last_name }}</p>
                                         </div>
                                     </div>
@@ -93,9 +91,6 @@
                                     <p class="text-muted mb-0">{{ faculty.department }}</p>
                                 </td>
                                 <td>
-                                    <p class="text-muted mb-0">{{ faculty.start_date|date:"M d, Y" }}</p>
-                                </td>
-                                <td>
                                     <span class="badge rounded-pill {% if faculty.completed_onboarding %}bg-success{% else %}bg-warning{% endif %}">
                                         {% if faculty.completed_onboarding %}
                                             Completed
@@ -103,6 +98,9 @@
                                             Pending
                                         {% endif %}
                                     </span>
+                                </td>
+                                <td>
+                                    <p class="text-muted mb-0">{{ faculty.start_date|date:"M d, Y" }}</p>
                                 </td>
                                 <td>
                                     <div class="action-buttons">
@@ -247,11 +245,8 @@
     });
 
     function showTaskProgress(event, facultyId) {
-        // Don't trigger if clicking action buttons
-        if (event.target.closest('.action-buttons')) {
-            return;
-        }
-
+        // No need to check for action buttons since only the name is clickable now
+        
         const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
         
         if (facultyRow) {
