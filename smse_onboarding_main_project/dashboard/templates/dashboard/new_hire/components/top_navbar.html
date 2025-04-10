@@ -12,7 +12,7 @@
         </button>
         
         <!-- Title -->
-        <div class="navbar-brand">
+        <div class="navbar-brand-text">
             <span class="fw-semibold">SMSE ONBOARDING PORTAL</span>
         </div>
 
@@ -27,12 +27,12 @@
 
             <!-- Notification bell -->
             <div class="me-5 position-relative">
-                <span class="tt" data-bs-placement="bottom" data-bs-title="Notifications">
-                    <a href="#" class="nav-link">
+                <a href="#" class="nav-link">
+                    <span class="tt" data-bs-placement="bottom" data-bs-title="Notifications">
                         <i class="bi bi-bell"></i>
                         <span class="mt-2 notification-badge">5</span>
-                    </a>
-                </span>
+                    </span>
+                </a>
             </div>
 
             <!-- User profile dropdown -->
@@ -72,12 +72,6 @@
                         <li>
                             <a class="dropdown-item" href="#">
                                 <i class="bi bi-gear me-2"></i>Settings
-                            </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                                <i class="bi bi-box-arrow-right me-2"></i>Logout
                             </a>
                         </li>
                     </ul>

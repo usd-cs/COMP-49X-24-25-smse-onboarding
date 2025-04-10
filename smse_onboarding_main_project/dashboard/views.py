@@ -146,7 +146,8 @@ def admin_home(request):
         faculty_tasks.append({
             'id': faculty.faculty_id,
             'name': f"{faculty.first_name} {faculty.last_name}",
-            'current_task': next_task.title if next_task else "All tasks completed",
+            'current_task': next_task if next_task else None,
+            'current_task_title': next_task.title if next_task else "All tasks completed",
             'completion_percentage': round(completion_percentage),
             'status_class': status_class,
             'remaining_days': (next_task.deadline - timezone.now()).days if next_task else 0,
