@@ -230,5 +230,18 @@
     </script>
     
     {% block extra_js %}{% endblock %}
+
+    {% block tooltip_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltips = document.querySelectorAll('.tt');
+            tooltips.forEach(t => {
+                new bootstrap.Tooltip(t, {
+                    trigger: 'hover'
+                });
+            });
+        });
+    </script>
+    {% endblock %}
 </body>
 </html>

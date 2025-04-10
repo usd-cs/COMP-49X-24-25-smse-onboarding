@@ -2,7 +2,10 @@
 <div class="dashboard-card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h2>Upcoming New Hire Deadlines</h2>
-        <button class="outline-btn" id="addNewHireBtn">Add New Hire</button>
+        <button class="btn outline-btn" id="addNewHireBtn">
+            <span>Add New Hire</span>
+            <i class="bi bi-person-add"></i>
+        </button>
     </div>
     <div class="card-body">
         <table class="deadlines-table">
@@ -16,7 +19,7 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Task</th>
+                    <th>Current Task</th>
                     <th>Status</th>
                     <th>Due Date</th>
                     <th>Actions</th>
@@ -26,7 +29,65 @@
                 {% for faculty in faculty_tasks %}
                 <tr>
                     <td>{{ faculty.name }}</td>
-                    <td>{{ faculty.current_task }}</td>
+                    
+                    <td class="task-title table-hover" data-bs-toggle="modal" data-bs-target="#taskModal{{ faculty.current_task.id }}">
+                        <span class="tt task-title-text" data-bs-placement="bottom" data-bs-title="See Task Details">
+                            {{ faculty.current_task_title }}
+                        </span>
+                    </td>
+
+                    <!-- Task Modal -->
+                    <div class="modal fade" id="taskModal{{ faculty.current_task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ faculty.current_task.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                {% if faculty.current_task %}
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="taskModalLabel{{ faculty.current_task.id }}">{{ faculty.current_task.title }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Created:</strong> {{ faculty.current_task.created_at|date:"M d, Y" }}</p>
+                                        <p><strong>Due Date:</strong> {{ faculty.current_task.deadline|date:"M d, Y, g a" }}</p>
+                                        {% if faculty.current_task.prerequisite_task %}
+                                            <p><strong>Prerequisite Task:</strong> {{ faculty.current_task.prerequisite_task.title }}
+                                                {% if task.prereq_completed %}
+                                                    <span class="badge bg-success">Completed</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning text-dark">Not Completed</span>
+                                                {% endif %}
+                                            </p>
+                                        {% endif %}
+                                        <p><strong>Days Remaining:</strong>
+                                            {% if faculty.current_task.remaining_days < 0 %}
+                                                <span class="text-danger">Overdue</span>
+                                            {% elif faculty.current_task.remaining_days == 0 %}
+                                                <span class="text-warning">Due today</span>
+                                            {% else %}
+                                                {{ faculty.current_task.remaining_days }} days
+                                            {% endif %}
+                                        </p>
+                                        <p><strong>Description:</strong></p>
+                                        <p>{{ faculty.current_task.description }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                {% else %}
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">{{ faculty.current_task_title }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>This faculty member has completed all of their assigned tasks.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
                     <td>
                         <div class="progress-container">
                             {% if faculty.completion_percentage == 100 or faculty.name == 'Nick Zhou' %}
@@ -34,8 +95,7 @@
                                 <span class="progress-text">100%</span>
                             {% else %}
                                 <div class="line-progress">
-                                    <div class="progress-bar"
-                                         style="width: {{ faculty.completion_percentage }}%;">
+                                    <div class="progress-bar" style="width: {{ faculty.completion_percentage }}%;">
                                     </div>
                                 </div>
                                 <span class="progress-text">{{ faculty.completion_percentage }}%</span>
@@ -53,8 +113,12 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <button class="notify-btn" title="Send reminder"><i class="bi bi-bell"></i></button>
-                            <button class="edit-btn" title="Edit"><i class="bi bi-pencil"></i></button>
+                            <span class="tt" data-bs-placement="bottom" data-bs-title="Send Reminder">
+                                <button class="notify-btn"><i class="bi bi-bell"></i></button>
+                            </span>
+                            <span class="tt" data-bs-placement="bottom" data-bs-title="Edit">
+                                <button class="edit-btn"><i class="bi bi-pencil"></i></button>
+                            </span>
                         </div>
                     </td>
                 </tr>

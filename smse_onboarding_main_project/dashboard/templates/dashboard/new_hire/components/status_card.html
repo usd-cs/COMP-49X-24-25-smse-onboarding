@@ -6,7 +6,9 @@
         <!-- Three Dots Menu-->
         <div class="dropdown position-absolute" style="top: 1rem; right: 1.5rem;">
             <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots"></i>
+                <span class="tt" data-bs-placement="bottom" data-bs-title="Options">
+                    <i class="bi bi-three-dots"></i>
+                </span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
@@ -273,44 +275,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Function to update progress circle
 function updateProgressCircle() {
-    // Use server-provided data directly instead of trying to calculate from DOM
-    const serverCompletedTasks = {{ num_completed|default:0 }};
-    const serverTotalTasks = {{ num_tasks|default:0 }};
-
-    // Update progress text
-    const progressTextElement = document.getElementById('progressText');
-    if (progressTextElement) {
-        progressTextElement.textContent = serverCompletedTasks + ' of ' + serverTotalTasks;
-    }
-
-    // Calculate percentage
-    let percentage = 0;
-    if (serverTotalTasks > 0) {
-        percentage = (serverCompletedTasks / serverTotalTasks) * 100;
-    }
-
-    console.log("Progress calculation:", serverCompletedTasks, "of", serverTotalTasks, "=", percentage + "%");
-
-    // Update progress circle
-    const progressCircle = document.getElementById('progressCircle');
-    if (progressCircle) {
-        const circumference = 2 * Math.PI * 65; // 2πr where r=65
-        const dashoffset = circumference - (percentage / 100) * circumference;
-        progressCircle.style.strokeDasharray = circumference;
-        progressCircle.style.strokeDashoffset = dashoffset;
-
-        // Change color based on progress
-        if (percentage === 100) {
-            progressCircle.style.stroke = '#4CAF50'; // Green for complete
-        } else if (percentage >= 75) {
-            progressCircle.style.stroke = '#2196F3'; // Blue for good progress
-        } else if (percentage >= 50) {
-            progressCircle.style.stroke = '#FFC107'; // Yellow/amber for medium progress
-        } else if (percentage >= 25) {
-            progressCircle.style.stroke = '#FF9800'; // Orange for some progress
-        } else {
-            progressCircle.style.stroke = '#0047ab'; // Default blue
+    try {
+        // Count completed tasks from the DOM
+        const completedTasks = document.querySelectorAll('.bi-check-circle-fill').length;
+        const totalTasks = completedTasks + document.querySelectorAll('.task-circle-btn').length;
+        
+        // Server data fallback - if information cannot be found in the DOM
+        const serverCompletedTasks = parseInt('{{ num_completed|default:0 }}');
+        const serverTotalTasks = parseInt('{{ num_tasks|default:0 }}');
+        
+        // Use DOM data or server data, prioritizing DOM data
+        const finalCompletedTasks = (completedTasks > 0) ? completedTasks : serverCompletedTasks;
+        const finalTotalTasks = (totalTasks > 0) ? totalTasks : serverTotalTasks;
+        
+        // Update progress text
+        const progressTextElement = document.getElementById('progressText');
+        if (progressTextElement) {
+            progressTextElement.textContent = finalCompletedTasks + ' of ' + finalTotalTasks;
         }
+        
+        // Calculate percentage
+        let percentage = 0;
+        if (finalTotalTasks > 0) {
+            percentage = (finalCompletedTasks / finalTotalTasks) * 100;
+        }
+        
+        console.log("Progress calculation:", finalCompletedTasks, "of", finalTotalTasks, "=", percentage + "%");
+        
+        // Update progress circle
+        const progressCircle = document.getElementById('progressCircle');
+        if (progressCircle) {
+            const circumference = 2 * Math.PI * 65; // 2πr where r=65
+            const dashoffset = circumference - (percentage / 100) * circumference;
+            progressCircle.style.strokeDashoffset = dashoffset;
+            progressCircle.style.strokeDasharray = circumference;
+            
+            // Change color based on progress
+            if (percentage === 100) {
+                progressCircle.style.stroke = '#4CAF50'; // Green for complete
+            } else if (percentage >= 75) {
+                progressCircle.style.stroke = '#2196F3'; // Blue for good progress
+            } else if (percentage >= 50) {
+                progressCircle.style.stroke = '#FFC107'; // Yellow/amber for medium progress
+            } else if (percentage >= 25) {
+                progressCircle.style.stroke = '#FF9800'; // Orange for some progress
+            } else {
+                progressCircle.style.stroke = '#0047ab'; // Default blue
+            }
+        }
+    } catch (error) {
+        console.error("Error updating progress circle:", error);
     }
 }
 

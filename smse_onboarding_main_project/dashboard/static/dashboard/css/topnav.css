@@ -29,13 +29,25 @@
 
 /* Navbar Branding */
 .navbar-brand {
-    color: #333;
-    font-size: 1.1rem;
     padding: 0;
     margin: 0;
 }
 
-.navbar-brand span {
+.navbar-brand-text {
+    display: flex;
+    align-items: center;
+    padding-top: 0.3125rem;
+    padding-bottom: 0.3125rem;
+    margin-right: 1rem;
+    font-size: 1.1rem;
+    line-height: inherit;
+    white-space: nowrap;
+    height: 35px;
+    color: #333;
+}
+
+.navbar-brand span,
+.navbar-brand-text span {
     letter-spacing: 0.5px;
     font-weight: 600;
 }
