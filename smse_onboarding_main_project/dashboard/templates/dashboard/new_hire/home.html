@@ -337,6 +337,61 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initial binding of event handlers
         attachEventListeners();
+        
+        // Sidebar functionality
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mainContent = document.querySelector('.main-content');
+        
+        // Create sidebar overlay if it doesn't exist
+        let sidebarOverlay = document.getElementById('sidebarOverlay');
+        if (!sidebarOverlay) {
+            sidebarOverlay = document.createElement('div');
+            sidebarOverlay.id = 'sidebarOverlay';
+            sidebarOverlay.className = 'sidebar-overlay';
+            document.body.appendChild(sidebarOverlay);
+        }
+        
+        // Force layout update based on screen size
+        function updateScreenSize() {
+            // Always make sure the main content takes full width below 1200px
+            if (window.innerWidth <= 1200) {
+                mainContent.style.marginLeft = '0';
+                mainContent.style.width = '100%';
+                document.documentElement.style.setProperty('--sidebar-width', '0px');
+            } else {
+                document.documentElement.style.setProperty('--sidebar-width', '280px');
+                mainContent.style.marginLeft = '280px';
+                mainContent.style.width = 'calc(100% - 280px)';
+            }
+        }
+        
+        // Update on load and resize
+        updateScreenSize();
+        window.addEventListener('resize', updateScreenSize);
+        
+        // Toggle sidebar on menu button click
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            });
+        }
+        
+        // Close sidebar when clicking on overlay
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+        
+        // Close sidebar on window resize if needed
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1200) {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
 
         // Function to reattach event listeners after content update
         function attachEventListeners() {

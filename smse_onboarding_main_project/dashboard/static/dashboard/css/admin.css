@@ -74,10 +74,11 @@ html {
     background-color: var(--primary-color);
     color: white;
     height: 100vh;
+    min-height: 550px;
     position: fixed;
     top: 0;
     left: 0;
-    padding: 1.5rem 1rem;
+    padding: 1rem 1rem;
     display: flex;
     flex-direction: column;
     z-index: 1030;
@@ -122,13 +123,16 @@ html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 0 0 20px 0;
+    gap: 8px;
+    padding: 0 0 12px 0;
+    min-height: 80px;
 }
 
 .logo {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
+    min-width: 40px;
+    min-height: 40px;
     border-radius: 50%;
     object-fit: contain;
 }
@@ -143,18 +147,22 @@ html {
 .sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
+    overflow-y: auto;
+    flex-grow: 1;
 }
 
 .nav-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px;
+    padding: 8px 12px;
+    min-height: 40px;
     border-radius: 8px;
     color: #ffffff;
     text-decoration: none;
     transition: background-color 0.2s;
+    white-space: nowrap;
 }
 
 .nav-item:hover {
@@ -169,9 +177,10 @@ html {
 }
 
 .nav-item i {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     min-width: 24px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 /* Top Navigation */
@@ -454,9 +463,9 @@ html {
 /* Quick Links section */
 .quick-links {
     margin-top: auto;
-    padding-top: 20px;
+    padding-top: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 }
 
 .quick-links-title {
@@ -494,14 +503,30 @@ html {
 /* Responsive Design */
 @media (max-width: 1200px) {
     :root {
-        --sidebar-width: var(--sidebar-collapsed-width);
+        --sidebar-width: 0px;
+    }
+    
+    /* Force sidebar off-screen instead of collapsed state */
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+        transition: transform 0.3s ease;
+    }
+    
+    /* When active, bring sidebar back on screen */
+    .sidebar.active {
+        transform: translateX(0);
     }
     
     .main-content {
-        margin-left: var(--sidebar-collapsed-width);
-        width: calc(100% - var(--sidebar-collapsed-width));
+        margin-left: 0;
+        width: 100%;
     }
-
+    
+    .menu-toggle {
+        display: block !important;
+    }
+    
     .school-name, .sidebar .nav-item span, .quick-links-title span, .new-badge {
         display: none;
     }
@@ -528,24 +553,24 @@ html {
     /* Force sidebar off-screen by default */
     .sidebar {
         transform: translateX(-100%);
-        width: 280px;
+        width: 280px !important;
     }
     
     /* When active, bring sidebar back on screen */
     .sidebar.active {
         transform: translateX(0);
-        left: 0;
-        visibility: visible;
     }
     
     .main-content {
         margin-left: 0 !important;
         width: 100% !important;
-        padding: 16px;
     }
     
     .menu-toggle {
         display: block !important;
+        font-size: 1.5rem !important;
+        color: var(--text-dark) !important;
+        margin-right: 10px;
     }
     
     .close-sidebar-btn {
@@ -630,7 +655,29 @@ html {
     color: var(--accent-color);
 }
 
-/* Add New Hire Button */
+/* Outline Button (Add New Hire) */
+.outline-btn {
+    background-color: white;
+    color: var(--text-dark);
+    border: 1px solid var(--text-dark);
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: auto;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.outline-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Preserve original add-hire-btn for other places */
 .add-hire-btn {
     background-color: var(--accent-color);
     color: white;
@@ -655,4 +702,78 @@ html {
 
 .add-hire-btn:hover {
     background-color: #2563eb;
+}
+
+/* Fix for sidebar items on small height */
+@media (max-height: 600px) {
+    .sidebar {
+        padding: 0.5rem;
+    }
+    
+    .logo-container {
+        padding: 0 0 6px 0;
+        min-height: 60px;
+    }
+    
+    .logo {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .school-name {
+        font-size: 14px;
+    }
+    
+    .nav-item {
+        padding: 6px 8px;
+        min-height: 34px;
+        font-size: 0.9rem;
+    }
+    
+    .nav-item i {
+        font-size: 1rem;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    
+    .quick-links {
+        padding-top: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .quick-links .nav-item {
+        padding: 4px 8px;
+        min-height: 30px;
+    }
+}
+
+/* Enhanced status styling */
+.badge.bg-success {
+    background-color: var(--green) !important;
+    font-weight: 600;
+    padding: 0.35em 0.8em;
+}
+
+.task-completed {
+    color: var(--green);
+    font-size: 1.3rem;
+    margin-right: 4px;
+}
+
+tr:has(.task-completed) td {
+    color: var(--green);
+    font-weight: 500;
+}
+
+/* Completed row styling */
+.completed-row {
+    background-color: rgba(16, 185, 129, 0.05) !important;
+}
+
+.completed-row:hover {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+.text-success {
+    color: var(--green) !important;
 }

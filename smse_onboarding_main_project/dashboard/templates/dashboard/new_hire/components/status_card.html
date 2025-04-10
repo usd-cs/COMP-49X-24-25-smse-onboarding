@@ -25,53 +25,54 @@
             </ul>
         </div>
 
-        <div class="welcome-text bold-name mb-3">
+        <div class="welcome-text mb-3">
             Welcome, {{ faculty.first_name }}
         </div>
 
-        <div class="profile-card">
-            <!-- Profile Section -->
-            <div class="profile-section">
-                <!-- Profile Circle Container -->
-                <div class="circle-container d-flex align-items-center">
-                    <div class="position-relative" style="width: 150px; height: 150px;">
-                        <!-- Default Bootstrap Icon -->
-                        <div class="rounded-circle position-absolute d-flex align-items-center justify-content-center bg-light profile-img"
-                             style="width: 150px; height: 150px; top: 0; left: 0; z-index: 0;">
-                            <i class="bi bi-person-fill text-primary" style="font-size: 105px;"></i>
-                        </div>
+        <!-- New symmetric layout for profile and progress -->
+        <div class="profile-card-wrapper">
+            <div class="symmetric-container">
+                <!-- Profile Section -->
+                <div class="profile-section">
+                    <div class="circle-container">
+                        <div class="profile-circle">
+                            <!-- Default Bootstrap Icon -->
+                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-light profile-img">
+                                <i class="bi bi-person-fill text-primary"></i>
+                            </div>
 
-                        <!-- Profile Image (overlays the icon if available) -->
-                        <img src="{% static 'dashboard/images/profile.png' %}"
-                             alt="Profile"
-                             class="profile-img position-absolute"
-                             style="width: 150px; height: 150px; top: 0; left: 0; z-index: 1;"
-                             onerror="this.style.display='none'">
+                            <!-- Profile Image (overlays the icon if available) -->
+                            <img src="{% static 'dashboard/images/profile.png' %}"
+                                 alt="Profile"
+                                 class="profile-img"
+                                 onerror="this.style.display='none'">
+                        </div>
+                    </div>
+                    <!-- Name moved below profile photo -->
+                    <div class="text-center mt-3">
+                        <div class="prof-name">Dr. {{ faculty.first_name }} {{ faculty.last_name }}</div>
+                        <div class="job-title">{{ faculty.job_role }}</div>
                     </div>
                 </div>
-                <div class="text-center mt-2">
-                    <div class="bold-name">Dr. {{ faculty.first_name }} {{ faculty.last_name }}</div>
-                    <div class="job-title">{{ faculty.job_role }}</div>
-                </div>
-            </div>
 
-            <!-- Progress Circle -->
-            <div class="circle-container d-flex align-items-center">
-                <div class="progress-circle">
-                    <svg width="150" height="150">
-                        <circle cx="75" cy="75" r="65" stroke="#e6e6e6" stroke-width="10" fill="none"/>
-                        <circle cx="75" cy="75" r="65"
-                                stroke="#0047ab"
-                                stroke-width="10"
-                                fill="none"
-                                stroke-dasharray="408.4"
-                                stroke-dashoffset="408.4"
-                                id="progressCircle"
-                                stroke-linecap="round"/>
-                    </svg>
-                    <div class="progress-text">
-                        <div>Progress</div>
-                        <div id="progressText">{{ num_completed }} of {{ num_tasks }}</div>
+                <!-- Progress Circle -->
+                <div class="progress-section">
+                    <div class="progress-circle">
+                        <svg width="150" height="150">
+                            <circle cx="75" cy="75" r="65" stroke="#e6e6e6" stroke-width="10" fill="none"/>
+                            <circle cx="75" cy="75" r="65"
+                                    stroke="#0047ab"
+                                    stroke-width="10"
+                                    fill="none"
+                                    stroke-dasharray="408.4"
+                                    stroke-dashoffset="408.4"
+                                    id="progressCircle"
+                                    stroke-linecap="round"/>
+                        </svg>
+                        <div class="progress-text">
+                            <div>Progress</div>
+                            <div id="progressText">{{ num_completed }} of {{ num_tasks }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -87,36 +88,70 @@
 
 <style>
 .welcome-text {
-    position: absolute;
-    top: 1rem;
-    left: 1.5rem;
-    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
 }
 
-.profile-card {
+.profile-card-wrapper {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.prof-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.job-title {
+    font-size: 1rem;
+    color: #666;
+}
+
+.symmetric-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: flex-start;
-    margin-top: 2rem;
-    padding: 0 1rem;
-    gap: 2rem;
+    gap: 3rem;
+    flex-wrap: wrap;
+    padding-top: 1rem;
 }
 
-.profile-section {
-    margin-top: 0;
+.profile-section, 
+.progress-section {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.5rem;
 }
 
 .circle-container {
-    height: 150px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+.profile-circle {
+    width: 150px;
+    height: 150px;
+    position: relative;
+}
+
 .profile-img {
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     object-fit: cover;
     background-color: #f0f0f0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.profile-img i {
+    font-size: 105px;
 }
 
 .progress-circle {
@@ -155,15 +190,30 @@
     margin-bottom: 4px;
 }
 
-.bold-name {
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-top: 0.5rem;
-}
-
-.job-title {
-    font-size: 0.9rem;
-    color: gray;
+/* Media queries for responsive design */
+@media (max-width: 575.98px) {
+    .symmetric-container {
+        gap: 1.5rem;
+    }
+    
+    .profile-circle, 
+    .profile-img, 
+    .progress-circle,
+    .progress-circle svg,
+    .progress-circle svg circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .progress-circle svg circle {
+        cx: 60px;
+        cy: 60px;
+        r: 52px;
+    }
+    
+    .profile-img i {
+        font-size: 84px;
+    }
 }
 
 /* Three dots menu button style */
@@ -249,29 +299,22 @@ function updateProgressCircle() {
     
     console.log("Progress calculation:", finalCompletedTasks, "of", finalTotalTasks, "=", percentage + "%");
     
-    // Update progress circle
-    const progressCircle = document.getElementById('progressCircle');
-    if (progressCircle) {
-        const circumference = 2 * Math.PI * 65; // 2πr where r=65
-        const dashoffset = circumference - (percentage / 100) * circumference;
-        progressCircle.style.strokeDashoffset = dashoffset;
-        progressCircle.style.strokeDasharray = circumference;
+    // Calculate actual dashoffset based on percentage
+    const circle = document.getElementById('progressCircle');
+    if (circle) {
+        const radius = parseFloat(circle.getAttribute('r'));
+        const circumference = 2 * Math.PI * radius;
         
-        // Change color based on progress
-        if (percentage === 100) {
-            progressCircle.style.stroke = '#4CAF50'; // Green for complete
-        } else if (percentage >= 75) {
-            progressCircle.style.stroke = '#2196F3'; // Blue for good progress
-        } else if (percentage >= 50) {
-            progressCircle.style.stroke = '#FFC107'; // Yellow/amber for medium progress
-        } else if (percentage >= 25) {
-            progressCircle.style.stroke = '#FF9800'; // Orange for some progress
-        } else {
-            progressCircle.style.stroke = '#0047ab'; // Default blue
-        }
+        // Calculate dashoffset (408.4 is the full circumference calculated as 2 * PI * 65)
+        const dashoffset = circumference - (percentage / 100) * circumference;
+        
+        // Animate the progress circle
+        circle.style.transition = "stroke-dashoffset 0.5s ease-in-out";
+        circle.style.strokeDasharray = circumference;
+        circle.style.strokeDashoffset = dashoffset;
     }
 }
 
-// Make update function globally available so other scripts can call it
+// Create a function that can be called by other scripts to force update
 window.forceUpdateProgressCircle = updateProgressCircle;
 </script>
