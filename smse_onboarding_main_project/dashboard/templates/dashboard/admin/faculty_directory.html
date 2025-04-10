@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Faculty Directory{% endblock %}
+
+{% block dashboard_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/faculty_directory.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    {% include 'dashboard/admin/components/sidebar.html' %}
+    {% include 'dashboard/admin/components/newhire_task_progress.html' %}
+    
+    <div class="main-content">
+        {% include 'dashboard/admin/components/topnav.html' %}
+        
+        <div class="content-wrapper">
+            <!-- Title Section -->
+            <div class="title-section">
+                <div class="title-content">
+                    <h1 class="page-title">Faculty Directory</h1>
+                    <div class="header-buttons">
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-download"></i>
+                            Export CSV
+                        </button>
+                        <button class="btn btn-primary">
+                            <i class="bi bi-plus-lg"></i>
+                            Add Faculty
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search faculty by name, email, or department..." id="facultySearch">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Table Section -->
+            <div class="faculty-section">
+                <div class="faculty-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>NAME</th>
+                                <th>EMAIL</th>
+                                <th>DEPARTMENT</th>
+                                <th>STATUS</th>
+                                <th>START DATE</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for faculty in faculty_members %}
+                            <tr data-faculty-id="{{ faculty.pk }}" 
+                                data-faculty-first-name="{{ faculty.first_name }}"
+                                data-faculty-last-name="{{ faculty.last_name }}"
+                                data-faculty-email="{{ faculty.email|default:'None' }}"
+                                data-faculty-department="{{ faculty.department }}"
+                                data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
+                                data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
+                                data-faculty-extension="{{ faculty.extension|default:'None' }}"
+                                class="faculty-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="faculty-avatar">
+                                            {% if faculty.profile_image %}
+                                                <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }}">
+                                            {% else %}
+                                                <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="ms-3" style="cursor: pointer;" onclick="showTaskProgress(event, {{ faculty.pk }})">
+                                            <p class="fw-bold mb-1">{{ faculty.first_name }} {{ faculty.last_name }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="text-muted mb-0">{{ faculty.email }}</p>
+                                </td>
+                                <td>
+                                    <p class="text-muted mb-0">{{ faculty.department }}</p>
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill {% if faculty.completed_onboarding %}bg-success{% else %}bg-warning{% endif %}">
+                                        {% if faculty.completed_onboarding %}
+                                            Completed
+                                        {% else %}
+                                            Pending
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <p class="text-muted mb-0">{{ faculty.start_date|date:"M d, Y" }}</p>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-link btn-sm" onclick="showProfile({{ faculty.pk }})" title="View Profile">
+                                            <i class="bi bi-person-lines-fill"></i>
+                                        </button>
+                                        <button class="btn btn-link btn-sm" title="Send Email">
+                                            <i class="bi bi-envelope"></i>
+                                        </button>
+                                        <button class="btn btn-link btn-sm" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Faculty Profile Card -->
+<div class="faculty-profile-card" id="facultyProfileCard">
+    <div class="profile-header">
+        <button class="close-profile-btn" onclick="closeProfile()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+        <div class="profile-image">
+            <i class="bi bi-person"></i>
+        </div>
+        <h4 class="faculty-name" id="profileFacultyName"></h4>
+        <p class="faculty-title" id="profileFacultyDepartment"></p>
+    </div>
+    <div class="profile-content">
+        <div class="profile-section">
+            <h5 class="profile-section-title">Contact Information</h5>
+            <div class="profile-info-item">
+                <i class="bi bi-envelope"></i>
+                <span class="profile-info-label">Email</span>
+                <span class="profile-info-value" id="profileFacultyEmail"></span>
+            </div>
+            <div class="profile-info-item">
+                <i class="bi bi-telephone"></i>
+                <span class="profile-info-label">Extension</span>
+                <span class="profile-info-value" id="profileFacultyExtension"></span>
+            </div>
+            <div class="profile-info-item">
+                <i class="bi bi-building"></i>
+                <span class="profile-info-label">Department</span>
+                <span class="profile-info-value" id="profileFacultyDeptInfo"></span>
+            </div>
+        </div>
+        <div class="profile-section">
+            <h5 class="profile-section-title">Status Information</h5>
+            <div class="profile-info-item">
+                <i class="bi bi-calendar"></i>
+                <span class="profile-info-label">Start Date</span>
+                <span class="profile-info-value" id="profileFacultyStartDate"></span>
+            </div>
+            <div class="profile-info-item">
+                <i class="bi bi-check-circle"></i>
+                <span class="profile-info-label">Onboarding Status</span>
+                <span class="profile-info-value" id="profileFacultyStatus"></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showProfile(facultyId) {
+        const profileCard = document.getElementById('facultyProfileCard');
+        const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
+        
+        if (facultyRow) {
+            // Get faculty information from data attributes
+            const firstName = facultyRow.dataset.facultyFirstName;
+            const lastName = facultyRow.dataset.facultyLastName;
+            const email = facultyRow.dataset.facultyEmail;
+            const extension = facultyRow.dataset.facultyExtension;
+            const department = facultyRow.dataset.facultyDepartment;
+            const startDate = facultyRow.dataset.facultyStartDate;
+            const status = facultyRow.dataset.facultyStatus;
+
+            // Update profile card with faculty information
+            document.getElementById('profileFacultyName').textContent = `${firstName} ${lastName}`;
+            document.getElementById('profileFacultyDepartment').textContent = department;
+            document.getElementById('profileFacultyEmail').textContent = email;
+            document.getElementById('profileFacultyExtension').textContent = extension;
+            document.getElementById('profileFacultyDeptInfo').textContent = department;
+            document.getElementById('profileFacultyStartDate').textContent = startDate;
+            
+            // Update status with appropriate styling
+            const statusElement = document.getElementById('profileFacultyStatus');
+            const isCompleted = status === 'Completed';
+            statusElement.className = 'profile-info-value ' + (isCompleted ? 'text-success' : 'text-warning');
+            statusElement.innerHTML = `<span class="status-dot ${isCompleted ? 'bg-success' : 'bg-warning'}"></span>${status}`;
+
+            // Update profile image with initials
+            const profileImage = profileCard.querySelector('.profile-image');
+            if (profileImage) {
+                profileImage.innerHTML = '';
+                const initials = `${firstName[0]}${lastName[0]}`;
+                profileImage.textContent = initials;
+                profileImage.style.backgroundColor = '#1976d2';
+                profileImage.style.color = 'white';
+                profileImage.style.display = 'flex';
+                profileImage.style.alignItems = 'center';
+                profileImage.style.justifyContent = 'center';
+                profileImage.style.fontSize = '2rem';
+            }
+        }
+
+        profileCard.classList.add('active');
+    }
+
+    function closeProfile() {
+        const profileCard = document.getElementById('facultyProfileCard');
+        profileCard.classList.remove('active');
+    }
+
+    document.addEventListener('click', function(event) {
+        const profileCard = document.getElementById('facultyProfileCard');
+        if (!event.target.closest('.faculty-profile-card') && 
+            !event.target.closest('.action-buttons')) {
+            profileCard.classList.remove('active');
+        }
+    });
+
+    document.getElementById('facultySearch').addEventListener('input', function(e) {
+        const searchText = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.faculty-table tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchText) ? '' : 'none';
+        });
+    });
+
+    function showTaskProgress(event, facultyId) {
+        // No need to check for action buttons since only the name is clickable now
+        
+        const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
+        
+        if (facultyRow) {
+            // Get faculty information from data attributes
+            const firstName = facultyRow.dataset.facultyFirstName;
+            const lastName = facultyRow.dataset.facultyLastName;
+            const email = facultyRow.dataset.facultyEmail;
+            const department = facultyRow.dataset.facultyDepartment;
+            const startDate = facultyRow.dataset.facultyStartDate;
+            const status = facultyRow.dataset.facultyStatus;
+
+            // Update faculty information
+            document.getElementById('facultyNameTitle').textContent = `${firstName} ${lastName}`;
+            document.getElementById('facultyDepartmentInfo').textContent = department;
+            document.getElementById('facultyEmail').textContent = email;
+
+            // Fetch task data from the backend
+            fetch(`/dashboard/api/faculty/${facultyId}/tasks/`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Task data received:", data); // Debug log
+                    const tasks = {
+                        upcoming: data.upcoming_tasks || [],
+                        completed: data.completed_tasks || []
+                    };
+
+                    // Update progress information
+                    const totalTasks = tasks.upcoming.length + tasks.completed.length;
+                    const completedTasks = tasks.completed.length;
+                    const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+                    document.getElementById('completionPercentage').textContent = `${progressPercentage}%`;
+                    document.getElementById('progressBar').style.width = `${progressPercentage}%`;
+                    document.getElementById('tasksCompleteCount').textContent = `${completedTasks}/${totalTasks} complete`;
+
+                    // Update upcoming tasks
+                    const upcomingTasksList = document.getElementById('upcomingTasksList');
+                    if (tasks.upcoming.length === 0) {
+                        upcomingTasksList.innerHTML = `
+                            <div class="alert alert-info mb-0">
+                                No upcoming tasks at this moment
+                            </div>
+                        `;
+                    } else {
+                        upcomingTasksList.innerHTML = tasks.upcoming.map(task => `
+                            <div class="task-item">
+                                <div class="task-info">
+                                    <div class="task-title">${task.title}</div>
+                                    <div class="task-meta">
+                                        <span>Due: ${task.due_date}</span>
+                                        <span class="ms-2 task-due">${task.days_left}</span>
+                                    </div>
+                                </div>
+                                <span class="task-status pending">Pending</span>
+                                <button class="task-menu ms-2" title="More Info">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                            </div>
+                        `).join('');
+                    }
+
+                    // Update completed tasks
+                    const completedTasksList = document.getElementById('completedTasksList');
+                    if (tasks.completed.length === 0) {
+                        completedTasksList.innerHTML = `
+                            <div class="alert alert-info mb-0">
+                                No completed tasks at this moment
+                            </div>
+                        `;
+                    } else {
+                        completedTasksList.innerHTML = tasks.completed.map(task => `
+                            <div class="task-item">
+                                <div class="task-info">
+                                    <div class="task-title">${task.title}</div>
+                                    <div class="task-meta">Completed: ${task.completed_date || 'Unknown date'}</div>
+                                </div>
+                                <span class="task-status completed">Completed</span>
+                                <button class="task-menu ms-2" title="More Info">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                            </div>
+                        `).join('');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching task data:', error);
+                });
+
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('newhireTaskProgress'));
+            modal.show();
+        }
+    }
+</script>
+{% endblock %} 
