@@ -29,9 +29,9 @@
                         <span class="tt" data-bs-placement="bottom" data-bs-title="See Task Details">
                             {{ task.title }}
                         </span>
-                            {% if task.prerequisite_task and not task.prereq_completed %}
-                                <span class="badge bg-warning text-dark ms-2">Prerequisite Required</span>
-                            {% endif %}
+                        {% if task.prerequisite_task and not task.prereq_completed %}
+                            <span class="badge bg-warning text-dark ms-2">Prerequisite Required</span>
+                        {% endif %}
                     </td>
                     <td>{{ task.deadline|date:"M d, Y, g a" }}</td>
                     <td class="{% if task.remaining_days < 0 %}text-danger{% elif task.remaining_days < 2 %}text-warning{% else %}text-muted{% endif %}">

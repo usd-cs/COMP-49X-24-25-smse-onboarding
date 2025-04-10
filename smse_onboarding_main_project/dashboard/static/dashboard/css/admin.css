@@ -396,3 +396,13 @@ input[type="checkbox"]:checked::after {
     opacity: 1 !important;
     pointer-events: auto !important;
 }
+
+/* Task title hover effect */
+.task-title-text {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.task-title-text:hover {
+    color: #0d6efd;
+}
