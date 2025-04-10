@@ -21,38 +21,42 @@
             </div>
 
             <!-- Notification bell -->
-            <div class="nav-item me-3 position-relative">
-                <a href="#" class="nav-link">
-                    <i class="bi bi-bell"></i>
-                    <span class="notification-badge">5</span>
-                </a>
+            <div class="me-5 position-relative">
+                <span class="tt" data-bs-placement="bottom" data-bs-title="Notifications">
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-bell"></i>
+                        <span class="mt-2 notification-badge">5</span>
+                    </a>
+                </span>
             </div>
 
             <!-- User profile dropdown -->
-            <div class="nav-item">
+            <div class="position-relative">
                 <div class="dropdown">
-                    <button class="btn btn-link dropdown-toggle d-flex align-items-center text-decoration-none"
+                    <button class="btn btn-link dropdown-toggle d-flex align-items-center text-decoration-none nav-link"
                             type="button"
                             id="userDropdown"
                             data-bs-toggle="dropdown"
                             aria-expanded="false">
-                        <!-- Profile Image -->
-                        <div class="rounded-circle overflow-hidden me-2 user-avatar-container">
-                            {% if user.profile_image %}
-                                <img src="{{ user.profile_image.url }}"
-                                     alt="Profile"
-                                     class="img-profile">
-                            {% else %}
-                                <div class="img-profile bg-light d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-person-fill text-secondary"></i>
-                                </div>
-                            {% endif %}
-                        </div>
-                        <!-- User Name -->
-                        <div class="d-flex flex-column align-items-start">
-                            <span class="fw-medium user-name">{{ request.user.get_full_name }}</span>
-                            <small class="text-secondary user-role">{{ request.user.groups.first.name|default:"User" }}</small>
-                        </div>
+                        <span class="tt d-flex align-items-center" data-bs-placement="bottom" data-bs-title="Profile">
+                            <!-- Profile Image -->
+                            <div class="rounded-circle overflow-hidden me-2 user-avatar-container">
+                                {% if user.profile_image %}
+                                    <img src="{{ user.profile_image.url }}"
+                                        alt="Profile"
+                                        class="img-profile">
+                                {% else %}
+                                    <div class="img-profile bg-light d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-person-fill text-secondary"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <!-- User Name -->
+                            <div class="d-flex flex-column align-items-start">
+                                <span class="fw-medium user-name">{{ request.user.get_full_name }}</span>
+                                <small class="text-secondary user-role">{{ request.user.groups.first.name|default:"User" }}</small>
+                            </div>
+                        </span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                         <li>
