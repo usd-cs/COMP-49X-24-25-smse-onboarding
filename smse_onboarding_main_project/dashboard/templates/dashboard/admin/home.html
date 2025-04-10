@@ -8,20 +8,32 @@
 <!-- Admin Dashboard Specific CSS -->
 <link href="{% static 'dashboard/css/admin.css' %}" rel="stylesheet">
 <style>
-  body, html, .dashboard-container, .main-content, .dashboard-content {
-    background-color: #eaeaea !important;
-  }
+    /* Force content to take full width on mobile */
+    @media (max-width: 768px) {
+        .main-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+            padding: 15px !important;
+        }
+        
+        .dashboard-section,
+        .dashboard-card,
+        .content-wrapper {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-container" style="background-color: #eaeaea !important;">
+<div class="dashboard-container">
     {% include 'dashboard/admin/components/sidebar.html' %}
-
-    <div class="main-content" style="background-color: #eaeaea !important;">
+    
+    <div class="main-content">
         {% include 'dashboard/admin/components/topnav.html' %}
-
-        <div class="dashboard-content pt-4" style="background-color: #eaeaea !important;">
+        
+        <div class="dashboard-content pt-4">
             <!-- Welcome Modal -->
             {% if request.session.show_welcome_banner is True %}
             <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-modal-type="welcome">
@@ -68,7 +80,10 @@
             </div>
             {% endif %}
 
+            <!-- Upcoming New Hire Deadlines Section -->
             {% include 'dashboard/admin/components/new_hire_deadlines.html' %}
+            
+            <!-- Admin Tasks Section -->
             {% include 'dashboard/admin/components/admin_tasks.html' %}
         </div>
     </div>
@@ -82,6 +97,64 @@
             const modal = new bootstrap.Modal(welcomeModal);
             modal.show();
         }
+        
+        // Elements
+        const sidebar = document.getElementById('dashboardSidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const mainContent = document.querySelector('.main-content');
+        
+        // Force layout update based on screen size
+        function updateScreenSize() {
+            if (window.innerWidth <= 768) {
+                mainContent.style.marginLeft = '0';
+                mainContent.style.width = '100%';
+                document.documentElement.style.setProperty('--sidebar-width', '0px');
+            } else if (window.innerWidth <= 1200) {
+                document.documentElement.style.setProperty('--sidebar-width', '80px');
+                mainContent.style.marginLeft = '80px';
+                mainContent.style.width = 'calc(100% - 80px)';
+            } else {
+                document.documentElement.style.setProperty('--sidebar-width', '280px');
+                mainContent.style.marginLeft = '280px';
+                mainContent.style.width = 'calc(100% - 280px)';
+            }
+        }
+        
+        // Update on load and resize
+        updateScreenSize();
+        window.addEventListener('resize', updateScreenSize);
+        
+        // Toggle sidebar on menu button click
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isActive = sidebar.classList.contains('active');
+                if (!isActive) {
+                    sidebar.classList.add('active');
+                    sidebarOverlay.classList.add('active');
+                } else {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
+        }
+        
+        // Close sidebar when clicking on overlay
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
     });
 </script>
 {% endblock %}
