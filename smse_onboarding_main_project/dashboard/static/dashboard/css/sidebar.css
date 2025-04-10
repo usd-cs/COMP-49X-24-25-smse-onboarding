@@ -12,7 +12,7 @@
     left: 0;
     top: 0;
     z-index: 1050;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -76,6 +76,7 @@
 .quick-links {
     margin-top: auto;
     padding-top: 20px;
+    padding-bottom: 10px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
