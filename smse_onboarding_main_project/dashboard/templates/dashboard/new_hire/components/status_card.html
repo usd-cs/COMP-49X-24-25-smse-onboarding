@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
-
+    
     // Ensure progress circle is initialized after DOM is fully loaded
     setTimeout(function() {
         updateProgressCircle();
@@ -273,31 +273,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Function to update progress circle
 function updateProgressCircle() {
-    // Count completed tasks from the DOM
-    const completedTasks = document.querySelectorAll('.bi-check-circle-fill').length;
-    const totalTasks = completedTasks + document.querySelectorAll('.task-circle-btn').length;
-
-    // Server data fallback - if information cannot be found in the DOM
+    // Use server-provided data directly instead of trying to calculate from DOM
     const serverCompletedTasks = {{ num_completed|default:0 }};
     const serverTotalTasks = {{ num_tasks|default:0 }};
-
-    // Use DOM data or server data, prioritizing DOM data
-    const finalCompletedTasks = (completedTasks > 0) ? completedTasks : serverCompletedTasks;
-    const finalTotalTasks = (totalTasks > 0) ? totalTasks : serverTotalTasks;
 
     // Update progress text
     const progressTextElement = document.getElementById('progressText');
     if (progressTextElement) {
-        progressTextElement.textContent = finalCompletedTasks + ' of ' + finalTotalTasks;
+        progressTextElement.textContent = serverCompletedTasks + ' of ' + serverTotalTasks;
     }
 
     // Calculate percentage
     let percentage = 0;
-    if (finalTotalTasks > 0) {
-        percentage = (finalCompletedTasks / finalTotalTasks) * 100;
+    if (serverTotalTasks > 0) {
+        percentage = (serverCompletedTasks / serverTotalTasks) * 100;
     }
 
-    console.log("Progress calculation:", finalCompletedTasks, "of", finalTotalTasks, "=", percentage + "%");
+    console.log("Progress calculation:", serverCompletedTasks, "of", serverTotalTasks, "=", percentage + "%");
 
     // Update progress circle
     const progressCircle = document.getElementById('progressCircle');

@@ -103,25 +103,32 @@ function getCookie(name) {
 
 // Function to update circular progress
 function updateCircularProgress() {
-    const circle = document.querySelector('#progressCircle');
-    if (!circle) return;
+    // If forceUpdateProgressCircle exists, use it (it's defined in status_card.html)
+    if (window.forceUpdateProgressCircle) {
+        window.forceUpdateProgressCircle();
+    } else {
+        // Fallback if the primary progress update function isn't available
+        const circle = document.querySelector('#progressCircle');
+        if (!circle) return;
 
-    const totalTasks = document.querySelectorAll('.table-responsive table tbody tr').length;
-    const completedTasks = document.querySelectorAll('.bi-check-circle-fill').length;
-
-    if (totalTasks > 0) {
-        const percentage = (completedTasks / totalTasks);
-        const circumference = 2 * Math.PI * 50; // 50 is the radius of the circle
-        const offset = circumference * (1 - percentage);
-
-        // Update the circle
-        circle.style.strokeDasharray = circumference;
-        circle.style.strokeDashoffset = offset;
-
-        // Update the text
+        // Try to get server-provided data if available
         const progressText = document.querySelector('.progress-text div:last-child');
-        if (progressText) {
-            progressText.textContent = `${completedTasks} of ${totalTasks}`;
+        const textMatch = progressText ? progressText.textContent.match(/(\d+)\s+of\s+(\d+)/) : null;
+        
+        if (textMatch && textMatch.length === 3) {
+            // Use the values from the server-rendered text
+            const completedTasks = parseInt(textMatch[1], 10);
+            const totalTasks = parseInt(textMatch[2], 10);
+            
+            if (totalTasks > 0) {
+                const percentage = (completedTasks / totalTasks);
+                const circumference = 2 * Math.PI * 65; // 65 is the radius of the circle
+                const offset = circumference * (1 - percentage);
+
+                // Update the circle
+                circle.style.strokeDasharray = circumference;
+                circle.style.strokeDashoffset = offset;
+            }
         }
     }
 }
