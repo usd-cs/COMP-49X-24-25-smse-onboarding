@@ -48,6 +48,187 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script src="{% static 'dashboard/js/tasks.js' %}"></script>
+    
+    <!-- Global fixes for modal issues -->
+    <script>
+        // Ensure this runs after all other scripts
+        window.addEventListener('load', function() {
+            // Global modal interaction fix - runs 1 second after page load
+            setTimeout(function() {
+                // Fix all modals to ensure they're interactive
+                document.querySelectorAll('.modal').forEach(modal => {
+                    // Move modal to body to avoid stacking context issues
+                    if (modal.parentElement !== document.body) {
+                        document.body.appendChild(modal);
+                    }
+                    
+                    // Set extreme z-index values to ensure modals are on top
+                    modal.style.zIndex = '10000';
+                    modal.style.pointerEvents = 'auto';
+                    
+                    // Make sure modal-dialog and modal-content have pointer-events
+                    const dialog = modal.querySelector('.modal-dialog');
+                    if (dialog) {
+                        dialog.style.pointerEvents = 'auto';
+                        dialog.style.position = 'relative';
+                        dialog.style.zIndex = '10001';
+                    }
+                    
+                    const content = modal.querySelector('.modal-content');
+                    if (content) {
+                        content.style.pointerEvents = 'auto';
+                        content.style.position = 'relative';
+                        content.style.zIndex = '10002';
+                    }
+                    
+                    // Fix buttons inside modals
+                    modal.querySelectorAll('button, a, [role="button"]').forEach(btn => {
+                        btn.style.pointerEvents = 'auto';
+                        btn.style.position = 'relative';
+                        btn.style.zIndex = '10003';
+                    });
+                    
+                    // Handle Got it! button specifically
+                    const gotItBtn = modal.querySelector('.modal-footer .btn-primary');
+                    if (gotItBtn) {
+                        gotItBtn.style.pointerEvents = 'auto';
+                        gotItBtn.style.position = 'relative';
+                        gotItBtn.style.zIndex = '10003';
+                        
+                        // Add a click handler directly to the element
+                        gotItBtn.addEventListener('click', function(e) {
+                            console.log('Got it button clicked!');
+                            // Use native DOM methods to hide modal
+                            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                            modal.style.display = 'none';
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                            document.body.style.paddingRight = '';
+                        });
+                    }
+                    
+                    // Fix close buttons
+                    const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"]');
+                    closeButtons.forEach(btn => {
+                        btn.style.pointerEvents = 'auto';
+                        btn.style.position = 'relative';
+                        btn.style.zIndex = '10003';
+                        
+                        // Ensure close handler works
+                        btn.addEventListener('click', function(e) {
+                            console.log('Close button clicked!');
+                            // Use native DOM methods to hide modal
+                            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                            modal.style.display = 'none';
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                            document.body.style.paddingRight = '';
+                        });
+                    });
+                });
+                
+                // Fix modal backdrops
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                    backdrop.style.zIndex = '9999';
+                });
+                
+                // Add global styles to ensure modals work properly
+                const style = document.createElement('style');
+                style.textContent = `
+                    .modal {
+                        z-index: 10000 !important;
+                        position: fixed !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                        width: 100% !important;
+                        height: 100% !important;
+                        pointer-events: auto !important;
+                    }
+                    .modal-backdrop {
+                        z-index: 9999 !important;
+                        position: fixed !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                        width: 100% !important;
+                        height: 100% !important;
+                    }
+                    .modal-dialog {
+                        z-index: 10001 !important;
+                        pointer-events: auto !important;
+                        position: relative !important;
+                    }
+                    .modal-content {
+                        z-index: 10002 !important;
+                        pointer-events: auto !important;
+                        position: relative !important;
+                    }
+                    .modal .btn, .modal .btn-close {
+                        z-index: 10003 !important;
+                        pointer-events: auto !important;
+                        position: relative !important;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                console.log("Global modal interaction fix applied");
+            }, 1000);
+            
+            // Add a full-page event interceptor to debug clicks
+            const interceptor = document.createElement('div');
+            interceptor.style.position = 'fixed';
+            interceptor.style.top = '0';
+            interceptor.style.left = '0';
+            interceptor.style.width = '100%';
+            interceptor.style.height = '100%';
+            interceptor.style.zIndex = '99999';
+            interceptor.style.pointerEvents = 'none'; // Allow events to pass through
+            document.body.appendChild(interceptor);
+            
+            // Capture all clicks on the document
+            document.addEventListener('click', function(e) {
+                console.log('Click detected at:', e.clientX, e.clientY);
+                console.log('Target element:', e.target);
+                
+                // Check if click is on or near a modal button
+                const rect = e.target.getBoundingClientRect();
+                console.log('Element rect:', rect);
+                
+                // Check for close or dismiss buttons
+                if (e.target.classList.contains('btn-close') || 
+                    (e.target.tagName === 'BUTTON' && e.target.getAttribute('data-bs-dismiss') === 'modal')) {
+                    console.log('Close button clicked!');
+                    // Find the modal
+                    const modal = e.target.closest('.modal');
+                    if (modal) {
+                        // Close modal manually
+                        modal.style.display = 'none';
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+                        // Remove backdrops
+                        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                    }
+                }
+                
+                // Check for Got it! button
+                if (e.target.textContent && e.target.textContent.includes('Got it!')) {
+                    console.log('Got it button clicked!');
+                    // Find the modal
+                    const modal = e.target.closest('.modal');
+                    if (modal) {
+                        // Close modal manually
+                        modal.style.display = 'none';
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+                        // Remove backdrops
+                        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                    }
+                }
+            }, true);
+        });
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -272,15 +272,124 @@
 <!-- Force CSS cache refresh -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Emergency fix - Add global click event listener
+        document.body.addEventListener('click', function(e) {
+            // Find the click target
+            const target = e.target;
+            
+            // Check if close button was clicked
+            if (target.classList.contains('btn-close') && target.closest('.modal')) {
+                console.log("Close button click detected");
+                const modal = target.closest('.modal');
+                
+                // Manually close modal
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                document.body.classList.remove('modal-open');
+                document.body.style.paddingRight = '';
+                document.body.style.overflow = '';
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                
+                e.stopPropagation();
+                return;
+            }
+            
+            // Check if Got it! button was clicked
+            if (target.textContent.includes('Got it!') || 
+                (target.closest('a') && target.closest('a').textContent.includes('Got it!'))) {
+                console.log("'Got it!' button click detected");
+                
+                // Try to find dismiss_welcome URL
+                const btn = target.tagName === 'A' ? target : target.closest('a');
+                if (btn && btn.href && btn.href.includes('dismiss_welcome')) {
+                    // Submit dismiss request
+                    fetch(btn.href, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    }).then(() => {
+                        console.log("Welcome banner dismissed via direct click handler");
+                    });
+                    
+                    // Manually close modal
+                    const modal = btn.closest('.modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                        modal.classList.remove('show');
+                        document.body.classList.remove('modal-open');
+                        document.body.style.paddingRight = '';
+                        document.body.style.overflow = '';
+                        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                    }
+                    
+                    e.stopPropagation();
+                    return;
+                }
+            }
+        }, true); // Use capture phase to ensure we get the event before other handlers
+
         // Remove loading classes
         document.body.classList.remove('loading');
         document.querySelector('.dashboard-container').classList.remove('loading');
 
-        // Show welcome modal if it exists
+        // Fix for welcome modal
         const welcomeModal = document.getElementById('welcomeModal');
         if (welcomeModal) {
-            const modal = new bootstrap.Modal(welcomeModal);
-            modal.show();
+            try {
+                // Move modal to body level to avoid stacking context issues
+                if (welcomeModal.parentElement !== document.body) {
+                    document.body.appendChild(welcomeModal);
+                }
+                
+                // Ensure Bootstrap is available
+                if (typeof bootstrap !== 'undefined') {
+                    // Try standard Bootstrap modal initialization
+                    const modal = new bootstrap.Modal(welcomeModal);
+                    modal.show();
+                } else {
+                    console.error("Bootstrap is not defined - using fallback solution");
+                    // Fallback solution if Bootstrap is not available
+                    welcomeModal.style.display = 'block';
+                    welcomeModal.classList.add('show');
+                    document.body.classList.add('modal-open');
+                    
+                    // Create backdrop
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    document.body.appendChild(backdrop);
+                    
+                    // Setup close buttons
+                    welcomeModal.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            welcomeModal.style.display = 'none';
+                            welcomeModal.classList.remove('show');
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                            document.body.style.paddingRight = '';
+                            backdrop.remove();
+                        });
+                    });
+                    
+                    // Setup 'Got it!' button
+                    const gotItBtn = welcomeModal.querySelector('.modal-footer .btn-primary');
+                    if (gotItBtn) {
+                        gotItBtn.addEventListener('click', function() {
+                            // The link will handle the navigation/dismiss, but we still need to handle the modal UI
+                            setTimeout(() => {
+                                welcomeModal.style.display = 'none';
+                                welcomeModal.classList.remove('show');
+                                document.body.classList.remove('modal-open');
+                                document.body.style.overflow = '';
+                                document.body.style.paddingRight = '';
+                                if (backdrop) backdrop.remove();
+                            }, 100);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error initializing welcome modal:", error);
+            }
         }
 
         var timestamp = new Date().getTime();
@@ -341,6 +450,33 @@
                 transform: translateY(-1px);
                 box-shadow: 0 3px 10px rgba(0,0,0,0.15);
             }
+            
+            /* Fix for modal z-index and pointer events */
+            .modal {
+                z-index: 10055 !important;
+            }
+            .modal-backdrop {
+                z-index: 10050 !important;
+            }
+            .modal-dialog {
+                pointer-events: auto !important;
+            }
+            .modal-content {
+                pointer-events: auto !important;
+            }
+            
+            /* Emergency style fix */
+            #welcomeModal .btn-close,
+            #welcomeModal .modal-footer .btn {
+                pointer-events: auto !important;
+                cursor: pointer !important;
+                position: relative !important;
+                z-index: 19999 !important;
+            }
+            
+            #welcomeModal .modal-content {
+                pointer-events: auto !important;
+            }
         `;
         document.head.appendChild(style);
     });
@@ -351,6 +487,61 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initial binding of event handlers
         attachEventListeners();
+        
+        // Sidebar functionality
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mainContent = document.querySelector('.main-content');
+        
+        // Create sidebar overlay if it doesn't exist
+        let sidebarOverlay = document.getElementById('sidebarOverlay');
+        if (!sidebarOverlay) {
+            sidebarOverlay = document.createElement('div');
+            sidebarOverlay.id = 'sidebarOverlay';
+            sidebarOverlay.className = 'sidebar-overlay';
+            document.body.appendChild(sidebarOverlay);
+        }
+        
+        // Force layout update based on screen size
+        function updateScreenSize() {
+            // Always make sure the main content takes full width below 1200px
+            if (window.innerWidth <= 1200) {
+                mainContent.style.marginLeft = '0';
+                mainContent.style.width = '100%';
+                document.documentElement.style.setProperty('--sidebar-width', '0px');
+            } else {
+                document.documentElement.style.setProperty('--sidebar-width', '280px');
+                mainContent.style.marginLeft = '280px';
+                mainContent.style.width = 'calc(100% - 280px)';
+            }
+        }
+        
+        // Update on load and resize
+        updateScreenSize();
+        window.addEventListener('resize', updateScreenSize);
+        
+        // Toggle sidebar on menu button click
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            });
+        }
+        
+        // Close sidebar when clicking on overlay
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+        
+        // Close sidebar on window resize if needed
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1200) {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
 
         // Function to reattach event listeners after content update
         function attachEventListeners() {

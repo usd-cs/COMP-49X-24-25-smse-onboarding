@@ -1,6 +1,6 @@
 {% load custom_filters %}
 <div class="dashboard-card admin-tasks">
-    <div class="card-header">
+    <div class="card-header d-flex justify-content-between align-items-center">
         <h2>Your Admin Tasks</h2>
     </div>
     <div class="card-body">
@@ -22,7 +22,7 @@
             <tbody>
                 {% if admin_tasks %}
                     {% for task in admin_tasks %}
-                    <tr data-task-id="{{ task.id }}">
+                    <tr data-task-id="{{ task.id }}" class="{% if task.completed %}completed-row{% endif %}">
                         <td class="checkbox-cell">
                             {% if task.completed %}
                                 <i class="bi bi-check-circle-fill task-completed"></i>
@@ -32,17 +32,18 @@
                         </td>
                         <td>
                             <div class="task-info">
-                                <div class="task-title">{{ task.title }}</div>
+                                <div class="task-title {% if task.completed %}fw-medium text-success{% endif %}">{{ task.title }}</div>
                                 {% if task.description %}
-                                    <div class="task-description">{{ task.description }}</div>
+                                    <div class="task-description text-muted">{{ task.description }}</div>
                                 {% endif %}
                             </div>
                         </td>
                         <td>{{ task.assigned_to }}</td>
                         <td class="due-date {% if task.is_overdue %}overdue{% endif %}">
-                            {{ task.deadline|date:"m/d/y" }}
                             {% if task.is_overdue %}
-                                <span class="overdue-text">(Overdue)</span>
+                                <span class="badge bg-danger rounded-pill">{{ task.deadline|date:"m/d/y" }} (Overdue)</span>
+                            {% else %}
+                                <span class="badge {% if task.completed %}bg-success{% else %}bg-info{% endif %} rounded-pill">{{ task.deadline|date:"m/d/y" }}</span>
                             {% endif %}
                         </td>
                     </tr>

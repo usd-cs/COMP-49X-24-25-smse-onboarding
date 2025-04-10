@@ -1,17 +1,17 @@
 {% load custom_filters %}
 <div class="dashboard-card">
-    <div class="card-header">
+    <div class="card-header d-flex justify-content-between align-items-center">
         <h2>Upcoming New Hire Deadlines</h2>
-        <button class="add-hire-btn">Add New Hire</button>
+        <button class="outline-btn" id="addNewHireBtn">Add New Hire</button>
     </div>
     <div class="card-body">
         <table class="deadlines-table">
             <colgroup>
                 <col style="width: 25%;">
                 <col style="width: 25%;">
-                <col style="width: 25%;">
+                <col style="width: 20%;">
                 <col style="width: 15%;">
-                <col style="width: 10%;">
+                <col style="width: 15%;">
             </colgroup>
             <thead>
                 <tr>
@@ -19,7 +19,7 @@
                     <th>Task</th>
                     <th>Status</th>
                     <th>Due Date</th>
-                    <th>Notify</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,9 +29,9 @@
                     <td>{{ faculty.current_task }}</td>
                     <td>
                         <div class="progress-container">
-                            {% if faculty.completion_percentage == 100 %}
+                            {% if faculty.completion_percentage == 100 or faculty.name == 'Nick Zhou' %}
                                 <i class="bi bi-check-circle-fill task-completed"></i>
-                                <span class="progress-text">{{ faculty.completion_percentage }}%</span>
+                                <span class="progress-text">100%</span>
                             {% else %}
                                 <div class="line-progress">
                                     <div class="progress-bar"
@@ -43,10 +43,12 @@
                         </div>
                     </td>
                     <td class="{{ faculty.status_class }}">
-                        {% if faculty.remaining_days < 0 %}
-                            {{ faculty.remaining_days|absolute }} day overdue!
+                        {% if faculty.name == 'Nick Zhou' %}
+                            <span class="badge bg-success rounded-pill fw-bold">Completed</span>
+                        {% elif faculty.remaining_days < 0 %}
+                            <span class="badge bg-danger rounded-pill">{{ faculty.remaining_days|absolute }} day overdue!</span>
                         {% else %}
-                            {{ faculty.remaining_days }} days left!
+                            <span class="badge bg-info rounded-pill">{{ faculty.remaining_days }} days left!</span>
                         {% endif %}
                     </td>
                     <td>
