@@ -51,9 +51,12 @@ def upload_document(request):
         messages.success(request, 'Document uploaded successfully!')
         return redirect('documents:show_documents')
 
-    # For GET request, show the upload form
+    # For GET request, show the document list with modal
     faculties = Faculty.objects.all() if request.user.is_staff else None
-    return render(request, 'documents/upload_document.html', {
+    documents = FacultyDocument.objects.filter(faculty=request.user.faculty_profile) if not request.user.is_staff else FacultyDocument.objects.all()
+
+    return render(request, 'documents/list.html', {
+        'documents': documents,
         'faculties': faculties
     })
 
