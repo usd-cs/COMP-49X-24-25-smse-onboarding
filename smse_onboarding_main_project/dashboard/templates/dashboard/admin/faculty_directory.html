@@ -80,7 +80,9 @@
                                             {% endif %}
                                         </div>
                                         <div class="ms-3" style="cursor: pointer;" onclick="showTaskProgress(event, {{ faculty.pk }})">
-                                            <p class="fw-bold mb-1">{{ faculty.first_name }} {{ faculty.last_name }}</p>
+                                            <span class="tt" data-bs-placement="bottom" data-bs-title="View Progress">
+                                                <p class="fw-bold mb-1">{{ faculty.first_name }} {{ faculty.last_name }}</p>
+                                            </span>
                                         </div>
                                     </div>
                                 </td>
@@ -104,14 +106,20 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-link btn-sm" onclick="showProfile({{ faculty.pk }})" title="View Profile">
-                                            <i class="bi bi-person-lines-fill"></i>
+                                        <button class="btn btn-link btn-sm" onclick="showProfile({{ faculty.pk }})">
+                                            <span class="tt" data-bs-placement="bottom" data-bs-title="View Profile">
+                                                <i class="bi bi-person-lines-fill"></i>
+                                            </span>
                                         </button>
-                                        <button class="btn btn-link btn-sm" title="Send Email">
-                                            <i class="bi bi-envelope"></i>
+                                        <button class="btn btn-link btn-sm">
+                                            <span class="tt" data-bs-placement="bottom" data-bs-title="Send Email">
+                                                <i class="bi bi-envelope"></i>
+                                            </span>
                                         </button>
-                                        <button class="btn btn-link btn-sm" title="Edit">
-                                            <i class="bi bi-pencil"></i>
+                                        <button class="btn btn-link btn-sm">
+                                            <span class="tt" data-bs-placement="bottom" data-bs-title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </span>
                                         </button>
                                     </div>
                                 </td>

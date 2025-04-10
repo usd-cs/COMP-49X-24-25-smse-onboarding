@@ -19,9 +19,11 @@
         <!-- Right-aligned items -->
         <div class="navbar-nav ms-auto align-items-center">
             <!-- Help button -->
-            <div class="nav-item me-3">
-                <a href="{% url 'users:welcome_info' %}" class="nav-link" title="Help & Information">
-                    <i class="bi bi-question-circle-fill"></i>
+            <div class="me-3">
+                <a href="{% url 'users:welcome_info' %}" class="nav-link">
+                    <span class="tt" data-bs-placement="bottom" data-bs-title="Help & Information">
+                        <i class="bi bi-question-circle-fill"></i>
+                    </span>
                 </a>
             </div>
 
