@@ -1,33 +1,17 @@
-<div class="modal fade" id="reminderModal{{ faculty.current_task.id }}" aria-labelledby="reminderModalLabel" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="taskModal{{ task.id }}" aria-labelledby="taskModalLabel" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" style="opacity: 1 !important; pointer-events: auto !important;">
-            {% if faculty.current_task %}
-                <div class="modal-header">
-                    <h5 class="modal-title">Send Reminder</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Do you want to send a push notification to {{ faculty.name }} about the task: {{ faculty.current_task.title }}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                    <form method="POST" action="{% url 'reminders:send_reminder' faculty.id faculty.current_task.id %}" class="d-inline modal-form">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Yes</button>
-                    </form>
-                </div>
-            {% else %}
-                <div class="modal-header">
-                    <h5 class="modal-title">All Tasks Completed</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>{{ faculty.name }} has completed all of their assigned tasks.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            {% endif %}
+            <div class="modal-header">
+                <h5 class="modal-title">Send Reminder</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you want to send a push notification to this user about the task: {{ task.title }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yes</button>
+            </div>
         </div>
     </div>
 </div>

@@ -32,7 +32,6 @@ urlpatterns = [
     path('users/', include('users.urls', namespace='users')),  # User management
     path('admin-dashboard/', admin_home, name='admin_dashboard'),  # Custom admin dashboard
     path('dashboard/', include('dashboard.urls', namespace='dashboard')),  # New dashboard
-    path('reminders/', include('reminders.urls', namespace='reminders')),  # Reminders
     path('logout/', auth_views.LogoutView.as_view(next_page='users:login'), name='logout'),  # Global logout
     path('social-auth/', include('social_django.urls', namespace='social')),  # Social authentication
     
