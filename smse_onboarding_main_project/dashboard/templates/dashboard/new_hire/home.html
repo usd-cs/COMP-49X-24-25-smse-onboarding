@@ -5,6 +5,7 @@
 
 {% block dashboard_css %}
 <link href="{% static 'dashboard/css/new_hire.css' %}" rel="stylesheet">
+<link href="{% static 'dashboard/css/topnav.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -13,8 +14,10 @@
     {% include 'dashboard/new_hire/components/sidebar.html' %}
 
     <div class="main-content">
-        <!-- Include the new top navbar component -->
-        {% include 'dashboard/new_hire/components/top_navbar.html' %}
+        <!-- Include the shared top navbar component with is_admin=False -->
+        {% with is_admin=False %}
+        {% include 'dashboard/components/topnav.html' %}
+        {% endwith %}
 
         <!-- Dashboard Content -->
         <div class="dashboard-content pt-4">
@@ -459,4 +462,19 @@
         });
     });
 </script>
+
+<!-- Check if Bootstrap Modal is available -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Bootstrap available:", typeof bootstrap !== 'undefined');
+        if (typeof bootstrap === 'undefined') {
+            console.error("Bootstrap is not loaded properly!");
+        } else {
+            console.log("Bootstrap Modal available:", typeof bootstrap.Modal !== 'undefined');
+        }
+    });
+</script>
+
+<!-- Include the reusable modal -->
+{% include 'dashboard/components/modal.html' %}
 {% endblock %}

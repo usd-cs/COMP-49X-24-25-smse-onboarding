@@ -7,6 +7,8 @@
 {% block dashboard_css %}
 <!-- Admin Dashboard Specific CSS -->
 <link href="{% static 'dashboard/css/admin.css' %}" rel="stylesheet">
+<!-- Load topnav.css last so it takes precedence -->
+<link href="{% static 'dashboard/css/topnav.css' %}" rel="stylesheet">
 <style>
     /* Ensure correct sidebar behavior at all widths */
     @media (max-width: 1200px) {
@@ -14,14 +16,20 @@
             margin-left: 0 !important;
             width: 100% !important;
         }
-        
+
         .sidebar {
             transform: translateX(-100%);
         }
-        
+
         .sidebar.active {
             transform: translateX(0);
         }
+    }
+
+    /* Any additional special-case styles for admin dashboard */
+    .modal-content {
+        opacity: 1 !important;
+        pointer-events: auto !important;
     }
 </style>
 {% endblock %}
@@ -29,10 +37,12 @@
 {% block content %}
 <div class="dashboard-container">
     {% include 'dashboard/admin/components/sidebar.html' %}
-    
+
     <div class="main-content">
-        {% include 'dashboard/admin/components/topnav.html' %}
-        
+        {% with is_admin=True %}
+        {% include 'dashboard/components/topnav.html' %}
+        {% endwith %}
+
         <div class="dashboard-content pt-4">
             <!-- Welcome Modal -->
             {% if request.session.show_welcome_banner is True %}
@@ -82,7 +92,7 @@
 
             <!-- Upcoming New Hire Deadlines Section -->
             {% include 'dashboard/admin/components/new_hire_deadlines.html' %}
-            
+
             <!-- Admin Tasks Section -->
             {% include 'dashboard/admin/components/admin_tasks.html' %}
         </div>
@@ -95,12 +105,12 @@
         document.body.addEventListener('click', function(e) {
             // Find the click target
             const target = e.target;
-            
+
             // Check if close button was clicked
             if (target.classList.contains('btn-close') && target.closest('.modal')) {
                 console.log("Close button click detected");
                 const modal = target.closest('.modal');
-                
+
                 // Manually close modal
                 modal.style.display = 'none';
                 modal.classList.remove('show');
@@ -108,16 +118,16 @@
                 document.body.style.paddingRight = '';
                 document.body.style.overflow = '';
                 document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                
+
                 e.stopPropagation();
                 return;
             }
-            
+
             // Check if Got it! button was clicked
-            if (target.textContent.includes('Got it!') || 
+            if (target.textContent.includes('Got it!') ||
                 (target.closest('a') && target.closest('a').textContent.includes('Got it!'))) {
                 console.log("'Got it!' button click detected");
-                
+
                 // Try to find dismiss_welcome URL
                 const btn = target.tagName === 'A' ? target : target.closest('a');
                 if (btn && btn.href && btn.href.includes('dismiss_welcome')) {
@@ -130,7 +140,7 @@
                     }).then(() => {
                         console.log("Welcome banner dismissed via direct click handler");
                     });
-                    
+
                     // Manually close modal
                     const modal = btn.closest('.modal');
                     if (modal) {
@@ -141,13 +151,13 @@
                         document.body.style.overflow = '';
                         document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
                     }
-                    
+
                     e.stopPropagation();
                     return;
                 }
             }
         }, true); // Use capture phase to ensure we get the event before other handlers
-        
+
         // Fix for welcome modal
         const welcomeModal = document.getElementById('welcomeModal');
         if (welcomeModal) {
@@ -163,12 +173,12 @@
                     welcomeModal.style.display = 'block';
                     welcomeModal.classList.add('show');
                     document.body.classList.add('modal-open');
-                    
+
                     // Create backdrop
                     const backdrop = document.createElement('div');
                     backdrop.className = 'modal-backdrop fade show';
                     document.body.appendChild(backdrop);
-                    
+
                     // Setup close buttons
                     welcomeModal.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
                         btn.addEventListener('click', function() {
@@ -180,7 +190,7 @@
                             backdrop.remove();
                         });
                     });
-                    
+
                     // Setup 'Got it!' button
                     const gotItBtn = welcomeModal.querySelector('.modal-footer .btn-primary');
                     if (gotItBtn) {
@@ -201,13 +211,13 @@
                 console.error("Error initializing welcome modal:", error);
             }
         }
-        
+
         // Elements
-        const sidebar = document.getElementById('dashboardSidebar');
+        const sidebar = document.querySelector('.sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const mainContent = document.querySelector('.main-content');
-        
+
         // Force layout update based on screen size
         function updateScreenSize() {
             // Always make sure the main content takes full width below 1200px
@@ -221,11 +231,11 @@
                 mainContent.style.width = 'calc(100% - 280px)';
             }
         }
-        
+
         // Update on load and resize
         updateScreenSize();
         window.addEventListener('resize', updateScreenSize);
-        
+
         // Toggle sidebar on menu button click
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', function(e) {
@@ -236,7 +246,7 @@
                 }
             });
         }
-        
+
         // Close sidebar when clicking on overlay
         if (sidebarOverlay) {
             sidebarOverlay.addEventListener('click', function() {
@@ -244,7 +254,7 @@
                 sidebarOverlay.classList.remove('active');
             });
         }
-        
+
         // Close sidebar on window resize if needed
         window.addEventListener('resize', function() {
             if (window.innerWidth > 1200) {
@@ -254,7 +264,7 @@
                 }
             }
         });
-        
+
         // Add CSS fix for modals
         const style = document.createElement('style');
         style.textContent = `
@@ -270,22 +280,91 @@
             }
             .modal-content {
                 pointer-events: auto !important;
+                opacity: 1 !important;
             }
             
             /* Emergency style fix */
             #welcomeModal .btn-close,
-            #welcomeModal .modal-footer .btn {
+            #welcomeModal .modal-footer .btn,
+            #reusableModal .btn-close,
+            #reusableModal .modal-footer .btn {
                 pointer-events: auto !important;
                 cursor: pointer !important;
                 position: relative !important;
                 z-index: 19999 !important;
             }
             
-            #welcomeModal .modal-content {
+            #welcomeModal .modal-content,
+            #reusableModal .modal-content {
                 pointer-events: auto !important;
             }
         `;
         document.head.appendChild(style);
+
+        // Initialize the reusable modal
+        const profileLinks = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#reusableModal"]');
+        profileLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Profile link clicked');
+
+                // Ensure the modal element exists
+                const modalElement = document.getElementById('reusableModal');
+                if (!modalElement) {
+                    console.error('Modal element not found');
+                    return;
+                }
+
+                // Move modal to body to avoid stacking context issues
+                if (modalElement.parentElement !== document.body) {
+                    document.body.appendChild(modalElement);
+                }
+
+                try {
+                    // Initialize modal with Bootstrap
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                } catch (error) {
+                    console.error('Error showing modal:', error);
+
+                    // Fallback if Bootstrap Modal fails
+                    modalElement.style.display = 'block';
+                    modalElement.classList.add('show');
+                    document.body.classList.add('modal-open');
+
+                    // Create backdrop
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    document.body.appendChild(backdrop);
+
+                    // Set up close button
+                    modalElement.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            modalElement.style.display = 'none';
+                            modalElement.classList.remove('show');
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                            backdrop.remove();
+                        });
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Include the reusable modal -->
+{% include 'dashboard/components/modal.html' %}
+
+<!-- Check Bootstrap availability -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Admin Dashboard - Bootstrap available:", typeof bootstrap !== 'undefined');
+        if (typeof bootstrap === 'undefined') {
+            console.error("Bootstrap is not loaded properly in admin dashboard!");
+        } else {
+            console.log("Admin Dashboard - Bootstrap Modal available:", typeof bootstrap.Modal !== 'undefined');
+        }
     });
 </script>
 {% endblock %}

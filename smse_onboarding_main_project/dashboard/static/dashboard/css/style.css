@@ -23,21 +23,6 @@ body {
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-/* Navbar Styles - basic, not topnav specific */
-.navbar-custom {
-    background-color: var(--primary-color);
-    padding: 0.5rem 1rem;
-}
-
-.navbar-brand {
-    color: white;
-    cursor: pointer;
-}
-
-.navbar-brand:hover {
-    color: rgba(255, 255, 255, 0.9);
-}
-
 /* Main Container */
 .main-container {
     padding: 20px;
