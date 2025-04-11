@@ -15,7 +15,7 @@
     --light-text: #6b7280;
     --sidebar-width: 280px;
     --sidebar-collapsed-width: 80px;
-    --topnav-height: 60px;
+    --topnav-height: 70px;
 }
 
 body {
@@ -40,12 +40,13 @@ html {
     padding: 20px;
     margin-left: var(--sidebar-width, 280px);
     width: calc(100% - var(--sidebar-width, 280px));
-    min-height: 100vh;
+    min-height: calc(100vh - var(--topnav-height));
     background-color: #eaeaea;  /* Match body background color */
     transition: margin-left 0.3s ease, width 0.3s ease;
     overflow-y: auto; /* Enable vertical scrolling */
     position: relative;
     z-index: 900;
+    margin-top: var(--topnav-height); /* Add margin for topnav */
 }
 
 /* Dashboard container for proper scrolling */
@@ -72,16 +73,27 @@ html {
     min-height: 50px; /* Minimum height to ensure visibility */
 }
 
-/* Override any other styles that might affect top bar - keeping this reference only */
-.dashboard-container > .main-content:before {
-    content: "";
+/* Top Navigation Bar - Full Width */
+.top-bar {
+    display: none;
+}
+
+.navbar {
     position: fixed;
     top: 0;
-    left: 280px;
+    left: 0;
     right: 0;
-    height: 35px;
     background-color: white !important;
-    z-index: 1040;
+    height: var(--topnav-height);
+    z-index: 1060;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 0;
+}
+
+.navbar-brand-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
 }
 
 /* Status Card */
@@ -363,22 +375,22 @@ html {
     :root {
         --sidebar-width: 0px;
     }
-    
+
     .main-content {
         margin-left: 0;
         width: 100%;
     }
-    
+
     .sidebar {
         transform: translateX(-100%);
         width: 280px;
         transition: transform 0.3s ease;
     }
-    
+
     .sidebar.active {
         transform: translateX(0);
     }
-    
+
     .menu-toggle {
         display: block !important;
     }
@@ -388,27 +400,27 @@ html {
     .navbar > .container-fluid {
         padding: 0 10px;
     }
-    
+
     .main-content {
         margin-left: 0 !important;
         width: 100% !important;
         padding: 15px;
     }
-    
+
     .dashboard-content {
         padding-top: 10px !important;
         width: 100% !important;
     }
-    
+
     .col-md-8, .col-md-4 {
         width: 100%;
         padding: 0 10px;
     }
-    
+
     .row {
         margin: 0 -10px;
     }
-    
+
     .menu-toggle {
         display: block !important;
         font-size: 1.5rem !important;
@@ -422,10 +434,10 @@ html {
     width: var(--sidebar-width);
     background-color: var(--primary-color);
     color: white;
-    height: 100vh;
+    height: calc(100vh - var(--topnav-height));
     min-height: 550px;
     position: fixed;
-    top: 0;
+    top: var(--topnav-height);
     left: 0;
     padding: 1rem 1rem;
     display: flex;
@@ -434,6 +446,11 @@ html {
     transition: transform 0.3s ease, width 0.3s ease;
     overflow-y: auto;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo container in sidebar */
+.logo-container {
+    display: none; /* Hide logo as requested */
 }
 
 /* Menu toggle button for mobile view */
@@ -450,10 +467,10 @@ html {
 /* Sidebar overlay for mobile */
 .sidebar-overlay {
     position: fixed;
-    top: 0;
+    top: var(--topnav-height);
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% - var(--topnav-height));
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1020;
     display: none;
@@ -471,27 +488,27 @@ html {
     .navbar > .container-fluid {
         padding: 0 10px;
     }
-    
+
     .main-content {
         margin-left: 0 !important;
         width: 100% !important;
         padding: 15px;
     }
-    
+
     .dashboard-content {
         padding-top: 10px !important;
         width: 100% !important;
     }
-    
+
     .col-md-8, .col-md-4 {
         width: 100%;
         padding: 0 10px;
     }
-    
+
     .row {
         margin: 0 -10px;
     }
-    
+
     .menu-toggle {
         display: block !important;
         font-size: 1.5rem !important;
@@ -566,7 +583,7 @@ html {
         min-height: 75px;
         padding: 0.5rem 0.25rem;
     }
-    
+
     .quick-link-btn i {
         font-size: 20px;
         margin-bottom: 5px;

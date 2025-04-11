@@ -17,7 +17,7 @@
         {% include 'dashboard/new_hire/components/top_navbar.html' %}
 
         <!-- Dashboard Content -->
-        <div class="dashboard-content pt-4" style="padding-top: 50px !important;">
+        <div class="dashboard-content pt-4">
             <!-- Welcome Modal -->
             {% if request.session.show_welcome_banner is True %}
             <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-modal-type="welcome">
@@ -96,12 +96,12 @@
         document.body.addEventListener('click', function(e) {
             // Find the click target
             const target = e.target;
-            
+
             // Check if close button was clicked
             if (target.classList.contains('btn-close') && target.closest('.modal')) {
                 console.log("Close button click detected");
                 const modal = target.closest('.modal');
-                
+
                 // Manually close modal
                 modal.style.display = 'none';
                 modal.classList.remove('show');
@@ -109,16 +109,16 @@
                 document.body.style.paddingRight = '';
                 document.body.style.overflow = '';
                 document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                
+
                 e.stopPropagation();
                 return;
             }
-            
+
             // Check if Got it! button was clicked
-            if (target.textContent.includes('Got it!') || 
+            if (target.textContent.includes('Got it!') ||
                 (target.closest('a') && target.closest('a').textContent.includes('Got it!'))) {
                 console.log("'Got it!' button click detected");
-                
+
                 // Try to find dismiss_welcome URL
                 const btn = target.tagName === 'A' ? target : target.closest('a');
                 if (btn && btn.href && btn.href.includes('dismiss_welcome')) {
@@ -131,7 +131,7 @@
                     }).then(() => {
                         console.log("Welcome banner dismissed via direct click handler");
                     });
-                    
+
                     // Manually close modal
                     const modal = btn.closest('.modal');
                     if (modal) {
@@ -142,7 +142,7 @@
                         document.body.style.overflow = '';
                         document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
                     }
-                    
+
                     e.stopPropagation();
                     return;
                 }
@@ -161,7 +161,7 @@
                 if (welcomeModal.parentElement !== document.body) {
                     document.body.appendChild(welcomeModal);
                 }
-                
+
                 // Ensure Bootstrap is available
                 if (typeof bootstrap !== 'undefined') {
                     // Try standard Bootstrap modal initialization
@@ -173,12 +173,12 @@
                     welcomeModal.style.display = 'block';
                     welcomeModal.classList.add('show');
                     document.body.classList.add('modal-open');
-                    
+
                     // Create backdrop
                     const backdrop = document.createElement('div');
                     backdrop.className = 'modal-backdrop fade show';
                     document.body.appendChild(backdrop);
-                    
+
                     // Setup close buttons
                     welcomeModal.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
                         btn.addEventListener('click', function() {
@@ -190,7 +190,7 @@
                             backdrop.remove();
                         });
                     });
-                    
+
                     // Setup 'Got it!' button
                     const gotItBtn = welcomeModal.querySelector('.modal-footer .btn-primary');
                     if (gotItBtn) {
@@ -307,12 +307,12 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initial binding of event handlers
         attachEventListeners();
-        
+
         // Sidebar functionality
         const sidebar = document.querySelector('.sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const mainContent = document.querySelector('.main-content');
-        
+
         // Create sidebar overlay if it doesn't exist
         let sidebarOverlay = document.getElementById('sidebarOverlay');
         if (!sidebarOverlay) {
@@ -321,40 +321,75 @@
             sidebarOverlay.className = 'sidebar-overlay';
             document.body.appendChild(sidebarOverlay);
         }
-        
+
         // Force layout update based on screen size
         function updateScreenSize() {
+            const navbar = document.querySelector('.navbar');
+
             // Always make sure the main content takes full width below 1200px
             if (window.innerWidth <= 1200) {
                 mainContent.style.marginLeft = '0';
                 mainContent.style.width = '100%';
                 document.documentElement.style.setProperty('--sidebar-width', '0px');
+
+                // Update navbar position
+                if (navbar) {
+                    navbar.style.left = '0';
+                    navbar.style.width = '100%';
+                }
             } else {
                 document.documentElement.style.setProperty('--sidebar-width', '280px');
                 mainContent.style.marginLeft = '280px';
                 mainContent.style.width = 'calc(100% - 280px)';
+
+                // Update navbar position
+                if (navbar) {
+                    navbar.style.left = '280px';
+                    navbar.style.width = 'calc(100% - 280px)';
+                }
             }
         }
-        
+
         // Update on load and resize
         updateScreenSize();
         window.addEventListener('resize', updateScreenSize);
-        
+
         // Toggle sidebar on menu button click
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 sidebar.classList.toggle('active');
                 sidebarOverlay.classList.toggle('active');
+
+                // Adjust navbar when sidebar is toggled on mobile
+                const navbar = document.querySelector('.navbar');
+                if (window.innerWidth <= 1200 && navbar) {
+                    if (sidebar.classList.contains('active')) {
+                        navbar.style.left = '280px';
+                        navbar.style.width = 'calc(100% - 280px)';
+                    } else {
+                        navbar.style.left = '0';
+                        navbar.style.width = '100%';
+                    }
+                }
             });
         }
-        
+
         // Close sidebar when clicking on overlay
         sidebarOverlay.addEventListener('click', function() {
             sidebar.classList.remove('active');
             sidebarOverlay.classList.remove('active');
+
+            // Reset navbar position when sidebar is closed
+            if (window.innerWidth <= 1200) {
+                const navbar = document.querySelector('.navbar');
+                if (navbar) {
+                    navbar.style.left = '0';
+                    navbar.style.width = '100%';
+                }
+            }
         });
-        
+
         // Close sidebar on window resize if needed
         window.addEventListener('resize', function() {
             if (window.innerWidth > 1200) {
