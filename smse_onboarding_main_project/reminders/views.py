@@ -19,9 +19,12 @@ def send_reminder(request, faculty_id, current_task_id):
             days_remaining = "This task is overdue."
             time_remaining = "Overdue"
 
+        first_three_sentences = f"This is a reminder about your new hire onboarding task: {current_task.title}. This task is due on {current_task.deadline.strftime('%B %d, %Y, %I:%M %p')}. {days_remaining}"
+        next_two_sentences = f"Please complete this task as soon as possible. Please log in to the SMSE Onboarding Portal at https://smse-onboarding.dedyn.io to view the task and complete it."
+
         message = f"""Hello {faculty.first_name} {faculty.last_name},
-        
-This is a reminder about your new hire onboarding task: {current_task.title}. This task is due on {current_task.deadline.strftime('%B %d, %Y, %I:%M %p')}. {days_remaining} Please complete this task as soon as possible. Please log in to the SMSE Onboarding Portal at https://smse-onboarding.dedyn.io to view the task and complete it.
+
+{first_three_sentences} {next_two_sentences}
 
 See below for the task details:
 
@@ -46,5 +49,5 @@ SMSE Admin Team
             [faculty.email],
             fail_silently=False,
         )
-        
+
     return redirect('dashboard:admin_home')
