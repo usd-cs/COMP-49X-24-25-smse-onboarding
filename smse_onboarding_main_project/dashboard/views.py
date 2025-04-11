@@ -81,7 +81,7 @@ def new_hire_home(request):
         completion_percentage = (completed_tasks_count / total_assigned_tasks) * 100
 
     context = {
-        'tasks': upcoming_tasks,
+        'upcoming_tasks': upcoming_tasks,
         'completed_tasks': completed_tasks,
         'faculty': faculty,
         'documents': documents,
