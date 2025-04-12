@@ -2,11 +2,14 @@
 :root {
     --sidebar-width: 280px;
     --sidebar-collapsed-width: 70px;
+    --sidebar-color: #003b70;
+    --sidebar-hover-color: #33628d;
+    --topnav-height: 70px;
 }
 
 .sidebar {
     width: var(--sidebar-width);
-    background-color: #003b70;
+    background-color: var(--sidebar-color);
     padding: 20px;
     color: white;
     display: flex;
@@ -20,13 +23,21 @@
     overflow-y: hidden;
     overflow-x: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    transition: width 0.3s ease;
+    transition: width 0.3s ease, transform 0.3s ease, margin-left 0.3s ease;
 }
 
 /* Collapsed sidebar state */
 .sidebar.collapsed {
     width: var(--sidebar-collapsed-width);
     padding: 20px 10px;
+}
+
+/* Sidebar divider */
+.sidebar-divider {
+    border: 0;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 5px 0 10px 0;
 }
 
 .logo-container {
@@ -45,10 +56,28 @@
     width: 100%;
     height: 100%;
     border-radius: 0%;
+    max-width: 200px;
+    max-height: 80px;
+    object-fit: contain;
 }
 
 .sidebar.collapsed .logo {
     max-width: 40px;
+}
+
+.school-name {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed .school-name {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
 }
 
 /* Navigation Items */
@@ -57,6 +86,7 @@
     flex-direction: column;
     gap: 5px;
     flex: 1;
+    overflow-y: auto;
 }
 
 .nav-item {
@@ -69,16 +99,17 @@
     text-decoration: none;
     transition: background-color 0.2s;
     position: relative;
+    white-space: nowrap;
 }
 
 .nav-item:hover {
-    background-color: #33628d;
+    background-color: var(--sidebar-hover-color);
     color: #ffffff;
     text-decoration: none;
 }
 
 .nav-item.active {
-    background-color: #33628d;
+    background-color: var(--sidebar-hover-color);
     color: #ffffff;
 }
 
@@ -155,11 +186,12 @@
 @media (max-width: 1200px) {
     .sidebar {
         margin-left: -280px;
-        transition: margin-left 0.3s ease, width 0.3s ease;
+        transition: margin-left 0.3s ease, width 0.3s ease, transform 0.3s ease;
     }
 
     .sidebar.active {
         margin-left: 0;
+        transform: translateX(0);
     }
 
     .sidebar.collapsed {
@@ -171,7 +203,26 @@
     }
 }
 
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: var(--topnav-height);
+    left: 0;
+    width: 100%;
+    height: calc(100% - var(--topnav-height));
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1020;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
 /* Adjust main content when sidebar is collapsed */
 .main-content {
-    transition: margin-left 0.3s ease;
+    transition: margin-left 0.3s ease, width 0.3s ease;
 }

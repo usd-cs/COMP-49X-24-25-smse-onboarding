@@ -5,103 +5,35 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block dashboard_css %}
+<!-- Sidebar CSS -->
+<link href="{% static 'dashboard/css/sidebar.css' %}" rel="stylesheet">
 <!-- Admin Dashboard Specific CSS -->
 <link href="{% static 'dashboard/css/admin.css' %}" rel="stylesheet">
 <!-- Load topnav.css last so it takes precedence -->
 <link href="{% static 'dashboard/css/topnav.css' %}" rel="stylesheet">
-<style>
-    /* Ensure correct sidebar behavior at all widths */
-    @media (max-width: 1200px) {
-        .main-content {
-            margin-left: 0 !important;
-            width: 100% !important;
+{% endblock %}
+
+{% block extra_js %}
+<!-- Disable sidebar.js since we're using our own implementation -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find and remove the sidebar.js script to prevent double initialization
+        const scripts = document.getElementsByTagName('script');
+        for (let i = 0; i < scripts.length; i++) {
+            if (scripts[i].src.includes('sidebar.js')) {
+                scripts[i].parentNode.removeChild(scripts[i]);
+                console.log("Removed sidebar.js to prevent double initialization");
+                break;
+            }
         }
-
-        .sidebar {
-            transform: translateX(-100%);
-        }
-
-        .sidebar.active {
-            transform: translateX(0);
-        }
-    }
-
-    /* Tables layout styles */
-    .card-body {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .table-responsive {
-        flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    .deadlines-table, .admin-tasks-table {
-        table-layout: fixed;
-        width: 100%;
-    }
-
-    .deadlines-table th, .admin-tasks-table th {
-        position: sticky;
-        top: 0;
-        background-color: #f8f9fa;
-        z-index: 10;
-        border-bottom: 2px solid #dee2e6;
-        white-space: nowrap;
-    }
-
-    .deadlines-table td, .admin-tasks-table td {
-        vertical-align: middle;
-        word-wrap: break-word;
-        white-space: normal;
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    /* Remove striped rows */
-    .deadlines-table tr:nth-child(even),
-    .admin-tasks-table tr:nth-child(even) {
-        background-color: transparent;
-    }
-
-    /* Hover effect for row visibility */
-    .deadlines-table tr:hover,
-    .admin-tasks-table tr:hover {
-        background-color: rgba(0,0,0,0.02);
-    }
-
-    /* Responsive styles for tables */
-    @media (max-width: 768px) {
-        .row > .col-8,
-        .row > .col-4 {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-
-        .card {
-            height: auto !important;
-            margin-bottom: 15px;
-        }
-
-        .table-responsive {
-            max-height: 50vh !important;
-        }
-    }
-
-    /* Any additional special-case styles for admin dashboard */
-    .modal-content {
-        opacity: 1 !important;
-        pointer-events: auto !important;
-    }
-</style>
+    });
+</script>
 {% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
     {% with is_admin=True %}
-    {% include 'dashboard/components/sidebar.html' %}
+        {% include 'dashboard/components/sidebar.html' %}
     {% endwith %}
 
     <div class="main-content">
@@ -183,6 +115,73 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar functionality
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mainContent = document.querySelector('.main-content');
+
+        // Create sidebar overlay if it doesn't exist
+        let sidebarOverlay = document.getElementById('sidebarOverlay');
+        if (!sidebarOverlay) {
+            sidebarOverlay = document.createElement('div');
+            sidebarOverlay.id = 'sidebarOverlay';
+            sidebarOverlay.className = 'sidebar-overlay';
+            document.body.appendChild(sidebarOverlay);
+        }
+
+        // Force layout update based on screen size
+        function updateScreenSize() {
+            const navbar = document.querySelector('.navbar');
+
+            // Always make sure the main content takes full width below 1200px
+            if (window.innerWidth <= 1200) {
+                mainContent.style.marginLeft = '0';
+                mainContent.style.width = '100%';
+                document.documentElement.style.setProperty('--sidebar-width', '0px');
+
+                // Update navbar position
+                if (navbar) {
+                    navbar.style.left = '0';
+                    navbar.style.width = '100%';
+                }
+            } else {
+                document.documentElement.style.setProperty('--sidebar-width', '280px');
+                mainContent.style.marginLeft = '280px';
+                mainContent.style.width = 'calc(100% - 280px)';
+
+                // Update navbar position
+                if (navbar) {
+                    navbar.style.left = '280px';
+                    navbar.style.width = 'calc(100% - 280px)';
+                }
+            }
+        }
+
+        // Update on load and resize
+        updateScreenSize();
+        window.addEventListener('resize', updateScreenSize);
+
+        // Toggle sidebar on menu button click
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+
+                // Adjust navbar when sidebar is toggled on mobile
+                const navbar = document.querySelector('.navbar');
+                if (window.innerWidth <= 1200 && navbar) {
+                    if (sidebar.classList.contains('active')) {
+                        navbar.style.left = '280px';
+                        navbar.style.width = 'calc(100% - 280px)';
+                    } else {
+                        navbar.style.left = '0';
+                        navbar.style.width = '100%';
+                    }
+                }
+            });
+        }
+
         // Emergency fix - Add global click event listener
         document.body.addEventListener('click', function(e) {
             // Find the click target
@@ -293,59 +292,6 @@
                 console.error("Error initializing welcome modal:", error);
             }
         }
-
-        // Elements
-        const sidebar = document.querySelector('.sidebar');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const mainContent = document.querySelector('.main-content');
-
-        // Force layout update based on screen size
-        function updateScreenSize() {
-            // Always make sure the main content takes full width below 1200px
-            if (window.innerWidth <= 1200) {
-                mainContent.style.marginLeft = '0';
-                mainContent.style.width = '100%';
-                document.documentElement.style.setProperty('--sidebar-width', '0px');
-            } else {
-                document.documentElement.style.setProperty('--sidebar-width', '280px');
-                mainContent.style.marginLeft = '280px';
-                mainContent.style.width = 'calc(100% - 280px)';
-            }
-        }
-
-        // Update on load and resize
-        updateScreenSize();
-        window.addEventListener('resize', updateScreenSize);
-
-        // Toggle sidebar on menu button click
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                sidebar.classList.toggle('active');
-                if (sidebarOverlay) {
-                    sidebarOverlay.classList.toggle('active');
-                }
-            });
-        }
-
-        // Close sidebar when clicking on overlay
-        if (sidebarOverlay) {
-            sidebarOverlay.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-            });
-        }
-
-        // Close sidebar on window resize if needed
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 1200) {
-                sidebar.classList.remove('active');
-                if (sidebarOverlay) {
-                    sidebarOverlay.classList.remove('active');
-                }
-            }
-        });
 
         // Add CSS fix for modals
         const style = document.createElement('style');

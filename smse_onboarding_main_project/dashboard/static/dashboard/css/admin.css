@@ -13,8 +13,7 @@
     --secondary-color: #f5f7fa;
     --text-color: #333;
     --light-text: #6b7280;
-    --sidebar-width: 280px;
-    --sidebar-collapsed-width: 80px;
+    /* Sidebar values are now defined in sidebar.css */
     --topnav-height: 70px;
 }
 
@@ -67,114 +66,59 @@ html {
     padding-bottom: 50px; /* Extra padding at bottom to ensure all content is visible when scrolled */
 }
 
+/* Tables layout styles */
+.card-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-responsive {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.deadlines-table, .admin-tasks-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.deadlines-table th, .admin-tasks-table th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.deadlines-table td, .admin-tasks-table td {
+    vertical-align: middle;
+    word-wrap: break-word;
+    white-space: normal;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Remove striped rows */
+.deadlines-table tr:nth-child(even),
+.admin-tasks-table tr:nth-child(even) {
+    background-color: transparent;
+}
+
+/* Hover effect for row visibility */
+.deadlines-table tr:hover,
+.admin-tasks-table tr:hover {
+    background-color: rgba(0,0,0,0.02);
+}
+
 /* Remove any conflicting top-bar */
 .top-bar {
     display: none !important;
 }
 
-/* Sidebar - match new_hire.css */
-.sidebar {
-    width: var(--sidebar-width);
-    background-color: var(--primary-color);
-    color: white;
-    height: calc(100vh - var(--topnav-height));
-    min-height: 550px;
-    position: fixed;
-    top: var(--topnav-height);
-    left: 0;
-    padding: 1rem 1rem;
-    display: flex;
-    flex-direction: column;
-    z-index: 1030;
-    transition: transform 0.3s ease, width 0.3s ease;
-    overflow-y: auto;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Sidebar overlay for mobile */
-.sidebar-overlay {
-    position: fixed;
-    top: var(--topnav-height);
-    left: 0;
-    width: 100%;
-    height: calc(100% - var(--topnav-height));
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1020;
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.sidebar-overlay.active {
-    display: block;
-    opacity: 1;
-}
-
-/* Logo container in sidebar */
-.logo-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 0 0 12px 0;
-    min-height: 80px;
-}
-
-.logo {
-    width: 50px;
-    height: 50px;
-    min-width: 40px;
-    min-height: 40px;
-    border-radius: 50%;
-    object-fit: contain;
-}
-
-.school-name {
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    color: white;
-}
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    overflow-y: auto;
-    flex-grow: 1;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 12px;
-    min-height: 40px;
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    transition: background-color 0.2s;
-    white-space: nowrap;
-}
-
-.nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.nav-item.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-}
-
-.nav-item i {
-    font-size: 1.1rem;
-    min-width: 24px;
-    text-align: center;
-    flex-shrink: 0;
-    margin-right: 12px;
-}
+/* Sidebar and overlay - Now handled by sidebar.css */
+/* Logo container in sidebar - Now handled by sidebar.css */
 
 /* Menu toggle button for mobile view */
 .menu-toggle {
@@ -265,55 +209,13 @@ html {
     border-bottom: none;
 }
 
-/* Quick Links section */
-.quick-links {
-    margin-top: auto;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: 12px;
-}
-
-.quick-links-title {
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    margin-bottom: 8px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-}
-
-.quick-links-title i {
-    margin-right: 8px;
-}
-
-.new-badge {
-    background-color: #FF3366;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 10px;
-    margin-left: auto;
-}
+/* Quick Links section - Now handled by sidebar.css */
 
 /* Match responsive behavior from new_hire.css */
 @media (max-width: 1200px) {
-    :root {
-        --sidebar-width: 0px;
-    }
-
     .main-content {
         margin-left: 0;
         width: 100%;
-    }
-
-    .sidebar {
-        transform: translateX(-100%);
-        width: 280px;
-        transition: transform 0.3s ease;
-    }
-
-    .sidebar.active {
-        transform: translateX(0);
     }
 
     .menu-toggle {
@@ -602,4 +504,10 @@ input:checked + .toggle-slider:before {
 .legend-label {
     font-size: 0.875rem;
     color: var(--text-light);
+}
+
+/* Fix modal content z-index issues */
+.modal-content {
+    opacity: 1 !important;
+    pointer-events: auto !important;
 }
