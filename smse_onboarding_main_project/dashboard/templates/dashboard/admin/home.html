@@ -13,23 +13,6 @@
 <link href="{% static 'dashboard/css/topnav.css' %}" rel="stylesheet">
 {% endblock %}
 
-{% block extra_js %}
-<!-- Disable sidebar.js since we're using our own implementation -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Find and remove the sidebar.js script to prevent double initialization
-        const scripts = document.getElementsByTagName('script');
-        for (let i = 0; i < scripts.length; i++) {
-            if (scripts[i].src.includes('sidebar.js')) {
-                scripts[i].parentNode.removeChild(scripts[i]);
-                console.log("Removed sidebar.js to prevent double initialization");
-                break;
-            }
-        }
-    });
-</script>
-{% endblock %}
-
 {% block content %}
 <div class="dashboard-container">
     {% with is_admin=True %}
