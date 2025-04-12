@@ -112,7 +112,7 @@ html {
     color: var(--text-color);
     border-radius: 10px;
     padding: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.3);
 }
 
 .quick-links-card a {
@@ -531,7 +531,7 @@ html {
     min-height: 90px;
     padding: 0.8rem 0.5rem;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 10px rgba(0,0,0,0.1);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     margin-bottom: 12px;
     color: white;
@@ -556,12 +556,12 @@ html {
     transform: scale(1.2);
 }
 
-.admin-btn { background-color: #522d6d; }
-.it-btn { background-color: #3e7b05; }
-.parking-btn { background-color: #2c3e8c; }
-.map-btn { background-color: #c67f12; }
-.phone-btn { background-color: #5291c5; }
-.notif-btn { background-color: #942638; }
+.admin-btn { background-color: #5a2b81; }
+.it-btn { background-color: #728c1f; }
+.parking-btn { background-color: #00a499; }
+.map-btn { background-color: #eeaa2b; }
+.phone-btn { background-color: #75bee9; }
+.notif-btn { background-color: #92002d; }
 
 /* Shine effect for buttons */
 .quick-link-btn::after {

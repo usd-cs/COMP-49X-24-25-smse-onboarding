@@ -6,6 +6,7 @@
     --light-text: #666;
     --border-color: #e5e7eb;
     --dark-bg: #eaeaea;
+    --font-family: 'Myriad Pro', sans-serif;
 }
 
 /* General Styles */
@@ -40,7 +41,13 @@ body {
     background-color: white;
     color: var(--text-color);
     border: none;
+    font-family: 'Myriad Pro', sans-serif;
     max-width: 100%; /* Ensure cards don't overflow */
+}
+
+/*card family title should be pro myriad*/
+.card-title {
+    font-family: 'Myriad Pro', sans-serif;
 }
 
 /* Quick Links */

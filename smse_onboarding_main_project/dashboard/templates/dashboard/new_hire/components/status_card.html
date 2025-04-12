@@ -28,7 +28,8 @@
         </div>
 
         <div class="welcome-text mb-3">
-            Welcome, {{ faculty.first_name }}
+            Welcome, {{ faculty.first_name }} {{ faculty.last_name }}
+            <!--change the color of the welcome text to #0074c8-->
         </div>
 
         <!-- New symmetric layout for profile and progress -->
@@ -40,7 +41,7 @@
                         <div class="profile-circle">
                             <!-- Default Bootstrap Icon -->
                             <div class="rounded-circle d-flex align-items-center justify-content-center bg-light profile-img">
-                                <i class="bi bi-person-fill text-primary"></i>
+                                <i class="bi bi-person-fill" style="color: #0074c8;"></i>
                             </div>
 
                             <!-- Profile Image (overlays the icon if available) -->
@@ -94,6 +95,8 @@
     font-size: 1.4rem;
     font-weight: bold;
     text-align: center;
+    color: #003b70;
+    font-family: 'Myriad Pro', sans-serif;
 }
 
 .profile-card-wrapper {
