@@ -2,131 +2,134 @@
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 
-<div class="card shadow-sm mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">Upcoming New Hire Deadlines</h5>
-        <button class="btn btn-outline-primary" id="addNewHireBtn">
-            <i class="bi bi-person-add me-2"></i>
-            <span>Add New Hire</span>
-        </button>
+<!-- Simple Header -->
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Upcoming New Hire Deadlines</h1>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" id="addNewHireBtn">
+                <i class="bi bi-person-add me-2"></i>
+                <span class="d-none d-md-inline">Add New Hire</span>
+            </button>
+        </div>
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden;">
-            <table class="deadlines-table w-100" id="newHireDeadlinesTable">
-                <thead>
-                    <tr>
-                        <th style="width: 20%">Name</th>
-                        <th style="width: 30%">Current Task</th>
-                        <th style="width: 20%">Status</th>
-                        <th style="width: 15%">Due Date</th>
-                        <th style="width: 15%">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for faculty in faculty_tasks %}
-                    <tr>
-                        <td>{{ faculty.name }}</td>
 
-                        <td class="task-title" data-bs-toggle="modal" data-bs-target="#taskModal{{ faculty.current_task.id }}">
-                            <span class="tt task-title-text" data-bs-placement="bottom" data-bs-title="See Task Details">
-                                {{ faculty.current_task_title }}
-                            </span>
-                        </td>
+    <!-- New Hire Deadlines Table -->
+    <div class="table-responsive bg-white rounded shadow-sm p-3">
+        <table class="table" id="newHireDeadlinesTable">
+            <thead>
+                <tr>
+                    <th style="width: 20%">Name</th>
+                    <th style="width: 30%">Current Task</th>
+                    <th style="width: 20%">Status</th>
+                    <th style="width: 15%">Due Date</th>
+                    <th style="width: 15%">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for faculty in faculty_tasks %}
+                <tr>
+                    <td>{{ faculty.name }}</td>
 
-                        <!-- Task Modal -->
-                        <div class="modal fade" id="taskModal{{ faculty.current_task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ faculty.current_task.id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    {% if faculty.current_task %}
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="taskModalLabel{{ faculty.current_task.id }}">{{ faculty.current_task.title }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p><strong>Created:</strong> {{ faculty.current_task.created_at|date:"M d, Y" }}</p>
-                                            <p><strong>Due Date:</strong> {{ faculty.current_task.deadline|date:"M d, Y, g a" }}</p>
-                                            {% if faculty.current_task.prerequisite_task %}
-                                                <p><strong>Prerequisite Task:</strong> {{ faculty.current_task.prerequisite_task.title }}
-                                                    {% if task.prereq_completed %}
-                                                        <span class="badge bg-success">Completed</span>
-                                                    {% else %}
-                                                        <span class="badge bg-warning text-dark">Not Completed</span>
-                                                    {% endif %}
-                                                </p>
-                                            {% endif %}
-                                            <p><strong>Days Remaining:</strong>
-                                                {% if faculty.current_task.remaining_days < 0 %}
-                                                    <span class="text-danger">Overdue</span>
-                                                {% elif faculty.current_task.remaining_days == 0 %}
-                                                    <span class="text-warning">Due today</span>
+                    <td class="task-title" data-bs-toggle="modal" data-bs-target="#taskModal{{ faculty.current_task.id }}">
+                        <span class="tt task-title-text" data-bs-placement="bottom" data-bs-title="See Task Details">
+                            {{ faculty.current_task_title }}
+                        </span>
+                    </td>
+
+                    <!-- Task Modal -->
+                    <div class="modal fade" id="taskModal{{ faculty.current_task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ faculty.current_task.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                {% if faculty.current_task %}
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="taskModalLabel{{ faculty.current_task.id }}">{{ faculty.current_task.title }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Created:</strong> {{ faculty.current_task.created_at|date:"M d, Y" }}</p>
+                                        <p><strong>Due Date:</strong> {{ faculty.current_task.deadline|date:"M d, Y, g a" }}</p>
+                                        {% if faculty.current_task.prerequisite_task %}
+                                            <p><strong>Prerequisite Task:</strong> {{ faculty.current_task.prerequisite_task.title }}
+                                                {% if task.prereq_completed %}
+                                                    <span class="badge bg-success">Completed</span>
                                                 {% else %}
-                                                    {{ faculty.current_task.remaining_days }} days
+                                                    <span class="badge bg-warning text-dark">Not Completed</span>
                                                 {% endif %}
                                             </p>
-                                            <p><strong>Description:</strong></p>
-                                            <p>{{ faculty.current_task.description }}</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        </div>
-                                    {% else %}
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">{{ faculty.current_task_title }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>This faculty member has completed all of their assigned tasks.</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <td>
-                            <div class="d-flex align-items-center">
-                                {% if faculty.completion_percentage == 100 or faculty.name == 'Nick Zhou' %}
-                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                    <span>100%</span>
-                                {% else %}
-                                    <div class="progress flex-grow-1 me-2" style="height: 6px;">
-                                        <div class="progress-bar" role="progressbar"
-                                             style="width: {{ faculty.completion_percentage }}%;"
-                                             aria-valuenow="{{ faculty.completion_percentage }}"
-                                             aria-valuemin="0"
-                                             aria-valuemax="100">
-                                        </div>
+                                        {% endif %}
+                                        <p><strong>Days Remaining:</strong>
+                                            {% if faculty.current_task.remaining_days < 0 %}
+                                                <span class="text-danger">Overdue</span>
+                                            {% elif faculty.current_task.remaining_days == 0 %}
+                                                <span class="text-warning">Due today</span>
+                                            {% else %}
+                                                {{ faculty.current_task.remaining_days }} days
+                                            {% endif %}
+                                        </p>
+                                        <p><strong>Description:</strong></p>
+                                        <p>{{ faculty.current_task.description }}</p>
                                     </div>
-                                    <span>{{ faculty.completion_percentage }}%</span>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                {% else %}
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">{{ faculty.current_task_title }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>This faculty member has completed all of their assigned tasks.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
                                 {% endif %}
                             </div>
-                        </td>
-                        <td>
-                            {% if faculty.name == 'Nick Zhou' %}
-                                <span class="badge bg-success">Completed</span>
-                            {% elif faculty.remaining_days < 0 %}
-                                <span class="badge bg-danger">{{ faculty.remaining_days|absolute }} day overdue</span>
+                        </div>
+                    </div>
+
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if faculty.completion_percentage == 100 or faculty.name == 'Nick Zhou' %}
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>100%</span>
                             {% else %}
-                                <span class="badge bg-info">{{ faculty.remaining_days }} days left</span>
+                                <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                                    <div class="progress-bar" role="progressbar"
+                                         style="width: {{ faculty.completion_percentage }}%;"
+                                         aria-valuenow="{{ faculty.completion_percentage }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <span>{{ faculty.completion_percentage }}%</span>
                             {% endif %}
-                        </td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="Send Reminder">
-                                    <i class="bi bi-bell"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if faculty.name == 'Nick Zhou' %}
+                            <span class="badge rounded-pill bg-success">Completed</span>
+                        {% elif faculty.remaining_days < 0 %}
+                            <span class="badge rounded-pill bg-danger">{{ faculty.remaining_days|absolute }} day overdue</span>
+                        {% else %}
+                            <span class="badge rounded-pill bg-info">{{ faculty.remaining_days }} days left</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-link btn-sm p-1" data-bs-toggle="tooltip" data-bs-title="Send Reminder">
+                                <i class="bi bi-bell"></i>
+                            </button>
+                            <button class="btn btn-link btn-sm p-1" data-bs-toggle="tooltip" data-bs-title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -135,31 +138,25 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
-    // Initialize DataTable when document is ready or when jQuery is available
-    function initDataTable() {
-        if (typeof $ === 'undefined') {
-            // If jQuery isn't loaded yet, try again in 100ms
-            setTimeout(initDataTable, 100);
-            return;
+    // Initialize DataTable when document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if jQuery is loaded
+        if (typeof jQuery !== 'undefined') {
+            if ($.fn.DataTable.isDataTable('#newHireDeadlinesTable')) {
+                $('#newHireDeadlinesTable').DataTable().destroy();
+            }
+
+            $('#newHireDeadlinesTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50],
+                language: {
+                    search: "Search new hires:"
+                },
+                columnDefs: [
+                    { orderable: false, targets: 4 } // Disable sorting on actions column
+                ]
+            });
         }
-
-        if ($.fn.DataTable && $.fn.DataTable.isDataTable('#newHireDeadlinesTable')) {
-            $('#newHireDeadlinesTable').DataTable().destroy();
-        }
-
-        $('#newHireDeadlinesTable').DataTable({
-            responsive: true,
-            pageLength: 5,
-            lengthMenu: [5, 10, 25, 50],
-            language: {
-                search: "Search new hires:"
-            },
-            columnDefs: [
-                { orderable: false, targets: 4 } // Disable sorting on actions column
-            ]
-        });
-    }
-
-    // Try to initialize immediately in case jQuery is already loaded
-    document.addEventListener('DOMContentLoaded', initDataTable);
+    });
 </script>
