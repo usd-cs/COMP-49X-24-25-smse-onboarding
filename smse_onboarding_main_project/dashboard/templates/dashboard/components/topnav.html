@@ -25,22 +25,22 @@
         </div>
 
         <!-- Right-aligned items -->
-        <div class="navbar-nav ms-auto align-items-center">
+        <div class="navbar-nav ms-auto align-items-center d-flex">
             <!-- Help button - Conditional URL based on dashboard type -->
-            <div class="me-3">
-                <a href="{% if is_admin %}{% url 'users:admin_help_guide' %}{% else %}{% url 'users:welcome_info' %}{% endif %}" class="nav-link">
+            <div class="mx-2">
+                <a href="{% if is_admin %}{% url 'users:admin_help_guide' %}{% else %}{% url 'users:welcome_info' %}{% endif %}" class="nav-link p-2">
                     <span class="tt" data-bs-placement="bottom" data-bs-title="Help & Information">
-                        <i class="bi bi-question-circle-fill"></i>
+                        <i class="bi bi-question-circle-fill fs-4" style="color: #0074c8; font-weight: bold;"></i>
                     </span>
                 </a>
             </div>
 
             <!-- Notification bell -->
-            <div class="me-5 position-relative">
-                <a href="#" class="nav-link">
+            <div class="mx-2 position-relative">
+                <a href="#" class="nav-link p-2">
                     <span class="tt" data-bs-placement="bottom" data-bs-title="Notifications">
-                        <i class="bi bi-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <i class="bi bi-bell fs-4" style="color: #0074c8; font-weight: bold;"></i>
+                        <span class="position-absolute top-50 start-80 translate-middle badge rounded-pill bg-danger" style="margin-top: -3px;">
                             5
                         </span>
                     </span>
@@ -48,32 +48,28 @@
             </div>
 
             <!-- User profile dropdown -->
-            <div class="position-relative">
+            <div class="mx-2 position-relative">
                 <div class="dropdown">
-                    <button class="btn btn-link dropdown-toggle d-flex align-items-center text-decoration-none nav-link"
+                    <button class="btn btn-link dropdown-toggle text-decoration-none nav-link p-2"
                             type="button"
                             id="userDropdown"
                             data-bs-toggle="dropdown"
                             aria-expanded="false">
-                        <!-- Profile Image -->
-                        <div class="rounded-circle overflow-hidden me-2 user-avatar-container">
-                            {% if user.profile_image %}
-                                <img src="{{ user.profile_image.url }}"
-                                    alt="Profile"
-                                    class="img-profile">
-                            {% else %}
-                                <div class="img-profile bg-light d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-person-fill text-secondary"></i>
-                                </div>
-                            {% endif %}
-                        </div>
-                        <!-- User Name -->
-                        <div class="d-flex flex-column align-items-start">
+                        <!-- Profile Icon -->
+                        {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}"
+                                alt="Profile"
+                                class="me-2 img-profile">
+                        {% else %}
+                            <i class="bi bi-person-fill fs-4" style="color: #0074c8; font-weight: bold;"></i>
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <div class="d-flex flex-column align-items-start px-3 py-2">
                             <span class="fw-medium user-name">{{ request.user.get_full_name }}</span>
                             <small class="text-secondary user-role">{{ request.user.groups.first.name|default:"User" }}</small>
                         </div>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#reusableModal">
                                 <i class="bi bi-person me-2"></i>Profile

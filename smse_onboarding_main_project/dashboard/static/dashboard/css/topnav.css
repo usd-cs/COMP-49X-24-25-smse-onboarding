@@ -44,10 +44,11 @@
     padding-top: 0.3125rem;
     padding-bottom: 0.3125rem;
     margin-right: 1rem;
-    font-size: 1.1rem;
+    font-size: 20px;
+    font-family: 'Myriad Pro', sans-serif;
     line-height: inherit;
     white-space: nowrap;
-    color: #333;
+    color: #00294E;
 }
 
 .navbar-brand span,
@@ -103,7 +104,7 @@
     position: absolute;
     top: -5px;
     right: -5px;
-    background-color: #ef4444;
+    background-color: #4aef44;
     color: white;
     font-size: 0.7rem;
     width: 18px;
