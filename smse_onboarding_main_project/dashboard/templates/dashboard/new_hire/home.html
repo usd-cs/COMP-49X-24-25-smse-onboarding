@@ -382,29 +382,6 @@
             });
         }
 
-        // Close sidebar when clicking on overlay
-        sidebarOverlay.addEventListener('click', function() {
-            sidebar.classList.remove('active');
-            sidebarOverlay.classList.remove('active');
-
-            // Reset navbar position when sidebar is closed
-            if (window.innerWidth <= 1200) {
-                const navbar = document.querySelector('.navbar');
-                if (navbar) {
-                    navbar.style.left = '0';
-                    navbar.style.width = '100%';
-                }
-            }
-        });
-
-        // Close sidebar on window resize if needed
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 1200) {
-                sidebar.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-            }
-        });
-
         // Function to reattach event listeners after content update
         function attachEventListeners() {
             // Reattach listeners for task completion forms in the table (not in modals)
