@@ -3,14 +3,11 @@
 <!-- Top Navigation Bar -->
 <nav class="navbar navbar-expand navbar-light bg-white shadow-sm">
     <div class="container-fluid px-3">
-        <!-- Logo on the left -->
-        <div class="navbar-brand me-3">
-            <img src="{% static 'dashboard/images/smse_logo_transparent.png' %}" alt="SMSE Logo" class="navbar-logo">
-        </div>
-
-        <!-- Menu toggle for mobile -->
-        <button class="menu-toggle me-3 border-0 bg-transparent" type="button" id="sidebarToggle" style="font-size: 24px;">
-            <i class="bi bi-list"></i>
+        <!-- Sidebar toggle button -->
+        <button class="sidebar-toggle border-0 bg-transparent mx-2" type="button" id="sidebarToggle">
+            <span class="tt" data-bs-placement="bottom" data-bs-title="Toggle Sidebar">
+                <i class="bi bi-list fs-4" style="color: #0074c8; font-weight: bold;"></i>
+            </span>
         </button>
 
         <!-- Title - Conditional based on dashboard type -->
