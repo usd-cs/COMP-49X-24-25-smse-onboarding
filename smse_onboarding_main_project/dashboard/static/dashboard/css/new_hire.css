@@ -295,10 +295,13 @@ html {
 .task-title {
     cursor: pointer;
     font-weight: 500;
+    color: #333;
+    transition: color 0.2s;
 }
 
 .task-title:hover {
-    color: #0d6efd;
+    color: var(--accent-color);
+    text-decoration: underline;
 }
 
 /* Task action buttons with transitions - safe hover effects only */
@@ -329,8 +332,9 @@ html {
 /* Icon transitions that don't affect opacity */
 .bi-check-circle-fill,
 .bi-circle,
-.bi-hourglass-split {
-    transition: transform 0.15s ease;
+.bi-exclamation-circle,
+.bi-eye {
+    transition: color 0.2s ease;
 }
 
 /* Modal styles */
@@ -588,4 +592,30 @@ html {
         font-size: 20px;
         margin-bottom: 5px;
     }
+}
+
+/* Task popup modal styling */
+.task-details {
+    padding: 0.5rem;
+}
+.task-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+.task-info-item {
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+}
+.task-info-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+.task-info-value {
+    font-weight: 500;
+}
+.task-description p {
+    line-height: 1.6;
 }
