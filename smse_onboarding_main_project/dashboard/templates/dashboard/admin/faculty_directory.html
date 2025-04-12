@@ -17,101 +17,95 @@
     <div class="main-content" id="mainContent">
         {% include 'dashboard/components/topnav.html' %}
 
-        <!-- Integrated Faculty Section with Card Component -->
-        <div class="faculty-section card" id="facultySection">
-            <!-- Card Header with Title and Buttons -->
-            <div class="card-header" id="facultyCardHeader">
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <h1 class="page-title mb-0">Faculty Directory</h1>
-                    <div class="header-buttons">
-                        <button class="btn btn-outline-primary">
-                            <i class="bi bi-download"></i>
-                            <span class="d-none d-md-inline">Export</span>
-                        </button>
-                        <button class="btn btn-primary">
-                            <i class="bi bi-plus-lg"></i>
-                            <span class="d-none d-md-inline">Add Faculty</span>
-                        </button>
-                    </div>
+        <!-- Simple Header -->
+        <div class="container-fluid py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">Faculty Directory</h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-download"></i>
+                        <span class="d-none d-md-inline">Export</span>
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="bi bi-plus-lg"></i>
+                        <span class="d-none d-md-inline">Add Faculty</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- Card Body with Search and Table -->
-            <div class="card-body" id="facultyCardBody">
-                <!-- Faculty Table -->
-                <div class="faculty-table table-responsive" id="facultyTable">
-                    <table class="table" id="facultyDataTable">
-                        <thead>
-                            <tr>
-                                <th>NAME</th>
-                                <th>EMAIL</th>
-                                <th>DEPARTMENT</th>
-                                <th>STATUS</th>
-                                <th>START DATE</th>
-                                <th>ACTIONS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for faculty in faculty_members %}
-                            <tr data-faculty-id="{{ faculty.pk }}"
-                                data-faculty-first-name="{{ faculty.first_name }}"
-                                data-faculty-last-name="{{ faculty.last_name }}"
-                                data-faculty-email="{{ faculty.email|default:'None' }}"
-                                data-faculty-department="{{ faculty.department }}"
-                                data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
-                                data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
-                                data-faculty-extension="{{ faculty.extension|default:'None' }}"
-                                class="faculty-row">
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="faculty-avatar">
-                                            {% if faculty.profile_image %}
-                                                <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }}">
-                                            {% else %}
-                                                <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
-                                            {% endif %}
-                                        </div>
-                                        <div class="ms-2" style="cursor: pointer;" data-faculty-id="{{ faculty.pk }}" onclick="showTaskProgress(event)">
-                                            <p class="fw-bold mb-0 small">{{ faculty.first_name }} {{ faculty.last_name }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="text-muted mb-0 small">{{ faculty.email }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-muted mb-0 small">{{ faculty.department }}</p>
-                                </td>
-                                <td>
-                                    <span class="badge rounded-pill {% if faculty.completed_onboarding %}bg-success{% else %}bg-warning{% endif %}">
-                                        {% if faculty.completed_onboarding %}
-                                            Completed
+            <!-- Faculty Table -->
+            <div class="table-responsive bg-white rounded shadow-sm p-3">
+                <table class="table" id="facultyDataTable">
+                    <thead>
+                        <tr>
+                            <th>NAME</th>
+                            <th>EMAIL</th>
+                            <th>DEPARTMENT</th>
+                            <th>STATUS</th>
+                            <th>START DATE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for faculty in faculty_members %}
+                        <tr data-faculty-id="{{ faculty.pk }}"
+                            data-faculty-first-name="{{ faculty.first_name }}"
+                            data-faculty-last-name="{{ faculty.last_name }}"
+                            data-faculty-email="{{ faculty.email|default:'None' }}"
+                            data-faculty-department="{{ faculty.department }}"
+                            data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
+                            data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
+                            data-faculty-extension="{{ faculty.extension|default:'None' }}"
+                            class="faculty-row">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="faculty-avatar">
+                                        {% if faculty.profile_image %}
+                                            <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }}">
                                         {% else %}
-                                            Pending
+                                            <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
                                         {% endif %}
-                                    </span>
-                                </td>
-                                <td>
-                                    <p class="text-muted mb-0 small">{{ faculty.start_date|date:"M d, Y" }}</p>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-link btn-sm p-1" data-faculty-id="{{ faculty.pk }}" onclick="showProfile(event)">
-                                            <i class="bi bi-person-lines-fill"></i>
-                                        </button>
-                                        <button class="btn btn-link btn-sm p-1">
-                                            <i class="bi bi-envelope"></i>
-                                        </button>
-                                        <button class="btn btn-link btn-sm p-1">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
                                     </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                                    <div class="ms-2" style="cursor: pointer;" data-faculty-id="{{ faculty.pk }}" onclick="showTaskProgress(event)">
+                                        <p class="fw-bold mb-0 small">{{ faculty.first_name }} {{ faculty.last_name }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p class="text-muted mb-0 small">{{ faculty.email }}</p>
+                            </td>
+                            <td>
+                                <p class="text-muted mb-0 small">{{ faculty.department }}</p>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill {% if faculty.completed_onboarding %}bg-success{% else %}bg-warning{% endif %}">
+                                    {% if faculty.completed_onboarding %}
+                                        Completed
+                                    {% else %}
+                                        Pending
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <p class="text-muted mb-0 small">{{ faculty.start_date|date:"M d, Y" }}</p>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-link btn-sm p-1" data-faculty-id="{{ faculty.pk }}" onclick="showProfile(event)">
+                                        <i class="bi bi-person-lines-fill"></i>
+                                    </button>
+                                    <button class="btn btn-link btn-sm p-1">
+                                        <i class="bi bi-envelope"></i>
+                                    </button>
+                                    <button class="btn btn-link btn-sm p-1">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
