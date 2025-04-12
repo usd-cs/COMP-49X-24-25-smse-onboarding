@@ -9,12 +9,12 @@
 
 {% block content %}
 <div class="dashboard-container">
-    {% include 'dashboard/admin/components/sidebar.html' %}
+    {% include 'dashboard/components/sidebar.html' %}
     {% include 'dashboard/admin/components/newhire_task_progress.html' %}
-    
+
     <div class="main-content">
-        {% include 'dashboard/admin/components/topnav.html' %}
-        
+        {% include 'dashboard/components/topnav.html' %}
+
         <div class="content-wrapper">
             <!-- Title Section -->
             <div class="title-section">
@@ -61,7 +61,7 @@
                         </thead>
                         <tbody>
                             {% for faculty in faculty_members %}
-                            <tr data-faculty-id="{{ faculty.pk }}" 
+                            <tr data-faculty-id="{{ faculty.pk }}"
                                 data-faculty-first-name="{{ faculty.first_name }}"
                                 data-faculty-last-name="{{ faculty.last_name }}"
                                 data-faculty-email="{{ faculty.email|default:'None' }}"
@@ -186,7 +186,7 @@
     function showProfile(facultyId) {
         const profileCard = document.getElementById('facultyProfileCard');
         const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
-        
+
         if (facultyRow) {
             // Get faculty information from data attributes
             const firstName = facultyRow.dataset.facultyFirstName;
@@ -204,7 +204,7 @@
             document.getElementById('profileFacultyExtension').textContent = extension;
             document.getElementById('profileFacultyDeptInfo').textContent = department;
             document.getElementById('profileFacultyStartDate').textContent = startDate;
-            
+
             // Update status with appropriate styling
             const statusElement = document.getElementById('profileFacultyStatus');
             const isCompleted = status === 'Completed';
@@ -236,7 +236,7 @@
 
     document.addEventListener('click', function(event) {
         const profileCard = document.getElementById('facultyProfileCard');
-        if (!event.target.closest('.faculty-profile-card') && 
+        if (!event.target.closest('.faculty-profile-card') &&
             !event.target.closest('.action-buttons')) {
             profileCard.classList.remove('active');
         }
@@ -245,7 +245,7 @@
     document.getElementById('facultySearch').addEventListener('input', function(e) {
         const searchText = e.target.value.toLowerCase();
         const rows = document.querySelectorAll('.faculty-table tbody tr');
-        
+
         rows.forEach(row => {
             const text = row.textContent.toLowerCase();
             row.style.display = text.includes(searchText) ? '' : 'none';
@@ -254,9 +254,9 @@
 
     function showTaskProgress(event, facultyId) {
         // No need to check for action buttons since only the name is clickable now
-        
+
         const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
-        
+
         if (facultyRow) {
             // Get faculty information from data attributes
             const firstName = facultyRow.dataset.facultyFirstName;
@@ -349,4 +349,4 @@
         }
     }
 </script>
-{% endblock %} 
+{% endblock %}
