@@ -1,75 +1,85 @@
 .dashboard-container {
     display: flex;
     min-height: 100vh;
-    background-color: #f8f9fa;
+    background-color: #f8f9fa !important;
     overflow: hidden; /* Prevent body scroll */
+    position: relative; /* Ensure proper stacking */
 }
 
 .main-content {
     flex-grow: 1;
-    padding: 20px 32px;
-    margin-left: 240px;
-    background-color: #f8f9fa;
+    padding: 90px 20px 20px; /* Increased top padding to account for navbar height */
+    margin-left: 280px; /* Match sidebar width */
+    background-color: #f8f9fa !important; /* Light gray for main content */
     min-width: 0;
+    width: calc(100% - 280px); /* Ensure width accounts for sidebar */
     height: 100vh; /* Full viewport height */
     overflow-y: auto; /* Enable scrolling */
     position: relative; /* For proper scroll containment */
+    box-sizing: border-box; /* Include padding in width calculation */
+    z-index: 1; /* Ensure main content is above other elements */
 }
 
-.content-wrapper {
-    padding-top: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    padding-bottom: 24px; /* Add bottom padding for last item */
+/* Integrated Faculty Section */
+.faculty-section.card {
+    background-color: white !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    margin: 0 0 20px 0 !important; /* Simplified margins */
+    padding: 0 !important; /* Remove padding as card-body will provide it */
+    overflow: hidden !important; /* Ensure rounded corners contain contents */
+    max-width: 100% !important; /* Ensure it doesn't exceed parent width */
+    position: relative !important; /* Ensure proper stacking */
+    z-index: 2 !important; /* Above main-content */
+    border: none !important; /* Override the card border */
 }
 
-/* Title Section */
-.title-section {
-    background-color: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.title-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
+/* Card Header */
+.faculty-section.card .card-header {
+    background-color: #f8f9fa !important; /* Light gray for card header */
+    border-bottom: 1px solid #e9ecef !important;
+    padding: 15px !important; /* Reduced padding */
+    position: relative !important; /* Ensure proper stacking */
+    z-index: 3 !important; /* Above faculty-section */
 }
 
 .page-title {
-    font-size: 1.75rem;
+    font-size: 1.25rem; /* Smaller title */
     font-weight: 600;
-    color: #2c3e50;
+    color: #000; /* Black text for better contrast */
     margin: 0;
 }
 
-/* Search Section */
-.search-section {
-    background-color: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+/* Card Body */
+.faculty-section.card .card-body {
+    padding: 15px !important; /* Reduced padding */
+    background-color: white !important; /* White background for card body */
+    position: relative !important; /* Ensure proper stacking */
+    z-index: 3 !important; /* Above faculty-section */
 }
 
+/* Search Container */
 .search-container {
     max-width: 100%;
+    margin-bottom: 15px; /* Reduced margin */
+    background-color: #f8f9fa !important; /* Light gray for search container */
+    padding: 10px;
+    border-radius: 6px;
+    position: relative; /* Ensure proper stacking */
+    z-index: 4; /* Above card-body */
 }
 
 .search-container .input-group {
     background: #f8f9fa;
-    border-radius: 12px;
+    border-radius: 6px; /* Smaller radius */
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
 .search-container input {
     border: none;
-    padding: 0.75rem 1.25rem;
-    font-size: 0.95rem;
+    padding: 0.5rem 1rem; /* Reduced padding */
+    font-size: 0.9rem; /* Smaller font */
     background-color: #f8f9fa;
 }
 
@@ -79,41 +89,43 @@
 }
 
 .search-container .btn {
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem 1rem; /* Reduced padding */
     border: none;
 }
 
-/* Faculty Section */
-.faculty-section {
-    background-color: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    overflow-x: auto;
-}
-
+/* Faculty Table */
 .faculty-table {
     width: 100%;
-    min-width: 800px;
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    background-color: white !important; /* White background for faculty table */
+    padding: 10px;
+    border-radius: 6px;
+    position: relative; /* Ensure proper stacking */
+    z-index: 4; /* Above card-body */
 }
 
 .faculty-table .table {
     margin-bottom: 0;
+    font-size: 0.9rem; /* Smaller font */
+    width: 100%;
+    table-layout: auto; /* Allow table to adjust column widths */
+    background-color: white; /* Keep table itself white for readability */
 }
 
 .faculty-table th {
     background-color: #f8f9fa;
     color: #6c757d;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8rem; /* Smaller font */
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 1rem;
-    border-bottom: 2px solid #e9ecef;
+    padding: 0.75rem; /* Reduced padding */
+    border-bottom: 1px solid #e9ecef;
+    white-space: nowrap; /* Prevent wrapping */
 }
 
 .faculty-table td {
-    padding: 1rem;
+    padding: 0.75rem; /* Reduced padding */
     vertical-align: middle;
     border-bottom: 1px solid #f1f1f1;
 }
@@ -123,132 +135,24 @@
 }
 
 /* Name cell with avatar */
-.name-cell {
-    min-width: 250px;
-}
-
 .faculty-avatar {
-    width: 40px;
-    height: 40px;
+    width: 32px; /* Smaller avatar */
+    height: 32px; /* Smaller avatar */
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 0.9rem; /* Smaller font */
     background-color: #1976d2;
     color: white;
-    margin-right: 12px;
+    margin-right: 8px; /* Reduced margin */
 }
 
-.faculty-info {
-    display: inline-flex;
-    flex-direction: column;
-}
-
-.faculty-name {
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 2px;
-}
-
-.faculty-id {
-    font-size: 0.85rem;
-    color: #6c757d;
-}
-
-/* Email cell */
-.email-cell {
-    min-width: 200px;
-    max-width: 250px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Department cell */
-.department-cell {
-    min-width: 150px;
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Status cell */
-.status-cell {
-    min-width: 120px;
-}
-
-/* Date cell */
-.date-cell {
-    min-width: 120px;
-    white-space: nowrap;
-}
-
-/* Actions cell */
-.actions-cell {
-    min-width: 150px;
-    white-space: nowrap;
-}
-
+/* Action buttons */
 .action-buttons {
     display: flex;
-    gap: 8px;
-}
-
-.action-button {
-    border: none;
-    background: none;
-    color: #6c757d;
-    padding: 8px;
-    border-radius: 8px;
-    transition: all 0.2s;
-}
-
-.action-button:hover {
-    background-color: #e3f2fd;
-    color: #1976d2;
-}
-
-.action-button i {
-    font-size: 1.1rem;
-}
-
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-}
-
-.status-badge::before {
-    content: '';
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    margin-right: 6px;
-}
-
-.status-onboarding {
-    background-color: #e3f2fd;
-    color: #1976d2;
-}
-
-.status-onboarding::before {
-    background-color: #1976d2;
-}
-
-.status-active {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-}
-
-.status-active::before {
-    background-color: #2e7d32;
+    gap: 4px; /* Reduced gap */
 }
 
 .header-buttons {
@@ -260,44 +164,59 @@
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px; /* Reduced gap */
+    font-size: 0.9rem; /* Smaller font */
 }
 
-.btn-primary {
-    background-color: #1976d2;
-    border-color: #1976d2;
-    padding: 0.5rem 1rem;
-    font-size: 0.95rem;
+.btn-primary, .btn-outline-primary {
+    padding: 0.4rem 0.8rem; /* Reduced padding */
 }
 
-.btn-primary:hover {
-    background-color: #1565c0;
-    border-color: #1565c0;
+/* Add responsive table styles */
+@media screen and (max-width: 1400px) {
+    .faculty-table .table {
+        min-width: 800px; /* Ensure minimum width for readability */
+    }
 }
 
-.btn-outline-primary {
-    color: #1976d2;
-    border-color: #1976d2;
-    padding: 0.5rem 1rem;
-    font-size: 0.95rem;
+/* Fix for topnav overlap */
+.navbar {
+    z-index: 1050 !important; /* Ensure navbar is always on top */
 }
 
-.btn-outline-primary:hover {
-    background-color: #1976d2;
-    border-color: #1976d2;
+/* Fix for sidebar overlap */
+.sidebar {
+    z-index: 1040 !important; /* Ensure sidebar is on top of main content but below navbar */
+}
+
+/* Specific fix for layout issues */
+@media (max-width: 1200px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 85px 15px 15px;
+    }
 }
 
 @media (max-width: 768px) {
     .main-content {
-        margin-left: 0;
-        padding: 16px;
+        padding: 75px 10px 10px;
     }
 
-    .content-wrapper {
-        padding-top: 60px;
+    .faculty-section .card-header {
+        padding: 12px;
     }
 
-    .faculty-table {
-        overflow-x: auto;
+    .faculty-section .card-body {
+        padding: 12px;
+    }
+
+    .page-title {
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
     }
 }

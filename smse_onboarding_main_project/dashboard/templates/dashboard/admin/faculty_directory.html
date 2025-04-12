@@ -9,46 +9,46 @@
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
+<div class="dashboard-container" id="dashboardContainer">
     {% include 'dashboard/components/sidebar.html' %}
     {% include 'dashboard/admin/components/newhire_task_progress.html' %}
 
-    <div class="main-content">
+    <div class="main-content" id="mainContent">
         {% include 'dashboard/components/topnav.html' %}
 
-        <div class="content-wrapper">
-            <!-- Title Section -->
-            <div class="title-section">
-                <div class="title-content">
-                    <h1 class="page-title">Faculty Directory</h1>
+        <!-- Integrated Faculty Section with Card Component -->
+        <div class="faculty-section card" id="facultySection">
+            <!-- Card Header with Title and Buttons -->
+            <div class="card-header" id="facultyCardHeader">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <h1 class="page-title mb-0">Faculty Directory</h1>
                     <div class="header-buttons">
                         <button class="btn btn-outline-primary">
                             <i class="bi bi-download"></i>
-                            Export CSV
+                            <span class="d-none d-md-inline">Export</span>
                         </button>
                         <button class="btn btn-primary">
                             <i class="bi bi-plus-lg"></i>
-                            Add Faculty
+                            <span class="d-none d-md-inline">Add Faculty</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="search-container">
+            <!-- Card Body with Search and Table -->
+            <div class="card-body" id="facultyCardBody">
+                <!-- Search Section -->
+                <div class="search-container mb-3" id="searchContainer">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search faculty by name, email, or department..." id="facultySearch">
+                        <input type="text" class="form-control" placeholder="Search faculty..." id="facultySearch">
                         <button class="btn btn-primary">
                             <i class="bi bi-search"></i>
                         </button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Faculty Table Section -->
-            <div class="faculty-section">
-                <div class="faculty-table">
+                <!-- Faculty Table -->
+                <div class="faculty-table table-responsive" id="facultyTable">
                     <table class="table">
                         <thead>
                             <tr>
@@ -80,18 +80,16 @@
                                                 <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
                                             {% endif %}
                                         </div>
-                                        <div class="ms-3" style="cursor: pointer;" data-faculty-id="{{ faculty.pk }}" onclick="showTaskProgress(event)">
-                                            <span class="tt" data-bs-placement="bottom" data-bs-title="View Progress">
-                                                <p class="fw-bold mb-1">{{ faculty.first_name }} {{ faculty.last_name }}</p>
-                                            </span>
+                                        <div class="ms-2" style="cursor: pointer;" data-faculty-id="{{ faculty.pk }}" onclick="showTaskProgress(event)">
+                                            <p class="fw-bold mb-0 small">{{ faculty.first_name }} {{ faculty.last_name }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <p class="text-muted mb-0">{{ faculty.email }}</p>
+                                    <p class="text-muted mb-0 small">{{ faculty.email }}</p>
                                 </td>
                                 <td>
-                                    <p class="text-muted mb-0">{{ faculty.department }}</p>
+                                    <p class="text-muted mb-0 small">{{ faculty.department }}</p>
                                 </td>
                                 <td>
                                     <span class="badge rounded-pill {% if faculty.completed_onboarding %}bg-success{% else %}bg-warning{% endif %}">
@@ -103,24 +101,18 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <p class="text-muted mb-0">{{ faculty.start_date|date:"M d, Y" }}</p>
+                                    <p class="text-muted mb-0 small">{{ faculty.start_date|date:"M d, Y" }}</p>
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-link btn-sm" data-faculty-id="{{ faculty.pk }}" onclick="showProfile(event)">
-                                            <span class="tt" data-bs-placement="bottom" data-bs-title="View Profile">
-                                                <i class="bi bi-person-lines-fill"></i>
-                                            </span>
+                                        <button class="btn btn-link btn-sm p-1" data-faculty-id="{{ faculty.pk }}" onclick="showProfile(event)">
+                                            <i class="bi bi-person-lines-fill"></i>
                                         </button>
-                                        <button class="btn btn-link btn-sm">
-                                            <span class="tt" data-bs-placement="bottom" data-bs-title="Send Email">
-                                                <i class="bi bi-envelope"></i>
-                                            </span>
+                                        <button class="btn btn-link btn-sm p-1">
+                                            <i class="bi bi-envelope"></i>
                                         </button>
-                                        <button class="btn btn-link btn-sm">
-                                            <span class="tt" data-bs-placement="bottom" data-bs-title="Edit">
-                                                <i class="bi bi-pencil"></i>
-                                            </span>
+                                        <button class="btn btn-link btn-sm p-1">
+                                            <i class="bi bi-pencil"></i>
                                         </button>
                                     </div>
                                 </td>
