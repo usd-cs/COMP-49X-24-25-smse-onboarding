@@ -6,6 +6,7 @@
 {% block dashboard_css %}
 <link rel="stylesheet" href="{% static 'dashboard/css/faculty_directory.css' %}">
 <link rel="stylesheet" href="{% static 'dashboard/css/faculty_profile_card.css' %}">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 {% endblock %}
 
 {% block content %}
@@ -37,19 +38,9 @@
 
             <!-- Card Body with Search and Table -->
             <div class="card-body" id="facultyCardBody">
-                <!-- Search Section -->
-                <div class="search-container mb-3" id="searchContainer">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search faculty..." id="facultySearch">
-                        <button class="btn btn-primary">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </div>
-
                 <!-- Faculty Table -->
                 <div class="faculty-table table-responsive" id="facultyTable">
-                    <table class="table">
+                    <table class="table" id="facultyDataTable">
                         <thead>
                             <tr>
                                 <th>NAME</th>
@@ -131,14 +122,19 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
-    document.getElementById('facultySearch').addEventListener('input', function(e) {
-        const searchText = e.target.value.toLowerCase();
-        const rows = document.querySelectorAll('.faculty-table tbody tr');
-
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchText) ? '' : 'none';
+    // Initialize DataTable
+    $(document).ready(function() {
+        $('#facultyDataTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            language: {
+                search: "Search faculty:"
+            }
         });
     });
 
