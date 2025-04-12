@@ -1,4 +1,7 @@
 {% load custom_filters %}
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
 <div class="card shadow-sm mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title mb-0">Upcoming New Hire Deadlines</h5>
@@ -9,7 +12,7 @@
     </div>
     <div class="card-body p-0">
         <div class="table-responsive" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden;">
-            <table class="deadlines-table w-100">
+            <table class="deadlines-table w-100" id="newHireDeadlinesTable">
                 <thead>
                     <tr>
                         <th style="width: 20%">Name</th>
@@ -89,10 +92,10 @@
                                     <span>100%</span>
                                 {% else %}
                                     <div class="progress flex-grow-1 me-2" style="height: 6px;">
-                                        <div class="progress-bar" role="progressbar" 
+                                        <div class="progress-bar" role="progressbar"
                                              style="width: {{ faculty.completion_percentage }}%;"
-                                             aria-valuenow="{{ faculty.completion_percentage }}" 
-                                             aria-valuemin="0" 
+                                             aria-valuenow="{{ faculty.completion_percentage }}"
+                                             aria-valuemin="0"
                                              aria-valuemax="100">
                                         </div>
                                     </div>
@@ -126,3 +129,37 @@
         </div>
     </div>
 </div>
+
+<!-- DataTables script -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    // Initialize DataTable when document is ready or when jQuery is available
+    function initDataTable() {
+        if (typeof $ === 'undefined') {
+            // If jQuery isn't loaded yet, try again in 100ms
+            setTimeout(initDataTable, 100);
+            return;
+        }
+
+        if ($.fn.DataTable && $.fn.DataTable.isDataTable('#newHireDeadlinesTable')) {
+            $('#newHireDeadlinesTable').DataTable().destroy();
+        }
+
+        $('#newHireDeadlinesTable').DataTable({
+            responsive: true,
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50],
+            language: {
+                search: "Search new hires:"
+            },
+            columnDefs: [
+                { orderable: false, targets: 4 } // Disable sorting on actions column
+            ]
+        });
+    }
+
+    // Try to initialize immediately in case jQuery is already loaded
+    document.addEventListener('DOMContentLoaded', initDataTable);
+</script>
