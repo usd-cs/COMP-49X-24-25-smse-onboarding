@@ -100,7 +100,9 @@
 
 {% block content %}
 <div class="dashboard-container">
-    {% include 'dashboard/admin/components/sidebar.html' %}
+    {% with is_admin=True %}
+    {% include 'dashboard/components/sidebar.html' %}
+    {% endwith %}
 
     <div class="main-content">
         {% with is_admin=True %}

@@ -1,12 +1,17 @@
 {% load static %}
-<!-- Sidebar for dashboard -->
+<!-- Shared sidebar component with conditional rendering based on user role -->
 <div class="sidebar">
+    <!-- Logo container for both admin and new hire -->
     <div class="logo-container">
        <img src="{% static 'dashboard/images/smse_logo_transparent.png' %}" alt="SMSE Logo" class="logo">
         <div class="school-name">School of Engineering</div>
     </div>
 
+
     <nav class="sidebar-nav">
+        <!-- Conditional navigation based on user role -->
+        {% if is_admin %}
+        <!-- Admin navigation items -->
         <a href="{% url 'dashboard:admin_home' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %}">
             <i class="bi bi-house-fill"></i>
             <span>Dashboard</span>
@@ -25,9 +30,30 @@
         </a>
         <a href="{% url 'admin:index' %}" class="nav-item" target="_blank">
             <i class="bi bi-gear-fill"></i>
-            <span> Advanced Admin Settings</span>
+            <span> Advanced Settings</span>
         </a>
-        <a href="{% url 'logout' %}" class="nav-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        {% else %}
+        <!-- New hire navigation items -->
+        <a href="{% url 'dashboard:new_hire_home' %}" class="nav-item {% if request.path == '/dashboard/' or request.path == '/dashboard/newhire/' %}active{% endif %}">
+            <i class="bi bi-house-fill"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="{% url 'dashboard:new_hire_home' %}" class="nav-item {% if request.resolver_match.url_name == 'faculty_directory' %}active{% endif %}">
+            <i class="bi bi-people-fill"></i>
+            <span>Faculty Directory</span>
+        </a>
+        <a href="{% url 'documents:show_documents' %}" class="nav-item">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Manage Documents</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="bi bi-bell-fill"></i>
+            <span>Notifications</span>
+        </a>
+        {% endif %}
+
+        <!-- Logout (shared between both roles) -->
+        <a href="#" class="nav-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             <i class="bi bi-box-arrow-right"></i>
             <span>Logout</span>
         </a>
@@ -49,5 +75,7 @@
     </div>
 </div>
 
-<!-- Document Modal -->
+<!-- Include document modal for admin -->
+{% if is_admin %}
 {% include 'documents/document_modal.html' %}
+{% endif %}

@@ -11,7 +11,11 @@
 {% block content %}
 <div class="dashboard-container">
     <!-- Sidebar -->
-    {% include 'dashboard/new_hire/components/sidebar.html' %}
+    {% block sidebar %}
+        {% with is_admin=False %}
+            {% include 'dashboard/components/sidebar.html' %}
+        {% endwith %}
+    {% endblock %}
 
     <div class="main-content">
         <!-- Include the shared top navbar component with is_admin=False -->
