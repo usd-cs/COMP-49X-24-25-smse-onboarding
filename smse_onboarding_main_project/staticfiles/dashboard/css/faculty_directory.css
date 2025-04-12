@@ -1,0 +1,222 @@
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f9fa !important;
+    overflow: hidden; /* Prevent body scroll */
+    position: relative; /* Ensure proper stacking */
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 90px 20px 20px; /* Increased top padding to account for navbar height */
+    margin-left: 280px; /* Match sidebar width */
+    background-color: #f8f9fa !important; /* Light gray for main content */
+    min-width: 0;
+    width: calc(100% - 280px); /* Ensure width accounts for sidebar */
+    height: 100vh; /* Full viewport height */
+    overflow-y: auto; /* Enable scrolling */
+    position: relative; /* For proper scroll containment */
+    box-sizing: border-box; /* Include padding in width calculation */
+    z-index: 1; /* Ensure main content is above other elements */
+}
+
+/* Integrated Faculty Section */
+.faculty-section.card {
+    background-color: white !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    margin: 0 0 20px 0 !important; /* Simplified margins */
+    padding: 0 !important; /* Remove padding as card-body will provide it */
+    overflow: hidden !important; /* Ensure rounded corners contain contents */
+    max-width: 100% !important; /* Ensure it doesn't exceed parent width */
+    position: relative !important; /* Ensure proper stacking */
+    z-index: 2 !important; /* Above main-content */
+    border: none !important; /* Override the card border */
+}
+
+/* Card Header */
+.faculty-section.card .card-header {
+    background-color: #f8f9fa !important; /* Light gray for card header */
+    border-bottom: 1px solid #e9ecef !important;
+    padding: 15px !important; /* Reduced padding */
+    position: relative !important; /* Ensure proper stacking */
+    z-index: 3 !important; /* Above faculty-section */
+}
+
+.page-title {
+    font-size: 1.25rem; /* Smaller title */
+    font-weight: 600;
+    color: #000; /* Black text for better contrast */
+    margin: 0;
+}
+
+/* Card Body */
+.faculty-section.card .card-body {
+    padding: 15px !important; /* Reduced padding */
+    background-color: white !important; /* White background for card body */
+    position: relative !important; /* Ensure proper stacking */
+    z-index: 3 !important; /* Above faculty-section */
+}
+
+/* Search Container */
+.search-container {
+    max-width: 100%;
+    margin-bottom: 15px; /* Reduced margin */
+    background-color: #f8f9fa !important; /* Light gray for search container */
+    padding: 10px;
+    border-radius: 6px;
+    position: relative; /* Ensure proper stacking */
+    z-index: 4; /* Above card-body */
+}
+
+.search-container .input-group {
+    background: #f8f9fa;
+    border-radius: 6px; /* Smaller radius */
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.search-container input {
+    border: none;
+    padding: 0.5rem 1rem; /* Reduced padding */
+    font-size: 0.9rem; /* Smaller font */
+    background-color: #f8f9fa;
+}
+
+.search-container input:focus {
+    box-shadow: none;
+    background-color: #f8f9fa;
+}
+
+.search-container .btn {
+    padding: 0.5rem 1rem; /* Reduced padding */
+    border: none;
+}
+
+/* Faculty Table */
+.faculty-table {
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    background-color: white !important; /* White background for faculty table */
+    padding: 10px;
+    border-radius: 6px;
+    position: relative; /* Ensure proper stacking */
+    z-index: 4; /* Above card-body */
+}
+
+.faculty-table .table {
+    margin-bottom: 0;
+    font-size: 0.9rem; /* Smaller font */
+    width: 100%;
+    table-layout: auto; /* Allow table to adjust column widths */
+    background-color: white; /* Keep table itself white for readability */
+}
+
+.faculty-table th {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 0.8rem; /* Smaller font */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.75rem; /* Reduced padding */
+    border-bottom: 1px solid #e9ecef;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.faculty-table td {
+    padding: 0.75rem; /* Reduced padding */
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.faculty-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Name cell with avatar */
+.faculty-avatar {
+    width: 32px; /* Smaller avatar */
+    height: 32px; /* Smaller avatar */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 0.9rem; /* Smaller font */
+    background-color: #1976d2;
+    color: white;
+    margin-right: 8px; /* Reduced margin */
+}
+
+/* Action buttons */
+.action-buttons {
+    display: flex;
+    gap: 4px; /* Reduced gap */
+}
+
+.header-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px; /* Reduced gap */
+    font-size: 0.9rem; /* Smaller font */
+}
+
+.btn-primary, .btn-outline-primary {
+    padding: 0.4rem 0.8rem; /* Reduced padding */
+}
+
+/* Add responsive table styles */
+@media screen and (max-width: 1400px) {
+    .faculty-table .table {
+        min-width: 800px; /* Ensure minimum width for readability */
+    }
+}
+
+/* Fix for topnav overlap */
+.navbar {
+    z-index: 1050 !important; /* Ensure navbar is always on top */
+}
+
+/* Fix for sidebar overlap */
+.sidebar {
+    z-index: 1040 !important; /* Ensure sidebar is on top of main content but below navbar */
+}
+
+/* Specific fix for layout issues */
+@media (max-width: 1200px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 85px 15px 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 75px 10px 10px;
+    }
+
+    .faculty-section .card-header {
+        padding: 12px;
+    }
+
+    .faculty-section .card-body {
+        padding: 12px;
+    }
+
+    .page-title {
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+    }
+}

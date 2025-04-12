@@ -1,0 +1,621 @@
+/* New Hire Dashboard Specific Styles */
+:root {
+    --primary-color: #1a3a8f;
+    --accent-color: #3b82f6;
+    --bg-light: #f8f9fa;
+    --text-dark: #2d3436;
+    --text-light: #636e72;
+    --border-color: #e5e7eb;
+    --red: #ef4444;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --purple: #8b5cf6;
+    --secondary-color: #f5f7fa;
+    --text-color: #333;
+    --light-text: #6b7280;
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 80px;
+    --topnav-height: 70px;
+}
+
+body {
+    background-color: #eaeaea;  /* Light grey background */
+    transition: none;
+    height: 100%;
+    overflow-y: auto;
+}
+
+html {
+    height: 100%;
+}
+
+/* Subtle transitions for UI elements only (not page-wide) */
+.btn, .nav-link, .task-title {
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Allow main content to have a specific background, but don't touch sidebar */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: var(--sidebar-width, 280px);
+    width: calc(100% - var(--sidebar-width, 280px));
+    min-height: calc(100vh - var(--topnav-height));
+    background-color: #eaeaea;  /* Match body background color */
+    transition: margin-left 0.3s ease, width 0.3s ease;
+    overflow-y: auto; /* Enable vertical scrolling */
+    position: relative;
+    z-index: 900;
+    margin-top: var(--topnav-height); /* Add margin for topnav */
+}
+
+/* Dashboard container for proper scrolling */
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    overflow: hidden; /* Hide overflow on container */
+}
+
+/* Dashboard content with scrolling support */
+.dashboard-content {
+    height: auto;
+    min-height: calc(100% - 35px);
+    width: 100%;
+    overflow-y: auto;
+    padding-bottom: 50px; /* Extra padding at bottom to ensure all content is visible when scrolled */
+}
+
+/* Ensure the Quick Links card can expand properly */
+.card-body .d-grid {
+    height: auto !important; /* Override any fixed height constraints */
+    min-height: 50px; /* Minimum height to ensure visibility */
+}
+
+/* Top Navigation Bar - Full Width */
+.top-bar {
+    display: none;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: white !important;
+    height: var(--topnav-height);
+    z-index: 1060;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 0;
+}
+
+.navbar-brand-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Status Card */
+.status-card {
+    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Quick Links Card */
+.quick-links-card {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.quick-links-card a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.quick-links-card a:hover {
+    color: #66bb6a;
+}
+
+/* Progress Bar */
+.progress {
+    height: 8px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.progress-bar {
+    background-color: #0d6efd;
+    border-radius: 4px;
+}
+
+/* Task List Styling */
+.task-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #e5e7eb;
+    background-color: white;
+    color: black;
+}
+
+.task-text {
+    flex-grow: 1;
+    margin-left: 10px;
+    color: black;
+    cursor: pointer;
+}
+
+.task-deadline {
+    color: #666;
+    margin: 0 15px;
+}
+
+.locked-task {
+    opacity: 0.5;
+    background-color: #f8f9fa;
+}
+
+/* Card Overrides */
+.card {
+    background-color: white;
+    color: black;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item {
+    background-color: white;
+    color: black;
+    border-color: #e5e7eb;
+}
+
+/* Line Progress */
+.line-progress {
+    flex-grow: 1;
+    height: 4px;
+    background-color: #f0f0f0;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-right: 8px;
+}
+
+.line-progress .progress-bar {
+    height: 100%;
+    background-color: #4CAF50;
+    border-radius: 2px;
+}
+
+/* Status Icons */
+.status-icons a {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    color: #0d6efd;
+    transition: all 0.2s;
+}
+
+.status-icons a:hover {
+    background-color: #e9ecef;
+    color: #0b5ed7;
+}
+
+/* Quick Links */
+.quick-links-card .btn,
+.card-body .d-grid a.btn {
+    margin-bottom: 8px;
+    border-radius: 4px;
+    text-align: left;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    position: relative;
+    overflow: hidden;
+    border: none;
+}
+
+/* Enhanced Quick Links hover effects */
+.quick-links-card .btn:hover,
+.card-body .d-grid a.btn:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2) !important;
+    filter: brightness(110%) !important;
+    z-index: 10 !important;
+}
+
+/* Click effects */
+.quick-links-card .btn:active,
+.card-body .d-grid a.btn:active {
+    transform: translateY(-1px) scale(0.98) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+    transition-duration: 0.1s !important;
+}
+
+/* Add subtle shine effect */
+.quick-links-card .btn::after,
+.card-body .d-grid a.btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 20%;
+    height: 200%;
+    background: rgba(255,255,255,0.2);
+    transform: rotate(30deg);
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.quick-links-card .btn:hover::after,
+.card-body .d-grid a.btn:hover::after {
+    left: 120%;
+    opacity: 1;
+}
+
+/* Icon hover effects */
+.quick-links-card .btn:hover i,
+.card-body .d-grid a.btn:hover i {
+    transform: scale(1.2) !important;
+    transition: transform 0.3s ease !important;
+}
+
+/* Task Table Styles */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table td {
+    vertical-align: middle;
+    border-color: #f0f0f0;
+}
+
+.task-title {
+    cursor: pointer;
+    font-weight: 500;
+    color: #333;
+    transition: color 0.2s;
+}
+
+.task-title:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+/* Task action buttons with transitions - safe hover effects only */
+.task-circle-btn {
+    opacity: 1; /* Keep full opacity for normal state */
+    transition: transform 0.15s ease !important;
+    position: relative;
+}
+
+.task-circle-btn:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+/* Loading spinner styles */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* Safe hover transitions that don't affect page state */
+.table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    transition: background-color 0.2s ease;
+}
+
+/* Icon transitions that don't affect opacity */
+.bi-check-circle-fill,
+.bi-circle,
+.bi-exclamation-circle,
+.bi-eye {
+    transition: color 0.2s ease;
+}
+
+/* Modal styles */
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-footer {
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Status colors */
+.text-overdue {
+    color: #dc3545 !important;
+}
+
+/* Make task rows slightly taller */
+.table tr td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    transition: none;
+}
+
+/* Additional performance optimizations */
+.table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    will-change: auto;
+}
+
+/* Add border to card in tasks area */
+.card {
+    border: 1px solid #e0e0e0;
+}
+
+/* Add responsive media queries similar to admin dashboard */
+@media (max-width: 1200px) {
+    :root {
+        --sidebar-width: 0px;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .menu-toggle {
+        display: block !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar > .container-fluid {
+        padding: 0 10px;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px;
+    }
+
+    .dashboard-content {
+        padding-top: 10px !important;
+        width: 100% !important;
+    }
+
+    .col-md-8, .col-md-4 {
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .row {
+        margin: 0 -10px;
+    }
+
+    .menu-toggle {
+        display: block !important;
+        font-size: 1.5rem !important;
+        color: var(--text-dark) !important;
+        margin-right: 10px;
+    }
+}
+
+/* Add sidebar specific styles */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--primary-color);
+    color: white;
+    height: calc(100vh - var(--topnav-height));
+    min-height: 550px;
+    position: fixed;
+    top: var(--topnav-height);
+    left: 0;
+    padding: 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    z-index: 1030;
+    transition: transform 0.3s ease, width 0.3s ease;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo container in sidebar */
+.logo-container {
+    display: none; /* Hide logo as requested */
+}
+
+/* Menu toggle button for mobile view */
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-dark);
+    padding: 0;
+    display: none;
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: var(--topnav-height);
+    left: 0;
+    width: 100%;
+    height: calc(100% - var(--topnav-height));
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1020;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Make sure mobile navbar is properly styled */
+@media (max-width: 768px) {
+    .navbar > .container-fluid {
+        padding: 0 10px;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px;
+    }
+
+    .dashboard-content {
+        padding-top: 10px !important;
+        width: 100% !important;
+    }
+
+    .col-md-8, .col-md-4 {
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .row {
+        margin: 0 -10px;
+    }
+
+    .menu-toggle {
+        display: block !important;
+        font-size: 1.5rem !important;
+        color: var(--text-dark) !important;
+        margin-right: 10px;
+    }
+}
+
+/* Quick Links Button Styles */
+.quick-link-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 90px;
+    padding: 0.8rem 0.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-bottom: 12px;
+    color: white;
+    border: none;
+    overflow: hidden;
+    position: relative;
+}
+
+.quick-link-btn i {
+    font-size: 24px;
+    margin-bottom: 8px;
+    transition: transform 0.3s ease;
+}
+
+.quick-link-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 7px 14px rgba(0,0,0,0.15);
+    color: white;
+}
+
+.quick-link-btn:hover i {
+    transform: scale(1.2);
+}
+
+.admin-btn { background-color: #522d6d; }
+.it-btn { background-color: #3e7b05; }
+.parking-btn { background-color: #2c3e8c; }
+.map-btn { background-color: #c67f12; }
+.phone-btn { background-color: #5291c5; }
+.notif-btn { background-color: #942638; }
+
+/* Shine effect for buttons */
+.quick-link-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 20%;
+    height: 200%;
+    background: rgba(255,255,255,0.2);
+    transform: rotate(30deg);
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    opacity: 0;
+}
+
+.quick-link-btn:hover::after {
+    left: 140%;
+    opacity: 1;
+}
+
+@media (max-width: 575.98px) {
+    .quick-link-btn {
+        min-height: 75px;
+        padding: 0.5rem 0.25rem;
+    }
+
+    .quick-link-btn i {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+}
+
+/* Task popup modal styling */
+.task-details {
+    padding: 0.5rem;
+}
+.task-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+.task-info-item {
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+}
+.task-info-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+.task-info-value {
+    font-weight: 500;
+}
+.task-description p {
+    line-height: 1.6;
+}
