@@ -41,7 +41,6 @@ html {
     margin-left: var(--sidebar-width, 280px);
     width: calc(100% - var(--sidebar-width, 280px));
     min-height: calc(100vh - var(--topnav-height));
-    background-color: #eaeaea;  /* Match body background color */
     transition: margin-left 0.3s ease, width 0.3s ease;
     overflow-y: auto; /* Enable vertical scrolling */
     position: relative;

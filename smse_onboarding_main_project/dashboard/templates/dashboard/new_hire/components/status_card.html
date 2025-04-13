@@ -40,7 +40,7 @@
                         <div class="profile-circle">
                             <!-- Default Bootstrap Icon -->
                             <div class="rounded-circle d-flex align-items-center justify-content-center bg-light profile-img">
-                                <i class="bi bi-person-fill text-primary"></i>
+                                <i class="bi bi-person-fill profile-icon"></i>
                             </div>
 
                             <!-- Profile Image (overlays the icon if available) -->
@@ -52,7 +52,7 @@
                     </div>
                     <!-- Name moved below profile photo -->
                     <div class="text-center mt-3">
-                        <div class="prof-name">{{ faculty.first_name }} {{ faculty.last_name }}</div>
+                        <div class="prof-email">{{ faculty.email }}</div>
                         <div class="job-title">{{ faculty.job_role }}</div>
                     </div>
                 </div>
@@ -101,8 +101,8 @@
     margin-top: 0.5rem;
 }
 
-.prof-name {
-    font-weight: bold;
+.prof-email {
+    font-weight: 2rem
     font-size: 1.2rem;
 }
 
@@ -153,6 +153,11 @@
 }
 
 .profile-img i {
+    font-size: 105px;
+}
+
+.profile-icon {
+    color: #0074c8; /* USD blue color */
     font-size: 105px;
 }
 

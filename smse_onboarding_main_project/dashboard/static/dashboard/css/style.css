@@ -195,7 +195,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #eaeaea;
+    background-color: #eeeeee;
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
@@ -208,6 +208,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow-x: hidden; /* Prevent horizontal overflow */
+    background-color: #eeeeee;
 }
 
 .dashboard-content .row {
