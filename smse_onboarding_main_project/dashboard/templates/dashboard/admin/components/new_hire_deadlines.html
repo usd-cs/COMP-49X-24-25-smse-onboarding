@@ -79,7 +79,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p>This faculty member has completed all of their assigned tasks.</p>
+                                        <p>{{ faculty.name }} has completed all of their assigned tasks.</p>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -117,14 +117,16 @@
                         {% endif %}
                     </td>
                     <td>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-link btn-sm p-1" data-bs-toggle="tooltip" data-bs-title="Send Reminder">
-                                <i class="bi bi-bell"></i>
-                            </button>
-                            <button class="btn btn-link btn-sm p-1" data-bs-toggle="tooltip" data-bs-title="Edit">
-                                <i class="bi bi-pencil"></i>
-                            </button>
+                        <div class="action-buttons">
+                            <span class="tt" data-bs-placement="bottom" data-bs-title="Send Reminder">
+                                <button class="notify-btn" data-bs-toggle="modal" data-bs-target="#reminderModal{{ faculty.current_task.id }}"><i class="bi bi-bell"></i></button>
+                            </span>
+                            <span class="tt" data-bs-placement="bottom" data-bs-title="Edit">
+                                <button class="edit-btn"><i class="bi bi-pencil"></i></button>
+                            </span>
                         </div>
+
+                        {% include 'reminders/reminder_confirmation.html' %}
                     </td>
                 </tr>
                 {% endfor %}
