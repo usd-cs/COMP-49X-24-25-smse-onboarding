@@ -28,6 +28,8 @@
         }
     });
 </script>
+<!-- Welcome Modal Script -->
+<script src="{% static 'dashboard/js/welcome_modal.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -42,51 +44,10 @@
         {% endwith %}
 
         <div class="dashboard-content pt-4">
-            <!-- Welcome Modal -->
-            {% if request.session.show_welcome_banner is True %}
-            <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-modal-type="welcome">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="welcomeModalLabel">
-                                <i class="bi bi-info-circle-fill me-2"></i>
-                                Welcome to SMSE Admin Dashboard!
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-4 text-center">
-                                    <img src="{% static 'dashboard/images/smse_logo.jpg' %}" alt="SMSE Logo" class="img-fluid mb-3" style="max-height: 180px; max-width: 100%; object-fit: contain;">
-                                </div>
-                                <div class="col-md-8">
-                                    <h4 class="mb-3">Hello {{ request.user.first_name }}!</h4>
-                                    <p>You are logged in as an administrator. This dashboard allows you to manage new hire onboarding processes, track progress, and ensure all tasks are completed on time.</p>
-
-                                    <div class="alert alert-info mt-3">
-                                        <h5 class="alert-heading">Administrative Features</h5>
-                                        <ul class="mb-0">
-                                            <li>Monitor task completion rates</li>
-                                            <li>Manage documents and requirements</li>
-                                            <li>Track faculty onboarding progress</li>
-                                            <li>Oversee the entire onboarding process</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <a href="{% url 'users:admin_help_guide' %}" class="btn btn-outline-primary me-auto">
-                                <i class="bi bi-info-circle me-2"></i>Learn More
-                            </a>
-                            <a href="{% url 'users:dismiss_welcome' %}" class="btn btn-primary">
-                                <i class="bi bi-check-circle me-2"></i>Got it!
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
+            <!-- Include Welcome Modal -->
+            {% with is_admin=True %}
+            {% include 'dashboard/components/welcome_modal.html' %}
+            {% endwith %}
 
             <div class="row g-2 h-100">
                 <!-- New Hire Deadlines Table - 60% width -->
@@ -180,117 +141,6 @@
                     }
                 }
             });
-        }
-
-        // Emergency fix - Add global click event listener
-        document.body.addEventListener('click', function(e) {
-            // Find the click target
-            const target = e.target;
-
-            // Check if close button was clicked
-            if (target.classList.contains('btn-close') && target.closest('.modal')) {
-                console.log("Close button click detected");
-                const modal = target.closest('.modal');
-
-                // Manually close modal
-                modal.style.display = 'none';
-                modal.classList.remove('show');
-                document.body.classList.remove('modal-open');
-                document.body.style.paddingRight = '';
-                document.body.style.overflow = '';
-                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-
-                e.stopPropagation();
-                return;
-            }
-
-            // Check if Got it! button was clicked
-            if (target.textContent.includes('Got it!') ||
-                (target.closest('a') && target.closest('a').textContent.includes('Got it!'))) {
-                console.log("'Got it!' button click detected");
-
-                // Try to find dismiss_welcome URL
-                const btn = target.tagName === 'A' ? target : target.closest('a');
-                if (btn && btn.href && btn.href.includes('dismiss_welcome')) {
-                    // Submit dismiss request
-                    fetch(btn.href, {
-                        method: 'GET',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    }).then(() => {
-                        console.log("Welcome banner dismissed via direct click handler");
-                    });
-
-                    // Manually close modal
-                    const modal = btn.closest('.modal');
-                    if (modal) {
-                        modal.style.display = 'none';
-                        modal.classList.remove('show');
-                        document.body.classList.remove('modal-open');
-                        document.body.style.paddingRight = '';
-                        document.body.style.overflow = '';
-                        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                    }
-
-                    e.stopPropagation();
-                    return;
-                }
-            }
-        }, true); // Use capture phase to ensure we get the event before other handlers
-
-        // Fix for welcome modal
-        const welcomeModal = document.getElementById('welcomeModal');
-        if (welcomeModal) {
-            try {
-                // Ensure Bootstrap is available
-                if (typeof bootstrap !== 'undefined') {
-                    // Try standard Bootstrap modal initialization
-                    const modal = new bootstrap.Modal(welcomeModal);
-                    modal.show();
-                } else {
-                    console.error("Bootstrap is not defined - using fallback solution");
-                    // Fallback solution if Bootstrap is not available
-                    welcomeModal.style.display = 'block';
-                    welcomeModal.classList.add('show');
-                    document.body.classList.add('modal-open');
-
-                    // Create backdrop
-                    const backdrop = document.createElement('div');
-                    backdrop.className = 'modal-backdrop fade show';
-                    document.body.appendChild(backdrop);
-
-                    // Setup close buttons
-                    welcomeModal.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            welcomeModal.style.display = 'none';
-                            welcomeModal.classList.remove('show');
-                            document.body.classList.remove('modal-open');
-                            document.body.style.overflow = '';
-                            document.body.style.paddingRight = '';
-                            backdrop.remove();
-                        });
-                    });
-
-                    // Setup 'Got it!' button
-                    const gotItBtn = welcomeModal.querySelector('.modal-footer .btn-primary');
-                    if (gotItBtn) {
-                        gotItBtn.addEventListener('click', function() {
-                            // The link will handle the navigation/dismiss, but we still need to handle the modal UI
-                            setTimeout(() => {
-                                welcomeModal.style.display = 'none';
-                                welcomeModal.classList.remove('show');
-                                document.body.classList.remove('modal-open');
-                                document.body.style.overflow = '';
-                                document.body.style.paddingRight = '';
-                                if (backdrop) backdrop.remove();
-                            }, 100);
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error("Error initializing welcome modal:", error);
-            }
         }
 
         // Add CSS fix for modals

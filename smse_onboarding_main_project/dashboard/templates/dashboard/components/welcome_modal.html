@@ -1,0 +1,73 @@
+{% load static %}
+
+{% if request.session.show_welcome_banner is True %}
+<div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-modal-type="welcome">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="welcomeModalLabel">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    {% if is_admin %}
+                    Welcome to SMSE Admin Dashboard!
+                    {% else %}
+                    Welcome to SMSE Onboarding Portal!
+                    {% endif %}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="{% static 'dashboard/images/smse_logo.jpg' %}" alt="SMSE Logo" class="img-fluid mb-3" style="max-height: 180px; max-width: 100%; object-fit: contain;">
+                    </div>
+                    <div class="col-md-8">
+                        <h4 class="mb-3">Hello {{ request.user.first_name }}!</h4>
+
+                        {% if is_admin %}
+                        <!-- Admin specific content -->
+                        <p>You are logged in as an administrator. This dashboard allows you to manage new hire onboarding processes, track progress, and ensure all tasks are completed on time.</p>
+
+                        <div class="alert alert-info mt-3">
+                            <h5 class="alert-heading">Administrative Features</h5>
+                            <ul class="mb-0">
+                                <li>Monitor task completion rates</li>
+                                <li>Manage documents and requirements</li>
+                                <li>Track faculty onboarding progress</li>
+                                <li>Oversee the entire onboarding process</li>
+                            </ul>
+                        </div>
+                        {% else %}
+                        <!-- New hire specific content -->
+                        <p>We're excited to have you join the School of Engineering team. This portal will guide you through all the necessary steps to complete your onboarding process.</p>
+
+                        <div class="alert alert-info mt-3">
+                            <h5 class="alert-heading">Getting Started</h5>
+                            <ul class="mb-0">
+                                <li>Complete your profile information</li>
+                                <li>View and complete assigned tasks</li>
+                                <li>Upload required documents</li>
+                                <li>Track your onboarding progress</li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                {% if is_admin %}
+                <a href="{% url 'users:admin_help_guide' %}" class="btn btn-outline-primary me-auto">
+                    <i class="bi bi-info-circle me-2"></i>Learn More
+                </a>
+                {% else %}
+                <a href="{% url 'users:welcome_info' %}" class="btn btn-outline-primary me-auto">
+                    <i class="bi bi-info-circle me-2"></i>Learn More
+                </a>
+                {% endif %}
+                <a href="{% url 'users:dismiss_welcome' %}" class="btn btn-primary">
+                    <i class="bi bi-check-circle me-2"></i>Got it!
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
