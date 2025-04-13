@@ -4,70 +4,158 @@
 <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-modal-type="welcome">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="welcomeModalLabel">
-                    <i class="bi bi-info-circle-fill me-2"></i>
-                    {% if is_admin %}
-                    Welcome to SMSE Admin Dashboard!
-                    {% else %}
-                    Welcome to SMSE Onboarding Portal!
-                    {% endif %}
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-4 text-center">
-                        <img src="{% static 'dashboard/images/USD-ENG-logo.png' %}" alt="SMSE Logo" class="img-fluid mb-3" style="max-height: 180px; max-width: 100%; object-fit: contain;">
-                    </div>
-                    <div class="col-md-8">
-                        <h4 class="mb-3">Hello {{ request.user.first_name }}!</h4>
+            <!-- Close button positioned at the top right of the entire modal -->
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1060; color: white; opacity: 1; background: none; font-size: 1.5rem;">
+                <i class="bi bi-x" style="color: black"></i>
+            </button>
 
-                        {% if is_admin %}
-                        <!-- Admin specific content -->
-                        <p>You are logged in as an administrator. This dashboard allows you to manage new hire onboarding processes, track progress, and ensure all tasks are completed on time.</p>
-
-                        <div class="alert alert-info mt-3">
-                            <h5 class="alert-heading">Administrative Features</h5>
-                            <ul class="mb-0">
-                                <li>Monitor task completion rates</li>
-                                <li>Manage documents and requirements</li>
-                                <li>Track faculty onboarding progress</li>
-                                <li>Oversee the entire onboarding process</li>
-                            </ul>
-                        </div>
-                        {% else %}
-                        <!-- New hire specific content -->
-                        <p>We're excited to have you join the School of Engineering team. This portal will guide you through all the necessary steps to complete your onboarding process.</p>
-
-                        <div class="alert alert-info mt-3">
-                            <h5 class="alert-heading">Getting Started</h5>
-                            <ul class="mb-0">
-                                <li>Complete your profile information</li>
-                                <li>View and complete assigned tasks</li>
-                                <li>Upload required documents</li>
-                                <li>Track your onboarding progress</li>
-                            </ul>
-                        </div>
-                        {% endif %}
-                    </div>
+            <!-- Top section with dark blue background -->
+            <div class="modal-header text-center d-block" style="border-bottom: none;">
+                <!-- Logo centered at the top -->
+                <div class="text-center mb-3">
+                    <img src="{% static 'dashboard/images/smse_logo_transparent.png' %}" alt="SMSE Logo" class="img-fluid" style="max-height: 120px; max-width: 100%; object-fit: contain;">
                 </div>
+
             </div>
-            <div class="modal-footer">
+
+            <!-- Bottom section (2/3) with white background -->
+            <div class="modal-body bg-white" style="padding: 2rem 1.5rem;">
                 {% if is_admin %}
-                <a href="{% url 'users:admin_help_guide' %}" class="btn btn-outline-primary me-auto">
-                    <i class="bi bi-info-circle me-2"></i>Learn More
-                </a>
+                <!-- Admin specific content -->
+                <h5 class="welcome-greeting mb-3">Welcome, {{ request.user.first_name }} {{ request.user.last_name }}, to the SMSE Onboarding Portal!</h5>
+                <p class="mb-4">
+                    You are logged in as an administrator.
+                    This dashboard allows you to manage new hire onboarding processes, track progress, and ensure all tasks are completed on time.
+                </p>
+
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">Administrative Features</h5>
+                    <ul class="mb-0">
+                        <li>Monitor task completion rates</li>
+                        <li>Manage documents and requirements</li>
+                        <li>Track faculty onboarding progress</li>
+                        <li>Oversee the entire onboarding process</li>
+                    </ul>
+                </div>
                 {% else %}
-                <a href="{% url 'users:welcome_info' %}" class="btn btn-outline-primary me-auto">
-                    <i class="bi bi-info-circle me-2"></i>Learn More
-                </a>
+                <!-- New hire specific content -->
+                <h5 class="welcome-greeting mb-3">Welcome, {{ request.user.first_name }} {{ request.user.last_name }}, to the SMSE Onboarding Portal!</h5>
+                <p class="mb-4">We're excited to have you join the School of Engineering team. This portal will guide you through all the necessary steps to complete your onboarding process.</p>
+
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">Getting Started</h5>
+                    <ul class="mb-0">
+                        <li>Complete your profile information</li>
+                        <li>View and complete assigned tasks</li>
+                        <li>Upload required documents</li>
+                        <li>Track your onboarding progress</li>
+                    </ul>
+                </div>
                 {% endif %}
-                <a href="{% url 'users:dismiss_welcome' %}" class="btn btn-primary">
-                    <i class="bi bi-check-circle me-2"></i>Got it!
-                </a>
+
+                <!-- USD-styled button group -->
+                <div class="c-btn-group text-center mt-4">
+                    {% if is_admin %}
+                    <a href="{% url 'users:admin_help_guide' %}" class="c-btn c-btn--secondary">
+                        <i class="bi bi-info-circle me-2"></i>Learn More
+                    </a>
+                    <a href="{% url 'users:dismiss_welcome' %}" class="c-btn c-btn--primary">
+                        <i class="bi bi-check-circle me-2"></i>Get Started
+                    </a>
+                    {% else %}
+                    <a href="{% url 'users:welcome_info' %}" class="c-btn c-btn--secondary">
+                        <i class="bi bi-info-circle me-2"></i>Learn More
+                    </a>
+                    <a href="{% url 'users:dismiss_welcome' %}" class="c-btn c-btn--primary">
+                        <i class="bi bi-check-circle me-2"></i>Get Started
+                    </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    #welcomeModal .modal-content {
+        border: none;
+        overflow: hidden;
+        position: relative;
+        background-color: #003b70 !important;
+    }
+    #welcomeModal .modal-dialog {
+        max-width: 800px;
+    }
+    #welcomeModal .modal-header {
+        background-color: #003b70 !important;
+        color: white !important;
+        padding: 0.5rem 1.5rem !important;
+        border-top-left-radius: 0.3rem;
+        border-top-right-radius: 0.3rem;
+        text-align: center;
+    }
+    #welcomeModal .welcome-greeting {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #003b70;
+    }
+    #welcomeModal .btn-close {
+        opacity: 1;
+        box-shadow: none;
+        border: none;
+        outline: none;
+    }
+
+    /* USD-styled Button Styles */
+    .c-btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .c-btn {
+        font-family: "myriad-pro", Arial, sans-serif;
+        font-weight: 600;
+        color: #0074c8;
+        border: 0;
+        min-width: 2rem;
+        -webkit-appearance: none;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        padding: .25rem 1rem !important;
+        border: none;
+        text-decoration: none;
+        box-shadow: 0 0 0.25rem 0 rgba(0, 0, 0, 0.1), 0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.15);
+        min-height: 2rem;
+        border-radius: .25rem;
+        line-height: 1.5;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .c-btn--primary {
+        color: #fff !important;
+        background-color: #0074c8;
+    }
+
+    .c-btn--primary:hover {
+        background-color: #005ea3;
+        transform: translateY(-1px);
+        box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1), 0 0.5rem 0.75rem 0 rgba(0, 0, 0, 0.15);
+    }
+
+    .c-btn--secondary {
+        color: #333 !important;
+        background-color: #f0f0f0;
+    }
+
+    .c-btn--secondary:hover {
+        background-color: #e0e0e0;
+        transform: translateY(-1px);
+        box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1), 0 0.5rem 0.75rem 0 rgba(0, 0, 0, 0.15);
+    }
+</style>
 {% endif %}
