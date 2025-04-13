@@ -511,3 +511,56 @@ input:checked + .toggle-slider:before {
     opacity: 1 !important;
     pointer-events: auto !important;
 }
+
+
+/* New Hire Deadlines Table Styles */
+.notify-btn, .edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #0074c8;
+    font-size: 1.1rem;
+    transition: color 0.2s ease;
+}
+
+.notify-btn:hover {
+    color: #0056b3;
+}
+
+.edit-btn:hover {
+    color: #0056b3;
+}
+
+/* Table hover effects */
+#newHireDeadlinesTable tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s;
+}
+
+/* Faculty name hover effect */
+.faculty-name {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.faculty-name:hover span {
+    color: #0074c8;
+    text-decoration: underline;
+}
+
+/* Task title hover effect */
+.task-title {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.task-title:hover .task-title-text {
+    color: #0074c8;
+    text-decoration: underline;
+}
+
+/* Progress bar styles */
+.faculty-progress-bar {
+    width: 0%; /* Will be set via JavaScript */
+}
