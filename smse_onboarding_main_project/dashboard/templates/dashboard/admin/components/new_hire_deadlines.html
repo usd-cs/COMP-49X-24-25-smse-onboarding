@@ -96,8 +96,7 @@
                                 <span>100%</span>
                             {% else %}
                                 <div class="progress flex-grow-1 me-2" style="height: 6px;">
-                                    <div class="progress-bar" role="progressbar"
-                                         style="width: {{ faculty.completion_percentage }}%;"
+                                    <div class="progress-bar" role="progressbar" style="width: {{ faculty.completion_percentage }}%;"
                                          aria-valuenow="{{ faculty.completion_percentage }}"
                                          aria-valuemin="0"
                                          aria-valuemax="100">
@@ -134,6 +133,27 @@
         </table>
     </div>
 </div>
+
+<style>
+    /* Fix for action button styles */
+    .notify-btn, .edit-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        color: #0074c8;
+        font-size: 1.1rem;
+        transition: color 0.2s ease;
+    }
+
+    .notify-btn:hover {
+        color: #0056b3;
+    }
+
+    .edit-btn:hover {
+        color: #0056b3;
+    }
+</style>
 
 <!-- DataTables script -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
