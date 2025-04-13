@@ -556,12 +556,12 @@ html {
     transform: scale(1.2);
 }
 
-.admin-btn { background-color: #522d6d; }
-.it-btn { background-color: #3e7b05; }
-.parking-btn { background-color: #2c3e8c; }
-.map-btn { background-color: #c67f12; }
-.phone-btn { background-color: #5291c5; }
-.notif-btn { background-color: #942638; }
+.admin-btn { background-color: #5a2b81; }
+.it-btn { background-color: #728c1f; }
+.parking-btn { background-color: #00a499; }
+.map-btn { background-color: #eeaa2b; }
+.phone-btn { background-color: #75bee9; }
+.notif-btn { background-color: #92002d; }
 
 /* Shine effect for buttons */
 .quick-link-btn::after {
