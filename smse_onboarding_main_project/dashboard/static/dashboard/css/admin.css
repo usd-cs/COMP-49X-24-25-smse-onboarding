@@ -564,3 +564,8 @@ input:checked + .toggle-slider:before {
 .faculty-progress-bar {
     width: 0%; /* Will be set via JavaScript */
 }
+
+/* Control progress bar container width */
+#newHireDeadlinesTable .progress {
+    flex-grow: 0; /* stops it from expanding to fill available space */
+}
