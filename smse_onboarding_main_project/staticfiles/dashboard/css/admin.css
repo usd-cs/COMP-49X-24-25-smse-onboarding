@@ -1,0 +1,605 @@
+/* Admin Dashboard Styles */
+:root {
+    --primary-color: #1a3a8f;
+    --accent-color: #3b82f6;
+    --bg-light: #eaeaea; /* Match new_hire.css background */
+    --text-dark: #2d3436;
+    --text-light: #636e72;
+    --border-color: #e5e7eb;
+    --red: #ef4444;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --purple: #8b5cf6;
+    --secondary-color: #f5f7fa;
+    --text-color: #333;
+    --light-text: #6b7280;
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 80px;
+    --topnav-height: 70px;
+}
+
+/* Main Layout - match new_hire.css */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background-color: #eaeaea; /* Match new_hire.css */
+    color: var(--text-dark);
+    transition: none;
+    height: 100%;
+    overflow-y: auto;
+}
+
+html {
+    height: 100%;
+    background-color: #eaeaea; /* Match new_hire.css */
+}
+
+/* Dashboard Container - match new_hire.css */
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    overflow: hidden; /* Hide overflow on container */
+}
+
+/* Main Content - match new_hire.css */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: var(--sidebar-width, 280px);
+    width: calc(100% - var(--sidebar-width, 280px));
+    min-height: calc(100vh - var(--topnav-height));
+    background-color: #eaeaea; /* Match new_hire.css */
+    transition: margin-left 0.3s ease, width 0.3s ease;
+    overflow-y: auto; /* Enable vertical scrolling */
+    position: relative;
+    z-index: 900;
+    margin-top: var(--topnav-height); /* Add margin for topnav */
+}
+
+/* Dashboard content - match new_hire.css */
+.dashboard-content {
+    height: auto;
+    min-height: calc(100% - 35px);
+    width: 100%;
+    overflow-y: auto;
+    padding-bottom: 50px; /* Extra padding at bottom to ensure all content is visible when scrolled */
+}
+
+/* Remove any conflicting top-bar */
+.top-bar {
+    display: none !important;
+}
+
+/* Sidebar - match new_hire.css */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--primary-color);
+    color: white;
+    height: calc(100vh - var(--topnav-height));
+    min-height: 550px;
+    position: fixed;
+    top: var(--topnav-height);
+    left: 0;
+    padding: 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    z-index: 1030;
+    transition: transform 0.3s ease, width 0.3s ease;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: var(--topnav-height);
+    left: 0;
+    width: 100%;
+    height: calc(100% - var(--topnav-height));
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1020;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Logo container in sidebar */
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0 0 12px 0;
+    min-height: 80px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.school-name {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    min-height: 40px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.nav-item.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.nav-item i {
+    font-size: 1.1rem;
+    min-width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+    margin-right: 12px;
+}
+
+/* Menu toggle button for mobile view */
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-dark);
+    padding: 0;
+    display: none;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+    width: 100%;
+    border: 1px solid #e0e0e0;
+}
+
+.dashboard-card .card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-card .card-header h2 {
+    font-size: 1.25rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.dashboard-card .card-body {
+    padding: 1rem;
+}
+
+/* Tables */
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.deadlines-table, .admin-tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+.deadlines-table th, .admin-tasks-table th,
+.deadlines-table td, .admin-tasks-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.deadlines-table th, .admin-tasks-table th {
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    background-color: var(--bg-light);
+    letter-spacing: 0.5px;
+}
+
+.deadlines-table tbody tr:hover,
+.admin-tasks-table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    transition: background-color 0.2s ease;
+}
+
+.deadlines-table tr:last-child td,
+.admin-tasks-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Quick Links section */
+.quick-links {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 12px;
+}
+
+.quick-links-title {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.quick-links-title i {
+    margin-right: 8px;
+}
+
+.new-badge {
+    background-color: #FF3366;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    margin-left: auto;
+}
+
+/* Match responsive behavior from new_hire.css */
+@media (max-width: 1200px) {
+    :root {
+        --sidebar-width: 0px;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .menu-toggle {
+        display: block !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar > .container-fluid {
+        padding: 0 10px;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px;
+    }
+
+    .dashboard-content {
+        padding-top: 10px !important;
+        width: 100% !important;
+    }
+
+    .col-md-8, .col-md-4 {
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .row {
+        margin: 0 -10px;
+    }
+
+    .menu-toggle {
+        display: block !important;
+        font-size: 1.5rem !important;
+        color: var(--text-dark) !important;
+        margin-right: 10px;
+    }
+
+    .dashboard-card .card-header {
+        padding: 1rem;
+    }
+
+    .deadlines-table th, .admin-tasks-table th,
+    .deadlines-table td, .admin-tasks-table td {
+        padding: 0.75rem;
+    }
+}
+
+/* Admin Dashboard Specific Styles */
+
+.card {
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: #fff;
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 1.25rem;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+/* Admin tables styling */
+.admin-tasks-table,
+.new-hire-deadlines-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.admin-tasks-table th,
+.new-hire-deadlines-table th {
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-light);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-tasks-table td,
+.new-hire-deadlines-table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-tasks-table tr:last-child td,
+.new-hire-deadlines-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-tasks-table tr:hover,
+.new-hire-deadlines-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Progress display */
+.circle-progress {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid;
+    display: inline-block;
+}
+
+.circle-progress.green {
+    border-color: var(--green);
+}
+
+.circle-progress.red {
+    border-color: var(--red);
+}
+
+.circle-progress.yellow {
+    border-color: var(--yellow);
+}
+
+/* Stats cards */
+.stats-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    height: 100%;
+}
+
+.stats-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 1rem;
+}
+
+.stats-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stats-label {
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+/* Admin chart containers */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+/* Badge styling */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 0.25rem;
+}
+
+/* Admin toggle switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(22px);
+}
+
+/* Task status colors */
+.status-pending {
+    color: var(--yellow);
+}
+
+.status-complete {
+    color: var(--green);
+}
+
+.status-overdue {
+    color: var(--red);
+}
+
+/* Responsive table adjustments */
+@media (max-width: 992px) {
+    .admin-tasks-table,
+    .new-hire-deadlines-table {
+        min-width: 750px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+}
+
+/* Dashboard sections spacing */
+.dashboard-section {
+    margin-bottom: 1.5rem;
+}
+
+/* Filter controls */
+.filter-controls {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.filter-dropdown {
+    min-width: 150px;
+}
+
+/* Chart legend */
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.legend-label {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}

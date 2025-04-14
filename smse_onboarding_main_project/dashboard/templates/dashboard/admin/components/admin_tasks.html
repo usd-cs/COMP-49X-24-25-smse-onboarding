@@ -1,61 +1,57 @@
 {% load custom_filters %}
-<div class="dashboard-card admin-tasks">
+<div class="card shadow-sm">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h2>Your Admin Tasks</h2>
+        <h5 class="card-title mb-0">Your Admin Tasks</h5>
     </div>
-    <div class="card-body">
-        <table class="admin-tasks-table">
-            <colgroup>
-                <col style="width: 10%;">
-                <col style="width: 35%;">
-                <col style="width: 30%;">
-                <col style="width: 25%;">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Status</th>
-                    <th>Task</th>
-                    <th>Assigned By</th>
-                    <th>Due Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if admin_tasks %}
-                    {% for task in admin_tasks %}
-                    <tr data-task-id="{{ task.id }}" class="{% if task.completed %}completed-row{% endif %}">
-                        <td class="checkbox-cell">
-                            {% if task.completed %}
-                                <i class="bi bi-check-circle-fill task-completed"></i>
-                            {% else %}
-                                <div class="circle-progress {% if task.is_overdue %}red{% else %}green{% endif %}"></div>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <div class="task-info">
-                                <div class="task-title {% if task.completed %}fw-medium text-success{% endif %}">{{ task.title }}</div>
-                                {% if task.description %}
-                                    <div class="task-description text-muted">{{ task.description }}</div>
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td>{{ task.assigned_to }}</td>
-                        <td class="due-date {% if task.is_overdue %}overdue{% endif %}">
-                            {% if task.is_overdue %}
-                                <span class="badge bg-danger rounded-pill">{{ task.deadline|date:"m/d/y" }} (Overdue)</span>
-                            {% else %}
-                                <span class="badge {% if task.completed %}bg-success{% else %}bg-info{% endif %} rounded-pill">{{ task.deadline|date:"m/d/y" }}</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                {% else %}
+    <div class="card-body p-0">
+        <div class="table-responsive" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden;">
+            <table class="admin-tasks-table w-100">
+                <thead>
                     <tr>
-                        <td colspan="4" class="empty-state">
-                            <p>No admin tasks available</p>
-                        </td>
+                        <th style="width: 10%">Status</th>
+                        <th style="width: 45%">Task</th>
+                        <th style="width: 20%">Assigned By</th>
+                        <th style="width: 25%">Due Date</th>
                     </tr>
-                {% endif %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% if admin_tasks %}
+                        {% for task in admin_tasks %}
+                        <tr data-task-id="{{ task.id }}" class="{% if task.completed %}bg-light{% endif %}">
+                            <td class="text-center">
+                                {% if task.completed %}
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                {% else %}
+                                    <div class="rounded-circle border border-2 {% if task.is_overdue %}border-danger{% else %}border-success{% endif %}" style="width: 20px; height: 20px;"></div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div>
+                                    <div class="fw-medium {% if task.completed %}text-success{% endif %}">{{ task.title }}</div>
+                                    {% if task.description %}
+                                        <div class="text-muted small">{{ task.description }}</div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>{{ task.assigned_to }}</td>
+                            <td>
+                                {% if task.is_overdue %}
+                                    <span class="badge bg-danger">{{ task.deadline|date:"m/d/y" }} (Overdue)</span>
+                                {% else %}
+                                    <span class="badge {% if task.completed %}bg-success{% else %}bg-info{% endif %}">{{ task.deadline|date:"m/d/y" }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center p-4 text-muted">
+                                <p>No admin tasks available</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

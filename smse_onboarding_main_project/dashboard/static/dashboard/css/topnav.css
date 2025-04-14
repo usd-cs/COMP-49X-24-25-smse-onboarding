@@ -1,30 +1,30 @@
 /* Top Navigation Bar - Shared between Admin and New Hire dashboards */
 
-/* Top Bar */
-.top-bar {
-    position: fixed;
-    top: 0;
-    left: 280px;
-    right: 0;
-    height: 35px;
-    background-color: white;
-    z-index: 1060;
-    border-bottom: 1px solid #eaeaea;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
 /* Navbar Positioning */
 .navbar {
     position: fixed;
     top: 0;
     right: 0;
-    left: 280px;
-    height: 35px;
+    left: var(--sidebar-width, 280px);
+    height: var(--topnav-height, 70px);
     z-index: 1065;
-    background-color: transparent !important;
+    background-color: white !important;
     padding: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: calc(100% - var(--sidebar-width, 280px));
+    transition: left 0.3s ease, width 0.3s ease;
+}
+
+/* Remove any additional navbar styles from admin dashboard */
+.navbar.mb-4, .navbar.rounded-3 {
+    margin-bottom: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Ensure navbar has no margins that might affect height */
+.navbar > .container-fluid {
+    height: 100%;
+    padding: 0 15px;
 }
 
 /* Navbar Branding */
@@ -33,17 +33,23 @@
     margin: 0;
 }
 
+.navbar-logo {
+    height: 40px;
+    width: auto;
+}
+
 .navbar-brand-text {
     display: flex;
     align-items: center;
     padding-top: 0.3125rem;
     padding-bottom: 0.3125rem;
     margin-right: 1rem;
-    font-size: 1.1rem;
+    margin-left: 2rem;
+    font-size: 25px;
+    font-family: 'Myriad Pro', sans-serif;
     line-height: inherit;
     white-space: nowrap;
-    height: 35px;
-    color: #333;
+    color: #00294E;
 }
 
 .navbar-brand span,
@@ -99,7 +105,7 @@
     position: absolute;
     top: -5px;
     right: -5px;
-    background-color: #ef4444;
+    background-color: #4aef44;
     color: white;
     font-size: 0.7rem;
     width: 18px;
@@ -118,16 +124,16 @@
     cursor: pointer;
 }
 
-.img-profile, .avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
+.user-avatar-container {
+    width: 40px;
+    height: 40px;
 }
 
-.user-avatar-container {
-    width: 32px;
-    height: 32px;
+.img-profile, .avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .user-name {
@@ -176,10 +182,16 @@
     border-top: 1px solid #e9ecef;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .top-bar,
+/* Mobile responsive adjustments */
+@media (max-width: 1200px) {
     .navbar {
         left: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar > .container-fluid {
+        padding: 0 10px;
     }
 }

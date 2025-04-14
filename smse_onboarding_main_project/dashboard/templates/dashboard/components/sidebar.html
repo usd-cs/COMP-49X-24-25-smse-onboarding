@@ -1,0 +1,82 @@
+{% load static %}
+<!-- Shared sidebar component with conditional rendering based on user role -->
+<div class="sidebar">
+    <!-- Logo container for both admin and new hire -->
+    <div class="logo-container">
+       <img src="{% static 'dashboard/images/smse_logo_transparent.png' %}" alt="SMSE Logo" class="logo">
+    </div>
+
+    <!-- A divider line -->
+    <hr class="sidebar-divider">
+
+    <nav class="sidebar-nav">
+        <!-- Conditional navigation based on user role -->
+        {% if is_admin %}
+        <!-- Admin navigation items -->
+        <a href="{% url 'dashboard:admin_home' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %}" data-title="Dashboard">
+            <i class="bi bi-house-fill"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="{% url 'dashboard:faculty_directory' %}" class="nav-item {% if request.resolver_match.url_name == 'faculty_directory' %}active{% endif %}" data-title="Faculty Directory">
+            <i class="bi bi-people-fill"></i>
+            <span>Faculty Directory</span>
+        </a>
+        <a href="{% url 'documents:show_documents' %}" class="nav-item" data-title="Manage Documents">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Manage Documents</span>
+        </a>
+        <a href="#" class="nav-item" data-title="Notification">
+            <i class="bi bi-bell-fill"></i>
+            <span>Notification</span>
+        </a>
+        <a href="{% url 'admin:index' %}" class="nav-item" target="_blank" data-title="Advanced Settings">
+            <i class="bi bi-gear-fill"></i>
+            <span> Advanced Settings</span>
+        </a>
+        {% else %}
+        <!-- New hire navigation items -->
+        <a href="{% url 'dashboard:new_hire_home' %}" class="nav-item {% if request.path == '/dashboard/' or request.path == '/dashboard/newhire/' %}active{% endif %}" data-title="Dashboard">
+            <i class="bi bi-house-fill"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="{% url 'dashboard:new_hire_home' %}" class="nav-item {% if request.resolver_match.url_name == 'faculty_directory' %}active{% endif %}" data-title="Faculty Directory">
+            <i class="bi bi-people-fill"></i>
+            <span>Faculty Directory</span>
+        </a>
+        <a href="{% url 'documents:show_documents' %}" class="nav-item" data-title="Manage Documents">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Manage Documents</span>
+        </a>
+        <a href="#" class="nav-item" data-title="Notifications">
+            <i class="bi bi-bell-fill"></i>
+            <span>Notifications</span>
+        </a>
+        {% endif %}
+
+        <!-- Logout (shared between both roles) -->
+        <a href="#" class="nav-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" data-title="Logout">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+        <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+            {% csrf_token %}
+        </form>
+    </nav>
+
+    <div class="quick-links">
+        <div class="quick-links-title">
+            <i class="bi bi-link-45deg"></i>
+            <span>Quick Links</span>
+            <span class="new-badge">NEW</span>
+        </div>
+        <a href="{% url 'users:show_welcome' %}" class="nav-item" data-title="Show Welcome Banner">
+            <i class="bi bi-info-circle-fill"></i>
+            <span>Show Welcome Banner</span>
+        </a>
+    </div>
+</div>
+
+<!-- Include document modal for admin -->
+{% if is_admin %}
+{% include 'documents/document_modal.html' %}
+{% endif %}

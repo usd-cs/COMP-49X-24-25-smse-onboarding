@@ -1,0 +1,152 @@
+/* Faculty Profile Card Styles */
+.faculty-profile-card {
+    position: fixed;
+    top: 80px;
+    right: -400px;
+    width: 400px;
+    height: calc(100vh - 160px);
+    background-color: white;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+    border-radius: 12px 0 0 12px;
+    margin: 20px 0;
+}
+
+.faculty-profile-card.active {
+    right: 0;
+}
+
+.profile-header {
+    padding: 24px;
+    text-align: center;
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    color: white;
+    border-radius: 12px 0 0 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 16px;
+    background-color: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    position: relative;
+}
+
+.profile-image::after {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    border-radius: 50%;
+}
+
+.profile-header .faculty-name {
+    font-size: 1.5rem;
+    margin: 0;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.profile-header .faculty-title {
+    font-size: 1rem;
+    margin: 0;
+    opacity: 0.9;
+}
+
+.profile-content {
+    padding: 32px 24px 24px;
+}
+
+.profile-section {
+    margin-bottom: 24px;
+}
+
+.profile-section-title {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.profile-info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.profile-info-item:last-child {
+    border-bottom: none;
+}
+
+.profile-info-item i {
+    color: #1976d2;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.profile-info-label {
+    font-size: 0.9rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.profile-info-value {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.close-profile-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: white;
+    opacity: 0.8;
+    cursor: pointer;
+    padding: 4px;
+    transition: opacity 0.2s;
+}
+
+.close-profile-btn:hover {
+    opacity: 1;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .faculty-profile-card {
+        width: 330px;
+        right: -330px;
+    }
+}

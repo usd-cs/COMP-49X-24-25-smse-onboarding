@@ -40,7 +40,7 @@
                         <div class="profile-circle">
                             <!-- Default Bootstrap Icon -->
                             <div class="rounded-circle d-flex align-items-center justify-content-center bg-light profile-img">
-                                <i class="bi bi-person-fill text-primary"></i>
+                                <i class="bi bi-person-fill profile-icon"></i>
                             </div>
 
                             <!-- Profile Image (overlays the icon if available) -->
@@ -52,7 +52,7 @@
                     </div>
                     <!-- Name moved below profile photo -->
                     <div class="text-center mt-3">
-                        <div class="prof-name">Dr. {{ faculty.first_name }} {{ faculty.last_name }}</div>
+                        <div class="prof-email">{{ faculty.email }}</div>
                         <div class="job-title">{{ faculty.job_role }}</div>
                     </div>
                 </div>
@@ -101,8 +101,8 @@
     margin-top: 0.5rem;
 }
 
-.prof-name {
-    font-weight: bold;
+.prof-email {
+    font-weight: 2rem
     font-size: 1.2rem;
 }
 
@@ -120,7 +120,7 @@
     padding-top: 1rem;
 }
 
-.profile-section, 
+.profile-section,
 .progress-section {
     flex: 0 0 auto;
     display: flex;
@@ -153,6 +153,11 @@
 }
 
 .profile-img i {
+    font-size: 105px;
+}
+
+.profile-icon {
+    color: #0074c8; /* USD blue color */
     font-size: 105px;
 }
 
@@ -197,22 +202,22 @@
     .symmetric-container {
         gap: 1.5rem;
     }
-    
-    .profile-circle, 
-    .profile-img, 
+
+    .profile-circle,
+    .profile-img,
     .progress-circle,
     .progress-circle svg,
     .progress-circle svg circle {
         width: 120px;
         height: 120px;
     }
-    
+
     .progress-circle svg circle {
         cx: 60px;
         cy: 60px;
         r: 52px;
     }
-    
+
     .profile-img i {
         font-size: 84px;
     }
@@ -251,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
-    
+
     // Ensure progress circle is initialized after DOM is fully loaded
     setTimeout(function() {
         updateProgressCircle();
@@ -279,29 +284,29 @@ function updateProgressCircle() {
         // Count completed tasks from the DOM
         const completedTasks = document.querySelectorAll('.bi-check-circle-fill').length;
         const totalTasks = completedTasks + document.querySelectorAll('.task-circle-btn').length;
-        
+
         // Server data fallback - if information cannot be found in the DOM
         const serverCompletedTasks = parseInt('{{ num_completed|default:0 }}');
         const serverTotalTasks = parseInt('{{ num_tasks|default:0 }}');
-        
+
         // Use DOM data or server data, prioritizing DOM data
         const finalCompletedTasks = (completedTasks > 0) ? completedTasks : serverCompletedTasks;
         const finalTotalTasks = (totalTasks > 0) ? totalTasks : serverTotalTasks;
-        
+
         // Update progress text
         const progressTextElement = document.getElementById('progressText');
         if (progressTextElement) {
             progressTextElement.textContent = finalCompletedTasks + ' of ' + finalTotalTasks;
         }
-        
+
         // Calculate percentage
         let percentage = 0;
         if (finalTotalTasks > 0) {
             percentage = (finalCompletedTasks / finalTotalTasks) * 100;
         }
-        
+
         console.log("Progress calculation:", finalCompletedTasks, "of", finalTotalTasks, "=", percentage + "%");
-        
+
         // Update progress circle
         const progressCircle = document.getElementById('progressCircle');
         if (progressCircle) {
@@ -309,7 +314,7 @@ function updateProgressCircle() {
             const dashoffset = circumference - (percentage / 100) * circumference;
             progressCircle.style.strokeDashoffset = dashoffset;
             progressCircle.style.strokeDasharray = circumference;
-            
+
             // Change color based on progress
             if (percentage === 100) {
                 progressCircle.style.stroke = '#4CAF50'; // Green for complete

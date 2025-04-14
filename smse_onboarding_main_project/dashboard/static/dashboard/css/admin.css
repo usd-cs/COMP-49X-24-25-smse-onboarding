@@ -1,7 +1,8 @@
+/* Admin Dashboard Styles */
 :root {
     --primary-color: #1a3a8f;
     --accent-color: #3b82f6;
-    --bg-light: #f8f9fa;
+    --bg-light: #eaeaea; /* Match new_hire.css background */
     --text-dark: #2d3436;
     --text-light: #636e72;
     --border-color: #e5e7eb;
@@ -12,189 +13,114 @@
     --secondary-color: #f5f7fa;
     --text-color: #333;
     --light-text: #6b7280;
-    --sidebar-width: 280px;
-    --sidebar-collapsed-width: 80px;
-    --topnav-height: 60px;
+    /* Sidebar values are now defined in sidebar.css */
+    --topnav-height: 70px;
 }
 
-/* Main Layout */
+/* Main Layout - match new_hire.css */
 body {
     font-family: 'Inter', sans-serif;
     margin: 0;
-    background-color: var(--bg-light);
+    background-color: #eaeaea; /* Match new_hire.css */
     color: var(--text-dark);
+    transition: none;
+    height: 100%;
+    overflow-y: auto;
 }
 
 html {
     height: 100%;
-    background-color: var(--bg-light);
+    background-color: #eaeaea; /* Match new_hire.css */
 }
 
-/* Dashboard Container */
+/* Dashboard Container - match new_hire.css */
 .dashboard-container {
     display: flex;
     width: 100%;
     min-height: 100vh;
-    background-color: var(--bg-light);
-    position: relative;
-    overflow-x: hidden;
+    height: 100%;
+    overflow: hidden; /* Hide overflow on container */
 }
 
-/* Main Content */
+/* Main Content - match new_hire.css */
 .main-content {
     flex: 1;
     padding: 20px;
-    margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
-    min-height: 100vh;
-    background-color: var(--bg-light);
+    margin-left: var(--sidebar-width, 280px);
+    width: calc(100% - var(--sidebar-width, 280px));
+    min-height: calc(100vh - var(--topnav-height));
+    background-color: #eaeaea; /* Match new_hire.css */
     transition: margin-left 0.3s ease, width 0.3s ease;
+    overflow-y: auto; /* Enable vertical scrolling */
     position: relative;
     z-index: 900;
+    margin-top: var(--topnav-height); /* Add margin for topnav */
 }
 
-/* Content Wrapper */
-.content-wrapper {
-    padding-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+/* Dashboard content - match new_hire.css */
+.dashboard-content {
+    height: auto;
+    min-height: calc(100% - 35px);
     width: 100%;
-}
-
-/* Dashboard Sections */
-.dashboard-section {
-    margin-bottom: 24px;
-    width: 100%;
-}
-
-/* Sidebar */
-.sidebar {
-    width: var(--sidebar-width);
-    background-color: var(--primary-color);
-    color: white;
-    height: 100vh;
-    min-height: 550px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding: 1rem 1rem;
-    display: flex;
-    flex-direction: column;
-    z-index: 1030;
-    transition: transform 0.3s ease, width 0.3s ease;
     overflow-y: auto;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    padding-bottom: 50px; /* Extra padding at bottom to ensure all content is visible when scrolled */
 }
 
-/* Sidebar overlay for mobile */
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+/* Tables layout styles */
+.card-body {
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1020;
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.sidebar-overlay.active {
-    display: block;
-    opacity: 1;
-}
-
-/* Close sidebar button */
-.close-sidebar-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    display: none;
-}
-
-.logo-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 0 0 12px 0;
-    min-height: 80px;
 }
 
-.logo {
-    width: 50px;
-    height: 50px;
-    min-width: 40px;
-    min-height: 40px;
-    border-radius: 50%;
-    object-fit: contain;
-}
-
-.school-name {
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    color: white;
-}
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+.table-responsive {
+    flex: 1;
     overflow-y: auto;
-    flex-grow: 1;
+    overflow-x: hidden;
 }
 
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 12px;
-    min-height: 40px;
-    border-radius: 8px;
-    color: #ffffff;
-    text-decoration: none;
-    transition: background-color 0.2s;
+.deadlines-table, .admin-tasks-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.deadlines-table th, .admin-tasks-table th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+    border-bottom: 2px solid #dee2e6;
     white-space: nowrap;
 }
 
-.nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    text-decoration: none;
+.deadlines-table td, .admin-tasks-table td {
+    vertical-align: middle;
+    word-wrap: break-word;
+    white-space: normal;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-.nav-item.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+/* Remove striped rows */
+.deadlines-table tr:nth-child(even),
+.admin-tasks-table tr:nth-child(even) {
+    background-color: transparent;
 }
 
-.nav-item i {
-    font-size: 1.1rem;
-    min-width: 24px;
-    text-align: center;
-    flex-shrink: 0;
+/* Hover effect for row visibility */
+.deadlines-table tr:hover,
+.admin-tasks-table tr:hover {
+    background-color: rgba(0,0,0,0.02);
 }
 
-/* Top Navigation */
+/* Remove any conflicting top-bar */
 .top-bar {
-    height: 4px;
-    background-color: var(--primary-color);
-    width: 100%;
+    display: none !important;
 }
 
-.navbar {
-    padding: 0.75rem 1rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-}
+/* Sidebar and overlay - Now handled by sidebar.css */
+/* Logo container in sidebar - Now handled by sidebar.css */
 
+/* Menu toggle button for mobile view */
 .menu-toggle {
     background: none;
     border: none;
@@ -205,55 +131,14 @@ html {
     display: none;
 }
 
-.navbar-brand {
-    margin-right: 2rem;
-}
-
-.navbar-nav {
-    align-items: center;
-}
-
-.nav-link {
-    color: var(--text-dark);
-    padding: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.notification-badge {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: var(--red);
-    color: white;
-    font-size: 0.7rem;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.user-avatar-container {
-    width: 36px;
-    height: 36px;
-}
-
-.img-profile {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
 /* Dashboard Cards */
 .dashboard-card {
     background-color: white;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 24px;
     width: 100%;
+    border: 1px solid #e0e0e0;
 }
 
 .dashboard-card .card-header {
@@ -281,7 +166,7 @@ html {
 }
 
 .dashboard-card .card-body {
-    padding: 0;
+    padding: 1rem;
 }
 
 /* Tables */
@@ -293,6 +178,7 @@ html {
 .deadlines-table, .admin-tasks-table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 0;
 }
 
 .deadlines-table th, .admin-tasks-table th,
@@ -312,9 +198,10 @@ html {
     letter-spacing: 0.5px;
 }
 
-.deadlines-table tbody tr:hover, 
+.deadlines-table tbody tr:hover,
 .admin-tasks-table tbody tr:hover {
-    background-color: var(--secondary-color);
+    background-color: rgba(0, 0, 0, 0.02);
+    transition: background-color 0.2s ease;
 }
 
 .deadlines-table tr:last-child td,
@@ -322,504 +209,363 @@ html {
     border-bottom: none;
 }
 
-/* Enhanced table styles */
-.deadlines-table tbody tr:nth-child(even) {
-    background-color: rgba(0, 0, 0, 0.02);
-}
+/* Quick Links section - Now handled by sidebar.css */
 
-.deadlines-table td {
-    font-size: 0.95rem;
-}
-
-/* Faculty Avatar */
-.faculty-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 500;
-    font-size: 1rem;
-    background-color: var(--accent-color);
-    color: white;
-}
-
-.initials-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-}
-
-/* Progress Indicators */
-.progress-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.line-progress {
-    flex: 1;
-    height: 6px;
-    background-color: var(--border-color);
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    background-color: var(--accent-color);
-    transition: width 0.3s ease;
-}
-
-.progress-text {
-    font-size: 0.85rem;
-    color: var(--text-light);
-    min-width: 40px;
-    text-align: right;
-}
-
-/* Status Colors */
-.upcoming { color: var(--primary-color); }
-.overdue { color: var(--red); }
-.completed { color: var(--green); }
-.approaching { color: var(--yellow); }
-
-/* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-link {
-    color: var(--text-light);
-    transition: color 0.2s;
-    padding: 0.25rem;
-}
-
-.btn-link:hover {
-    color: var(--accent-color);
-}
-
-/* Button Styles */
-.btn {
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-}
-
-.btn-primary {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
-    padding: 0.5rem 1rem;
-    font-size: 0.95rem;
-}
-
-.btn-primary:hover {
-    background-color: #2563eb;
-    border-color: #2563eb;
-}
-
-/* Task Status */
-.task-completed {
-    color: var(--green);
-    font-size: 1.2rem;
-}
-
-.task-title {
-    margin-bottom: 4px;
-}
-
-.task-description {
-    font-size: 0.85rem;
-}
-
-/* Empty state styling */
-.empty-state {
-    padding: 2rem;
-    text-align: center;
-    color: var(--light-text);
-}
-
-/* Modal styles */
-.modal-backdrop.show {
-    z-index: 1040;
-}
-
-.modal.fade.show {
-    z-index: 1050;
-}
-
-.modal-content {
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-/* Quick Links section */
-.quick-links {
-    margin-top: auto;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: 12px;
-}
-
-.quick-links-title {
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    margin-bottom: 8px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-}
-
-.quick-links-title i {
-    margin-right: 8px;
-}
-
-.new-badge {
-    background-color: #FF3366;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 10px;
-    margin-left: auto;
-}
-
-/* Dashboard Content */
-.dashboard-content {
-    height: auto;
-    min-height: calc(100% - 35px);
-    overflow-y: auto;
-    padding-bottom: 50px;
-    padding-top: 50px !important;
-    background-color: var(--bg-light);
-}
-
-/* Responsive Design */
+/* Match responsive behavior from new_hire.css */
 @media (max-width: 1200px) {
-    :root {
-        --sidebar-width: 0px;
-    }
-    
-    /* Force sidebar off-screen instead of collapsed state */
-    .sidebar {
-        transform: translateX(-100%);
-        width: 280px;
-        transition: transform 0.3s ease;
-    }
-    
-    /* When active, bring sidebar back on screen */
-    .sidebar.active {
-        transform: translateX(0);
-    }
-    
     .main-content {
         margin-left: 0;
         width: 100%;
     }
-    
+
     .menu-toggle {
         display: block !important;
-    }
-    
-    .school-name, .sidebar .nav-item span, .quick-links-title span, .new-badge {
-        display: none;
-    }
-    
-    .nav-item {
-        justify-content: center;
-        padding: 12px;
-    }
-    
-    .nav-item i {
-        margin: 0;
-    }
-    
-    .logo-container {
-        padding-bottom: 10px;
     }
 }
 
 @media (max-width: 768px) {
-    :root {
-        --sidebar-width: 0px;
+    .navbar > .container-fluid {
+        padding: 0 10px;
     }
-    
-    /* Force sidebar off-screen by default */
-    .sidebar {
-        transform: translateX(-100%);
-        width: 280px !important;
-    }
-    
-    /* When active, bring sidebar back on screen */
-    .sidebar.active {
-        transform: translateX(0);
-    }
-    
+
     .main-content {
         margin-left: 0 !important;
         width: 100% !important;
+        padding: 15px;
     }
-    
+
+    .dashboard-content {
+        padding-top: 10px !important;
+        width: 100% !important;
+    }
+
+    .col-md-8, .col-md-4 {
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .row {
+        margin: 0 -10px;
+    }
+
     .menu-toggle {
         display: block !important;
         font-size: 1.5rem !important;
         color: var(--text-dark) !important;
         margin-right: 10px;
     }
-    
-    .close-sidebar-btn {
-        display: none !important;
-    }
-    
-    .school-name, .sidebar .nav-item span, .quick-links-title span, .new-badge {
-        display: block;
-    }
-    
-    .nav-item {
-        justify-content: flex-start;
-        padding: 12px 16px;
-    }
-    
-    .dashboard-content {
-        padding-top: 10px !important;
-        width: 100% !important;
-    }
-    
-    .card-header {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .card-header h2 {
-        margin-bottom: 10px;
-    }
-    
-    /* Ensure cards take full width */
-    .dashboard-card {
-        width: 100% !important;
-    }
-}
 
-/* Utility classes for mobile */
-@media (max-width: 576px) {
-    .d-sm-none {
-        display: none !important;
-    }
-    
-    .d-sm-block {
-        display: block !important;
-    }
-    
     .dashboard-card .card-header {
         padding: 1rem;
     }
-    
-    .deadlines-table th, .admin-tasks-table th, 
+
+    .deadlines-table th, .admin-tasks-table th,
     .deadlines-table td, .admin-tasks-table td {
         padding: 0.75rem;
     }
 }
 
-/* Add these back for admin tasks */
-.circle-progress {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid currentColor;
+/* Admin Dashboard Specific Styles */
+
+.card {
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: #fff;
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 100%;
 }
 
-.circle-progress.red { border-color: var(--red); }
-.circle-progress.green { border-color: var(--green); }
-
-.notify-btn, .edit-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.notify-btn:hover {
-    color: var(--purple);
+.card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 1.25rem;
 }
 
-.edit-btn:hover {
-    color: var(--accent-color);
+.card-body {
+    padding: 1.25rem;
 }
 
-/* Outline Button (Add New Hire) */
-.outline-btn {
-    background-color: white;
-    color: var(--text-dark);
-    border: 1px solid var(--text-dark);
-    border-radius: 4px;
-    padding: 0.5rem 1rem;
-    font-size: 0.95rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-left: auto;
-    font-weight: 500;
-    line-height: 1;
+/* Admin tables styling */
+.admin-tasks-table,
+.new-hire-deadlines-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
-.outline-btn:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-/* Preserve original add-hire-btn for other places */
-.add-hire-btn {
-    background-color: var(--accent-color);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 0.5rem 1rem;
-    font-size: 0.95rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-left: auto;
-    font-weight: 500;
-}
-
-.add-hire-btn::before {
-    content: '+';
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.add-hire-btn:hover {
-    background-color: #2563eb;
-}
-
-/* Fix for sidebar items on small height */
-@media (max-height: 600px) {
-    .sidebar {
-        padding: 0.5rem;
-    }
-    
-    .logo-container {
-        padding: 0 0 6px 0;
-        min-height: 60px;
-    }
-    
-    .logo {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .school-name {
-        font-size: 14px;
-    }
-    
-    .nav-item {
-        padding: 6px 8px;
-        min-height: 34px;
-        font-size: 0.9rem;
-    }
-    
-    .nav-item i {
-        font-size: 1rem;
-        display: inline-block;
-        vertical-align: middle;
-    }
-    
-    .quick-links {
-        padding-top: 8px;
-        margin-bottom: 8px;
-    }
-    
-    .quick-links .nav-item {
-        padding: 4px 8px;
-        min-height: 30px;
-    }
-}
-
-/* Enhanced status styling */
-.badge.bg-success {
-    background-color: var(--green) !important;
+.admin-tasks-table th,
+.new-hire-deadlines-table th {
+    color: var(--text-light);
     font-weight: 600;
-    padding: 0.35em 0.8em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-light);
+    border-bottom: 1px solid var(--border-color);
 }
 
-.task-completed {
-    color: var(--green);
-    font-size: 1.3rem;
-    margin-right: 4px;
+.admin-tasks-table td,
+.new-hire-deadlines-table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
 }
 
-tr:has(.task-completed) td {
-    color: var(--green);
+.admin-tasks-table tr:last-child td,
+.new-hire-deadlines-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-tasks-table tr:hover,
+.new-hire-deadlines-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Progress display */
+.circle-progress {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid;
+    display: inline-block;
+}
+
+.circle-progress.green {
+    border-color: var(--green);
+}
+
+.circle-progress.red {
+    border-color: var(--red);
+}
+
+.circle-progress.yellow {
+    border-color: var(--yellow);
+}
+
+/* Stats cards */
+.stats-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    height: 100%;
+}
+
+.stats-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 1rem;
+}
+
+.stats-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stats-label {
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+/* Admin chart containers */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+/* Badge styling */
+.badge {
     font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 0.25rem;
 }
 
-/* Completed row styling */
-.completed-row {
-    background-color: rgba(16, 185, 129, 0.05) !important;
+/* Admin toggle switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
 }
 
-.completed-row:hover {
-    background-color: rgba(16, 185, 129, 0.1) !important;
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
-.text-success {
-    color: var(--green) !important;
-}
-
-/* Task title hover effect */
-.task-title-text {
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-input[type="checkbox"]:checked {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
-}
-
-input[type="checkbox"]:checked::after {
-    content: '✓';
+.toggle-slider {
     position: absolute;
-    color: white;
-    font-size: 12px;
-    top: -1px;
-    left: 2px;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
 }
 
-/* Modal styles */
-.modal-backdrop.show {
-    z-index: 1040 !important;
-    pointer-events: auto !important;
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
 }
 
-.modal.fade.show {
-    z-index: 1050 !important;
-    pointer-events: auto !important;
+input:checked + .toggle-slider {
+    background-color: var(--primary-color);
 }
 
+input:checked + .toggle-slider:before {
+    transform: translateX(22px);
+}
+
+/* Task status colors */
+.status-pending {
+    color: var(--yellow);
+}
+
+.status-complete {
+    color: var(--green);
+}
+
+.status-overdue {
+    color: var(--red);
+}
+
+/* Responsive table adjustments */
+@media (max-width: 992px) {
+    .admin-tasks-table,
+    .new-hire-deadlines-table {
+        min-width: 750px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+}
+
+/* Dashboard sections spacing */
+.dashboard-section {
+    margin-bottom: 1.5rem;
+}
+
+/* Filter controls */
+.filter-controls {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.filter-dropdown {
+    min-width: 150px;
+}
+
+/* Chart legend */
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.legend-label {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+/* Fix modal content z-index issues */
 .modal-content {
     opacity: 1 !important;
     pointer-events: auto !important;
 }
 
-/* Task title hover effect */
-.task-title-text {
+
+/* New Hire Deadlines Table Styles */
+.notify-btn, .edit-btn {
+    background: none;
+    border: none;
     cursor: pointer;
+    padding: 5px;
+    color: #0074c8;
+    font-size: 1.1rem;
     transition: color 0.2s ease;
 }
 
-.task-title-text:hover {
-    color: #0d6efd;
+.notify-btn:hover {
+    color: #0056b3;
+}
+
+.edit-btn:hover {
+    color: #0056b3;
+}
+
+/* Table hover effects */
+#newHireDeadlinesTable tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s;
+}
+
+/* Faculty name hover effect */
+.faculty-name {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.faculty-name:hover span {
+    color: #0074c8;
+    text-decoration: underline;
+}
+
+/* Task title hover effect */
+.task-title {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.task-title:hover .task-title-text {
+    color: #0074c8;
+    text-decoration: underline;
+}
+
+/* Progress bar styles */
+.faculty-progress-bar {
+    width: 0%; /* Will be set via JavaScript */
+}
+
+/* Control progress bar container width */
+#newHireDeadlinesTable .progress {
+    flex-grow: 0; /* stops it from expanding to fill available space */
 }

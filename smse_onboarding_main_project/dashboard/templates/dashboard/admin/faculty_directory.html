@@ -5,258 +5,139 @@
 
 {% block dashboard_css %}
 <link rel="stylesheet" href="{% static 'dashboard/css/faculty_directory.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/css/faculty_profile_card.css' %}">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    {% include 'dashboard/admin/components/sidebar.html' %}
+<div class="dashboard-container" id="dashboardContainer">
+    {% include 'dashboard/components/sidebar.html' %}
     {% include 'dashboard/admin/components/newhire_task_progress.html' %}
-    
-    <div class="main-content">
-        {% include 'dashboard/admin/components/topnav.html' %}
-        
-        <div class="content-wrapper">
-            <!-- Title Section -->
-            <div class="title-section">
-                <div class="title-content">
-                    <h1 class="page-title">Faculty Directory</h1>
-                    <div class="header-buttons">
-                        <button class="btn btn-outline-primary">
-                            <i class="bi bi-download"></i>
-                            Export CSV
-                        </button>
-                        <button class="btn btn-primary">
-                            <i class="bi bi-plus-lg"></i>
-                            Add Faculty
-                        </button>
-                    </div>
+
+    <div class="main-content" id="mainContent">
+        {% include 'dashboard/components/topnav.html' %}
+
+        <!-- Simple Header -->
+        <div class="container-fluid py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">Faculty Directory</h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-download"></i>
+                        <span class="d-none d-md-inline">Export</span>
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="bi bi-plus-lg"></i>
+                        <span class="d-none d-md-inline">Add Faculty</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="search-container">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search faculty by name, email, or department..." id="facultySearch">
-                        <button class="btn btn-primary">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Faculty Table Section -->
-            <div class="faculty-section">
-                <div class="faculty-table">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>NAME</th>
-                                <th>EMAIL</th>
-                                <th>DEPARTMENT</th>
-                                <th>STATUS</th>
-                                <th>START DATE</th>
-                                <th>ACTIONS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for faculty in faculty_members %}
-                            <tr data-faculty-id="{{ faculty.pk }}" 
-                                data-faculty-first-name="{{ faculty.first_name }}"
-                                data-faculty-last-name="{{ faculty.last_name }}"
-                                data-faculty-email="{{ faculty.email|default:'None' }}"
-                                data-faculty-department="{{ faculty.department }}"
-                                data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
-                                data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
-                                data-faculty-extension="{{ faculty.extension|default:'None' }}"
-                                class="faculty-row">
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="faculty-avatar">
-                                            {% if faculty.profile_image %}
-                                                <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }}">
-                                            {% else %}
-                                                <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
-                                            {% endif %}
-                                        </div>
-                                        <div class="ms-3" style="cursor: pointer;" onclick="showTaskProgress(event, {{ faculty.pk }})">
-                                            <span class="tt" data-bs-placement="bottom" data-bs-title="View Progress">
-                                                <p class="fw-bold mb-1">{{ faculty.first_name }} {{ faculty.last_name }}</p>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="text-muted mb-0">{{ faculty.email }}</p>
-                                </td>
-                                <td>
-                                    <p class="text-muted mb-0">{{ faculty.department }}</p>
-                                </td>
-                                <td>
-                                    <span class="badge rounded-pill {% if faculty.completed_onboarding %}bg-success{% else %}bg-warning{% endif %}">
-                                        {% if faculty.completed_onboarding %}
-                                            Completed
+            <!-- Faculty Table -->
+            <div class="table-responsive bg-white rounded shadow-sm p-3">
+                <table class="table" id="facultyDataTable">
+                    <thead>
+                        <tr>
+                            <th>NAME</th>
+                            <th>EMAIL</th>
+                            <th>DEPARTMENT</th>
+                            <th>STATUS</th>
+                            <th>START DATE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for faculty in faculty_members %}
+                        <tr data-faculty-id="{{ faculty.pk }}"
+                            data-faculty-first-name="{{ faculty.first_name }}"
+                            data-faculty-last-name="{{ faculty.last_name }}"
+                            data-faculty-email="{{ faculty.email|default:'None' }}"
+                            data-faculty-department="{{ faculty.department }}"
+                            data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
+                            data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
+                            data-faculty-extension="{{ faculty.extension|default:'None' }}"
+                            class="faculty-row">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="faculty-avatar">
+                                        {% if faculty.profile_image %}
+                                            <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }}">
                                         {% else %}
-                                            Pending
+                                            <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
                                         {% endif %}
-                                    </span>
-                                </td>
-                                <td>
-                                    <p class="text-muted mb-0">{{ faculty.start_date|date:"M d, Y" }}</p>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-link btn-sm" onclick="showProfile({{ faculty.pk }})">
-                                            <span class="tt" data-bs-placement="bottom" data-bs-title="View Profile">
-                                                <i class="bi bi-person-lines-fill"></i>
-                                            </span>
-                                        </button>
-                                        <button class="btn btn-link btn-sm">
-                                            <span class="tt" data-bs-placement="bottom" data-bs-title="Send Email">
-                                                <i class="bi bi-envelope"></i>
-                                            </span>
-                                        </button>
-                                        <button class="btn btn-link btn-sm">
-                                            <span class="tt" data-bs-placement="bottom" data-bs-title="Edit">
-                                                <i class="bi bi-pencil"></i>
-                                            </span>
-                                        </button>
                                     </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                                    <div class="ms-2" style="cursor: pointer;" data-faculty-id="{{ faculty.pk }}" onclick="showTaskProgress(event)">
+                                        <p class="fw-bold mb-0 small">{{ faculty.first_name }} {{ faculty.last_name }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p class="text-muted mb-0 small">{{ faculty.email }}</p>
+                            </td>
+                            <td>
+                                <p class="text-muted mb-0 small">{{ faculty.department }}</p>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill {% if faculty.completed_onboarding %}bg-success{% else %}bg-warning{% endif %}">
+                                    {% if faculty.completed_onboarding %}
+                                        Completed
+                                    {% else %}
+                                        Pending
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <p class="text-muted mb-0 small">{{ faculty.start_date|date:"M d, Y" }}</p>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-link btn-sm p-1" data-faculty-id="{{ faculty.pk }}" onclick="showProfile(event)">
+                                        <i class="bi bi-person-lines-fill"></i>
+                                    </button>
+                                    <button class="btn btn-link btn-sm p-1">
+                                        <i class="bi bi-envelope"></i>
+                                    </button>
+                                    <button class="btn btn-link btn-sm p-1">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Faculty Profile Card -->
-<div class="faculty-profile-card" id="facultyProfileCard">
-    <div class="profile-header">
-        <button class="close-profile-btn" onclick="closeProfile()">
-            <i class="bi bi-x-lg"></i>
-        </button>
-        <div class="profile-image">
-            <i class="bi bi-person"></i>
-        </div>
-        <h4 class="faculty-name" id="profileFacultyName"></h4>
-        <p class="faculty-title" id="profileFacultyDepartment"></p>
-    </div>
-    <div class="profile-content">
-        <div class="profile-section">
-            <h5 class="profile-section-title">Contact Information</h5>
-            <div class="profile-info-item">
-                <i class="bi bi-envelope"></i>
-                <span class="profile-info-label">Email</span>
-                <span class="profile-info-value" id="profileFacultyEmail"></span>
-            </div>
-            <div class="profile-info-item">
-                <i class="bi bi-telephone"></i>
-                <span class="profile-info-label">Extension</span>
-                <span class="profile-info-value" id="profileFacultyExtension"></span>
-            </div>
-            <div class="profile-info-item">
-                <i class="bi bi-building"></i>
-                <span class="profile-info-label">Department</span>
-                <span class="profile-info-value" id="profileFacultyDeptInfo"></span>
-            </div>
-        </div>
-        <div class="profile-section">
-            <h5 class="profile-section-title">Status Information</h5>
-            <div class="profile-info-item">
-                <i class="bi bi-calendar"></i>
-                <span class="profile-info-label">Start Date</span>
-                <span class="profile-info-value" id="profileFacultyStartDate"></span>
-            </div>
-            <div class="profile-info-item">
-                <i class="bi bi-check-circle"></i>
-                <span class="profile-info-label">Onboarding Status</span>
-                <span class="profile-info-value" id="profileFacultyStatus"></span>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Include Faculty Profile Card Component -->
+{% include 'dashboard/components/faculty_profile_card.html' %}
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
-    function showProfile(facultyId) {
-        const profileCard = document.getElementById('facultyProfileCard');
-        const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
-        
-        if (facultyRow) {
-            // Get faculty information from data attributes
-            const firstName = facultyRow.dataset.facultyFirstName;
-            const lastName = facultyRow.dataset.facultyLastName;
-            const email = facultyRow.dataset.facultyEmail;
-            const extension = facultyRow.dataset.facultyExtension;
-            const department = facultyRow.dataset.facultyDepartment;
-            const startDate = facultyRow.dataset.facultyStartDate;
-            const status = facultyRow.dataset.facultyStatus;
-
-            // Update profile card with faculty information
-            document.getElementById('profileFacultyName').textContent = `${firstName} ${lastName}`;
-            document.getElementById('profileFacultyDepartment').textContent = department;
-            document.getElementById('profileFacultyEmail').textContent = email;
-            document.getElementById('profileFacultyExtension').textContent = extension;
-            document.getElementById('profileFacultyDeptInfo').textContent = department;
-            document.getElementById('profileFacultyStartDate').textContent = startDate;
-            
-            // Update status with appropriate styling
-            const statusElement = document.getElementById('profileFacultyStatus');
-            const isCompleted = status === 'Completed';
-            statusElement.className = 'profile-info-value ' + (isCompleted ? 'text-success' : 'text-warning');
-            statusElement.innerHTML = `<span class="status-dot ${isCompleted ? 'bg-success' : 'bg-warning'}"></span>${status}`;
-
-            // Update profile image with initials
-            const profileImage = profileCard.querySelector('.profile-image');
-            if (profileImage) {
-                profileImage.innerHTML = '';
-                const initials = `${firstName[0]}${lastName[0]}`;
-                profileImage.textContent = initials;
-                profileImage.style.backgroundColor = '#1976d2';
-                profileImage.style.color = 'white';
-                profileImage.style.display = 'flex';
-                profileImage.style.alignItems = 'center';
-                profileImage.style.justifyContent = 'center';
-                profileImage.style.fontSize = '2rem';
+    // Initialize DataTable
+    $(document).ready(function() {
+        $('#facultyDataTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            language: {
+                search: "Search faculty:"
             }
-        }
-
-        profileCard.classList.add('active');
-    }
-
-    function closeProfile() {
-        const profileCard = document.getElementById('facultyProfileCard');
-        profileCard.classList.remove('active');
-    }
-
-    document.addEventListener('click', function(event) {
-        const profileCard = document.getElementById('facultyProfileCard');
-        if (!event.target.closest('.faculty-profile-card') && 
-            !event.target.closest('.action-buttons')) {
-            profileCard.classList.remove('active');
-        }
-    });
-
-    document.getElementById('facultySearch').addEventListener('input', function(e) {
-        const searchText = e.target.value.toLowerCase();
-        const rows = document.querySelectorAll('.faculty-table tbody tr');
-        
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchText) ? '' : 'none';
         });
     });
 
-    function showTaskProgress(event, facultyId) {
-        // No need to check for action buttons since only the name is clickable now
-        
+    function showTaskProgress(event) {
+        // Get the faculty ID from the data attribute
+        const facultyId = event.currentTarget.getAttribute('data-faculty-id');
+
         const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
-        
+
         if (facultyRow) {
             // Get faculty information from data attributes
             const firstName = facultyRow.dataset.facultyFirstName;
@@ -349,4 +230,4 @@
         }
     }
 </script>
-{% endblock %} 
+{% endblock %}

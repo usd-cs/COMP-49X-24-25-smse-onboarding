@@ -1,7 +1,15 @@
 /* Sidebar Styles - Shared between Admin and New Hire dashboards */
+:root {
+    --sidebar-width: 280px;
+    --sidebar-collapsed-width: 70px;
+    --sidebar-color: #003b70;
+    --sidebar-hover-color: #33628d;
+    --topnav-height: 70px;
+}
+
 .sidebar {
-    width: 280px;
-    background-color: #0A1E3C;
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-color);
     padding: 20px;
     color: white;
     display: flex;
@@ -15,6 +23,21 @@
     overflow-y: hidden;
     overflow-x: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease, transform 0.3s ease, margin-left 0.3s ease;
+}
+
+/* Collapsed sidebar state */
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+    padding: 20px 10px;
+}
+
+/* Sidebar divider */
+.sidebar-divider {
+    border: 0;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 5px 0 10px 0;
 }
 
 .logo-container {
@@ -25,10 +48,21 @@
     margin-bottom: 10px;
 }
 
+.sidebar.collapsed .logo-container {
+    margin-bottom: 20px;
+}
+
 .logo {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 0%;
+    max-width: 200px;
+    max-height: 80px;
+    object-fit: contain;
+}
+
+.sidebar.collapsed .logo {
+    max-width: 40px;
 }
 
 .school-name {
@@ -36,6 +70,14 @@
     font-weight: 600;
     text-align: center;
     color: white;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed .school-name {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
 }
 
 /* Navigation Items */
@@ -44,6 +86,7 @@
     flex-direction: column;
     gap: 5px;
     flex: 1;
+    overflow-y: auto;
 }
 
 .nav-item {
@@ -55,21 +98,51 @@
     color: #ffffff;
     text-decoration: none;
     transition: background-color 0.2s;
+    position: relative;
+    white-space: nowrap;
 }
 
 .nav-item:hover {
-    background-color: #132f5c;
+    background-color: var(--sidebar-hover-color);
     color: #ffffff;
     text-decoration: none;
 }
 
 .nav-item.active {
-    background-color: #1a3a6d;
+    background-color: var(--sidebar-hover-color);
     color: #ffffff;
 }
 
 .nav-item i {
     font-size: 18px;
+    min-width: 24px;
+    text-align: center;
+}
+
+.nav-item span {
+    transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed .nav-item span {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+/* Tooltip for collapsed sidebar */
+.sidebar.collapsed .nav-item:hover::after {
+    content: attr(data-title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-left: 10px;
+    white-space: nowrap;
+    z-index: 1060;
 }
 
 /* Quick Links */
@@ -92,6 +165,13 @@
     font-size: 18px;
 }
 
+.sidebar.collapsed .quick-links-title span,
+.sidebar.collapsed .new-badge {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
 .new-badge {
     background-color: #FF3366;
     color: white;
@@ -99,16 +179,50 @@
     padding: 2px 6px;
     border-radius: 10px;
     margin-left: 5px;
+    transition: opacity 0.2s ease;
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
     .sidebar {
         margin-left: -280px;
-        transition: margin-left 0.3s ease;
+        transition: margin-left 0.3s ease, width 0.3s ease, transform 0.3s ease;
     }
 
-    .sidebar.toggled {
+    .sidebar.active {
+        margin-left: 0;
+        transform: translateX(0);
+    }
+
+    .sidebar.collapsed {
+        margin-left: -70px;
+    }
+
+    .sidebar.collapsed.active {
         margin-left: 0;
     }
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: var(--topnav-height);
+    left: 0;
+    width: 100%;
+    height: calc(100% - var(--topnav-height));
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1020;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Adjust main content when sidebar is collapsed */
+.main-content {
+    transition: margin-left 0.3s ease, width 0.3s ease;
 }

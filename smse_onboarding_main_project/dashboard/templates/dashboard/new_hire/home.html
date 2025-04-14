@@ -4,65 +4,51 @@
 {% block title %}New Hire Dashboard{% endblock %}
 
 {% block dashboard_css %}
+<link href="{% static 'dashboard/css/sidebar.css' %}" rel="stylesheet">
 <link href="{% static 'dashboard/css/new_hire.css' %}" rel="stylesheet">
+<link href="{% static 'dashboard/css/topnav.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+<!-- Disable sidebar.js since we're using our own implementation -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find and remove the sidebar.js script to prevent double initialization
+        const scripts = document.getElementsByTagName('script');
+        for (let i = 0; i < scripts.length; i++) {
+            if (scripts[i].src.includes('sidebar.js')) {
+                scripts[i].parentNode.removeChild(scripts[i]);
+                console.log("Removed sidebar.js to prevent double initialization");
+                break;
+            }
+        }
+    });
+</script>
+<!-- Welcome Modal Script -->
+<script src="{% static 'dashboard/js/welcome_modal.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
     <!-- Sidebar -->
-    {% include 'dashboard/new_hire/components/sidebar.html' %}
+    {% block sidebar %}
+        {% with is_admin=False %}
+            {% include 'dashboard/components/sidebar.html' %}
+        {% endwith %}
+    {% endblock %}
 
     <div class="main-content">
-        <!-- Include the new top navbar component -->
-        {% include 'dashboard/new_hire/components/top_navbar.html' %}
+        <!-- Include the shared top navbar component with is_admin=False -->
+        {% with is_admin=False %}
+        {% include 'dashboard/components/topnav.html' %}
+        {% endwith %}
 
         <!-- Dashboard Content -->
-        <div class="dashboard-content pt-4" style="padding-top: 50px !important;">
-            <!-- Welcome Modal -->
-            {% if request.session.show_welcome_banner is True %}
-            <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true" data-modal-type="welcome">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="welcomeModalLabel">
-                                <i class="bi bi-info-circle-fill me-2"></i>
-                                Welcome to SMSE Onboarding Portal!
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-4 text-center">
-                                    <img src="{% static 'dashboard/images/smse_logo.jpg' %}" alt="SMSE Logo" class="img-fluid mb-3" style="max-height: 180px; max-width: 100%; object-fit: contain;">
-                                </div>
-                                <div class="col-md-8">
-                                    <h4 class="mb-3">Hello {{ request.user.first_name }}!</h4>
-                                    <p>We're excited to have you join the School of Engineering team. This portal will guide you through all the necessary steps to complete your onboarding process.</p>
-
-                                    <div class="alert alert-info mt-3">
-                                        <h5 class="alert-heading">Getting Started</h5>
-                                        <ul class="mb-0">
-                                            <li>Complete your profile information</li>
-                                            <li>View and complete assigned tasks</li>
-                                            <li>Upload required documents</li>
-                                            <li>Track your onboarding progress</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <a href="{% url 'users:welcome_info' %}" class="btn btn-outline-primary me-auto">
-                                <i class="bi bi-info-circle me-2"></i>Learn More
-                            </a>
-                            <a href="{% url 'users:dismiss_welcome' %}" class="btn btn-primary">
-                                <i class="bi bi-check-circle me-2"></i>Got it!
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
+        <div class="dashboard-content pt-4">
+            <!-- Include Welcome Modal -->
+            {% with is_admin=False %}
+            {% include 'dashboard/components/welcome_modal.html' %}
+            {% endwith %}
 
             <div class="row g-2 h-100">
                 <!-- Left Column - Task Lists -->
@@ -92,125 +78,9 @@
 <!-- Force CSS cache refresh -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Emergency fix - Add global click event listener
-        document.body.addEventListener('click', function(e) {
-            // Find the click target
-            const target = e.target;
-            
-            // Check if close button was clicked
-            if (target.classList.contains('btn-close') && target.closest('.modal')) {
-                console.log("Close button click detected");
-                const modal = target.closest('.modal');
-                
-                // Manually close modal
-                modal.style.display = 'none';
-                modal.classList.remove('show');
-                document.body.classList.remove('modal-open');
-                document.body.style.paddingRight = '';
-                document.body.style.overflow = '';
-                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                
-                e.stopPropagation();
-                return;
-            }
-            
-            // Check if Got it! button was clicked
-            if (target.textContent.includes('Got it!') || 
-                (target.closest('a') && target.closest('a').textContent.includes('Got it!'))) {
-                console.log("'Got it!' button click detected");
-                
-                // Try to find dismiss_welcome URL
-                const btn = target.tagName === 'A' ? target : target.closest('a');
-                if (btn && btn.href && btn.href.includes('dismiss_welcome')) {
-                    // Submit dismiss request
-                    fetch(btn.href, {
-                        method: 'GET',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    }).then(() => {
-                        console.log("Welcome banner dismissed via direct click handler");
-                    });
-                    
-                    // Manually close modal
-                    const modal = btn.closest('.modal');
-                    if (modal) {
-                        modal.style.display = 'none';
-                        modal.classList.remove('show');
-                        document.body.classList.remove('modal-open');
-                        document.body.style.paddingRight = '';
-                        document.body.style.overflow = '';
-                        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                    }
-                    
-                    e.stopPropagation();
-                    return;
-                }
-            }
-        }, true); // Use capture phase to ensure we get the event before other handlers
-
         // Remove loading classes
         document.body.classList.remove('loading');
         document.querySelector('.dashboard-container').classList.remove('loading');
-
-        // Fix for welcome modal
-        const welcomeModal = document.getElementById('welcomeModal');
-        if (welcomeModal) {
-            try {
-                // Move modal to body level to avoid stacking context issues
-                if (welcomeModal.parentElement !== document.body) {
-                    document.body.appendChild(welcomeModal);
-                }
-                
-                // Ensure Bootstrap is available
-                if (typeof bootstrap !== 'undefined') {
-                    // Try standard Bootstrap modal initialization
-                    const modal = new bootstrap.Modal(welcomeModal);
-                    modal.show();
-                } else {
-                    console.error("Bootstrap is not defined - using fallback solution");
-                    // Fallback solution if Bootstrap is not available
-                    welcomeModal.style.display = 'block';
-                    welcomeModal.classList.add('show');
-                    document.body.classList.add('modal-open');
-                    
-                    // Create backdrop
-                    const backdrop = document.createElement('div');
-                    backdrop.className = 'modal-backdrop fade show';
-                    document.body.appendChild(backdrop);
-                    
-                    // Setup close buttons
-                    welcomeModal.querySelectorAll('[data-bs-dismiss="modal"]').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            welcomeModal.style.display = 'none';
-                            welcomeModal.classList.remove('show');
-                            document.body.classList.remove('modal-open');
-                            document.body.style.overflow = '';
-                            document.body.style.paddingRight = '';
-                            backdrop.remove();
-                        });
-                    });
-                    
-                    // Setup 'Got it!' button
-                    const gotItBtn = welcomeModal.querySelector('.modal-footer .btn-primary');
-                    if (gotItBtn) {
-                        gotItBtn.addEventListener('click', function() {
-                            // The link will handle the navigation/dismiss, but we still need to handle the modal UI
-                            setTimeout(() => {
-                                welcomeModal.style.display = 'none';
-                                welcomeModal.classList.remove('show');
-                                document.body.classList.remove('modal-open');
-                                document.body.style.overflow = '';
-                                document.body.style.paddingRight = '';
-                                if (backdrop) backdrop.remove();
-                            }, 100);
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error("Error initializing welcome modal:", error);
-            }
-        }
 
         var timestamp = new Date().getTime();
         var links = document.getElementsByTagName('link');
@@ -307,12 +177,12 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Initial binding of event handlers
         attachEventListeners();
-        
+
         // Sidebar functionality
         const sidebar = document.querySelector('.sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const mainContent = document.querySelector('.main-content');
-        
+
         // Create sidebar overlay if it doesn't exist
         let sidebarOverlay = document.getElementById('sidebarOverlay');
         if (!sidebarOverlay) {
@@ -321,47 +191,59 @@
             sidebarOverlay.className = 'sidebar-overlay';
             document.body.appendChild(sidebarOverlay);
         }
-        
+
         // Force layout update based on screen size
         function updateScreenSize() {
+            const navbar = document.querySelector('.navbar');
+
             // Always make sure the main content takes full width below 1200px
             if (window.innerWidth <= 1200) {
                 mainContent.style.marginLeft = '0';
                 mainContent.style.width = '100%';
                 document.documentElement.style.setProperty('--sidebar-width', '0px');
+
+                // Update navbar position
+                if (navbar) {
+                    navbar.style.left = '0';
+                    navbar.style.width = '100%';
+                }
             } else {
                 document.documentElement.style.setProperty('--sidebar-width', '280px');
                 mainContent.style.marginLeft = '280px';
                 mainContent.style.width = 'calc(100% - 280px)';
+
+                // Update navbar position
+                if (navbar) {
+                    navbar.style.left = '280px';
+                    navbar.style.width = 'calc(100% - 280px)';
+                }
             }
         }
-        
+
         // Update on load and resize
         updateScreenSize();
         window.addEventListener('resize', updateScreenSize);
-        
+
         // Toggle sidebar on menu button click
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 sidebar.classList.toggle('active');
                 sidebarOverlay.classList.toggle('active');
+
+                // Adjust navbar when sidebar is toggled on mobile
+                const navbar = document.querySelector('.navbar');
+                if (window.innerWidth <= 1200 && navbar) {
+                    if (sidebar.classList.contains('active')) {
+                        navbar.style.left = '280px';
+                        navbar.style.width = 'calc(100% - 280px)';
+                    } else {
+                        navbar.style.left = '0';
+                        navbar.style.width = '100%';
+                    }
+                }
             });
         }
-        
-        // Close sidebar when clicking on overlay
-        sidebarOverlay.addEventListener('click', function() {
-            sidebar.classList.remove('active');
-            sidebarOverlay.classList.remove('active');
-        });
-        
-        // Close sidebar on window resize if needed
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 1200) {
-                sidebar.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-            }
-        });
 
         // Function to reattach event listeners after content update
         function attachEventListeners() {
@@ -424,4 +306,19 @@
         });
     });
 </script>
+
+<!-- Check if Bootstrap Modal is available -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Bootstrap available:", typeof bootstrap !== 'undefined');
+        if (typeof bootstrap === 'undefined') {
+            console.error("Bootstrap is not loaded properly!");
+        } else {
+            console.log("Bootstrap Modal available:", typeof bootstrap.Modal !== 'undefined');
+        }
+    });
+</script>
+
+<!-- Include the reusable modal -->
+{% include 'dashboard/components/modal.html' %}
 {% endblock %}

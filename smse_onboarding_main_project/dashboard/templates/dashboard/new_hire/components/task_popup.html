@@ -1,29 +1,129 @@
-<div class="modal fade" id="taskModal{{ task.id }}" aria-labelledby="taskModalLabel" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content" style="opacity: 1 !important; pointer-events: auto !important;">
+{% load custom_filters %}
+<!-- Task Popup Modal -->
+<div class="modal fade" id="taskPopup" tabindex="-1" aria-labelledby="taskPopupLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ task.title }}</h5>
+                <h5 class="modal-title" id="taskPopupLabel">
+                    <i class="bi bi-clipboard-check me-2"></i>
+                    <span id="taskModalTitle">Task Details</span>
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Created At:</strong> {{ task.created_at }}</p>
-                <p><strong>Deadline:</strong> {{ task.deadline }}</p>
-                {% if not task.completed %}
-                    <p><strong>Days Remaining:</strong>
-                        {% if task.remaining_days >= 0 %}
-                            {{ task.remaining_days }} days left
-                        {% else %}
-                            Overdue
-                        {% endif %}
-                    </p>
-                {% else %}
-                    <p><strong>Status:</strong> Completed</p>
-                {% endif %}
-                <p><strong>Description:</strong> {{ task.description }}</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="task-info-header mb-3">
+                    <h4 id="taskTitle"></h4>
+                    <div class="badge" id="taskStatusBadge"></div>
+                </div>
+
+                <div class="task-details">
+                    <div class="task-info-grid mb-3">
+                        <div class="task-info-item">
+                            <div class="task-info-label">Due Date</div>
+                            <div class="task-info-value" id="taskDueDate"></div>
+                        </div>
+                        <div class="task-info-item">
+                            <div class="task-info-label">Time Remaining</div>
+                            <div class="task-info-value">
+                                {% if task.is_completed_by_faculty %}
+                                    Completed
+                                {% elif task.remaining_days > 0 %}
+                                    {{ task.remaining_days }} days left
+                                {% elif task.remaining_days == 0 %}
+                                    Today
+                                {% else %}
+                                    {{ task.remaining_days|absolute }} days overdue
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="task-info-item">
+                            <div class="task-info-label">Priority</div>
+                            <div class="task-info-value">
+                                {% if task.is_overdue %}
+                                    <span class="text-danger">High</span>
+                                {% elif task.is_due_soon %}
+                                    <span class="text-warning">Medium</span>
+                                {% else %}
+                                    <span class="text-success">Normal</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="task-info-item">
+                            <div class="task-info-label">Assigned By</div>
+                            <div class="task-info-value">
+                                {% if task.assigned_by %}
+                                    {{ task.assigned_by.get_full_name }}
+                                {% else %}
+                                    System
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="task-description mb-3">
+                        <h5><i class="bi bi-card-text me-2"></i>Description</h5>
+                        <div id="taskDescription"></div>
+                    </div>
+
+                    <div id="taskActions" class="mt-4 text-end">
+                        <!-- Task action buttons will be inserted here by JavaScript -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Task popup functionality
+        const taskPopup = document.getElementById('taskPopup');
+        if (taskPopup) {
+            taskPopup.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const taskId = button.getAttribute('data-task-id');
+                const taskTitle = button.getAttribute('data-task-title');
+                const taskDescription = button.getAttribute('data-task-description');
+                const taskDueDate = button.getAttribute('data-task-due-date');
+                const taskStatus = button.getAttribute('data-task-status');
+
+                // Update modal content
+                document.getElementById('taskTitle').textContent = taskTitle;
+                document.getElementById('taskDescription').innerHTML = taskDescription || 'No description available.';
+                document.getElementById('taskDueDate').textContent = taskDueDate || 'No due date set';
+
+                // Set the status badge
+                const statusBadge = document.getElementById('taskStatusBadge');
+                if (taskStatus === 'completed') {
+                    statusBadge.className = 'badge bg-success';
+                    statusBadge.textContent = 'Completed';
+                } else if (taskStatus === 'in_progress') {
+                    statusBadge.className = 'badge bg-primary';
+                    statusBadge.textContent = 'In Progress';
+                } else if (taskStatus === 'overdue') {
+                    statusBadge.className = 'badge bg-danger';
+                    statusBadge.textContent = 'Overdue';
+                } else {
+                    statusBadge.className = 'badge bg-secondary';
+                    statusBadge.textContent = 'Pending';
+                }
+
+                // Set up action buttons based on task status
+                const actionsContainer = document.getElementById('taskActions');
+                actionsContainer.innerHTML = '';
+
+                if (taskStatus !== 'completed') {
+                    const markCompletedBtn = document.createElement('button');
+                    markCompletedBtn.className = 'btn btn-success';
+                    markCompletedBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Mark as Completed';
+                    markCompletedBtn.onclick = function() {
+                        // Handle mark as completed action
+                        // AJAX request would go here
+                        console.log('Marking task as completed:', taskId);
+                    };
+                    actionsContainer.appendChild(markCompletedBtn);
+                }
+            });
+        }
+    });
+</script>

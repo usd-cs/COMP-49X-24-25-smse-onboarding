@@ -1,36 +1,41 @@
 {% load custom_filters %}
-<div class="dashboard-card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h2>Upcoming New Hire Deadlines</h2>
-        <button class="btn outline-btn" id="addNewHireBtn">
-            <span>Add New Hire</span>
-            <i class="bi bi-person-add"></i>
-        </button>
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+<!-- Simple Header -->
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Upcoming New Hire Deadlines</h1>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" id="addNewHireBtn">
+                <i class="bi bi-person-add me-2"></i>
+                <span class="d-none d-md-inline">Add New Hire</span>
+            </button>
+        </div>
     </div>
-    <div class="card-body">
-        <table class="deadlines-table">
-            <colgroup>
-                <col style="width: 25%;">
-                <col style="width: 25%;">
-                <col style="width: 20%;">
-                <col style="width: 15%;">
-                <col style="width: 15%;">
-            </colgroup>
+
+    <!-- New Hire Deadlines Table -->
+    <div class="table-responsive bg-white rounded shadow-sm p-3">
+        <table class="table" id="newHireDeadlinesTable">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Current Task</th>
-                    <th>Status</th>
-                    <th>Due Date</th>
-                    <th>Actions</th>
+                    <th style="width: 20%">Name</th>
+                    <th style="width: 30%">Current Task</th>
+                    <th style="width: 20%">Status</th>
+                    <th style="width: 15%">Due Date</th>
+                    <th style="width: 15%">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for faculty in faculty_tasks %}
                 <tr>
-                    <td>{{ faculty.name }}</td>
-                    
-                    <td class="task-title table-hover" data-bs-toggle="modal" data-bs-target="#taskModal{{ faculty.current_task.id }}">
+                    <td class="faculty-name" data-bs-toggle="modal" data-bs-target="#profileModal{{ faculty.id|default:'Default' }}">
+                        <span class="tt" data-bs-placement="bottom" data-bs-title="View Faculty Profile">
+                            {{ faculty.name }}
+                        </span>
+                    </td>
+
+                    <td class="task-title" data-bs-toggle="modal" data-bs-target="#taskModal{{ faculty.current_task.id }}">
                         <span class="tt task-title-text" data-bs-placement="bottom" data-bs-title="See Task Details">
                             {{ faculty.current_task_title }}
                         </span>
@@ -87,28 +92,31 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <td>
-                        <div class="progress-container">
+                        <div class="d-flex align-items-center">
                             {% if faculty.completion_percentage == 100 or faculty.name == 'Nick Zhou' %}
-                                <i class="bi bi-check-circle-fill task-completed"></i>
-                                <span class="progress-text">100%</span>
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>100%</span>
                             {% else %}
-                                <div class="line-progress">
-                                    <div class="progress-bar" style="width: {{ faculty.completion_percentage }}%;">
+                                <div class="progress me-2" style="width: 50px; height: 6px;">
+                                    <div class="progress-bar faculty-progress-bar" role="progressbar"
+                                         aria-valuenow="{{ faculty.completion_percentage }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
                                     </div>
                                 </div>
-                                <span class="progress-text">{{ faculty.completion_percentage }}%</span>
+                                <span>{{ faculty.completion_percentage }}%</span>
                             {% endif %}
                         </div>
                     </td>
-                    <td class="{{ faculty.status_class }}">
+                    <td>
                         {% if faculty.name == 'Nick Zhou' %}
-                            <span class="badge bg-success rounded-pill fw-bold">Completed</span>
+                            <span class="badge rounded-pill bg-success">Completed</span>
                         {% elif faculty.remaining_days < 0 %}
-                            <span class="badge bg-danger rounded-pill">{{ faculty.remaining_days|absolute }} day overdue!</span>
+                            <span class="badge rounded-pill bg-danger">{{ faculty.remaining_days|absolute }} day overdue</span>
                         {% else %}
-                            <span class="badge bg-info rounded-pill">{{ faculty.remaining_days }} days left!</span>
+                            <span class="badge rounded-pill bg-info">{{ faculty.remaining_days }} days left</span>
                         {% endif %}
                     </td>
                     <td>
@@ -129,3 +137,38 @@
         </table>
     </div>
 </div>
+
+
+<!-- DataTables script -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    // Initialize DataTable when document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set progress bar widths dynamically
+        document.querySelectorAll('.faculty-progress-bar').forEach(function(bar) {
+            const percentage = bar.getAttribute('aria-valuenow');
+            bar.style.width = percentage + '%';
+        });
+
+        // Check if jQuery is loaded
+        if (typeof jQuery !== 'undefined') {
+            if ($.fn.DataTable.isDataTable('#newHireDeadlinesTable')) {
+                $('#newHireDeadlinesTable').DataTable().destroy();
+            }
+
+            $('#newHireDeadlinesTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50],
+                language: {
+                    search: "Search new hires:"
+                },
+                columnDefs: [
+                    { orderable: false, targets: 4 } // Disable sorting on actions column
+                ]
+            });
+        }
+    });
+</script>

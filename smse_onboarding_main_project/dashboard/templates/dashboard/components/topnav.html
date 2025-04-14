@@ -1,1 +1,94 @@
-<!--make a shared topnav component for the new hire and admin dashboard -->
+{% load static %}
+
+<!-- Top Navigation Bar -->
+<nav class="navbar navbar-expand navbar-light bg-white shadow-sm">
+    <div class="container-fluid px-3">
+        <!-- Sidebar toggle button -->
+        <button class="sidebar-toggle border-0 bg-transparent mx-2" type="button" id="sidebarToggle">
+            <span class="tt" data-bs-placement="bottom" data-bs-title="Toggle Sidebar">
+                <i class="bi bi-list fs-4" style="color: #0074c8; font-weight: bold;"></i>
+            </span>
+        </button>
+
+        <!-- Title - Conditional based on dashboard type -->
+        <div class="navbar-brand-text">
+            <span class="fw-semibold">
+                {% if is_admin %}
+                    SMSE ADMIN DASHBOARD
+                {% else %}
+                    SMSE ONBOARDING PORTAL
+                {% endif %}
+            </span>
+        </div>
+
+        <!-- Right-aligned items -->
+        <div class="navbar-nav ms-auto align-items-center d-flex">
+            <!-- Help button - Conditional URL based on dashboard type -->
+            <div class="mx-2">
+                <a href="{% if is_admin %}{% url 'users:admin_help_guide' %}{% else %}{% url 'users:welcome_info' %}{% endif %}" class="nav-link p-2">
+                    <span class="tt" data-bs-placement="bottom" data-bs-title="Help & Information">
+                        <i class="bi bi-question-circle-fill fs-4" style="color: #0074c8; font-weight: bold;"></i>
+                    </span>
+                </a>
+            </div>
+
+            <!-- Notification bell -->
+            <div class="mx-2 position-relative">
+                <a href="#" class="nav-link p-2">
+                    <span class="tt" data-bs-placement="bottom" data-bs-title="Notifications">
+                        <i class="bi bi-bell fs-4" style="color: #0074c8; font-weight: bold;"></i>
+                        <span class="position-absolute top-50 start-80 translate-middle badge rounded-pill bg-danger" style="margin-top: -3px;">
+                            5
+                        </span>
+                    </span>
+                </a>
+            </div>
+
+            <!-- User profile dropdown -->
+            <div class="mx-2 position-relative">
+                <div class="dropdown">
+                    <button class="btn btn-link dropdown-toggle text-decoration-none nav-link p-2"
+                            type="button"
+                            id="userDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <!-- Profile Icon -->
+                        {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}"
+                                alt="Profile"
+                                class="me-2 img-profile">
+                        {% else %}
+                            <i class="bi bi-person-fill fs-4" style="color: #0074c8; font-weight: bold;"></i>
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <div class="d-flex flex-column align-items-start px-3 py-2">
+                            <span class="fw-medium user-name">{{ request.user.get_full_name }}</span>
+                            <small class="text-secondary user-role">{{ request.user.groups.first.name|default:"User" }}</small>
+                        </div>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#reusableModal">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-gear me-2"></i>Settings
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </a>
+                            <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+                                {% csrf_token %}
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
