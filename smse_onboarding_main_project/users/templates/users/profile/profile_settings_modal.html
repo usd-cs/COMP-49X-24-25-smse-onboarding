@@ -23,7 +23,7 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            <label for="profile_picture" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2 cursor-pointer">
+                            <label for="profile_picture" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2 cursor-pointer camera-icon">
                                 <i class="bi bi-camera-fill"></i>
                                 <input type="file" id="profile_picture" name="profile_picture" class="d-none" accept="image/*">
                             </label>
@@ -92,7 +92,7 @@
 
     .profile-upload-preview {
         border-radius: 50%;
-        overflow: hidden;
+        overflow: visible;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
@@ -102,6 +102,16 @@
 
     .object-fit-cover {
         object-fit: cover;
+    }
+
+    .camera-icon {
+        z-index: 10;
+        transform: translate(10%, 10%);
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
 
