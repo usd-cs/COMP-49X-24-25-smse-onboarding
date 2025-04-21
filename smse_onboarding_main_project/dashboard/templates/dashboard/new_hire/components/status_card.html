@@ -11,7 +11,7 @@
                 </span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileSettingsModal">
                     <i class="bi bi-person me-2"></i>Edit Profile
                 </a></li>
                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#documentModal">
@@ -86,7 +86,7 @@
 {% include 'documents/document_modal.html' %}
 
 <!-- Profile Modal -->
-{% include 'dashboard/new_hire/components/profile_modal.html' %}
+{% include 'users/profile/profile_settings_modal.html' %}
 
 <style>
 .welcome-text {
@@ -102,7 +102,7 @@
 }
 
 .prof-email {
-    font-weight: 2rem
+    font-weight: 2rem;
     font-size: 1.2rem;
 }
 

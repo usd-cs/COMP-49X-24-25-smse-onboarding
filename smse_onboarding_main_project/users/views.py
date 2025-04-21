@@ -132,3 +132,50 @@ def welcome_info(request):
 def admin_help_guide(request):
     """Display the admin help guide page"""
     return render(request, 'users/admin_help_guide.html')
+
+@login_required
+def update_profile(request):
+    """Update user profile information"""
+    if request.method == 'POST':
+        try:
+            # Get the faculty object
+            faculty = Faculty.objects.get(user=request.user)
+
+            # Update username if provided
+            if 'username' in request.POST and request.POST['username'].strip():
+                request.user.username = request.POST['username'].strip()
+                request.user.save()
+
+            # Update job role if provided
+            if 'job_role' in request.POST and request.POST['job_role'].strip():
+                faculty.job_role = request.POST['job_role'].strip()
+
+            # Update office if provided
+            if 'office' in request.POST and request.POST['office'].strip():
+                faculty.office_room = request.POST['office'].strip()
+
+            # Update bio if provided
+            if 'bio' in request.POST and request.POST['bio'].strip():
+                faculty.bio = request.POST['bio'].strip()
+
+            # Update profile picture if provided
+            if 'profile_picture' in request.FILES:
+                request.user.profile_image = request.FILES['profile_picture']
+                request.user.save()
+
+            # Save faculty changes
+            faculty.save()
+
+            messages.success(request, 'Profile updated successfully!')
+
+        except Faculty.DoesNotExist:
+            messages.error(request, 'Faculty profile not found.')
+        except Exception as e:
+            messages.error(request, f'Error updating profile: {str(e)}')
+
+    # Redirect back to referring page
+    referer = request.META.get('HTTP_REFERER', None)
+    if referer:
+        return redirect(referer)
+    else:
+        return redirect('dashboard:new_hire_home')
