@@ -18,5 +18,7 @@ urlpatterns = [
     path('complete-task/<int:task_id>/', views.complete_task, name='complete_task'),
     path('continue-task/<int:task_id>/', views.continue_task, name='continue_task'),
     path('api/faculty/<int:faculty_id>/tasks/', views.faculty_tasks, name='faculty_tasks'),
+    path('add-faculty/', views.add_faculty, name='add_faculty'),
+    path('import-faculty-csv/', views.import_faculty_csv, name='import_faculty_csv'),
 ]
 

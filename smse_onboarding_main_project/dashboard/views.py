@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from tasks.models import Task, TaskProgress
-from users.models import Faculty
+from users.models import Faculty, User
 from documents.models import FacultyDocument
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from datetime import datetime
 import logging
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -390,3 +391,118 @@ def faculty_tasks(request, faculty_id):
         return JsonResponse({'error': 'Faculty not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def add_faculty(request):
+    """Handle adding a new faculty member"""
+    if request.method == 'POST':
+        try:
+            # Create a new User instance
+            email = f"{request.POST['email']}@sandiego.edu"
+            username = request.POST['email']  # Using email as username
+            
+            # Create user with a random password that will need to be changed
+            temp_password = str(uuid.uuid4())
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=temp_password,
+                first_name=request.POST['first_name'],
+                last_name=request.POST['last_name']
+            )
+
+            # Create the faculty profile
+            faculty = Faculty.objects.create(
+                user=user,
+                first_name=request.POST['first_name'],
+                last_name=request.POST['last_name'],
+                job_role=request.POST['job_role'],
+                engineering_dept=request.POST['engineering_dept'],
+                email=email,
+                phone=request.POST['phone'].replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
+                office_room=request.POST['office_room'],
+                hire_date=timezone.now()
+            )
+
+            # Create default tasks for the new faculty
+            from tasks.models import Task
+            default_tasks = Task.objects.all()
+            for task in default_tasks:
+                task.assigned_to.add(faculty)
+
+            messages.success(request, f'Successfully added {faculty.first_name} {faculty.last_name}. Their temporary password is: {temp_password}')
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            messages.error(request, f'Error adding faculty: {str(e)}')
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+@login_required
+@user_passes_test(is_admin)
+def import_faculty_csv(request):
+    """Handle importing faculty members from CSV"""
+    if request.method == 'POST' and request.FILES.get('csv_file'):
+        try:
+            import csv
+            from io import TextIOWrapper
+            
+            csv_file = TextIOWrapper(request.FILES['csv_file'].file, encoding='utf-8')
+            reader = csv.DictReader(csv_file)
+            
+            success_count = 0
+            error_messages = []
+            
+            for row in reader:
+                try:
+                    # Create user
+                    email = f"{row['email']}@sandiego.edu"
+                    username = row['email']
+                    temp_password = str(uuid.uuid4())
+                    
+                    user = User.objects.create_user(
+                        username=username,
+                        email=email,
+                        password=temp_password,
+                        first_name=row['first_name'],
+                        last_name=row['last_name']
+                    )
+                    
+                    # Create faculty profile
+                    faculty = Faculty.objects.create(
+                        user=user,
+                        first_name=row['first_name'],
+                        last_name=row['last_name'],
+                        job_role=row['job_role'],
+                        engineering_dept=row['engineering_dept'],
+                        email=email,
+                        phone=row['phone'].replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
+                        office_room=row['office_room'],
+                        hire_date=timezone.now()
+                    )
+                    
+                    # Add default tasks
+                    from tasks.models import Task
+                    default_tasks = Task.objects.all()
+                    for task in default_tasks:
+                        task.assigned_to.add(faculty)
+                    
+                    success_count += 1
+                    messages.success(request, f'Added {faculty.first_name} {faculty.last_name}. Temporary password: {temp_password}')
+                except Exception as e:
+                    error_messages.append(f"Error adding {row.get('email', 'unknown')}: {str(e)}")
+            
+            if error_messages:
+                messages.warning(request, f'Imported {success_count} faculty members with {len(error_messages)} errors.')
+                for error in error_messages:
+                    messages.error(request, error)
+            else:
+                messages.success(request, f'Successfully imported {success_count} faculty members.')
+            
+            return JsonResponse({'status': 'success', 'imported': success_count})
+        except Exception as e:
+            messages.error(request, f'Error processing CSV file: {str(e)}')
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)

@@ -1,0 +1,13 @@
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Set viewport scale based on OS
+        function setViewportScale() {
+            var isMac = /Mac|iPhone|iPad|iPod/i.test(navigator.platform);
+            var scale = isMac ? 0.75 : 0.8;
+            var viewport = document.querySelector('meta[name="viewport"]');
+            viewport.setAttribute('content', 'width=device-width, initial-scale=' + scale);
+        }
+        setViewportScale();
+    </script>
+    <title>Onboarding Portal | {% block title %}Home{% endblock %}</title> 

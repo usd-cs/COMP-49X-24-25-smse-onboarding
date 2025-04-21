@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">Upcoming New Hire Deadlines</h1>
         <div class="d-flex gap-2">
-            <button class="btn btn-primary" id="addNewHireBtn">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewHireModal">
                 <i class="bi bi-person-add me-2"></i>
                 <span class="d-none d-md-inline">Add New Hire</span>
             </button>
@@ -138,6 +138,8 @@
     </div>
 </div>
 
+<!-- Include the modal component -->
+{% include 'dashboard/admin/components/add_new_hire_modal.html' %}
 
 <!-- DataTables script -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>

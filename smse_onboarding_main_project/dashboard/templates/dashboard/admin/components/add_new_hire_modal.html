@@ -1,0 +1,183 @@
+{% load static %}
+
+<!-- Add New Hire Modal -->
+<div class="modal fade" id="addNewHireModal" tabindex="-1" aria-labelledby="addNewHireModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNewHireModalLabel">Add Faculty</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs mb-3" id="addFacultyTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="manually-tab" data-bs-toggle="tab" data-bs-target="#manually" type="button" role="tab" aria-controls="manually" aria-selected="true">Manually</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="import-csv-tab" data-bs-toggle="tab" data-bs-target="#import-csv" type="button" role="tab" aria-controls="import-csv" aria-selected="false">Import CSV</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="addFacultyTabContent">
+                    <!-- Manual Entry Tab -->
+                    <div class="tab-pane fade show active" id="manually" role="tabpanel" aria-labelledby="manually-tab">
+                        <form id="addFacultyForm" method="POST" action="{% url 'dashboard:add_faculty' %}" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="first_name" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="last_name" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="job_role" class="form-label">Job Role</label>
+                                <input type="text" class="form-control" id="job_role" name="job_role" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="engineering_dept" class="form-label">Department</label>
+                                <select class="form-select" id="engineering_dept" name="engineering_dept" required>
+                                    <option value="">Select Department...</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Electrical Engineering">Electrical Engineering</option>
+                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                    <option value="Industrial Systems Engineering">Industrial Systems Engineering</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email address</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="email" name="email" required>
+                                    <span class="input-group-text">@sandiego.edu</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="office_room" class="form-label">Office Room</label>
+                                    <input type="text" class="form-control" id="office_room" name="office_room" required>
+                                </div>
+                            </div>
+                            <input type="hidden" name="hire_date" id="hire_date" value="{{ current_date|date:'Y-m-d' }}">
+                        </form>
+                    </div>
+
+                    <!-- Import CSV Tab -->
+                    <div class="tab-pane fade" id="import-csv" role="tabpanel" aria-labelledby="import-csv-tab">
+                        <form id="csvUploadForm" method="POST" action="{% url 'dashboard:import_faculty_csv' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="text-center py-4">
+                                <i class="bi bi-cloud-upload fs-1 text-primary"></i>
+                                <h5 class="mt-3">Drag and drop your CSV file here</h5>
+                                <p class="text-muted">or</p>
+                                <label class="btn btn-outline-primary" for="csvFile">
+                                    Browse Files
+                                    <input type="file" id="csvFile" name="csv_file" accept=".csv" class="d-none">
+                                </label>
+                                <p class="mt-3 text-muted small">Supported format: CSV</p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link text-decoration-none" id="addAnother">Add another</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="addFacultyBtn">Add Faculty</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add New Hire Modal Scripts -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('addFacultyForm');
+    const csvForm = document.getElementById('csvUploadForm');
+    
+    // Form validation
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+
+    // Phone number formatting
+    const phoneInput = document.getElementById('phone');
+    phoneInput.addEventListener('input', function(e) {
+        let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+        e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+    });
+
+    // CSV file handling
+    const csvFile = document.getElementById('csvFile');
+    csvFile.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            csvForm.submit();
+        }
+    });
+
+    // Add Faculty button click handler
+    document.getElementById('addFacultyBtn').addEventListener('click', function() {
+        const activeTab = document.querySelector('.tab-pane.active');
+        if (activeTab.id === 'manually') {
+            if (form.checkValidity()) {
+                form.submit();
+            }
+            form.classList.add('was-validated');
+        } else if (activeTab.id === 'import-csv') {
+            const file = csvFile.files[0];
+            if (file) {
+                csvForm.submit();
+            } else {
+                alert('Please select a CSV file first');
+            }
+        }
+    });
+
+    // Reset form when modal is hidden
+    const modal = document.getElementById('addNewHireModal');
+    modal.addEventListener('hidden.bs.modal', function () {
+        form.reset();
+        form.classList.remove('was-validated');
+        csvForm.reset();
+    });
+});
+</script>
+
+<!-- Add New Hire Modal Styles -->
+<style>
+#addNewHireModal .nav-tabs .nav-link {
+    color: #6c757d;
+}
+
+#addNewHireModal .nav-tabs .nav-link.active {
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+#import-csv {
+    min-height: 250px;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+#addAnother {
+    margin-right: auto;
+    color: #6c757d;
+}
+
+#addAnother:hover {
+    color: #0d6efd;
+}
+</style> 
