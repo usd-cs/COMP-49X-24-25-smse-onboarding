@@ -6,6 +6,7 @@ services:
       - "8000:8000"
     volumes:
       - .:/usr/local/app
+      - media_data:/usr/local/app/media:rw
     depends_on:
       - db
     environment:
@@ -17,7 +18,10 @@ services:
       DJANGO_SUPERUSER_EMAIL: admin@gmail.com
       DJANGO_SUPERUSER_PASSWORD: password
     command: >
-      sh -c "until nc -z db 5432; do echo 'Waiting for PostgreSQL...'; sleep 2; done &&
+      bash -c "
+             mkdir -p /usr/local/app/media/profile_images &&
+             chmod -R 777 /usr/local/app/media &&
+             until nc -z db 5432; do echo 'Waiting for PostgreSQL...'; sleep 2; done &&
              python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py loaddata fixtures/test_data.json || true &&
@@ -37,3 +41,4 @@ services:
 
 volumes:
   postgres_data:
+  media_data:

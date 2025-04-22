@@ -9,7 +9,15 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
-RUN useradd app
+# Create media directories with proper permissions
+RUN mkdir -p media/profile_images && \
+    chmod -R 777 media
+
+# Create user but don't switch to it yet
+RUN useradd -m app && \
+    chown -R app:app /usr/local/app
+
+# Switch to app user only for running the application
 USER app
 
 EXPOSE 8000

@@ -15,8 +15,8 @@
                     <div class="text-center mb-4">
                         <div class="profile-upload-preview mx-auto position-relative" style="width: 120px; height: 120px;">
                             <div class="rounded-circle overflow-hidden h-100 w-100">
-                                {% if user.profile_image %}
-                                    <img src="{{ user.profile_image.url }}" alt="Profile" class="img-fluid w-100 h-100 object-fit-cover">
+                                {% if faculty.profile_image %}
+                                    <img src="{{ faculty.profile_image.url }}" alt="Profile" class="img-fluid w-100 h-100 object-fit-cover">
                                 {% else %}
                                     <div class="bg-light d-flex align-items-center justify-content-center h-100">
                                         <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>

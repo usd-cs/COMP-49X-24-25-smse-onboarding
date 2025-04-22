@@ -44,10 +44,12 @@
                             </div>
 
                             <!-- Profile Image (overlays the icon if available) -->
-                            <img src="{% static 'dashboard/images/profile.png' %}"
+                            {% if faculty.profile_image %}
+                            <img src="{{ faculty.profile_image.url }}"
                                  alt="Profile"
                                  class="profile-img"
                                  onerror="this.style.display='none'">
+                            {% endif %}
                         </div>
                     </div>
                     <!-- Name moved below profile photo -->
