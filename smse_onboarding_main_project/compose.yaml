@@ -16,7 +16,7 @@ services:
       DJANGO_SUPERUSER_EMAIL: admin@gmail.com
       DJANGO_SUPERUSER_PASSWORD: password
     command: >
-      bash -c "
+      sh -c "
              until nc -z db 5432; do echo 'Waiting for PostgreSQL...'; sleep 2; done &&
              python manage.py makemigrations &&
              python manage.py migrate &&
@@ -27,9 +27,11 @@ services:
   proxy:
     image: nginx:latest
     ports:
-      - "80:80"
+      - "443:8080"
+      - '80:8000'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt
     restart: always
     depends_on:
       - web
