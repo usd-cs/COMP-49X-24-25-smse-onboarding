@@ -1,0 +1,29 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}SMSE Administration{% endblock %}
+
+{% block branding %}
+<div style="display: flex; align-items: center;">
+    <img src="{% static 'dashboard/images/smse_logo_transparent.png' %}" alt="SMSE Logo" style="height: 50px; margin-right: 10px;">
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">SMSE Administration</a></h1>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/admin_custom.css' %}">
+<style>
+    /* Additional styles for logo and branding */
+    #header {
+        height: auto;
+        padding: 10px 40px;
+    }
+    #branding {
+        display: flex;
+        align-items: center;
+    }
+    #site-name {
+        margin: 0;
+    }
+</style>
+{% endblock %}
