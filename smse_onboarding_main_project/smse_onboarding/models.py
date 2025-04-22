@@ -10,7 +10,7 @@ class Faculty(models.Model):
     Args:
         models.Model: Inherits from the models.Model class.
     """
-    
+
     faculty_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -24,6 +24,7 @@ class Faculty(models.Model):
     hire_date = models.DateTimeField()
     mailing_list_status = models.BooleanField(default=False)
     bio = models.TextField(blank=True)
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -38,7 +39,7 @@ class Admin(Faculty):
     Args:
         models.Model: Inherits from the Faculty class.
     """
-    
+
     permissions = models.CharField(max_length=255)
 
 # Task Table
