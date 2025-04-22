@@ -398,31 +398,50 @@ def add_faculty(request):
     """Handle adding a new faculty member"""
     if request.method == 'POST':
         try:
-            # Create a new User instance
-            email = f"{request.POST['email']}@sandiego.edu"
-            username = request.POST['email']  # Using email as username
+            # Get form data
+            email = request.POST['email']
+            username = request.POST['username']
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            is_admin = request.POST.get('user_type') == 'admin'
             
-            # Create user with a random password that will need to be changed
+            # Create user with a random password if password authentication is enabled
             temp_password = str(uuid.uuid4())
             user = User.objects.create_user(
                 username=username,
                 email=email,
-                password=temp_password,
-                first_name=request.POST['first_name'],
-                last_name=request.POST['last_name']
+                password=temp_password if request.POST.get('password_enabled', 'on') == 'on' else None,
+                first_name=first_name,
+                last_name=last_name
+            )
+
+            # Set user permissions based on user type
+            user.is_active = True
+            user.is_staff = is_admin
+            user.is_superuser = is_admin
+            user.save()
+
+            # Parse datetime fields
+            hire_datetime = timezone.make_aware(
+                datetime.combine(
+                    datetime.strptime(request.POST['hire_date'], '%Y-%m-%d').date(),
+                    datetime.strptime(request.POST['hire_time'], '%H:%M').time()
+                )
             )
 
             # Create the faculty profile
             faculty = Faculty.objects.create(
                 user=user,
-                first_name=request.POST['first_name'],
-                last_name=request.POST['last_name'],
+                first_name=first_name,
+                last_name=last_name,
                 job_role=request.POST['job_role'],
                 engineering_dept=request.POST['engineering_dept'],
                 email=email,
                 phone=request.POST['phone'].replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
+                zoom_phone=request.POST.get('zoom_phone', '').replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
                 office_room=request.POST['office_room'],
-                hire_date=timezone.now()
+                hire_date=hire_datetime,
+                bio=request.POST.get('bio', '')
             )
 
             # Create default tasks for the new faculty
@@ -431,7 +450,11 @@ def add_faculty(request):
             for task in default_tasks:
                 task.assigned_to.add(faculty)
 
-            messages.success(request, f'Successfully added {faculty.first_name} {faculty.last_name}. Their temporary password is: {temp_password}')
+            messages.success(
+                request, 
+                f'Successfully added {faculty.first_name} {faculty.last_name}. ' + 
+                (f'Their temporary password is: {temp_password}' if request.POST.get('password_enabled', 'on') == 'on' else 'No password was set (authentication disabled).')
+            )
             return JsonResponse({'status': 'success'})
         except Exception as e:
             messages.error(request, f'Error adding faculty: {str(e)}')
@@ -458,7 +481,7 @@ def import_faculty_csv(request):
                 try:
                     # Create user
                     email = f"{row['email']}@sandiego.edu"
-                    username = row['email']
+                    username = row['username']
                     temp_password = str(uuid.uuid4())
                     
                     user = User.objects.create_user(
@@ -468,6 +491,12 @@ def import_faculty_csv(request):
                         first_name=row['first_name'],
                         last_name=row['last_name']
                     )
+
+                    # Parse hire date
+                    try:
+                        hire_date = timezone.make_aware(datetime.strptime(row['hire_date'], '%Y-%m-%d %H:%M'))
+                    except ValueError:
+                        hire_date = timezone.now()
                     
                     # Create faculty profile
                     faculty = Faculty.objects.create(
@@ -478,8 +507,13 @@ def import_faculty_csv(request):
                         engineering_dept=row['engineering_dept'],
                         email=email,
                         phone=row['phone'].replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
+                        zoom_phone=row.get('zoom_phone', '').replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
                         office_room=row['office_room'],
-                        hire_date=timezone.now()
+                        hire_date=hire_date,
+                        mailing_list_status=row.get('mailing_list_status', '').lower() == 'true',
+                        bio=row.get('bio', ''),
+                        completed_onboarding=row.get('completed_onboarding', '').lower() == 'true',
+                        last_welcome_shown=timezone.now() if row.get('completed_onboarding', '').lower() == 'true' else None
                     )
                     
                     # Add default tasks
