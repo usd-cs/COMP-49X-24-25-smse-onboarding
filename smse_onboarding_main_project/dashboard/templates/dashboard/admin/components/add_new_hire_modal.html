@@ -18,42 +18,51 @@
                             <div class="mb-3">
                                 <label class="form-label">First Name</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name" required>
+                                <div class="invalid-feedback">Please enter a first name.</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Last Name</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name" required>
+                                <div class="invalid-feedback">Please enter a last name.</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
+                                <div class="invalid-feedback">Please enter a valid email address.</div>
                                 <div class="form-text">Username will be generated from email address</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required pattern="^[\w.@+-]+$" readonly>
+                                <div class="invalid-feedback">Username can only contain letters, digits, and @/./+/-/_</div>
                                 <div class="form-text">Auto-generated from email. Only letters, digits, and @/./+/-/_ allowed.</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" required>
+                                <input type="tel" class="form-control" id="phone" name="phone" required pattern="[0-9()-\s]{10,}">
+                                <div class="invalid-feedback">Please enter a valid phone number.</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Department</label>
                                 <input type="text" class="form-control" id="department" name="department" required>
+                                <div class="invalid-feedback">Please enter a department.</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Job Role</label>
                                 <input type="text" class="form-control" id="job_role" name="job_role" required>
+                                <div class="invalid-feedback">Please enter a job role.</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Office Room</label>
                                 <input type="text" class="form-control" id="office_room" name="office_room" required>
+                                <div class="invalid-feedback">Please enter an office room.</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Hire Date</label>
                                 <input type="date" class="form-control" id="hire_date" name="hire_date" required>
+                                <div class="invalid-feedback">Please select a hire date.</div>
                             </div>
                         </div>
                     </div>
@@ -250,12 +259,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!form.checkValidity()) {
             console.log('Form validation failed');
-            form.reportValidity();
+            form.classList.add('was-validated');
             return;
         }
 
         const formData = new FormData(form);
-        console.log('Form data prepared:', Object.fromEntries(formData));
+        const formDataObj = {};
+        formData.forEach((value, key) => {
+            formDataObj[key] = value;
+        });
+        console.log('Form data prepared:', formDataObj);
 
         // Validate username format
         const username = usernameInput.value;
@@ -278,10 +291,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Server response:', data);
-            if (data.status === 'success') {
+        .then(response => {
+            console.log('Server response status:', response.status);
+            return response.json().then(data => ({
+                ok: response.ok,
+                status: response.status,
+                data: data
+            }));
+        })
+        .then(({ok, status, data}) => {
+            console.log('Server response:', {ok, status, data});
+            if (ok && data.status === 'success') {
                 console.log('User created successfully');
                 // Show success toast
                 successToast.show();
@@ -315,17 +335,22 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 console.log('Error from server:', data);
                 // Show error in toast
-                document.getElementById('errorToastBody').textContent = data.message || 'An error occurred while creating the user.';
+                let errorMessage = data.message || 'An error occurred while creating the user.';
                 if (data.errors) {
                     if (data.errors.username) {
-                        document.getElementById('errorToastBody').textContent = `Username error: ${data.errors.username.join(', ')}`;
+                        errorMessage = `Username error: ${data.errors.username.join(', ')}`;
+                    } else if (data.errors.email) {
+                        errorMessage = `Email error: ${data.errors.email.join(', ')}`;
+                    } else if (data.errors.database) {
+                        errorMessage = data.errors.database.join(', ');
                     } else {
                         const details = Object.entries(data.errors)
                             .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
                             .join('\n');
-                        document.getElementById('errorToastBody').textContent += `\n${details}`;
+                        errorMessage += `\n${details}`;
                     }
                 }
+                document.getElementById('errorToastBody').textContent = errorMessage;
                 errorToast.show();
             }
         })
@@ -339,6 +364,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Re-enable submit button
             submitBtn.disabled = false;
             submitBtn.innerHTML = 'Create User';
+            // Remove validation styling
+            form.classList.remove('was-validated');
         });
     });
 
@@ -346,6 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
     addNewHireModal.addEventListener('hidden.bs.modal', function () {
         console.log('Resetting form');
         form.reset();
+        form.classList.remove('was-validated');
         hideError();
         // Reset submit button
         submitBtn.disabled = false;
