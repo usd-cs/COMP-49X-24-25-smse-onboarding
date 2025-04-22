@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     environment:
-      DJANGO_SETTINGS_MODULE: smse_onboarding.settings
+      DJANGO_SETTINGS_MODULE: smse_onboarding.settings_dev
       DATABASE_URL: postgres://postgres:password@db:5432/smse-db
       DB_HOST: db
       DOCKERIZED: "1"
