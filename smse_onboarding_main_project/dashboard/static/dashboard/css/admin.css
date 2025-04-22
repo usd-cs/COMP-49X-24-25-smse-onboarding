@@ -33,14 +33,6 @@ html {
     background-color: #eaeaea; /* Match new_hire.css */
 }
 
-/* Dashboard Container - match new_hire.css */
-.dashboard-container {
-    display: flex;
-    width: 100%;
-    min-height: 100vh;
-    height: 100%;
-    overflow: hidden; /* Hide overflow on container */
-}
 
 /* Main Content - match new_hire.css */
 .main-content {
@@ -55,6 +47,15 @@ html {
     position: relative;
     z-index: 900;
     margin-top: var(--topnav-height); /* Add margin for topnav */
+}
+
+/* Dashboard Container - match new_hire.css */
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    overflow: hidden; /* Hide overflow on container */
 }
 
 /* Dashboard content - match new_hire.css */
@@ -568,4 +569,176 @@ input:checked + .toggle-slider:before {
 /* Control progress bar container width */
 #newHireDeadlinesTable .progress {
     flex-grow: 0; /* stops it from expanding to fill available space */
+}
+
+/* Profile Image styles */
+.img-profile {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    vertical-align: middle !important;
+}
+
+.profile-icon-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+/* Modal Fixes - Moved from home.html */
+.modal {
+    z-index: 10055 !important;
+}
+
+.modal-backdrop {
+    z-index: 10050 !important;
+}
+
+.modal-dialog {
+    pointer-events: auto !important;
+}
+
+.modal-content {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+}
+
+/* Emergency style fix */
+#welcomeModal .btn-close,
+#welcomeModal .modal-footer .btn,
+#reusableModal .btn-close,
+#reusableModal .modal-footer .btn {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 19999 !important;
+}
+
+#welcomeModal .modal-content,
+#reusableModal .modal-content {
+    pointer-events: auto !important;
+}
+
+/* Fix for the topnav profile image */
+.img-profile, .avatar {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    vertical-align: middle !important;
+    max-width: 32px !important;
+    max-height: 32px !important;
+}
+
+.profile-icon-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    overflow: hidden !important;
+}
+
+/* More specific selectors for navbar profile images */
+.navbar .dropdown .profile-icon-container,
+.navbar .nav-item .profile-icon-container,
+.navbar .dropdown-toggle .profile-icon-container {
+    width: 32px !important;
+    height: 32px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+}
+
+.navbar .dropdown .img-profile,
+.navbar .nav-item .img-profile,
+.navbar .dropdown-toggle .img-profile {
+    width: 32px !important;
+    height: 32px !important;
+    max-width: 32px !important;
+    max-height: 32px !important;
+    object-fit: cover !important;
+}
+
+/* Force the navbar user dropdown profile image size */
+#userDropdown .profile-icon-container {
+    width: 32px !important;
+    height: 32px !important;
+}
+
+#userDropdown .img-profile {
+    width: 32px !important;
+    height: 32px !important;
+}
+
+/* Ensure the person icon is properly sized too */
+.navbar .profile-icon-container i.bi-person-fill {
+    font-size: 24px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Extra specificity for modals vs. navbar */
+.navbar .profile-icon-container,
+.navbar .img-profile,
+.navbar i.bi-person-fill.fs-4 {
+    max-width: 32px !important;
+    max-height: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+/* Styles for larger profile icons in modals */
+.profile-icon-large {
+    font-size: 4rem !important;
+}
+
+/* Additional cursor styles from removed inline CSS */
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+/* Reusable Modal Styles - Moved from inline styles */
+#reusableModal .modal-content {
+    border-radius: 8px !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+}
+
+#reusableModal .profile-container {
+    width: 100px !important;
+    height: 100px !important;
+}
+
+#reusableModal .modal-profile-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* Profile Settings Modal Styles */
+#profileSettingsModal .profile-upload-preview {
+    border-radius: 50% !important;
+    overflow: visible !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+    width: 120px !important;
+    height: 120px !important;
+}
+
+#profileSettingsModal .camera-icon {
+    z-index: 10 !important;
+    transform: translate(10%, 10%) !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#profileSettingsModal .object-fit-cover {
+    object-fit: cover !important;
 }

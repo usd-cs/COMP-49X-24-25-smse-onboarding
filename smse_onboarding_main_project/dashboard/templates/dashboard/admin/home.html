@@ -143,42 +143,6 @@
             });
         }
 
-        // Add CSS fix for modals
-        const style = document.createElement('style');
-        style.textContent = `
-            /* Fix for modal z-index and pointer events */
-            .modal {
-                z-index: 10055 !important;
-            }
-            .modal-backdrop {
-                z-index: 10050 !important;
-            }
-            .modal-dialog {
-                pointer-events: auto !important;
-            }
-            .modal-content {
-                pointer-events: auto !important;
-                opacity: 1 !important;
-            }
-            
-            /* Emergency style fix */
-            #welcomeModal .btn-close,
-            #welcomeModal .modal-footer .btn,
-            #reusableModal .btn-close,
-            #reusableModal .modal-footer .btn {
-                pointer-events: auto !important;
-                cursor: pointer !important;
-                position: relative !important;
-                z-index: 19999 !important;
-            }
-            
-            #welcomeModal .modal-content,
-            #reusableModal .modal-content {
-                pointer-events: auto !important;
-            }
-        `;
-        document.head.appendChild(style);
-
         // Initialize the reusable modal
         const profileLinks = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#reusableModal"]');
         profileLinks.forEach(link => {
