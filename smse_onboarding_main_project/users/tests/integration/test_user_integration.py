@@ -152,7 +152,7 @@ class AccessControlTest(TestCase):
         client.login(username=self.admin_username, password='password123')
         response = client.get('/admin/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Site administration')
+        self.assertContains(response, 'SMSE Administration')
 
 
 class RequestHandlingTest(TestCase):
