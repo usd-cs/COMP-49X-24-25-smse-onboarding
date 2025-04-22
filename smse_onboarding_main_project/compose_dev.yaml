@@ -19,8 +19,6 @@ services:
       DJANGO_SUPERUSER_PASSWORD: password
     command: >
       bash -c "
-             mkdir -p /usr/local/app/media/profile_images &&
-             chmod -R 777 /usr/local/app/media &&
              until nc -z db 5432; do echo 'Waiting for PostgreSQL...'; sleep 2; done &&
              python manage.py makemigrations &&
              python manage.py migrate &&
