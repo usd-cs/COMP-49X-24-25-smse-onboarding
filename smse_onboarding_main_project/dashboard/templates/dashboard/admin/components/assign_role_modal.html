@@ -1,0 +1,165 @@
+{% load static %}
+
+<!-- Assign Role Modal -->
+<div class="modal fade" id="assignRoleModal" tabindex="-1" aria-labelledby="assignRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignRoleModalLabel">Assign Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="roleAssignmentForm" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" id="userId" name="user_id">
+                    
+                    <div class="mb-4">
+                        <label class="form-label">User Type</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="user_type" id="newHireRadio" value="new_hire" checked>
+                                <label class="form-check-label" for="newHireRadio">New Hire</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="user_type" id="adminRadio" value="admin">
+                                <label class="form-check-label" for="adminRadio">Admin</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="permissionsSection" class="d-none">
+                        <h6 class="mb-3">Admin Permissions</h6>
+                        <div class="permission-list">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="manageUsers" name="permissions[]" value="manage_users">
+                                <label class="form-check-label" for="manageUsers">Manage Users</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="manageRoles" name="permissions[]" value="manage_roles">
+                                <label class="form-check-label" for="manageRoles">Manage Roles</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="viewReports" name="permissions[]" value="view_reports">
+                                <label class="form-check-label" for="viewReports">View Reports</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="manageTasks" name="permissions[]" value="manage_tasks">
+                                <label class="form-check-label" for="manageTasks">Manage Tasks</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="manageSettings" name="permissions[]" value="manage_settings">
+                                <label class="form-check-label" for="manageSettings">Manage Settings</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="fullAccess" name="permissions[]" value="full_access">
+                                <label class="form-check-label" for="fullAccess">Full Access</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveRoleBtn">Save Role</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal-content {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #212529;
+    margin-bottom: 0.5rem;
+}
+
+.form-check-label {
+    font-size: 14px;
+    color: #212529;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.permission-list {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.btn {
+    font-size: 14px;
+    padding: 8px 16px;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const adminRadio = document.getElementById('adminRadio');
+    const permissionsSection = document.getElementById('permissionsSection');
+    const allPermissionCheckboxes = document.querySelectorAll('input[name="permissions[]"]');
+    const saveRoleBtn = document.getElementById('saveRoleBtn');
+    const assignRoleModal = document.getElementById('assignRoleModal');
+    const bsAssignRoleModal = new bootstrap.Modal(assignRoleModal);
+
+    // Show/hide permissions section based on user type
+    adminRadio.addEventListener('change', function() {
+        permissionsSection.classList.toggle('d-none', !this.checked);
+        if (this.checked) {
+            allPermissionCheckboxes.forEach(checkbox => checkbox.checked = true);
+        }
+    });
+
+    document.querySelector('input[value="new_hire"]').addEventListener('change', function() {
+        permissionsSection.classList.add('d-none');
+        allPermissionCheckboxes.forEach(checkbox => checkbox.checked = false);
+    });
+
+    // Handle form submission
+    saveRoleBtn.addEventListener('click', function() {
+        const form = document.getElementById('roleAssignmentForm');
+        const formData = new FormData(form);
+
+        fetch('{% url "dashboard:assign_role" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                bsAssignRoleModal.hide();
+                window.location.reload(); // Reload page after successful role assignment
+            } else {
+                alert('Error: ' + (data.message || 'Unknown error occurred'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error assigning role');
+        });
+    });
+
+    // Reset form when modal is hidden
+    assignRoleModal.addEventListener('hidden.bs.modal', function () {
+        document.getElementById('roleAssignmentForm').reset();
+        permissionsSection.classList.add('d-none');
+    });
+});
+</script> 

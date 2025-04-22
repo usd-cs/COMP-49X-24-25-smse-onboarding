@@ -2,148 +2,95 @@
 
 <!-- Add New Hire Modal -->
 <div class="modal fade" id="addNewHireModal" tabindex="-1" aria-labelledby="addNewHireModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header py-2">
+            <div class="modal-header">
                 <h5 class="modal-title" id="addNewHireModalLabel">Add Faculty</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-3">
-                <ul class="nav nav-tabs" id="addFacultyTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="manually-tab" data-bs-toggle="tab" data-bs-target="#manually" type="button" role="tab">Manually</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="import-csv-tab" data-bs-toggle="tab" data-bs-target="#import-csv" type="button" role="tab">Import CSV</button>
-                    </li>
-                </ul>
-
-                <div class="tab-content mt-3" id="addFacultyTabContent">
-                    <!-- Manual Entry Tab -->
-                    <div class="tab-pane fade show active" id="manually" role="tabpanel">
-                        <form id="addFacultyForm" method="POST" action="{% url 'dashboard:add_faculty' %}" class="needs-validation" novalidate>
-                            {% csrf_token %}
-                            <div class="row">
-                                <!-- Left Column -->
-                                <div class="col-md-6 pe-4">
-                                    <h6 class="mb-3">Basic Information</h6>
-                                    <div class="row g-2">
-                                        <div class="col-md-6">
-                                            <label class="form-label small">First Name</label>
-                                            <input type="text" class="form-control form-control-sm" id="first_name" name="first_name" required>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label small">Last Name</label>
-                                            <input type="text" class="form-control form-control-sm" id="last_name" name="last_name" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-2">
-                                        <label class="form-label small">Email</label>
-                                        <input type="email" class="form-control form-control-sm" id="email" name="email" required placeholder="Enter email address">
-                                    </div>
-
-                                    <div class="row g-2 mt-2">
-                                        <div class="col-md-6">
-                                            <label class="form-label small">Phone Number</label>
-                                            <input type="tel" class="form-control form-control-sm" id="phone" name="phone" required>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label small">Zoom Phone</label>
-                                            <input type="tel" class="form-control form-control-sm" id="zoom_phone" name="zoom_phone">
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-2">
-                                        <label class="form-label small">Office Room</label>
-                                        <input type="text" class="form-control form-control-sm" id="office_room" name="office_room" required>
-                                    </div>
-
-                                    <h6 class="mb-2 mt-4">Account Settings</h6>
-                                    <div class="mt-2">
-                                        <label class="form-label small">Username</label>
-                                        <input type="text" class="form-control form-control-sm" id="username" name="username" required>
-                                        <div class="form-text small">Letters, digits and @/./+/-/_ only</div>
-                                    </div>
-
-                                    <div class="mt-3">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="password_enabled" name="password_enabled" checked>
-                                            <label class="form-check-label small" for="password_enabled">
-                                                Enable password authentication
-                                            </label>
-                                        </div>
-                                        
-                                        <div class="mb-2">
-                                            <label class="form-label small">User Type</label>
-                                            <select class="form-select form-select-sm" id="user_type" name="user_type">
-                                                <option value="new_hire">New Hire</option>
-                                                <option value="admin">Admin</option>
-                                            </select>
-                                            <div class="form-text small">Select whether this user is a new hire or an admin</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Right Column -->
-                                <div class="col-md-6 ps-4 border-start">
-                                    <h6 class="mb-3">Position Details</h6>
-                                    <div class="mt-2">
-                                        <label class="form-label small">Job Role</label>
-                                        <input type="text" class="form-control form-control-sm" id="job_role" name="job_role" required>
-                                    </div>
-
-                                    <div class="mt-2">
-                                        <label class="form-label small">Department</label>
-                                        <input type="text" class="form-control form-control-sm" id="engineering_dept" name="engineering_dept" required>
-                                    </div>
-
-                                    <div class="mt-2">
-                                        <label class="form-label small">Hire Date</label>
-                                        <div class="row g-2">
-                                            <div class="col-md-7">
-                                                <input type="date" class="form-control form-control-sm" id="hire_date" name="hire_date" required>
-                                            </div>
-                                            <div class="col-md-5">
-                                                <input type="time" class="form-control form-control-sm" id="hire_time" name="hire_time" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <h6 class="mb-2 mt-4">Additional Information</h6>
-                                    <div class="mt-2">
-                                        <label class="form-label small">Bio</label>
-                                        <textarea class="form-control form-control-sm" id="bio" name="bio" rows="2"></textarea>
-                                    </div>
-                                </div>
+            <div class="modal-body">
+                <!-- Add error alert div -->
+                <div class="alert alert-danger d-none" id="errorAlert" role="alert"></div>
+                <form id="basicInfoForm" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" required>
                             </div>
-                        </form>
-                    </div>
-
-                    <!-- Import CSV Tab -->
-                    <div class="tab-pane fade" id="import-csv" role="tabpanel">
-                        <form id="csvUploadForm" method="POST" action="{% url 'dashboard:import_faculty_csv' %}" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="text-center py-4 border rounded">
-                                <i class="bi bi-cloud-upload fs-1 text-primary"></i>
-                                <h5 class="mt-3">Drag and drop your CSV file here</h5>
-                                <p class="text-muted small mb-2">or</p>
-                                <label class="btn btn-outline-primary btn-sm" for="csvFile">
-                                    Browse Files
-                                    <input type="file" id="csvFile" name="csv_file" accept=".csv" class="d-none">
-                                </label>
-                                <p class="mt-3 mb-1 text-muted small">Supported format: CSV</p>
-                                <p class="text-muted small">Required columns: username, first_name, last_name, email, job_role, engineering_dept, phone, office_room, hire_date</p>
+                            <div class="mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" required>
                             </div>
-                        </form>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                                <div class="form-text">Username will be generated from email address</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required pattern="^[\w.@+-]+$" readonly>
+                                <div class="form-text">Auto-generated from email. Only letters, digits, and @/./+/-/_ allowed.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Department</label>
+                                <input type="text" class="form-control" id="department" name="department" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Job Role</label>
+                                <input type="text" class="form-control" id="job_role" name="job_role" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Office Room</label>
+                                <input type="text" class="form-control" id="office_room" name="office_room" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Hire Date</label>
+                                <input type="date" class="form-control" id="hire_date" name="hire_date" required>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
-            <div class="modal-footer py-2">
-                <button type="button" class="btn btn-link btn-sm text-decoration-none" id="addAnother">Add another</button>
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary btn-sm" id="addFacultyBtn">Add Faculty</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitBtn">Create User</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+        <div class="toast-header bg-success text-white">
+            <i class="bi bi-check-circle me-2"></i>
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            User created successfully!
+        </div>
+    </div>
+</div>
+
+<!-- Error Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-header bg-danger text-white">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="errorToastBody">
+            An error occurred.
         </div>
     </div>
 </div>
@@ -151,186 +98,263 @@
 <!-- Add New Hire Modal Styles -->
 <style>
 .modal-dialog {
-    max-width: 1000px !important;
-    margin: 1.75rem auto;
+    max-width: 800px !important;
 }
 
 .modal-content {
-    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.modal-body {
-    background-color: #fff;
+.form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #212529;
 }
 
-.nav-tabs .nav-link {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
 }
 
-.form-control-sm, .form-select-sm {
-    height: calc(1.5em + 0.5rem + 2px);
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
 }
 
-.form-control-sm:focus, .form-select-sm:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+.btn {
+    font-size: 14px;
+    padding: 8px 16px;
 }
 
-.input-group-text {
-    font-size: 0.875rem;
-    padding: 0.25rem 0.5rem;
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 16px 24px;
 }
 
-.border-start {
-    border-left: 1px solid #dee2e6;
+.alert {
+    margin-bottom: 1rem;
+    font-size: 14px;
 }
 
-textarea.form-control-sm {
-    height: auto;
-}
-
-.form-check-input {
-    margin-top: 0.2rem;
-}
-
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-}
-
-.small {
-    font-size: 0.875rem;
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
 }
 
 .form-text {
-    font-size: 0.75rem;
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 0.25rem;
 }
 
-@media (max-width: 768px) {
-    .modal-dialog {
-        max-width: 95% !important;
-        margin: 1rem auto;
-    }
-    
-    .col-md-6.ps-4.border-start {
-        padding-left: 1rem !important;
-        border-left: none !important;
-        margin-top: 2rem;
-    }
+input[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+.toast {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-width: 300px;
+}
+
+.toast-header {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.toast-body {
+    padding: 12px 16px;
+    font-size: 14px;
 }
 </style>
 
 <!-- Add New Hire Modal Scripts -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('addFacultyForm');
-    const csvForm = document.getElementById('csvUploadForm');
+    console.log('Initializing Add New Hire Modal...');
     
-    // Phone number formatting
-    const phoneInputs = document.querySelectorAll('input[type="tel"]');
-    phoneInputs.forEach(input => {
-        input.addEventListener('input', function(e) {
-            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+    const submitBtn = document.getElementById('submitBtn');
+    const addNewHireModal = document.getElementById('addNewHireModal');
+    const bsAddNewHireModal = new bootstrap.Modal(addNewHireModal);
+    const emailInput = document.getElementById('email');
+    const usernameInput = document.getElementById('username');
+    const errorAlert = document.getElementById('errorAlert');
+    const form = document.getElementById('basicInfoForm');
+    const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+    const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+
+    console.log('All elements initialized:', {
+        submitBtn: !!submitBtn,
+        addNewHireModal: !!addNewHireModal,
+        emailInput: !!emailInput,
+        usernameInput: !!usernameInput,
+        errorAlert: !!errorAlert,
+        form: !!form,
+        successToast: !!successToast,
+        errorToast: !!errorToast
+    });
+
+    // Function to generate valid username
+    function generateUsername(email) {
+        // Remove everything after @ and any invalid characters
+        let username = email.split('@')[0]
+            .replace(/[^\w.@+-]/g, '') // Remove any characters not allowed
+            .toLowerCase(); // Convert to lowercase
+        
+        // Ensure username starts with a letter
+        if (!/^[a-z]/.test(username)) {
+            username = 'user_' + username;
+        }
+        
+        return username;
+    }
+
+    // Update username when email changes
+    emailInput.addEventListener('input', function(e) {
+        const email = e.target.value;
+        if (email) {
+            const username = generateUsername(email);
+            usernameInput.value = username;
+        } else {
+            usernameInput.value = '';
+        }
+    });
+
+    // Function to show error message
+    function showError(message, details = null) {
+        let errorHtml = `<strong>Error:</strong> ${message}`;
+        if (details) {
+            errorHtml += `<br><small>${details}</small>`;
+        }
+        errorAlert.innerHTML = errorHtml;
+        errorAlert.classList.remove('d-none');
+    }
+
+    // Function to hide error message
+    function hideError() {
+        errorAlert.innerHTML = '';
+        errorAlert.classList.add('d-none');
+    }
+
+    // Form validation and submission
+    submitBtn.addEventListener('click', function() {
+        console.log('Submit button clicked');
+        hideError();
+        
+        if (!form.checkValidity()) {
+            console.log('Form validation failed');
+            form.reportValidity();
+            return;
+        }
+
+        const formData = new FormData(form);
+        console.log('Form data prepared:', Object.fromEntries(formData));
+
+        // Validate username format
+        const username = usernameInput.value;
+        if (!/^[\w.@+-]+$/.test(username)) {
+            console.log('Username validation failed');
+            document.getElementById('errorToastBody').textContent = 'Invalid username format. Username can only contain letters, digits, and @/./+/-/_';
+            errorToast.show();
+            return;
+        }
+
+        // Disable submit button and show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
+
+        console.log('Submitting form...');
+        fetch('{% url "dashboard:add_faculty" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Server response:', data);
+            if (data.status === 'success') {
+                console.log('User created successfully');
+                // Show success toast
+                successToast.show();
+                
+                // Hide the add new hire modal
+                bsAddNewHireModal.hide();
+                
+                // Show the assign role modal with a small delay
+                setTimeout(() => {
+                    const assignRoleModal = document.getElementById('assignRoleModal');
+                    console.log('Looking for assign role modal:', !!assignRoleModal);
+                    if (assignRoleModal) {
+                        try {
+                            const bsAssignRoleModal = new bootstrap.Modal(assignRoleModal);
+                            document.getElementById('userId').value = data.user_id;
+                            bsAssignRoleModal.show();
+                            console.log('Assign role modal shown successfully');
+                        } catch (error) {
+                            console.error('Error showing assign role modal:', error);
+                            // Show error in toast
+                            document.getElementById('errorToastBody').textContent = 'Error showing role assignment window. Please try again.';
+                            errorToast.show();
+                        }
+                    } else {
+                        console.error('Assign role modal not found in DOM');
+                        // Show error in toast
+                        document.getElementById('errorToastBody').textContent = 'Could not find role assignment window. Please refresh the page and try again.';
+                        errorToast.show();
+                    }
+                }, 500);
+            } else {
+                console.log('Error from server:', data);
+                // Show error in toast
+                document.getElementById('errorToastBody').textContent = data.message || 'An error occurred while creating the user.';
+                if (data.errors) {
+                    if (data.errors.username) {
+                        document.getElementById('errorToastBody').textContent = `Username error: ${data.errors.username.join(', ')}`;
+                    } else {
+                        const details = Object.entries(data.errors)
+                            .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
+                            .join('\n');
+                        document.getElementById('errorToastBody').textContent += `\n${details}`;
+                    }
+                }
+                errorToast.show();
+            }
+        })
+        .catch(error => {
+            console.error('Network or parsing error:', error);
+            // Show error in toast
+            document.getElementById('errorToastBody').textContent = 'Network error. Please check your connection and try again.';
+            errorToast.show();
+        })
+        .finally(() => {
+            // Re-enable submit button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Create User';
         });
     });
 
-    // Username auto-generation from email
-    const emailInput = document.getElementById('email');
-    const usernameInput = document.getElementById('username');
-    emailInput.addEventListener('input', function(e) {
-        const email = e.target.value;
-        const username = email.split('@')[0];
-        usernameInput.value = username;
-    });
-
-    // CSV file handling
-    const csvFile = document.getElementById('csvFile');
-    csvFile.addEventListener('change', function(e) {
-        if (e.target.files[0]) {
-            csvForm.submit();
-        }
-    });
-
-    // Add Faculty button click handler
-    document.getElementById('addFacultyBtn').addEventListener('click', function() {
-        const activeTab = document.querySelector('.tab-pane.active');
-        
-        if (activeTab.id === 'manually') {
-            // Basic form validation
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            // Create FormData object
-            const formData = new FormData(form);
-            
-            // Get user type and set admin status
-            const isAdmin = document.getElementById('user_type').value === 'admin';
-            const passwordEnabled = document.getElementById('password_enabled').checked;
-            
-            // Ensure all form fields are included
-            formData.set('first_name', document.getElementById('first_name').value);
-            formData.set('last_name', document.getElementById('last_name').value);
-            formData.set('email', document.getElementById('email').value);
-            formData.set('phone', document.getElementById('phone').value);
-            formData.set('zoom_phone', document.getElementById('zoom_phone').value);
-            formData.set('office_room', document.getElementById('office_room').value);
-            formData.set('username', document.getElementById('username').value);
-            formData.set('job_role', document.getElementById('job_role').value);
-            formData.set('engineering_dept', document.getElementById('engineering_dept').value);
-            formData.set('hire_date', document.getElementById('hire_date').value);
-            formData.set('hire_time', document.getElementById('hire_time').value);
-            formData.set('bio', document.getElementById('bio').value);
-            
-            // Set admin-related fields
-            formData.set('user_type', isAdmin ? 'admin' : 'new_hire');
-            formData.set('password_enabled', passwordEnabled);
-            formData.set('is_active', 'true');
-
-            // Submit form using fetch
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    window.location.reload();
-                } else {
-                    alert('Error: ' + (data.message || 'Unknown error occurred'));
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error submitting form');
-            });
-        } else if (activeTab.id === 'import-csv') {
-            if (!csvFile.files[0]) {
-                alert('Please select a CSV file first');
-                return;
-            }
-            csvForm.submit();
-        }
-    });
-
     // Reset form when modal is hidden
-    const modal = document.getElementById('addNewHireModal');
-    modal.addEventListener('hidden.bs.modal', function () {
+    addNewHireModal.addEventListener('hidden.bs.modal', function () {
+        console.log('Resetting form');
         form.reset();
-        csvForm.reset();
+        hideError();
+        // Reset submit button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Create User';
     });
 
-    // Set default dates
-    const now = new Date();
-    document.getElementById('hire_date').valueAsDate = now;
-    document.getElementById('hire_time').value = now.toTimeString().slice(0,5);
+    // Clear error when user starts typing
+    form.addEventListener('input', hideError);
 });
-</script> 
+</script>
+
+{% include 'dashboard/admin/components/assign_role_modal.html' %} 

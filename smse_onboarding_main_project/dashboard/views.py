@@ -9,6 +9,9 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 import uuid
+from django.contrib.auth.models import Group
+from django.views.decorators.http import require_http_methods
+from django.db.utils import IntegrityError
 
 logger = logging.getLogger(__name__)
 
@@ -403,64 +406,166 @@ def add_faculty(request):
             username = request.POST['username']
             first_name = request.POST['first_name']
             last_name = request.POST['last_name']
-            is_admin = request.POST.get('user_type') == 'admin'
             
-            # Create user with a random password if password authentication is enabled
-            temp_password = str(uuid.uuid4())
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                password=temp_password if request.POST.get('password_enabled', 'on') == 'on' else None,
-                first_name=first_name,
-                last_name=last_name
-            )
+            logger.info(f"Attempting to create faculty with email: {email}")
+            
+            # Debug: Check current state
+            user_exists = User.objects.filter(username=username).exists()
+            user_email_exists = User.objects.filter(email=email).exists()
+            faculty_exists = Faculty.objects.filter(email=email).exists()
+            
+            logger.info(f"Current state - User exists: {user_exists}, User email exists: {user_email_exists}, Faculty exists: {faculty_exists}")
+            
+            # Check if user or faculty already exists
+            if user_exists:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Username already exists',
+                    'errors': {'username': ['This username is already taken.']}
+                }, status=400)
+            
+            if user_email_exists:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Email already exists',
+                    'errors': {'email': ['This email address is already registered in User table.']}
+                }, status=400)
 
-            # Set user permissions based on user type
+            if faculty_exists:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Email already exists',
+                    'errors': {'email': ['This email address is already registered in Faculty table.']}
+                }, status=400)
+            
+            # Create user
+            temp_password = str(uuid.uuid4())
+            try:
+                user = User.objects.create_user(
+                    username=username,
+                    email=email,
+                    password=temp_password,
+                    first_name=first_name,
+                    last_name=last_name
+                )
+                logger.info(f"Successfully created user with ID: {user.id}")
+            except IntegrityError as e:
+                logger.error(f"IntegrityError while creating user: {str(e)}")
+                # Double check if the user was created despite the error
+                if User.objects.filter(username=username).exists():
+                    logger.error("User exists after IntegrityError!")
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Database error while creating user',
+                    'errors': {'database': ['Could not create user due to a database constraint.', str(e)]}
+                }, status=400)
+            except Exception as e:
+                logger.error(f"Unexpected error while creating user: {str(e)}")
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Error creating user',
+                    'errors': {'database': [str(e)]}
+                }, status=400)
+
+            # Set user as active
             user.is_active = True
-            user.is_staff = is_admin
-            user.is_superuser = is_admin
             user.save()
 
-            # Parse datetime fields
-            hire_datetime = timezone.make_aware(
-                datetime.combine(
-                    datetime.strptime(request.POST['hire_date'], '%Y-%m-%d').date(),
-                    datetime.strptime(request.POST['hire_time'], '%H:%M').time()
+            # Parse hire date
+            try:
+                hire_date = timezone.make_aware(
+                    datetime.strptime(request.POST['hire_date'], '%Y-%m-%d')
                 )
-            )
+            except ValueError:
+                hire_date = timezone.now()
+
+            # Double check again before creating faculty
+            if Faculty.objects.filter(email=email).exists():
+                logger.error(f"Faculty with email {email} exists before creation!")
+                user.delete()
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Email already exists',
+                    'errors': {'email': ['This email address is already registered in Faculty table (detected during creation).']}
+                }, status=400)
 
             # Create the faculty profile
-            faculty = Faculty.objects.create(
-                user=user,
-                first_name=first_name,
-                last_name=last_name,
-                job_role=request.POST['job_role'],
-                engineering_dept=request.POST['engineering_dept'],
-                email=email,
-                phone=request.POST['phone'].replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
-                zoom_phone=request.POST.get('zoom_phone', '').replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
-                office_room=request.POST['office_room'],
-                hire_date=hire_datetime,
-                bio=request.POST.get('bio', '')
-            )
+            try:
+                # Try to clean up any potential orphaned records first
+                try:
+                    Faculty.objects.filter(email=email).delete()
+                except Exception as e:
+                    logger.error(f"Error cleaning up potential orphaned faculty records: {str(e)}")
+
+                faculty = Faculty.objects.create(
+                    user=user,
+                    first_name=first_name,
+                    last_name=last_name,
+                    job_role=request.POST['job_role'],
+                    engineering_dept=request.POST.get('department', ''),
+                    email=email,
+                    phone=request.POST['phone'].replace('(', '').replace(')', '').replace(' ', '').replace('-', ''),
+                    office_room=request.POST['office_room'],
+                    hire_date=hire_date
+                )
+                logger.info(f"Successfully created faculty with ID: {faculty.faculty_id}")
+            except IntegrityError as e:
+                # If faculty creation fails, delete the user to maintain consistency
+                logger.error(f"IntegrityError while creating faculty profile: {str(e)}")
+                # Double check if the faculty was created despite the error
+                if Faculty.objects.filter(email=email).exists():
+                    logger.error("Faculty exists after IntegrityError!")
+                user.delete()
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Database error while creating faculty profile',
+                    'errors': {'database': ['Could not create faculty profile. The email might already be in use.', str(e)]}
+                }, status=400)
+            except Exception as e:
+                # If faculty creation fails for any other reason, delete the user
+                logger.error(f"Unexpected error while creating faculty profile: {str(e)}")
+                user.delete()
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Error creating faculty profile',
+                    'errors': {'database': [str(e)]}
+                }, status=400)
 
             # Create default tasks for the new faculty
-            from tasks.models import Task
-            default_tasks = Task.objects.all()
-            for task in default_tasks:
-                task.assigned_to.add(faculty)
+            try:
+                from tasks.models import Task
+                default_tasks = Task.objects.all()
+                for task in default_tasks:
+                    task.assigned_to.add(faculty)
+                logger.info(f"Successfully added default tasks for faculty {faculty.faculty_id}")
+            except Exception as e:
+                logger.error(f"Error adding default tasks for faculty {faculty.faculty_id}: {str(e)}")
+                # Don't fail the whole operation if adding tasks fails
 
-            messages.success(
-                request, 
-                f'Successfully added {faculty.first_name} {faculty.last_name}. ' + 
-                (f'Their temporary password is: {temp_password}' if request.POST.get('password_enabled', 'on') == 'on' else 'No password was set (authentication disabled).')
-            )
-            return JsonResponse({'status': 'success'})
+            return JsonResponse({
+                'status': 'success',
+                'user_id': user.id,
+                'message': f'Successfully added {faculty.first_name} {faculty.last_name}.'
+            })
+            
         except Exception as e:
-            messages.error(request, f'Error adding faculty: {str(e)}')
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            logger.error(f"Error adding faculty: {str(e)}")
+            # If we caught an exception here, make sure to clean up any created user
+            try:
+                if 'user' in locals():
+                    user.delete()
+            except Exception:
+                pass
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Error adding faculty',
+                'details': str(e)
+            }, status=400)
     
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=405)
 
 @login_required
 @user_passes_test(is_admin)
@@ -540,3 +645,51 @@ def import_faculty_csv(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+@login_required
+@user_passes_test(is_admin)
+@require_http_methods(["POST"])
+def assign_role(request):
+    """
+    Assign role and permissions to a faculty member
+    """
+    try:
+        user_id = request.POST.get('user_id')
+        user_type = request.POST.get('user_type')
+        permissions = request.POST.getlist('permissions[]')
+        
+        faculty = get_object_or_404(Faculty, user_id=user_id)
+        
+        # Update user type
+        if user_type == 'admin':
+            faculty.is_admin = True
+            # Add user to admin group
+            admin_group, _ = Group.objects.get_or_create(name='Admin')
+            faculty.user.groups.add(admin_group)
+            
+            # Set permissions if provided
+            if permissions:
+                for perm in permissions:
+                    # Here you would set the specific permissions
+                    # This depends on your permission model
+                    pass
+        else:
+            faculty.is_admin = False
+            # Remove user from admin group
+            admin_group = Group.objects.filter(name='Admin').first()
+            if admin_group:
+                faculty.user.groups.remove(admin_group)
+        
+        faculty.save()
+        faculty.user.save()
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Role assigned successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)

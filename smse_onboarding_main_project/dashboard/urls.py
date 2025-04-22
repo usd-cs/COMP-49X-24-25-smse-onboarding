@@ -20,5 +20,6 @@ urlpatterns = [
     path('api/faculty/<int:faculty_id>/tasks/', views.faculty_tasks, name='faculty_tasks'),
     path('add-faculty/', views.add_faculty, name='add_faculty'),
     path('import-faculty-csv/', views.import_faculty_csv, name='import_faculty_csv'),
+    path('assign-role/', views.assign_role, name='assign_role'),
 ]
 
