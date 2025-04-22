@@ -14,6 +14,7 @@ RUN mkdir -p media/profile_images && \
     chmod -R 777 media
 
 # Create user but don't switch to it yet
+# Adding a comment to test the git push
 RUN useradd -m app && \
     chown -R app:app /usr/local/app
 

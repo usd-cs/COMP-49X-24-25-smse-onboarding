@@ -16,7 +16,7 @@
                         <div class="profile-upload-preview mx-auto position-relative">
                             <div class="rounded-circle overflow-hidden h-100 w-100">
                                 {% if faculty.profile_image %}
-                                    <img src="{{ faculty.profile_image.url }}" alt="Profile" class="img-fluid w-100 h-100 object-fit-cover">
+                                    <img src="{{ faculty.profile_image.url }}" alt="Profile" class="object-fit-cover w-100 h-100">
                                 {% else %}
                                     <div class="bg-light d-flex align-items-center justify-content-center h-100">
                                         <i class="bi bi-person-fill text-secondary profile-icon-large"></i>
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Create and append image
                         const img = document.createElement('img');
                         img.src = e.target.result;
-                        img.classList.add('img-fluid', 'w-100', 'h-100', 'object-fit-cover');
+                        img.classList.add('object-fit-cover', 'w-100', 'h-100');
                         img.alt = 'Profile';
                         previewContainer.appendChild(img);
                     }

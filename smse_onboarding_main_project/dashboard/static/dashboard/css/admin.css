@@ -33,14 +33,6 @@ html {
     background-color: #eaeaea; /* Match new_hire.css */
 }
 
-/* Dashboard Container - match new_hire.css */
-.dashboard-container {
-    display: flex;
-    width: 100%;
-    min-height: 100vh;
-    height: 100%;
-    overflow: hidden; /* Hide overflow on container */
-}
 
 /* Main Content - match new_hire.css */
 .main-content {
@@ -55,6 +47,15 @@ html {
     position: relative;
     z-index: 900;
     margin-top: var(--topnav-height); /* Add margin for topnav */
+}
+
+/* Dashboard Container - match new_hire.css */
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    overflow: hidden; /* Hide overflow on container */
 }
 
 /* Dashboard content - match new_hire.css */

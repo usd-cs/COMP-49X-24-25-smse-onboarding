@@ -1,0 +1,23 @@
+[1mdiff --git a/smse_onboarding_main_project/Dockerfile b/smse_onboarding_main_project/Dockerfile[m
+[1mindex 9f71ba4..ba03620 100644[m
+[1m--- a/smse_onboarding_main_project/Dockerfile[m
+[1m+++ b/smse_onboarding_main_project/Dockerfile[m
+[36m@@ -9,8 +9,17 @@[m [mCOPY requirements.txt ./[m
+ RUN pip install --no-cache-dir -r requirements.txt[m
+ COPY . .[m
+ [m
+[31m-RUN useradd app[m
+[32m+[m[32m# Create media directories with proper permissions[m
+[32m+[m[32mRUN mkdir -p media/profile_images && \[m
+[32m+[m[32m    chmod -R 777 media[m
+[32m+[m
+[32m+[m[32m# Create user but don't switch to it yet[m
+[32m+[m[32mRUN useradd -m app && \[m
+[32m+[m[32m    chown -R app:app /usr/local/app[m
+[32m+[m
+[32m+[m[32m# Switch to app user only for running the application[m
+ USER app[m
+ [m
+ EXPOSE 8000[m
+ CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"][m
+[41m+[m
