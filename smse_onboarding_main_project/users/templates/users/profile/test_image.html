@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Profile Image Test</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Image Information</h4>
+                    <p><strong>Has image:</strong> {{ has_image }}</p>
+                    {% if has_image %}
+                        <p><strong>Image URL:</strong> {{ image_url }}</p>
+                        <p><strong>Image Path:</strong> {{ image_path }}</p>
+                        <div class="mt-3">
+                            <img src="{{ image_url }}" alt="Profile Image" style="max-width: 200px; border: 1px solid #ddd;" />
+                        </div>
+                    {% else %}
+                        <p>No profile image set.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <form method="post" action="{% url 'users:update_profile' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="profile_picture" class="form-label">Upload New Image</label>
+                        <input type="file" id="profile_picture" name="profile_picture" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Image</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

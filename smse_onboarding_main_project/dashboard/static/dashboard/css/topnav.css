@@ -130,10 +130,19 @@
 }
 
 .img-profile, .avatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    vertical-align: middle !important;
+}
+
+.profile-icon-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
 }
 
 .user-name {
@@ -194,4 +203,45 @@
     .navbar > .container-fluid {
         padding: 0 10px;
     }
+}
+
+/* More specific selectors for navbar profile images */
+.navbar .dropdown .profile-icon-container,
+.navbar .nav-item .profile-icon-container,
+.navbar .dropdown-toggle .profile-icon-container {
+    width: 32px !important;
+    height: 32px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+}
+
+.navbar .dropdown .img-profile,
+.navbar .nav-item .img-profile,
+.navbar .dropdown-toggle .img-profile {
+    width: 32px !important;
+    height: 32px !important;
+    max-width: 32px !important;
+    max-height: 32px !important;
+    object-fit: cover !important;
+}
+
+/* Force the navbar user dropdown profile image size */
+#userDropdown .profile-icon-container {
+    width: 32px !important;
+    height: 32px !important;
+}
+
+#userDropdown .img-profile {
+    width: 32px !important;
+    height: 32px !important;
+}
+
+/* Ensure the person icon is properly sized too */
+.navbar .profile-icon-container i.bi-person-fill {
+    font-size: 24px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }

@@ -12,4 +12,6 @@ urlpatterns = [
     path('show-welcome/', views.show_welcome, name='show_welcome'),
     path('welcome-info/', views.welcome_info, name='welcome_info'),
     path('admin-help-guide/', views.admin_help_guide, name='admin_help_guide'),
+    path('update-profile/', views.update_profile, name='update_profile'),
+    path('test-image/', views.test_profile_image, name='test_image'),
 ]

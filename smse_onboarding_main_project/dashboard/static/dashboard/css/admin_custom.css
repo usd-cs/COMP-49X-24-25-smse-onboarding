@@ -1,0 +1,166 @@
+/* Custom Admin Theme */
+
+/* Primary color - blue instead of teal/green */
+:root {
+  --primary: #0047AB; /* Primary blue */
+  --secondary: #003366; /* Dark blue */
+  --accent: #ffffff; /* White text instead of yellow */
+  --primary-fg: #ffffff;
+  --body-bg: #f8f8f8;
+  --body-fg: #333;
+  --link-fg: #0047AB;
+  --link-hover-color: #003366;
+  --header-color: #ffffff;
+  --table-header: #d9e2ec; /* Light blue-gray for table headers */
+}
+
+/* Header styles */
+#header {
+  background: var(--primary);
+  color: var(--primary-fg);
+  padding: 15px 40px !important;
+  height: auto !important;
+}
+
+#branding {
+  display: flex;
+  align-items: center;
+}
+
+#branding img {
+  max-height: 50px;
+  margin-right: 15px;
+}
+
+#site-name {
+  margin: 0;
+}
+
+#header a:link, #header a:visited {
+  color: var(--header-color);
+}
+
+/* Header dropdown menu */
+#user-tools a {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+#user-tools a:focus, #user-tools a:hover {
+  border-bottom-color: var(--header-color);
+  color: var(--header-color);
+}
+
+/* Sidebar modules */
+.module h2, .module caption, .inline-group h2 {
+  background: var(--secondary);
+  color: var(--primary-fg);
+  font-weight: 600;
+  padding: 8px 10px;
+}
+
+/* Table Headers - make them distinct from module captions */
+table thead th.sortable, .dashboard .module table th,
+.change-list table th {
+  background: var(--table-header) !important;
+  color: var(--secondary) !important;
+  font-weight: 700;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Dashboard Tables */
+.dashboard .module table th a {
+  color: var(--secondary) !important;
+}
+
+/* Table row backgrounds */
+.row1 {
+  background: #ffffff;
+}
+.row2 {
+  background: #f9f9f9;
+}
+
+/* Buttons */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover {
+  background: var(--secondary);
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+  background: var(--secondary);
+}
+
+.button.default:hover, input[type=submit].default:hover {
+  background: #001F3F;
+}
+
+/* Links */
+a:link, a:visited {
+  color: var(--link-fg);
+}
+
+a:focus, a:hover {
+  color: var(--link-hover-color);
+}
+
+/* Object tools */
+.object-tools a:link, .object-tools a:visited {
+  background: var(--primary);
+}
+
+.object-tools a:hover, .object-tools a:focus {
+  background: var(--secondary);
+}
+
+/* Breadcrumbs */
+div.breadcrumbs {
+  background: var(--secondary);
+  color: var(--primary-fg);
+}
+
+div.breadcrumbs a {
+  color: var(--primary-fg);
+}
+
+div.breadcrumbs a:focus, div.breadcrumbs a:hover {
+  color: #f8f8f8;
+}
+
+/* Messages */
+.messagelist li.success {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+
+/* Dashboard */
+.dashboard .module table th {
+  background: var(--table-header);
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+/* Form submit row */
+.submit-row {
+  background: #f8f8f8;
+  border: 1px solid #eaeaea;
+}
+
+/* Fix for content placement after logo addition */
+#user-tools {
+  align-self: center;
+}
+
+@media (max-width: 767px) {
+  #header {
+    padding: 10px 20px !important;
+  }
+
+  #branding img {
+    max-height: 40px;
+    margin-right: 10px;
+  }
+}
