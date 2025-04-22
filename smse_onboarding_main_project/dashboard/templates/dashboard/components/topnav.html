@@ -53,13 +53,16 @@
                             data-bs-toggle="dropdown"
                             aria-expanded="false">
                         <!-- Profile Icon -->
-                        {% if faculty.profile_image %}
-                            <img src="{{ faculty.profile_image.url }}"
-                                alt="Profile"
-                                class="me-2 img-profile">
-                        {% else %}
-                            <i class="bi bi-person-fill fs-4" style="color: #0074c8; font-weight: bold;"></i>
-                        {% endif %}
+                        <span class="profile-icon-container">
+                            {% if faculty.profile_image %}
+                                <img src="{{ faculty.profile_image.url }}"
+                                    alt="Profile"
+                                    class="img-profile"
+                                    style="width: 32px !important; height: 32px !important; max-width: 32px !important; max-height: 32px !important; object-fit: cover !important;">
+                            {% else %}
+                                <i class="bi bi-person-fill fs-4" style="color: #0074c8; font-weight: bold;"></i>
+                            {% endif %}
+                        </span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                         <div class="d-flex flex-column align-items-start px-3 py-2">

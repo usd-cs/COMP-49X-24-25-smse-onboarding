@@ -7,9 +7,9 @@
             </div>
             <div class="modal-body">
                 <div class="text-center mb-4">
-                    <div class="rounded-circle overflow-hidden mx-auto" style="width: 100px; height: 100px;">
+                    <div class="rounded-circle overflow-hidden mx-auto profile-container">
                         {% if faculty.profile_image %}
-                            <img src="{{ faculty.profile_image.url }}" alt="Profile" class="img-fluid">
+                            <img src="{{ faculty.profile_image.url }}" alt="Profile" class="modal-profile-img">
                         {% else %}
                             <div class="bg-light d-flex align-items-center justify-content-center h-100">
                                 <i class="bi bi-person-fill text-secondary" style="font-size: 3rem;"></i>
@@ -26,10 +26,3 @@
         </div>
     </div>
 </div>
-
-<style>
-    .modal-content {
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-</style>

@@ -13,13 +13,13 @@
 
                     <!-- Profile Image Section -->
                     <div class="text-center mb-4">
-                        <div class="profile-upload-preview mx-auto position-relative" style="width: 120px; height: 120px;">
+                        <div class="profile-upload-preview mx-auto position-relative">
                             <div class="rounded-circle overflow-hidden h-100 w-100">
                                 {% if faculty.profile_image %}
                                     <img src="{{ faculty.profile_image.url }}" alt="Profile" class="img-fluid w-100 h-100 object-fit-cover">
                                 {% else %}
                                     <div class="bg-light d-flex align-items-center justify-content-center h-100">
-                                        <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
+                                        <i class="bi bi-person-fill text-secondary profile-icon-large"></i>
                                     </div>
                                 {% endif %}
                             </div>
@@ -84,36 +84,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    .cursor-pointer {
-        cursor: pointer;
-    }
-
-    .profile-upload-preview {
-        border-radius: 50%;
-        overflow: visible;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-
-    .modal-content {
-        border-radius: 8px;
-    }
-
-    .object-fit-cover {
-        object-fit: cover;
-    }
-
-    .camera-icon {
-        z-index: 10;
-        transform: translate(10%, 10%);
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
