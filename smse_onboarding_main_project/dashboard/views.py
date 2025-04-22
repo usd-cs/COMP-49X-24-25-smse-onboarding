@@ -407,35 +407,19 @@ def add_faculty(request):
             first_name = request.POST['first_name']
             last_name = request.POST['last_name']
             
-            logger.info(f"Attempting to create faculty with email: {email}")
-            
-            # Debug: Check current state
-            user_exists = User.objects.filter(username=username).exists()
-            user_email_exists = User.objects.filter(email=email).exists()
-            faculty_exists = Faculty.objects.filter(email=email).exists()
-            
-            logger.info(f"Current state - User exists: {user_exists}, User email exists: {user_email_exists}, Faculty exists: {faculty_exists}")
-            
-            # Check if user or faculty already exists
-            if user_exists:
+            # Check if user already exists
+            if User.objects.filter(username=username).exists():
                 return JsonResponse({
                     'status': 'error',
                     'message': 'Username already exists',
                     'errors': {'username': ['This username is already taken.']}
                 }, status=400)
             
-            if user_email_exists:
+            if User.objects.filter(email=email).exists():
                 return JsonResponse({
                     'status': 'error',
                     'message': 'Email already exists',
-                    'errors': {'email': ['This email address is already registered in User table.']}
-                }, status=400)
-
-            if faculty_exists:
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Email already exists',
-                    'errors': {'email': ['This email address is already registered in Faculty table.']}
+                    'errors': {'email': ['This email address is already registered.']}
                 }, status=400)
             
             # Create user
@@ -448,23 +432,11 @@ def add_faculty(request):
                     first_name=first_name,
                     last_name=last_name
                 )
-                logger.info(f"Successfully created user with ID: {user.id}")
             except IntegrityError as e:
-                logger.error(f"IntegrityError while creating user: {str(e)}")
-                # Double check if the user was created despite the error
-                if User.objects.filter(username=username).exists():
-                    logger.error("User exists after IntegrityError!")
                 return JsonResponse({
                     'status': 'error',
                     'message': 'Database error while creating user',
-                    'errors': {'database': ['Could not create user due to a database constraint.', str(e)]}
-                }, status=400)
-            except Exception as e:
-                logger.error(f"Unexpected error while creating user: {str(e)}")
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Error creating user',
-                    'errors': {'database': [str(e)]}
+                    'errors': {'database': ['Could not create user due to a database constraint.']}
                 }, status=400)
 
             # Set user as active
@@ -479,24 +451,8 @@ def add_faculty(request):
             except ValueError:
                 hire_date = timezone.now()
 
-            # Double check again before creating faculty
-            if Faculty.objects.filter(email=email).exists():
-                logger.error(f"Faculty with email {email} exists before creation!")
-                user.delete()
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Email already exists',
-                    'errors': {'email': ['This email address is already registered in Faculty table (detected during creation).']}
-                }, status=400)
-
             # Create the faculty profile
             try:
-                # Try to clean up any potential orphaned records first
-                try:
-                    Faculty.objects.filter(email=email).delete()
-                except Exception as e:
-                    logger.error(f"Error cleaning up potential orphaned faculty records: {str(e)}")
-
                 faculty = Faculty.objects.create(
                     user=user,
                     first_name=first_name,
@@ -508,27 +464,13 @@ def add_faculty(request):
                     office_room=request.POST['office_room'],
                     hire_date=hire_date
                 )
-                logger.info(f"Successfully created faculty with ID: {faculty.faculty_id}")
             except IntegrityError as e:
                 # If faculty creation fails, delete the user to maintain consistency
-                logger.error(f"IntegrityError while creating faculty profile: {str(e)}")
-                # Double check if the faculty was created despite the error
-                if Faculty.objects.filter(email=email).exists():
-                    logger.error("Faculty exists after IntegrityError!")
                 user.delete()
                 return JsonResponse({
                     'status': 'error',
                     'message': 'Database error while creating faculty profile',
-                    'errors': {'database': ['Could not create faculty profile. The email might already be in use.', str(e)]}
-                }, status=400)
-            except Exception as e:
-                # If faculty creation fails for any other reason, delete the user
-                logger.error(f"Unexpected error while creating faculty profile: {str(e)}")
-                user.delete()
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Error creating faculty profile',
-                    'errors': {'database': [str(e)]}
+                    'errors': {'database': ['Could not create faculty profile.']}
                 }, status=400)
 
             # Create default tasks for the new faculty
@@ -537,9 +479,8 @@ def add_faculty(request):
                 default_tasks = Task.objects.all()
                 for task in default_tasks:
                     task.assigned_to.add(faculty)
-                logger.info(f"Successfully added default tasks for faculty {faculty.faculty_id}")
             except Exception as e:
-                logger.error(f"Error adding default tasks for faculty {faculty.faculty_id}: {str(e)}")
+                logger.error(f"Error adding default tasks for faculty {faculty.id}: {str(e)}")
                 # Don't fail the whole operation if adding tasks fails
 
             return JsonResponse({
@@ -550,12 +491,6 @@ def add_faculty(request):
             
         except Exception as e:
             logger.error(f"Error adding faculty: {str(e)}")
-            # If we caught an exception here, make sure to clean up any created user
-            try:
-                if 'user' in locals():
-                    user.delete()
-            except Exception:
-                pass
             return JsonResponse({
                 'status': 'error',
                 'message': 'Error adding faculty',
