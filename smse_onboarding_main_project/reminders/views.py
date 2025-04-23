@@ -3,10 +3,6 @@ from users.models import Faculty
 from tasks.models import Task
 from django.core.mail import send_mail
 from django.conf import settings
-import ssl
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import smtplib
 
 def send_reminder(request, faculty_id, current_task_id):
     if request.method == 'POST':
@@ -49,22 +45,12 @@ Thank you,
 SMSE Admin Team
         """
         
-        # Create a custom SSL context that allows unverified certificates
-        context = ssl.create_default_context()
-        context.check_hostname = False
-        context.verify_mode = ssl.CERT_NONE
-
-        # Create message
-        msg = MIMEMultipart()
-        msg['From'] = settings.EMAIL_HOST_USER
-        msg['To'] = faculty.email
-        msg['Subject'] = f"Reminder for New Hire Onboarding Task: {current_task.title}"
-        msg.attach(MIMEText(message, 'plain'))
-
-        # Send email using SMTP with custom SSL context
-        with smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT) as server:
-            server.starttls(context=context)
-            server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
-            server.send_message(msg)
+        send_mail(
+            f"Reminder for New Hire Onboarding Task: {current_task.title}",
+            message,
+            settings.EMAIL_HOST_USER,
+            [faculty.email],
+            fail_silently=False,
+        )
 
     return redirect('dashboard:admin_home')
