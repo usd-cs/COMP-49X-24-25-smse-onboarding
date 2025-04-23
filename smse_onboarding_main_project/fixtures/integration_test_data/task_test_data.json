@@ -1,0 +1,95 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "username": "longpham",
+            "password": "pbkdf2_sha256$870000$sCDDoZgPqKKeqiNzk3pBcm$MNECvTcABd4Elw34RtvKcL4yhQFlpK4jNpn5B7NKGhA=",
+            "email": "longpham@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "username": "sbello",
+            "password": "pbkdf2_sha256$870000$f9PaJosQrH2zONZUqDmlwk$muN3Ccp4uw4xQJdKqrDb4uF/1ldXrnUM2B8q0SV9uK0=",
+            "email": "sbello@sandiego.edu",
+            "is_active": true
+        }
+    },
+    {
+        "model": "users.faculty",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "faculty_id": 1,
+            "first_name": "Long",
+            "last_name": "Pham",
+            "job_role": "Professor",
+            "engineering_dept": "Computer Science",
+            "email": "longpham@sandiego.edu",
+            "phone": "1234567890",
+            "zoom_phone": "0987654321",
+            "office_room": "CS101",
+            "hire_date": "2024-01-15T08:00:00-08:00",
+            "mailing_list_status": false,
+            "bio": "Test bio",
+            "completed_onboarding": false
+        }
+    },
+    {
+        "model": "users.faculty",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "faculty_id": 2,
+            "first_name": "Shayna",
+            "last_name": "Bello",
+            "job_role": "Assistant Professor",
+            "engineering_dept": "Electrical Engineering",
+            "email": "sbello@sandiego.edu",
+            "phone": "987654321",
+            "zoom_phone": "0123456789",
+            "office_room": "EE102",
+            "hire_date": "2024-02-01T08:00:00-08:00",
+            "mailing_list_status": true,
+            "bio": "Another test bio",
+            "completed_onboarding": false
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 5,
+        "fields": {
+            "title": "Set Up Direct Deposit",
+            "description": "Set up direct deposit for your paycheck.",
+            "created_at": "2024-11-01T09:00:00-08:00",
+            "assigned_to": [1, 2],
+            "prerequisites": []
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 6,
+        "fields": {
+            "title": "Enroll in Benefits",
+            "description": "Enroll in health insurance and other benefits.",
+            "created_at": "2024-11-01T09:00:00-08:00",
+            "assigned_to": [1, 2],
+            "prerequisites": [5]
+        }
+    },
+    {
+        "model": "tasks.task",
+        "pk": 7,
+        "fields": {
+            "title": "Complete Security Training",
+            "description": "Complete the required security training.",
+            "created_at": "2024-11-01T09:00:00-08:00",
+            "assigned_to": [1, 2],
+            "prerequisites": [3]
+        }
+    }
+] 

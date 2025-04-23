@@ -8,10 +8,10 @@ from django.utils import timezone
 class TaskFlowTests(TestCase):
     """Integration tests for task workflows."""
 
-    fixtures = ['test_data.json']  # Load test data
+    fixtures = ['task_test_data.json']  # Load task-specific test data
 
     def setUp(self):
-        """Set up test data using test_data.json fixtures."""
+        """Set up test data using task_test_data.json fixtures."""
         # Get existing users from fixtures
         self.user1 = User.objects.get(username='longpham')
         self.user2 = User.objects.get(username='sbello')
