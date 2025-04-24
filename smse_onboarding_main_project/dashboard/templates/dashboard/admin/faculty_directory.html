@@ -12,7 +12,6 @@
 {% block content %}
 <div class="dashboard-container" id="dashboardContainer">
     {% include 'dashboard/components/sidebar.html' %}
-    {% include 'dashboard/admin/components/newhire_task_progress.html' %}
 
     <div class="main-content" id="mainContent">
         {% include 'dashboard/components/topnav.html' %}
@@ -151,82 +150,6 @@
             document.getElementById('facultyNameTitle').textContent = `${firstName} ${lastName}`;
             document.getElementById('facultyDepartmentInfo').textContent = department;
             document.getElementById('facultyEmail').textContent = email;
-
-            // Fetch task data from the backend
-            fetch(`/dashboard/api/faculty/${facultyId}/tasks/`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Task data received:", data); // Debug log
-                    const tasks = {
-                        upcoming: data.upcoming_tasks || [],
-                        completed: data.completed_tasks || []
-                    };
-
-                    // Update progress information
-                    const totalTasks = tasks.upcoming.length + tasks.completed.length;
-                    const completedTasks = tasks.completed.length;
-                    const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-                    document.getElementById('completionPercentage').textContent = `${progressPercentage}%`;
-                    document.getElementById('progressBar').style.width = `${progressPercentage}%`;
-                    document.getElementById('tasksCompleteCount').textContent = `${completedTasks}/${totalTasks} complete`;
-
-                    // Update upcoming tasks
-                    const upcomingTasksList = document.getElementById('upcomingTasksList');
-                    if (tasks.upcoming.length === 0) {
-                        upcomingTasksList.innerHTML = `
-                            <div class="alert alert-info mb-0">
-                                No upcoming tasks at this moment
-                            </div>
-                        `;
-                    } else {
-                        upcomingTasksList.innerHTML = tasks.upcoming.map(task => `
-                            <div class="task-item">
-                                <div class="task-info">
-                                    <div class="task-title">${task.title}</div>
-                                    <div class="task-meta">
-                                        <span>Due: ${task.due_date}</span>
-                                        <span class="ms-2 task-due">${task.days_left}</span>
-                                    </div>
-                                </div>
-                                <span class="task-status pending">Pending</span>
-                                <button class="task-menu ms-2" title="More Info">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                            </div>
-                        `).join('');
-                    }
-
-                    // Update completed tasks
-                    const completedTasksList = document.getElementById('completedTasksList');
-                    if (tasks.completed.length === 0) {
-                        completedTasksList.innerHTML = `
-                            <div class="alert alert-info mb-0">
-                                No completed tasks at this moment
-                            </div>
-                        `;
-                    } else {
-                        completedTasksList.innerHTML = tasks.completed.map(task => `
-                            <div class="task-item">
-                                <div class="task-info">
-                                    <div class="task-title">${task.title}</div>
-                                    <div class="task-meta">Completed: ${task.completed_date || 'Unknown date'}</div>
-                                </div>
-                                <span class="task-status completed">Completed</span>
-                                <button class="task-menu ms-2" title="More Info">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                            </div>
-                        `).join('');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching task data:', error);
-                });
-
-            // Show the modal
-            const modal = new bootstrap.Modal(document.getElementById('newhireTaskProgress'));
-            modal.show();
         }
     }
 </script>

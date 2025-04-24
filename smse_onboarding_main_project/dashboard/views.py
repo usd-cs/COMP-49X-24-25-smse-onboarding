@@ -317,6 +317,7 @@ def faculty_directory(request):
     
     context = {
         'faculty_members': faculty_members,
+        'is_admin': True,
     }
     
     return render(request, 'dashboard/admin/faculty_directory.html', context)
