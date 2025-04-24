@@ -170,21 +170,23 @@
             .then(response => response.json())
             .then(data => {
                 // Update faculty information
-                const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
-                const firstName = facultyRow.dataset.facultyFirstName;
-                const lastName = facultyRow.dataset.facultyLastName;
-                const email = facultyRow.dataset.facultyEmail;
-                const department = facultyRow.dataset.facultyDepartment;
+                const facultyRow = document.querySelector(`[data-faculty-id="${facultyId}"]`);
+                document.getElementById('facultyNameTitle').textContent = data.faculty_name || '';
+                document.getElementById('facultyDepartmentInfo').textContent = data.department || '';
+                document.getElementById('facultyEmail').textContent = data.email || '';
 
-                document.getElementById('facultyNameTitle').textContent = `${firstName} ${lastName}`;
-                document.getElementById('facultyDepartmentInfo').textContent = department;
-                document.getElementById('facultyEmail').textContent = email;
+                // Calculate progress
+                const totalTasks = data.upcoming_tasks.length + data.completed_tasks.length;
+                const completedTasks = data.completed_tasks.length;
+                const percentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
-                // Update task lists
-                const upcomingTasksList = document.getElementById('upcomingTasksList');
-                const completedTasksList = document.getElementById('completedTasksList');
+                // Update progress indicators
+                document.getElementById('completionPercentage').textContent = `${Math.round(percentage)}%`;
+                document.getElementById('progressBar').style.width = `${percentage}%`;
+                document.getElementById('tasksCompleteCount').textContent = `${completedTasks}/${totalTasks} complete`;
 
                 // Update upcoming tasks
+                const upcomingTasksList = document.getElementById('upcomingTasksList');
                 if (data.upcoming_tasks.length === 0) {
                     upcomingTasksList.innerHTML = `
                         <div class="alert alert-info mb-0">
@@ -207,6 +209,7 @@
                 }
 
                 // Update completed tasks
+                const completedTasksList = document.getElementById('completedTasksList');
                 if (data.completed_tasks.length === 0) {
                     completedTasksList.innerHTML = `
                         <div class="alert alert-info mb-0">
@@ -229,7 +232,10 @@
                 const modal = new bootstrap.Modal(document.getElementById('newhireTaskProgress'));
                 modal.show();
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error fetching task data:', error);
+                alert('Error loading task progress. Please try again.');
+            });
     }
 
     document.addEventListener('DOMContentLoaded', function() {
