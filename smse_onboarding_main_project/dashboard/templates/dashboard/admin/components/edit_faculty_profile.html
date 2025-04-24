@@ -145,14 +145,46 @@ document.getElementById('editFacultyForm').addEventListener('submit', function(e
             // Hide modal
             bootstrap.Modal.getInstance(document.getElementById('editFacultyModal')).hide();
             
+            // Update the table row with new data
+            const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
+            if (facultyRow) {
+                // Update data attributes
+                facultyRow.dataset.facultyFirstName = formData.get('first_name');
+                facultyRow.dataset.facultyLastName = formData.get('last_name');
+                facultyRow.dataset.facultyEmail = formData.get('email');
+                facultyRow.dataset.facultyDepartment = formData.get('engineering_dept');
+                facultyRow.dataset.facultyStatus = formData.get('completed_onboarding') === 'on' ? 'Completed' : 'Pending';
+                
+                // Update visible content
+                // Update name and initials
+                const nameElement = facultyRow.querySelector('.fw-bold.mb-0.small');
+                const initialsElement = facultyRow.querySelector('.initials-avatar');
+                const fullName = `${formData.get('first_name')} ${formData.get('last_name')}`;
+                nameElement.textContent = fullName;
+                if (initialsElement) {
+                    initialsElement.textContent = `${formData.get('first_name').charAt(0)}${formData.get('last_name').charAt(0)}`;
+                }
+                
+                // Update email
+                facultyRow.querySelector('td:nth-child(2) p').textContent = formData.get('email');
+                
+                // Update department
+                facultyRow.querySelector('td:nth-child(3) p').textContent = formData.get('engineering_dept');
+                
+                // Update status badge
+                const statusBadge = facultyRow.querySelector('.badge');
+                if (formData.get('completed_onboarding') === 'on') {
+                    statusBadge.className = 'badge rounded-pill bg-success';
+                    statusBadge.textContent = 'Completed';
+                } else {
+                    statusBadge.className = 'badge rounded-pill bg-warning';
+                    statusBadge.textContent = 'Pending';
+                }
+            }
+            
             // Show success toast
             const toast = new bootstrap.Toast(document.getElementById('successToast'));
             toast.show();
-            
-            // Refresh the page after a short delay
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
         } else {
             alert('Error updating faculty profile');
         }
@@ -161,4 +193,5 @@ document.getElementById('editFacultyForm').addEventListener('submit', function(e
         console.error('Error:', error);
         alert('Error updating faculty profile');
     });
-});</script> 
+});
+</script> 
