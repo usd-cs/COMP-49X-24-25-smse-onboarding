@@ -21,13 +21,11 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h3 mb-0">Faculty Directory</h1>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary">
-                        <i class="bi bi-download"></i>
-                        <span class="d-none d-md-inline">Export</span>
+                    <button class="btn btn-outline-secondary me-2" id="exportBtn" data-bs-toggle="tooltip" data-bs-placement="left" title="Export faculty data to CSV">
+                        <i class="fas fa-download me-1"></i> Export
                     </button>
-                    <button class="btn btn-primary">
-                        <i class="bi bi-plus-lg"></i>
-                        <span class="d-none d-md-inline">Add Faculty</span>
+                    <button class="btn btn-primary" id="addFacultyBtn" data-bs-toggle="tooltip" data-bs-placement="left" title="Add a new faculty member">
+                        <i class="fas fa-plus me-1"></i> Add Faculty
                     </button>
                 </div>
             </div>
@@ -65,7 +63,13 @@
                                             <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
                                         {% endif %}
                                     </div>
-                                    <div class="ms-2" style="cursor: pointer;" data-faculty-id="{{ faculty.pk }}" onclick="showTaskProgress('{{ faculty.pk }}')">
+                                    <div class="ms-2" 
+                                         style="cursor: pointer;" 
+                                         data-faculty-id="{{ faculty.pk }}" 
+                                         onclick="showTaskProgress('{{ faculty.pk }}')"
+                                         data-bs-toggle="tooltip"
+                                         data-bs-placement="bottom"
+                                         title="View onboarding task progress">
                                         <p class="fw-bold mb-0 small">{{ faculty.first_name }} {{ faculty.last_name }}</p>
                                     </div>
                                 </div>
@@ -90,16 +94,32 @@
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn btn-link btn-sm p-1" data-faculty-id="{{ faculty.pk }}" onclick="showProfile(event)">
+                                    <button class="btn btn-link btn-sm p-1" 
+                                            data-faculty-id="{{ faculty.pk }}" 
+                                            onclick="showProfile(event)"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="View faculty profile">
                                         <i class="bi bi-person-lines-fill"></i>
                                     </button>
-                                    <button class="btn btn-link btn-sm p-1">
+                                    <button class="btn btn-link btn-sm p-1"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="Send email to faculty">
                                         <i class="bi bi-envelope"></i>
                                     </button>
-                                    <button class="btn btn-link btn-sm p-1" onclick="showEditFacultyModal('{{ faculty.pk }}')">
+                                    <button class="btn btn-link btn-sm p-1" 
+                                            onclick="showEditFacultyModal('{{ faculty.pk }}')"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="Edit faculty information">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <button class="btn btn-link btn-sm p-1" onclick="showAssignUserRoleModal('{{ faculty.pk }}')" title="Assign User Role">
+                                    <button class="btn btn-link btn-sm p-1" 
+                                            onclick="showAssignUserRoleModal('{{ faculty.pk }}')"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="Manage user roles and permissions">
                                         <i class="bi bi-shield-lock"></i>
                                     </button>
                                 </div>
@@ -211,5 +231,24 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Add event listener for tooltip cleanup when modals are shown
+        var modals = document.querySelectorAll('.modal');
+        modals.forEach(function(modal) {
+            modal.addEventListener('show.bs.modal', function() {
+                // Hide all tooltips before showing modal
+                tooltipList.forEach(function(tooltip) {
+                    tooltip.hide();
+                });
+            });
+        });
+    });
 </script>
 {% endblock %}
