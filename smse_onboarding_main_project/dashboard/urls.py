@@ -18,6 +18,6 @@ urlpatterns = [
     path('complete-task/<int:task_id>/', views.complete_task, name='complete_task'),
     path('continue-task/<int:task_id>/', views.continue_task, name='continue_task'),
     path('api/faculty/<int:faculty_id>/tasks/', views.faculty_tasks, name='faculty_tasks'),
-    path('admin/add-new-hire/', views.add_new_hire, name='add_new_hire'),
+    path('create-faculty/', views.create_faculty, name='create_faculty'),
 ]
 

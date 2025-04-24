@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from tasks.models import Task, TaskProgress
-from users.models import Faculty, User
+from users.models import Faculty
 from documents.models import FacultyDocument
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from datetime import datetime
 import logging
-import re  # Add re module import
+from django.contrib.auth.models import User
+from django.views.decorators.http import require_http_methods
 
 logger = logging.getLogger(__name__)
 
@@ -393,100 +394,186 @@ def faculty_tasks(request, faculty_id):
         return JsonResponse({'error': str(e)}, status=500)
 
 @login_required
-@user_passes_test(is_admin)
-def add_new_hire(request):
-    """Handle adding a new hire"""
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
+@require_http_methods(["POST"])
+def create_faculty(request):
+    # Add detailed request logging
+    logger.info("=== Create Faculty Request ===")
+    logger.info(f"Request method: {request.method}")
+    logger.info(f"User: {request.user.username}")
+    logger.info("POST data:")
+    for key, value in request.POST.items():
+        if key != 'password' and key != 'password_confirmation':  # Don't log passwords
+            logger.info(f"  {key}: {value}")
+    logger.info("========================")
 
     try:
-        # Extract form data
+        # Get form data
+        username = request.POST.get('username')
+        email = request.POST.get('email')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
-        engineering_dept = request.POST.get('engineering_dept')
-        job_role = request.POST.get('job_role')
-        office_room = request.POST.get('office_room')
-        phone = request.POST.get('phone')
-        hire_date_str = request.POST.get('hire_date')
-
-        # Log received data
-        logger.info(f"Attempting to create new hire with email: {email}")
-
-        # Basic validation
-        if not all([first_name, last_name, email, engineering_dept, job_role, office_room, phone, hire_date_str]):
-            logger.error("Missing required fields in new hire form")
-            return JsonResponse({'error': 'All fields are required'}, status=400)
-
-        # Convert hire_date string to datetime
-        try:
-            hire_date = datetime.strptime(hire_date_str, '%Y-%m-%d')
-            hire_date = timezone.make_aware(hire_date)  # Make timezone-aware
-        except ValueError:
-            logger.error(f"Invalid hire date format: {hire_date_str}")
-            return JsonResponse({'error': 'Invalid hire date format'}, status=400)
-
-        # Create user account - Fix username generation
-        username = re.sub(r'[^a-zA-Z0-9]', '', email.split('@')[0])
+        password = request.POST.get('password')
         
-        # Check if username exists and append number if needed
-        base_username = username
-        counter = 1
-        while User.objects.filter(username=username).exists():
-            username = f"{base_username}{counter}"
-            counter += 1
+        # Validate required fields
+        required_fields = {
+            'username': username,
+            'email': email,
+            'first_name': first_name,
+            'last_name': last_name,
+            'password': password,
+            'engineering_dept': request.POST.get('engineering_dept'),
+            'job_role': request.POST.get('job_role'),
+            'phone': request.POST.get('phone'),
+            'office_room': request.POST.get('office_room'),
+            'hire_date': request.POST.get('hire_date'),
+            'hire_time': request.POST.get('hire_time')
+        }
+        
+        # Check for missing required fields
+        missing_fields = [field for field, value in required_fields.items() if not value]
+        if missing_fields:
+            logger.error(f"Missing required fields: {', '.join(missing_fields)}")
+            return JsonResponse({
+                'success': False,
+                'message': f'Please fill in all required fields: {", ".join(missing_fields)}'
+            }, status=400)
+        
+        # Debug logging for all form data
+        logger.debug(f"Received form data for faculty creation:")
+        logger.debug(f"Username: {username}")
+        logger.debug(f"Email: {email}")
+        logger.debug(f"Name: {first_name} {last_name}")
+        logger.debug(f"Department: {request.POST.get('engineering_dept')}")
+        logger.debug(f"Job Role: {request.POST.get('job_role')}")
+        logger.debug(f"Phone: {request.POST.get('phone')}")
+        logger.debug(f"Office: {request.POST.get('office_room')}")
+        logger.debug(f"Hire Date: {request.POST.get('hire_date')} {request.POST.get('hire_time')}")
+        
+        # Check if user is admin
+        if not is_admin(request.user):
+            logger.error(f"Non-admin user {request.user.username} attempted to create faculty")
+            return JsonResponse({
+                'success': False,
+                'message': 'You do not have permission to create faculty members.'
+            }, status=403)
+        
+        # Check if username already exists
+        existing_user_by_username = User.objects.filter(username=username).first()
+        if existing_user_by_username:
+            logger.debug(f"Username {username} already exists for user ID: {existing_user_by_username.id}")
+            return JsonResponse({
+                'success': False,
+                'message': f'Username "{username}" is already taken. Please choose a different username.'
+            }, status=400)
 
-        logger.info(f"Generated unique username: {username}")
+        # Check if email already exists in User or Faculty
+        existing_user_by_email = User.objects.filter(email=email).first()
+        if existing_user_by_email:
+            logger.debug(f"Email {email} already exists for user ID: {existing_user_by_email.id}")
+            return JsonResponse({
+                'success': False,
+                'message': f'Email "{email}" is already registered. Please use a different email address.'
+            }, status=400)
+            
+        existing_faculty_by_email = Faculty.objects.filter(email=email).first()
+        if existing_faculty_by_email:
+            # If there's an existing faculty but no user, delete the faculty record
+            if not existing_faculty_by_email.user:
+                logger.debug(f"Found orphaned faculty record with ID {existing_faculty_by_email.faculty_id}, deleting it")
+                existing_faculty_by_email.delete()
+            else:
+                logger.debug(f"Email {email} already exists for faculty ID: {existing_faculty_by_email.faculty_id}")
+                return JsonResponse({
+                    'success': False,
+                    'message': f'Email "{email}" is already registered. Please use a different email address.'
+                }, status=400)
 
+        # Prepare hire date
+        hire_date = request.POST.get('hire_date')
+        hire_time = request.POST.get('hire_time', '00:00')  # Default to midnight if not provided
         try:
-            # Create user with random password
+            hire_datetime = datetime.strptime(f"{hire_date} {hire_time}", '%Y-%m-%d %H:%M')
+            logger.debug(f"Parsed hire date: {hire_datetime}")
+        except ValueError as e:
+            logger.error(f"Invalid date format: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'message': f'Invalid date format. Please check the date and time.'
+            }, status=400)
+
+        # Create User account first
+        try:
             user = User.objects.create_user(
                 username=username,
-                email=email,
-                password=User.objects.make_random_password(),
+                password=password,
                 first_name=first_name,
-                last_name=last_name
+                last_name=last_name,
+                email=email
             )
-            logger.info(f"Successfully created Django user: {user.username} (ID: {user.id})")
+            logger.debug(f"Created user account with ID: {user.id}")
+        except Exception as e:
+            logger.error(f"Failed to create user account: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'message': f'Failed to create user account: {str(e)}'
+            }, status=400)
 
-            # Create faculty profile
+        try:
+            # Create Faculty profile with required fields
             faculty = Faculty.objects.create(
                 user=user,
                 first_name=first_name,
                 last_name=last_name,
-                email=email,
-                engineering_dept=engineering_dept,
-                job_role=job_role,
-                office_room=office_room,
-                phone=phone,
-                hire_date=hire_date
+                engineering_dept=request.POST.get('engineering_dept'),
+                job_role=request.POST.get('job_role'),
+                office_room=request.POST.get('office_room'),
+                phone=request.POST.get('phone'),
+                email=email,  # Use the same email as the user
+                hire_date=hire_datetime
             )
-            logger.info(f"Successfully created faculty profile: {faculty.faculty_id}")
+            logger.debug(f"Created faculty profile with ID: {faculty.faculty_id}")
 
-            # Assign default tasks to the new hire
-            default_tasks = Task.objects.filter(is_default=True)
-            task_count = 0
-            for task in default_tasks:
-                task.assigned_to.add(faculty)
-                task_count += 1
-            logger.info(f"Assigned {task_count} default tasks to faculty")
+            # Update optional fields if provided
+            if zoom_phone := request.POST.get('zoom_phone'):
+                faculty.zoom_phone = zoom_phone
+                logger.debug(f"Added zoom phone: {zoom_phone}")
+            
+            if bio := request.POST.get('bio'):
+                faculty.bio = bio
+                logger.debug(f"Added bio")
 
+            faculty.mailing_list_status = request.POST.get('mailing_list_status') == 'on'
+            faculty.completed_onboarding = request.POST.get('completed_onboarding') == 'on'
+            
+            faculty.save()
+            logger.debug(f"Successfully saved faculty with ID: {faculty.faculty_id}")
+            
             return JsonResponse({
-                'success': True, 
-                'message': 'New hire added successfully',
-                'username': username,
-                'user_id': user.id,
-                'faculty_id': faculty.faculty_id
+                'success': True,
+                'message': f'Faculty member {first_name} {last_name} created successfully!'
             })
-
+            
         except Exception as e:
-            logger.error(f"Error during user/faculty creation: {str(e)}")
-            # If user was created but faculty creation failed, delete the user
-            if 'user' in locals():
-                user.delete()
-                logger.info(f"Rolled back user creation for {username}")
-            raise
+            logger.error(f"Error creating faculty profile: {str(e)}")
+            # If faculty creation fails, delete the user
+            user.delete()
+            return JsonResponse({
+                'success': False,
+                'message': f'Failed to create faculty profile: {str(e)}'
+            }, status=400)
 
     except Exception as e:
-        logger.error(f"Error adding new hire: {str(e)}")
-        return JsonResponse({'error': str(e)}, status=500)
+        # Clean up any created user if it exists
+        if 'user' in locals():
+            user.delete()
+        
+        error_message = str(e)
+        logger.error(f"Error in create_faculty: {error_message}")
+        
+        if 'duplicate key value violates unique constraint' in error_message:
+            error_message = 'This email address is already registered in the system. Please use a different email address.'
+        
+        return JsonResponse({
+            'success': False,
+            'message': error_message
+        }, status=400)
