@@ -20,5 +20,6 @@ urlpatterns = [
     path('api/faculty/<int:faculty_id>/tasks/', views.faculty_tasks, name='faculty_tasks'),
     path('api/faculty/<int:faculty_id>/', views.get_faculty, name='get_faculty'),
     path('api/faculty/<int:faculty_id>/update/', views.update_faculty, name='update_faculty'),
+    path('api/new-hire-deadlines/', views.get_new_hire_deadlines, name='get_new_hire_deadlines'),
 ]
 

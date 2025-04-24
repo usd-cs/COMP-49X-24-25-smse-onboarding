@@ -452,3 +452,43 @@ def update_faculty(request, faculty_id):
         return JsonResponse({'error': 'Faculty not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def get_new_hire_deadlines(request):
+    """API endpoint to get updated new hire deadlines data"""
+    try:
+        # Get all faculty members with pending tasks
+        faculty_with_tasks = Faculty.objects.filter(completed_onboarding=False)
+        
+        deadlines_data = []
+        for faculty in faculty_with_tasks:
+            # Get the current task and its details
+            current_task = Task.objects.filter(faculty=faculty, completed=False).order_by('due_date').first()
+            
+            if current_task:
+                # Calculate progress
+                total_tasks = Task.objects.filter(faculty=faculty).count()
+                completed_tasks = Task.objects.filter(faculty=faculty, completed=True).count()
+                progress = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
+                
+                # Calculate days overdue
+                if current_task.due_date:
+                    today = timezone.now().date()
+                    days_overdue = (today - current_task.due_date).days if today > current_task.due_date else 0
+                else:
+                    days_overdue = 0
+                
+                deadlines_data.append({
+                    'faculty_id': faculty.id,
+                    'first_name': faculty.first_name,
+                    'last_name': faculty.last_name,
+                    'current_task': current_task.title,
+                    'progress': progress,
+                    'due_date': current_task.due_date.strftime('%Y-%m-%d') if current_task.due_date else None,
+                    'days_overdue': days_overdue
+                })
+        
+        return JsonResponse(deadlines_data, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
