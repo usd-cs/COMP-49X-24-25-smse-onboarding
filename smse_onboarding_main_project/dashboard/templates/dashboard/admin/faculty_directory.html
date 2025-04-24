@@ -96,7 +96,7 @@
                                     <button class="btn btn-link btn-sm p-1">
                                         <i class="bi bi-envelope"></i>
                                     </button>
-                                    <button class="btn btn-link btn-sm p-1">
+                                    <button class="btn btn-link btn-sm p-1" onclick="showEditFacultyModal('{{ faculty.pk }}')">
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                 </div>
@@ -112,6 +112,10 @@
 
 <!-- Include Faculty Profile Card Component -->
 {% include 'dashboard/components/faculty_profile_card.html' %}
+
+<!-- Include Edit Faculty Modal Component -->
+{% include 'dashboard/admin/components/edit_faculty_profile.html' %}
+
 {% endblock %}
 
 {% block extra_js %}

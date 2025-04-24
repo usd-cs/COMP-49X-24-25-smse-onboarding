@@ -391,3 +391,64 @@ def faculty_tasks(request, faculty_id):
         return JsonResponse({'error': 'Faculty not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def get_faculty(request, faculty_id):
+    """API endpoint to get faculty information"""
+    try:
+        faculty = Faculty.objects.get(pk=faculty_id)
+        data = {
+            'first_name': faculty.first_name,
+            'last_name': faculty.last_name,
+            'email': faculty.email,
+            'engineering_dept': faculty.engineering_dept,
+            'phone': faculty.phone,
+            'zoom_phone': faculty.zoom_phone,
+            'office_room': faculty.office_room,
+            'hire_date': faculty.hire_date.strftime('%Y-%m-%d') if faculty.hire_date else '',
+            'job_role': faculty.job_role,
+            'bio': faculty.bio,
+            'completed_onboarding': faculty.completed_onboarding,
+        }
+        return JsonResponse(data)
+    except Faculty.DoesNotExist:
+        return JsonResponse({'error': 'Faculty not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def update_faculty(request, faculty_id):
+    """API endpoint to update faculty information"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        faculty = Faculty.objects.get(pk=faculty_id)
+        
+        # Update faculty fields
+        faculty.first_name = request.POST.get('first_name', faculty.first_name)
+        faculty.last_name = request.POST.get('last_name', faculty.last_name)
+        faculty.email = request.POST.get('email', faculty.email)
+        faculty.engineering_dept = request.POST.get('engineering_dept', faculty.engineering_dept)
+        faculty.phone = request.POST.get('phone', faculty.phone)
+        faculty.zoom_phone = request.POST.get('zoom_phone', faculty.zoom_phone)
+        faculty.office_room = request.POST.get('office_room', faculty.office_room)
+        
+        # Handle hire date
+        hire_date = request.POST.get('hire_date')
+        if hire_date:
+            faculty.hire_date = datetime.strptime(hire_date, '%Y-%m-%d').date()
+        
+        faculty.job_role = request.POST.get('job_role', faculty.job_role)
+        faculty.bio = request.POST.get('bio', faculty.bio)
+        faculty.completed_onboarding = request.POST.get('completed_onboarding') == 'on'
+        
+        faculty.save()
+        
+        return JsonResponse({'status': 'success'})
+    except Faculty.DoesNotExist:
+        return JsonResponse({'error': 'Faculty not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
