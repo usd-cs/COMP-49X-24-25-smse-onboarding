@@ -7,6 +7,7 @@ services:
       - media_data:/usr/local/app/media:rw
     depends_on:
       - db
+    restart: always
     environment:
       DJANGO_SETTINGS_MODULE: smse_onboarding.settings
       DATABASE_URL: postgres://postgres:password@db:5432/smse-db
