@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from tasks.models import Task, TaskProgress
-from users.models import Faculty
+from users.models import Faculty, User
 from documents.models import FacultyDocument
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from datetime import datetime
 import logging
+import re  # Add re module import
 
 logger = logging.getLogger(__name__)
 
@@ -389,4 +390,103 @@ def faculty_tasks(request, faculty_id):
     except Faculty.DoesNotExist:
         return JsonResponse({'error': 'Faculty not found'}, status=404)
     except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def add_new_hire(request):
+    """Handle adding a new hire"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
+
+    try:
+        # Extract form data
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        engineering_dept = request.POST.get('engineering_dept')
+        job_role = request.POST.get('job_role')
+        office_room = request.POST.get('office_room')
+        phone = request.POST.get('phone')
+        hire_date_str = request.POST.get('hire_date')
+
+        # Log received data
+        logger.info(f"Attempting to create new hire with email: {email}")
+
+        # Basic validation
+        if not all([first_name, last_name, email, engineering_dept, job_role, office_room, phone, hire_date_str]):
+            logger.error("Missing required fields in new hire form")
+            return JsonResponse({'error': 'All fields are required'}, status=400)
+
+        # Convert hire_date string to datetime
+        try:
+            hire_date = datetime.strptime(hire_date_str, '%Y-%m-%d')
+            hire_date = timezone.make_aware(hire_date)  # Make timezone-aware
+        except ValueError:
+            logger.error(f"Invalid hire date format: {hire_date_str}")
+            return JsonResponse({'error': 'Invalid hire date format'}, status=400)
+
+        # Create user account - Fix username generation
+        username = re.sub(r'[^a-zA-Z0-9]', '', email.split('@')[0])
+        
+        # Check if username exists and append number if needed
+        base_username = username
+        counter = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}{counter}"
+            counter += 1
+
+        logger.info(f"Generated unique username: {username}")
+
+        try:
+            # Create user with random password
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=User.objects.make_random_password(),
+                first_name=first_name,
+                last_name=last_name
+            )
+            logger.info(f"Successfully created Django user: {user.username} (ID: {user.id})")
+
+            # Create faculty profile
+            faculty = Faculty.objects.create(
+                user=user,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                engineering_dept=engineering_dept,
+                job_role=job_role,
+                office_room=office_room,
+                phone=phone,
+                hire_date=hire_date
+            )
+            logger.info(f"Successfully created faculty profile: {faculty.faculty_id}")
+
+            # Assign default tasks to the new hire
+            default_tasks = Task.objects.filter(is_default=True)
+            task_count = 0
+            for task in default_tasks:
+                task.assigned_to.add(faculty)
+                task_count += 1
+            logger.info(f"Assigned {task_count} default tasks to faculty")
+
+            return JsonResponse({
+                'success': True, 
+                'message': 'New hire added successfully',
+                'username': username,
+                'user_id': user.id,
+                'faculty_id': faculty.faculty_id
+            })
+
+        except Exception as e:
+            logger.error(f"Error during user/faculty creation: {str(e)}")
+            # If user was created but faculty creation failed, delete the user
+            if 'user' in locals():
+                user.delete()
+                logger.info(f"Rolled back user creation for {username}")
+            raise
+
+    except Exception as e:
+        logger.error(f"Error adding new hire: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
