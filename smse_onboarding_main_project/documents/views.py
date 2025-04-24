@@ -23,7 +23,7 @@ def show_documents(request, faculty_id=None):
             # For admin users, show all documents sorted by most recent
             documents = FacultyDocument.objects.all().order_by('-uploaded_at')
             faculties = Faculty.objects.all()
-            
+
             context = {
                 'documents': documents,
                 'faculties': faculties,
