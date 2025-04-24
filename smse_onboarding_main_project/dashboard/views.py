@@ -492,3 +492,68 @@ def get_new_hire_deadlines(request):
         return JsonResponse(deadlines_data, safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def get_user_permissions(request, faculty_id):
+    """API endpoint to get user permissions"""
+    try:
+        faculty = Faculty.objects.get(pk=faculty_id)
+        user = faculty.user
+        
+        data = {
+            'user_id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'is_active': user.is_active,
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser,
+            'is_admin': is_admin(user)
+        }
+        return JsonResponse(data)
+    except Faculty.DoesNotExist:
+        return JsonResponse({'error': 'Faculty not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def update_user_permissions(request, user_id):
+    """API endpoint to update user permissions"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        user = User.objects.get(pk=user_id)
+        
+        # Update user permissions
+        user.is_active = request.POST.get('is_active') == 'on'
+        user.is_staff = request.POST.get('is_staff') == 'on'
+        user.is_superuser = request.POST.get('is_superuser') == 'on'
+        
+        # Handle role-based permissions
+        if request.POST.get('userRole') == 'admin':
+            user.is_staff = True
+            try:
+                faculty = user.faculty_profile
+                faculty.is_admin = True
+                faculty.save()
+            except:
+                pass
+        else:
+            try:
+                faculty = user.faculty_profile
+                faculty.is_admin = False
+                faculty.save()
+            except:
+                pass
+        
+        user.save()
+        
+        return JsonResponse({'status': 'success'})
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

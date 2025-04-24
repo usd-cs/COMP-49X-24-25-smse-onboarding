@@ -99,6 +99,9 @@
                                     <button class="btn btn-link btn-sm p-1" onclick="showEditFacultyModal('{{ faculty.pk }}')">
                                         <i class="bi bi-pencil"></i>
                                     </button>
+                                    <button class="btn btn-link btn-sm p-1" onclick="showAssignUserRoleModal('{{ faculty.pk }}')" title="Assign User Role">
+                                        <i class="bi bi-shield-lock"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -115,6 +118,9 @@
 
 <!-- Include Edit Faculty Modal Component -->
 {% include 'dashboard/admin/components/edit_faculty_profile.html' %}
+
+<!-- Include User Role Assignment Modal Component -->
+{% include 'dashboard/admin/components/assign_user_role.html' %}
 
 <!-- Include New Hire Task Progress Component -->
 {% include 'dashboard/admin/components/newhire_task_progress.html' %}
