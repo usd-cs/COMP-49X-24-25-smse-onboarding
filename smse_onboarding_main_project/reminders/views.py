@@ -3,6 +3,7 @@ from users.models import Faculty
 from tasks.models import Task
 from django.core.mail import send_mail
 from django.conf import settings
+from django.utils import timezone
 
 def send_reminder(request, faculty_id, current_task_id):
     if request.method == 'POST':
@@ -12,7 +13,7 @@ def send_reminder(request, faculty_id, current_task_id):
         if current_task.remaining_days > 1:
             days_remaining = f"You have {current_task.remaining_days} days remaining to complete this task."
             time_remaining = f"{current_task.remaining_days} days"
-        elif current_task.remaining_days <= 1 and current_task.remaining_days > 0:
+        elif (current_task.deadline - timezone.now()).total_seconds() / 3600 <= 24 and (current_task.deadline - timezone.now()).total_seconds() / 3600 > 0:
             days_remaining = "You have less than 24 hours remaining to complete this task."
             time_remaining = "Less than 24 hours"
         else:
