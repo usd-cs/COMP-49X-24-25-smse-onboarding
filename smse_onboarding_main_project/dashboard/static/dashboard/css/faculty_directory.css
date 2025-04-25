@@ -93,66 +93,73 @@
     border: none;
 }
 
-/* Faculty Table */
-.faculty-table {
-    width: 100%;
-    overflow-x: auto; /* Enable horizontal scrolling if needed */
-    background-color: white !important; /* White background for faculty table */
-    padding: 10px;
-    border-radius: 6px;
-    position: relative; /* Ensure proper stacking */
-    z-index: 4; /* Above card-body */
+/* Faculty Table Styles */
+.table-responsive {
+    background-color: white !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
 }
 
-.faculty-table .table {
+.table {
     margin-bottom: 0;
-    font-size: 0.9rem; /* Smaller font */
+    font-size: 0.9rem;
     width: 100%;
-    table-layout: auto; /* Allow table to adjust column widths */
-    background-color: white; /* Keep table itself white for readability */
+    table-layout: auto;
+    background-color: white;
 }
 
-.faculty-table th {
+.table th {
     background-color: #f8f9fa;
     color: #6c757d;
     font-weight: 600;
-    font-size: 0.8rem; /* Smaller font */
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 0.75rem; /* Reduced padding */
+    padding: 0.75rem;
     border-bottom: 1px solid #e9ecef;
-    white-space: nowrap; /* Prevent wrapping */
+    white-space: nowrap;
 }
 
-.faculty-table td {
-    padding: 0.75rem; /* Reduced padding */
+.table td {
+    padding: 0.75rem;
     vertical-align: middle;
     border-bottom: 1px solid #f1f1f1;
 }
 
-.faculty-table tbody tr:hover {
+.table tbody tr:hover {
     background-color: #f8f9fa;
 }
 
-/* Name cell with avatar */
+/* Faculty Avatar */
 .faculty-avatar {
-    width: 32px; /* Smaller avatar */
-    height: 32px; /* Smaller avatar */
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 500;
-    font-size: 0.9rem; /* Smaller font */
+    font-size: 0.9rem;
     background-color: #1976d2;
     color: white;
-    margin-right: 8px; /* Reduced margin */
+    margin-right: 8px;
 }
 
-/* Action buttons */
+.initials-avatar {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: white;
+}
+
+/* Action Buttons */
 .action-buttons {
     display: flex;
-    gap: 4px; /* Reduced gap */
+    gap: 4px;
 }
 
 .header-buttons {
@@ -164,18 +171,18 @@
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
-    gap: 6px; /* Reduced gap */
-    font-size: 0.9rem; /* Smaller font */
+    gap: 6px;
+    font-size: 0.9rem;
 }
 
 .btn-primary, .btn-outline-primary {
-    padding: 0.4rem 0.8rem; /* Reduced padding */
+    padding: 0.4rem 0.8rem;
 }
 
-/* Add responsive table styles */
+/* Responsive Styles */
 @media screen and (max-width: 1400px) {
-    .faculty-table .table {
-        min-width: 800px; /* Ensure minimum width for readability */
+    .table {
+        min-width: 800px;
     }
 }
 

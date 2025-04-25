@@ -317,6 +317,7 @@ def faculty_directory(request):
     
     context = {
         'faculty_members': faculty_members,
+        'is_admin': True,
     }
     
     return render(request, 'dashboard/admin/faculty_directory.html', context)
@@ -388,5 +389,171 @@ def faculty_tasks(request, faculty_id):
         })
     except Faculty.DoesNotExist:
         return JsonResponse({'error': 'Faculty not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def get_faculty(request, faculty_id):
+    """API endpoint to get faculty information"""
+    try:
+        faculty = Faculty.objects.get(pk=faculty_id)
+        data = {
+            'first_name': faculty.first_name,
+            'last_name': faculty.last_name,
+            'email': faculty.email,
+            'engineering_dept': faculty.engineering_dept,
+            'phone': faculty.phone,
+            'zoom_phone': faculty.zoom_phone,
+            'office_room': faculty.office_room,
+            'hire_date': faculty.hire_date.strftime('%Y-%m-%d') if faculty.hire_date else '',
+            'job_role': faculty.job_role,
+            'bio': faculty.bio,
+            'completed_onboarding': faculty.completed_onboarding,
+        }
+        return JsonResponse(data)
+    except Faculty.DoesNotExist:
+        return JsonResponse({'error': 'Faculty not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def update_faculty(request, faculty_id):
+    """API endpoint to update faculty information"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        faculty = Faculty.objects.get(pk=faculty_id)
+        
+        # Update faculty fields
+        faculty.first_name = request.POST.get('first_name', faculty.first_name)
+        faculty.last_name = request.POST.get('last_name', faculty.last_name)
+        faculty.email = request.POST.get('email', faculty.email)
+        faculty.engineering_dept = request.POST.get('engineering_dept', faculty.engineering_dept)
+        faculty.phone = request.POST.get('phone', faculty.phone)
+        faculty.zoom_phone = request.POST.get('zoom_phone', faculty.zoom_phone)
+        faculty.office_room = request.POST.get('office_room', faculty.office_room)
+        
+        # Handle hire date
+        hire_date = request.POST.get('hire_date')
+        if hire_date:
+            faculty.hire_date = datetime.strptime(hire_date, '%Y-%m-%d').date()
+        
+        faculty.job_role = request.POST.get('job_role', faculty.job_role)
+        faculty.bio = request.POST.get('bio', faculty.bio)
+        faculty.completed_onboarding = request.POST.get('completed_onboarding') == 'on'
+        
+        faculty.save()
+        
+        return JsonResponse({'status': 'success'})
+    except Faculty.DoesNotExist:
+        return JsonResponse({'error': 'Faculty not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def get_new_hire_deadlines(request):
+    """API endpoint to get updated new hire deadlines data"""
+    try:
+        # Get all faculty members with pending tasks
+        faculty_with_tasks = Faculty.objects.filter(completed_onboarding=False)
+        
+        deadlines_data = []
+        for faculty in faculty_with_tasks:
+            # Get the current task and its details
+            current_task = Task.objects.filter(faculty=faculty, completed=False).order_by('due_date').first()
+            
+            if current_task:
+                # Calculate progress
+                total_tasks = Task.objects.filter(faculty=faculty).count()
+                completed_tasks = Task.objects.filter(faculty=faculty, completed=True).count()
+                progress = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
+                
+                # Calculate days overdue
+                if current_task.due_date:
+                    today = timezone.now().date()
+                    days_overdue = (today - current_task.due_date).days if today > current_task.due_date else 0
+                else:
+                    days_overdue = 0
+                
+                deadlines_data.append({
+                    'faculty_id': faculty.id,
+                    'first_name': faculty.first_name,
+                    'last_name': faculty.last_name,
+                    'current_task': current_task.title,
+                    'progress': progress,
+                    'due_date': current_task.due_date.strftime('%Y-%m-%d') if current_task.due_date else None,
+                    'days_overdue': days_overdue
+                })
+        
+        return JsonResponse(deadlines_data, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def get_user_permissions(request, faculty_id):
+    """API endpoint to get user permissions"""
+    try:
+        faculty = Faculty.objects.get(pk=faculty_id)
+        user = faculty.user
+        
+        data = {
+            'user_id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'is_active': user.is_active,
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser,
+            'is_admin': is_admin(user)
+        }
+        return JsonResponse(data)
+    except Faculty.DoesNotExist:
+        return JsonResponse({'error': 'Faculty not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def update_user_permissions(request, user_id):
+    """API endpoint to update user permissions"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        user = User.objects.get(pk=user_id)
+        
+        # Update user permissions
+        user.is_active = request.POST.get('is_active') == 'on'
+        user.is_staff = request.POST.get('is_staff') == 'on'
+        user.is_superuser = request.POST.get('is_superuser') == 'on'
+        
+        # Handle role-based permissions
+        if request.POST.get('userRole') == 'admin':
+            user.is_staff = True
+            try:
+                faculty = user.faculty_profile
+                faculty.is_admin = True
+                faculty.save()
+            except:
+                pass
+        else:
+            try:
+                faculty = user.faculty_profile
+                faculty.is_admin = False
+                faculty.save()
+            except:
+                pass
+        
+        user.save()
+        
+        return JsonResponse({'status': 'success'})
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)

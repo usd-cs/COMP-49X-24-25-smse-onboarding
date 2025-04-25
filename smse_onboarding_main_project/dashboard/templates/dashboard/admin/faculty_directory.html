@@ -12,7 +12,6 @@
 {% block content %}
 <div class="dashboard-container" id="dashboardContainer">
     {% include 'dashboard/components/sidebar.html' %}
-    {% include 'dashboard/admin/components/newhire_task_progress.html' %}
 
     <div class="main-content" id="mainContent">
         {% include 'dashboard/components/topnav.html' %}
@@ -21,16 +20,6 @@
         <div class="container-fluid py-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h3 mb-0">Faculty Directory</h1>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary">
-                        <i class="bi bi-download"></i>
-                        <span class="d-none d-md-inline">Export</span>
-                    </button>
-                    <button class="btn btn-primary">
-                        <i class="bi bi-plus-lg"></i>
-                        <span class="d-none d-md-inline">Add Faculty</span>
-                    </button>
-                </div>
             </div>
 
             <!-- Faculty Table -->
@@ -66,7 +55,13 @@
                                             <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
                                         {% endif %}
                                     </div>
-                                    <div class="ms-2" style="cursor: pointer;" data-faculty-id="{{ faculty.pk }}" onclick="showTaskProgress(event)">
+                                    <div class="ms-2" 
+                                         style="cursor: pointer;" 
+                                         data-faculty-id="{{ faculty.pk }}" 
+                                         onclick="showTaskProgress('{{ faculty.pk }}')"
+                                         data-bs-toggle="tooltip"
+                                         data-bs-placement="bottom"
+                                         title="View onboarding task progress">
                                         <p class="fw-bold mb-0 small">{{ faculty.first_name }} {{ faculty.last_name }}</p>
                                     </div>
                                 </div>
@@ -91,14 +86,33 @@
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn btn-link btn-sm p-1" data-faculty-id="{{ faculty.pk }}" onclick="showProfile(event)">
+                                    <button class="btn btn-link btn-sm p-1" 
+                                            data-faculty-id="{{ faculty.pk }}" 
+                                            onclick="showProfile(event)"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="View faculty profile">
                                         <i class="bi bi-person-lines-fill"></i>
                                     </button>
-                                    <button class="btn btn-link btn-sm p-1">
+                                    <button class="btn btn-link btn-sm p-1"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="Send email to faculty">
                                         <i class="bi bi-envelope"></i>
                                     </button>
-                                    <button class="btn btn-link btn-sm p-1">
+                                    <button class="btn btn-link btn-sm p-1" 
+                                            onclick="showEditFacultyModal('{{ faculty.pk }}')"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="Edit faculty information">
                                         <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-link btn-sm p-1" 
+                                            onclick="showAssignUserRoleModal('{{ faculty.pk }}')"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="Manage user roles and permissions">
+                                        <i class="bi bi-shield-lock"></i>
                                     </button>
                                 </div>
                             </td>
@@ -113,6 +127,16 @@
 
 <!-- Include Faculty Profile Card Component -->
 {% include 'dashboard/components/faculty_profile_card.html' %}
+
+<!-- Include Edit Faculty Modal Component -->
+{% include 'dashboard/admin/components/edit_faculty_profile.html' %}
+
+<!-- Include User Role Assignment Modal Component -->
+{% include 'dashboard/admin/components/assign_user_role.html' %}
+
+<!-- Include New Hire Task Progress Component -->
+{% include 'dashboard/admin/components/newhire_task_progress.html' %}
+
 {% endblock %}
 
 {% block extra_js %}
@@ -132,102 +156,102 @@
         });
     });
 
-    function showTaskProgress(event) {
-        // Get the faculty ID from the data attribute
-        const facultyId = event.currentTarget.getAttribute('data-faculty-id');
-
+    function showTaskProgress(facultyId) {
+        // Get faculty information from the table row
         const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
+        const facultyName = facultyRow.querySelector('.fw-bold').textContent;
+        const facultyEmail = facultyRow.querySelector('.text-muted').textContent;
+        const facultyDepartment = facultyRow.querySelector('td:nth-child(3) .text-muted').textContent;
 
-        if (facultyRow) {
-            // Get faculty information from data attributes
-            const firstName = facultyRow.dataset.facultyFirstName;
-            const lastName = facultyRow.dataset.facultyLastName;
-            const email = facultyRow.dataset.facultyEmail;
-            const department = facultyRow.dataset.facultyDepartment;
-            const startDate = facultyRow.dataset.facultyStartDate;
-            const status = facultyRow.dataset.facultyStatus;
+        // Update faculty information in modal
+        document.getElementById('facultyNameTitle').textContent = facultyName;
+        document.getElementById('facultyDepartmentInfo').textContent = facultyDepartment;
+        document.getElementById('facultyEmail').textContent = facultyEmail;
 
-            // Update faculty information
-            document.getElementById('facultyNameTitle').textContent = `${firstName} ${lastName}`;
-            document.getElementById('facultyDepartmentInfo').textContent = department;
-            document.getElementById('facultyEmail').textContent = email;
+        // Fetch task data
+        fetch(`/dashboard/api/faculty/${facultyId}/tasks/`)
+            .then(response => response.json())
+            .then(data => {
+                // Calculate progress
+                const totalTasks = data.upcoming_tasks.length + data.completed_tasks.length;
+                const completedTasks = data.completed_tasks.length;
+                const percentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
-            // Fetch task data from the backend
-            fetch(`/dashboard/api/faculty/${facultyId}/tasks/`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Task data received:", data); // Debug log
-                    const tasks = {
-                        upcoming: data.upcoming_tasks || [],
-                        completed: data.completed_tasks || []
-                    };
+                // Update progress indicators
+                document.getElementById('completionPercentage').textContent = `${Math.round(percentage)}%`;
+                document.getElementById('progressBar').style.width = `${percentage}%`;
+                document.getElementById('tasksCompleteCount').textContent = `${completedTasks}/${totalTasks} complete`;
 
-                    // Update progress information
-                    const totalTasks = tasks.upcoming.length + tasks.completed.length;
-                    const completedTasks = tasks.completed.length;
-                    const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-                    document.getElementById('completionPercentage').textContent = `${progressPercentage}%`;
-                    document.getElementById('progressBar').style.width = `${progressPercentage}%`;
-                    document.getElementById('tasksCompleteCount').textContent = `${completedTasks}/${totalTasks} complete`;
-
-                    // Update upcoming tasks
-                    const upcomingTasksList = document.getElementById('upcomingTasksList');
-                    if (tasks.upcoming.length === 0) {
-                        upcomingTasksList.innerHTML = `
-                            <div class="alert alert-info mb-0">
-                                No upcoming tasks at this moment
-                            </div>
-                        `;
-                    } else {
-                        upcomingTasksList.innerHTML = tasks.upcoming.map(task => `
-                            <div class="task-item">
-                                <div class="task-info">
-                                    <div class="task-title">${task.title}</div>
-                                    <div class="task-meta">
-                                        <span>Due: ${task.due_date}</span>
-                                        <span class="ms-2 task-due">${task.days_left}</span>
-                                    </div>
+                // Update upcoming tasks
+                const upcomingTasksList = document.getElementById('upcomingTasksList');
+                if (data.upcoming_tasks.length === 0) {
+                    upcomingTasksList.innerHTML = `
+                        <div class="alert alert-info mb-0">
+                            No upcoming tasks at this moment
+                        </div>
+                    `;
+                } else {
+                    upcomingTasksList.innerHTML = data.upcoming_tasks.map(task => `
+                        <div class="task-item">
+                            <div class="task-info">
+                                <div class="task-title">${task.title}</div>
+                                <div class="task-meta">
+                                    <span>Due: ${task.due_date}</span>
+                                    <span class="ms-2 task-due">${task.days_left}</span>
                                 </div>
-                                <span class="task-status pending">Pending</span>
-                                <button class="task-menu ms-2" title="More Info">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
                             </div>
-                        `).join('');
-                    }
+                            <span class="task-status pending">Pending</span>
+                        </div>
+                    `).join('');
+                }
 
-                    // Update completed tasks
-                    const completedTasksList = document.getElementById('completedTasksList');
-                    if (tasks.completed.length === 0) {
-                        completedTasksList.innerHTML = `
-                            <div class="alert alert-info mb-0">
-                                No completed tasks at this moment
+                // Update completed tasks
+                const completedTasksList = document.getElementById('completedTasksList');
+                if (data.completed_tasks.length === 0) {
+                    completedTasksList.innerHTML = `
+                        <div class="alert alert-info mb-0">
+                            No completed tasks at this moment
+                        </div>
+                    `;
+                } else {
+                    completedTasksList.innerHTML = data.completed_tasks.map(task => `
+                        <div class="task-item">
+                            <div class="task-info">
+                                <div class="task-title">${task.title}</div>
+                                <div class="task-meta">Completed: ${task.completed_date}</div>
                             </div>
-                        `;
-                    } else {
-                        completedTasksList.innerHTML = tasks.completed.map(task => `
-                            <div class="task-item">
-                                <div class="task-info">
-                                    <div class="task-title">${task.title}</div>
-                                    <div class="task-meta">Completed: ${task.completed_date || 'Unknown date'}</div>
-                                </div>
-                                <span class="task-status completed">Completed</span>
-                                <button class="task-menu ms-2" title="More Info">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                            </div>
-                        `).join('');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching task data:', error);
-                });
+                            <span class="task-status completed">Completed</span>
+                        </div>
+                    `).join('');
+                }
 
-            // Show the modal
-            const modal = new bootstrap.Modal(document.getElementById('newhireTaskProgress'));
-            modal.show();
-        }
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('newhireTaskProgress'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error fetching task data:', error);
+                alert('Error loading task progress. Please try again.');
+            });
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Add event listener for tooltip cleanup when modals are shown
+        var modals = document.querySelectorAll('.modal');
+        modals.forEach(function(modal) {
+            modal.addEventListener('show.bs.modal', function() {
+                // Hide all tooltips before showing modal
+                tooltipList.forEach(function(tooltip) {
+                    tooltip.hide();
+                });
+            });
+        });
+    });
 </script>
 {% endblock %}

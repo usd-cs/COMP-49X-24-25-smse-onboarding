@@ -18,5 +18,12 @@ urlpatterns = [
     path('complete-task/<int:task_id>/', views.complete_task, name='complete_task'),
     path('continue-task/<int:task_id>/', views.continue_task, name='continue_task'),
     path('api/faculty/<int:faculty_id>/tasks/', views.faculty_tasks, name='faculty_tasks'),
+    path('api/faculty/<int:faculty_id>/', views.get_faculty, name='get_faculty'),
+    path('api/faculty/<int:faculty_id>/update/', views.update_faculty, name='update_faculty'),
+    path('api/new-hire-deadlines/', views.get_new_hire_deadlines, name='get_new_hire_deadlines'),
+    
+    # New endpoints for user permissions management
+    path('api/faculty/<int:faculty_id>/user-permissions/', views.get_user_permissions, name='get_user_permissions'),
+    path('api/faculty/user-permissions/<int:user_id>/update/', views.update_user_permissions, name='update_user_permissions'),
 ]
 
