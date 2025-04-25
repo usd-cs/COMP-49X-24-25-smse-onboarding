@@ -157,16 +157,21 @@
     });
 
     function showTaskProgress(facultyId) {
+        // Get faculty information from the table row
+        const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
+        const facultyName = facultyRow.querySelector('.fw-bold').textContent;
+        const facultyEmail = facultyRow.querySelector('.text-muted').textContent;
+        const facultyDepartment = facultyRow.querySelector('td:nth-child(3) .text-muted').textContent;
+
+        // Update faculty information in modal
+        document.getElementById('facultyNameTitle').textContent = facultyName;
+        document.getElementById('facultyDepartmentInfo').textContent = facultyDepartment;
+        document.getElementById('facultyEmail').textContent = facultyEmail;
+
         // Fetch task data
         fetch(`/dashboard/api/faculty/${facultyId}/tasks/`)
             .then(response => response.json())
             .then(data => {
-                // Update faculty information
-                const facultyRow = document.querySelector(`[data-faculty-id="${facultyId}"]`);
-                document.getElementById('facultyNameTitle').textContent = data.faculty_name || '';
-                document.getElementById('facultyDepartmentInfo').textContent = data.department || '';
-                document.getElementById('facultyEmail').textContent = data.email || '';
-
                 // Calculate progress
                 const totalTasks = data.upcoming_tasks.length + data.completed_tasks.length;
                 const completedTasks = data.completed_tasks.length;
