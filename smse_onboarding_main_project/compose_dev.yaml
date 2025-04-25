@@ -17,6 +17,7 @@ services:
       DJANGO_SUPERUSER_USERNAME: admin
       DJANGO_SUPERUSER_EMAIL: admin@gmail.com
       DJANGO_SUPERUSER_PASSWORD: password
+      PYTHONHTTPSVERIFY: "0"
     command: >
       bash -c "
              until nc -z db 5432; do echo 'Waiting for PostgreSQL...'; sleep 2; done &&
