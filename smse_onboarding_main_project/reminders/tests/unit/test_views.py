@@ -104,7 +104,7 @@ Thank you,
 SMSE Admin Team
         """
 
-        expected_message = f"""Hello Test Faculty,
+        expected_message = """Hello Test Faculty,
 
 This is a reminder about your new hire onboarding task: Test Task 1.
 This task is due on April 25, 2025, 12:00 PM.
