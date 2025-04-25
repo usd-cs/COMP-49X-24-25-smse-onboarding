@@ -45,7 +45,7 @@ class ReminderViewTests(TestCase):
         else:
             days_remaining = None
 
-        self.assertEqual(days_remaining, f"You have 3 days remaining to complete this task.")
+        self.assertEqual(days_remaining, "You have 3 days remaining to complete this task.")
 
     def test_time_less_than_1_day(self):
         """Test the time remaining hours for a task."""
