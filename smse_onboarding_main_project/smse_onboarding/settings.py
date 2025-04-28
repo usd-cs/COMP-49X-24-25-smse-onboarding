@@ -93,11 +93,7 @@ TEMPLATES = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    # 'https://smse-onboarding.dedyn.io:8080',
-    # 'https://smse-onboarding.dedyn.io:8000',
     'https://smse-onboarding.dedyn.io',
-    # 'http://smse-onboarding.dedyn.io:8080',
-    # 'http://smse-onboarding.dedyn.io:8000',
     'http://smse-onboarding.dedyn.io',
     'http://localhost:8000',
 ]
@@ -208,7 +204,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'usdsmse@gmail.com'
-EMAIL_HOST_PASSWORD = 'avslwlzrooptdlbm'
+EMAIL_HOST_PASSWORD = 'nooavwmaipzsthhd'
 DEFAULT_FROM_EMAIL = 'usdsmse@gmail.com'
 
 LOGIN_REDIRECT_URL = '/home/'

@@ -11,14 +11,13 @@ services:
       db:
         condition: service_healthy
     environment:
-      DJANGO_SETTINGS_MODULE: smse_onboarding.settings_dev
+      DJANGO_SETTINGS_MODULE: smse_onboarding.settings
       DATABASE_URL: postgres://postgres:password@db:5432/smse-db
       DB_HOST: db
       DOCKERIZED: "1"
       DJANGO_SUPERUSER_USERNAME: admin
       DJANGO_SUPERUSER_EMAIL: admin@gmail.com
       DJANGO_SUPERUSER_PASSWORD: password
-      PYTHONHTTPSVERIFY: "0"
     command: >
       bash -c "
              python manage.py migrate &&
