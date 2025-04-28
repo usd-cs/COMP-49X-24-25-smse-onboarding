@@ -1,9 +1,15 @@
 from django.shortcuts import redirect
 from users.models import Faculty
 from tasks.models import Task
+from reminders.models import Reminder
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
+from django.shortcuts import render
+
+def reminder_list(request):
+    reminders = Reminder.objects.all()
+    return render(request, 'reminders/reminder_list.html', {'reminders': reminders})
 
 def send_reminder(request, faculty_id, current_task_id):
     if request.method == 'POST':

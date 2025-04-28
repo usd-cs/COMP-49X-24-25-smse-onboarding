@@ -1,0 +1,19 @@
+{% load custom_filters %}
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th style="width: 5%"></th>
+                <th style="width: 45%">Task</th>
+                <th style="width: 25%">Due Date</th>
+                <th style="width: 25%">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reminder in reminders %}
+                {% include 'reminders/reminder_card.html' %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
