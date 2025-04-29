@@ -1,8 +1,23 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block dashboard_css %}
+<link href="{% static 'dashboard/css/sidebar.css' %}" rel="stylesheet">
+<link href="{% static 'dashboard/css/new_hire.css' %}" rel="stylesheet">
+<link href="{% static 'dashboard/css/topnav.css' %}" rel="stylesheet">
+<link href="{% static 'reminders/css/notifications.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
 <div class="card">
     <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center">
+                <a href="{% if user.is_staff %}{% url 'dashboard:admin_home' %}{% else %}{% url 'dashboard:new_hire_home' %}{% endif %}" class="btn btn-outline-secondary me-3">
+                    <i class="bi bi-house-fill"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
         <h5 class="card-title">Your Notifications</h5>
         {% include 'reminders/reminder_list.html' %}
     </div>
