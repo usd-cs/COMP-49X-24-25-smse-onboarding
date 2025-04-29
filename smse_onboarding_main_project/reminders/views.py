@@ -97,6 +97,8 @@ SMSE Admin Team"""
         except Exception as e:
             pass
 
+        send_notification(faculty, current_task, days_remaining, time_remaining)
+
     return redirect('dashboard:admin_home')
 
 def send_notification_faculty(faculty, current_task, days_remaining, time_remaining):
