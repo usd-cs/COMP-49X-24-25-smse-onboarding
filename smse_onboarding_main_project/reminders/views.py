@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from users.models import Faculty
 from tasks.models import Task
 from reminders.models import Reminder
@@ -6,11 +6,49 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from dashboard.views import is_admin, get_faculty_from_request
+from django.core.exceptions import PermissionDenied
 
-def reminder_list(request):
-    reminders = Reminder.objects.all()
-    return render(request, 'reminders/reminder_list.html', {'reminders': reminders})
+@login_required
+def notifications_page(request):
+    """Render the notifications page"""
+    user = request.user
 
+    # Check if user is staff or admin, redirect to admin dashboard if so
+    if user.is_staff or is_admin(user):
+        return redirect('dashboard:admin_home')
+    
+    faculty = get_faculty_from_request(request)
+    if not faculty:
+        if request.user.is_superuser:
+            return redirect('dashboard:admin_home')
+        return redirect('users:login')
+    
+    if not user.is_staff and (not hasattr(user, 'faculty_profile') or user.faculty_profile.faculty_id != faculty.faculty_id):
+        raise PermissionDenied
+    
+    reminders = Reminder.objects.filter(faculty=faculty)
+
+    # Render the notifications page for the specific faculty member
+    return render(request, 'reminders/notifications.html', {
+        'reminders': reminders,
+        'faculty': faculty,
+    })
+
+@login_required
+def mark_as_read(request, reminder_id):
+    reminder = get_object_or_404(Reminder, reminder_id=reminder_id)
+    reminder.mark_as_read()
+    return redirect('reminders:notifications')
+
+@login_required
+def mark_as_unread(request, reminder_id):
+    reminder = get_object_or_404(Reminder, reminder_id=reminder_id)
+    reminder.mark_as_unread()
+    return redirect('reminders:notifications')
+
+@login_required
 def send_reminder(request, faculty_id, current_task_id):
     if request.method == 'POST':
         faculty = Faculty.objects.get(faculty_id=faculty_id)
