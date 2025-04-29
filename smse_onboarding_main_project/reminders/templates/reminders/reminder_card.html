@@ -1,7 +1,7 @@
-<tr>
+<tr {% if not reminder.is_read %}class="reminder-card-unread"{% else %}class="reminder-card-read"{% endif %}>
     <td>
         {% if not reminder.is_read %}
-            <form method="POST" action="{% url 'reminders:mark_as_read' reminder.reminder_id %}" class="task-completion-form">
+            <form method="POST" action="{% url 'reminders:mark_as_read' reminder.reminder_id %}">
                 {% csrf_token %}
                 <span class="tt" data-bs-placement="bottom" data-bs-title="Mark As Read">
                     <button type="submit" class="btn btn-link p-0 task-circle-btn">
@@ -10,7 +10,7 @@
                 </span>
             </form>
         {% else %}
-            <form method="POST" action="{% url 'reminders:mark_as_unread' reminder.reminder_id %}" class="task-completion-form">
+            <form method="POST" action="{% url 'reminders:mark_as_unread' reminder.reminder_id %}">
                 {% csrf_token %}
                 <span class="tt" data-bs-placement="bottom" data-bs-title="Mark As Unread">
                     <button type="submit" class="btn btn-link p-0 task-circle-btn">
@@ -28,6 +28,7 @@
 
     <td>{{ reminder.reminder_date|date:"M d, Y, g a" }}</td>
 </tr>
+
 <!-- Reminder Modal -->
 <div class="modal fade" id="reminderModal{{ reminder.reminder_id }}" tabindex="-1" aria-labelledby="reminderModalLabel{{ reminder.reminder_id }}" aria-hidden="true">
     <div class="modal-dialog">
@@ -37,7 +38,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Created:</strong> {{ reminder.reminder_date|date:"M d, Y" }}</p>
+                <p><strong>Created:</strong> {{ reminder.reminder_date|date:"M d, Y, g a" }}</p>
                 <p><strong>Description:</strong></p>
                 <p>{{ reminder.message }}</p>
             </div>
