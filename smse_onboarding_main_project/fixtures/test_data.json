@@ -372,6 +372,19 @@
             "uploaded_by": 3,
             "uploaded_at": "2024-02-01T08:00:00-08:00"
         }
+    },
+
+    {
+        "model": "reminders.reminder",
+        "pk": 1,
+        "fields": {
+            "faculty": 1,
+            "task": 3,
+            "reminder_date": "2024-11-01T09:00:00-08:00",
+            "is_read": false,
+            "title": "Reminder for New Hire Onboarding Task: Computer Request",
+            "message": "This is a test reminder."
+        }
     }
 ]
 
