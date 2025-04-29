@@ -22,18 +22,20 @@ class Reminder(models.Model):
     )
     reminder_date = models.DateTimeField(default=timezone.now)
     is_read = models.BooleanField(default=False)
-    message = models.TextField()
+    title = models.TextField(default="")
+    message = models.TextField(default="")
 
     objects: Manager = Manager()
 
     def __str__(self):
         return f"Reminder for {self.faculty.first_name} - {self.task.title}"
-
-    def is_marked_as_read(self):
-        return self.is_read
     
     def mark_as_read(self):
         self.is_read = True
+        self.save()
+    
+    def mark_as_unread(self):
+        self.is_read = False
         self.save()
     
     class Meta:

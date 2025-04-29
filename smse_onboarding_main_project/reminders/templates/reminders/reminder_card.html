@@ -1,0 +1,60 @@
+<tr>
+    <td>
+        {% if not reminder.is_read %}
+            <form method="POST" action="{% url 'reminders:mark_as_read' reminder.reminder_id %}" class="task-completion-form">
+                {% csrf_token %}
+                <span class="tt" data-bs-placement="bottom" data-bs-title="Mark As Read">
+                    <button type="submit" class="btn btn-link p-0 task-circle-btn">
+                        <i class="bi bi-circle text-secondary" style="font-size: 1.2rem;"></i>
+                    </button>
+                </span>
+            </form>
+        {% else %}
+            <form method="POST" action="{% url 'reminders:mark_as_unread' reminder.reminder_id %}" class="task-completion-form">
+                {% csrf_token %}
+                <span class="tt" data-bs-placement="bottom" data-bs-title="Mark As Unread">
+                    <button type="submit" class="btn btn-link p-0 task-circle-btn">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 1.2rem;"></i>
+                    </button>
+                </span>
+            </form>
+        {% endif %}
+    </td>
+    <td class="task-title" data-bs-toggle="modal" data-bs-target="#reminderModal{{ reminder.reminder_id }}">
+        <span class="tt" data-bs-placement="bottom" data-bs-title="See Reminder Details">
+            {{ reminder.title }}
+        </span>
+    </td>
+
+    <td>{{ reminder.reminder_date|date:"M d, Y, g a" }}</td>
+</tr>
+<!-- Reminder Modal -->
+<div class="modal fade" id="reminderModal{{ reminder.reminder_id }}" tabindex="-1" aria-labelledby="reminderModalLabel{{ reminder.reminder_id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reminderModalLabel{{ reminder.reminder_id }}">{{ reminder.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Created:</strong> {{ reminder.reminder_date|date:"M d, Y" }}</p>
+                <p><strong>Description:</strong></p>
+                <p>{{ reminder.message }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                {% if not reminder.is_read %}
+                    <form method="POST" action="{% url 'reminders:mark_as_read' reminder.reminder_id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-secondary" onclick="this.form.submit(); return false;">Mark as Read</button>
+                    </form>
+                {% else %}
+                    <form method="POST" action="{% url 'reminders:mark_as_unread' reminder.reminder_id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-secondary" onclick="this.form.submit(); return false;">Mark as Unread</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
