@@ -8,7 +8,8 @@ services:
       - .:/usr/local/app
       - media_data:/usr/local/app/media:rw
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DJANGO_SETTINGS_MODULE: smse_onboarding.settings_dev
       DATABASE_URL: postgres://postgres:password@db:5432/smse-db
@@ -20,8 +21,6 @@ services:
       PYTHONHTTPSVERIFY: "0"
     command: >
       bash -c "
-             until nc -z db 5432; do echo 'Waiting for PostgreSQL...'; sleep 2; done &&
-             python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py loaddata fixtures/test_data.json || true &&
              python manage.py createsuperuser --noinput --username=admin --email=admin@gmail.com || true &&
@@ -37,6 +36,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
