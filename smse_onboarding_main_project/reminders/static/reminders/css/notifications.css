@@ -1,6 +1,5 @@
 .table-responsive .table.table-hover tbody tr.reminder-card-unread {
-    border-left: 8px solid #6788ff !important;
-    box-shadow: 0 0 10px rgba(144, 93, 255, 0.1) !important;
+    border-left: 8px solid #67c2ff !important;
     transition: all 0.3s ease;
 }
 

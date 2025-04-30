@@ -15,6 +15,13 @@ class Reminder(models.Model):
         on_delete=models.CASCADE,
         related_name='reminders'
     )
+    secondary_faculty = models.ForeignKey(
+        Faculty,
+        on_delete=models.CASCADE,
+        related_name='secondary_reminders',
+        null=True,
+        blank=True
+    )
     task = models.ForeignKey(
         Task,
         on_delete=models.CASCADE,
