@@ -229,7 +229,11 @@
             sidebarToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 sidebar.classList.toggle('active');
-                sidebarOverlay.classList.toggle('active');
+
+                // Only add the overlay on mobile views
+                if (window.innerWidth <= 1200) {
+                    sidebarOverlay.classList.toggle('active');
+                }
 
                 // Adjust navbar when sidebar is toggled on mobile
                 const navbar = document.querySelector('.navbar');
