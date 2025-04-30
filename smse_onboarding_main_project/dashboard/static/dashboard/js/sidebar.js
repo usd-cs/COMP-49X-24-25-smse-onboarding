@@ -12,26 +12,36 @@ document.addEventListener('DOMContentLoaded', function() {
             // Toggle collapsed class to switch between full and icon-only modes
             sidebar.classList.toggle('collapsed');
 
-            // Adjust main content margin when sidebar is collapsed
-            if (sidebar.classList.contains('collapsed')) {
-                // Collapsed state - use narrower sidebar
-                mainContent.style.marginLeft = 'var(--sidebar-collapsed-width, 70px)';
-                mainContent.style.width = 'calc(100% - var(--sidebar-collapsed-width, 70px))';
+            // Adjust main content margin when sidebar is collapsed (desktop only)
+            if (window.innerWidth > 1200) {
+                if (sidebar.classList.contains('collapsed')) {
+                    // Collapsed state - use narrower sidebar
+                    mainContent.style.marginLeft = 'var(--sidebar-collapsed-width, 70px)';
+                    mainContent.style.width = 'calc(100% - var(--sidebar-collapsed-width, 70px))';
 
-                // Also adjust the navbar
-                if (navbar) {
-                    navbar.style.left = 'var(--sidebar-collapsed-width, 70px)';
-                    navbar.style.width = 'calc(100% - var(--sidebar-collapsed-width, 70px))';
+                    // Also adjust the navbar
+                    if (navbar) {
+                        navbar.style.left = 'var(--sidebar-collapsed-width, 70px)';
+                        navbar.style.width = 'calc(100% - var(--sidebar-collapsed-width, 70px))';
+                    }
+                } else {
+                    // Expanded state - use full width sidebar
+                    mainContent.style.marginLeft = 'var(--sidebar-width, 280px)';
+                    mainContent.style.width = 'calc(100% - var(--sidebar-width, 280px))';
+
+                    // Also adjust the navbar
+                    if (navbar) {
+                        navbar.style.left = 'var(--sidebar-width, 280px)';
+                        navbar.style.width = 'calc(100% - var(--sidebar-width, 280px))';
+                    }
                 }
-            } else {
-                // Expanded state - use full width sidebar
-                mainContent.style.marginLeft = 'var(--sidebar-width, 280px)';
-                mainContent.style.width = 'calc(100% - var(--sidebar-width, 280px))';
+            }
 
-                // Also adjust the navbar
-                if (navbar) {
-                    navbar.style.left = 'var(--sidebar-width, 280px)';
-                    navbar.style.width = 'calc(100% - var(--sidebar-width, 280px))';
+            // Ensure no overlay on desktop
+            if (window.innerWidth > 1200) {
+                const overlay = document.querySelector('.sidebar-overlay');
+                if (overlay) {
+                    overlay.classList.remove('active');
                 }
             }
         });
@@ -72,6 +82,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         navbar.style.left = 'var(--sidebar-width, 280px)';
                         navbar.style.width = 'calc(100% - var(--sidebar-width, 280px))';
                     }
+                }
+
+                // Ensure no overlay on desktop
+                const overlay = document.querySelector('.sidebar-overlay');
+                if (overlay) {
+                    overlay.classList.remove('active');
                 }
             }
         }

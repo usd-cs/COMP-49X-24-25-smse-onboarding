@@ -32,6 +32,19 @@
     padding: 20px 10px;
 }
 
+/* Desktop adjustments for main content when sidebar is collapsed */
+@media (min-width: 1201px) {
+    body:not(.loading) .sidebar.collapsed + .main-content {
+        margin-left: var(--sidebar-collapsed-width);
+        width: calc(100% - var(--sidebar-collapsed-width));
+        transition: margin-left 0.3s ease, width 0.3s ease;
+    }
+    
+    body:not(.loading) .sidebar.collapsed ~ .sidebar-overlay {
+        display: none !important;
+    }
+}
+
 /* Sidebar divider */
 .sidebar-divider {
     border: 0;
