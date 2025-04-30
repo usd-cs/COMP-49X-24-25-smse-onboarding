@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from tasks.models import Task, TaskProgress
 from users.models import Faculty
 from documents.models import FacultyDocument
+from reminders.models import Reminder
+from reminders.views import send_reminder_admin
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
@@ -47,6 +49,10 @@ def new_hire_home(request):
     # Get all tasks assigned to this faculty
     tasks = Task.objects.filter(assigned_to=faculty)
     documents = FacultyDocument.objects.filter(faculty=faculty)
+    unread_reminders_count = Reminder.objects.filter(
+        faculty=faculty,
+        is_read=False
+    ).count()
 
     # Get completed tasks for this faculty
     completed_task_ids = set(
@@ -92,6 +98,7 @@ def new_hire_home(request):
         'num_completed': completed_tasks_count,
         'num_tasks': total_assigned_tasks,
         'percentage': round(completion_percentage),
+        'unread_reminders_count': unread_reminders_count,
     }
 
     return render(request, 'dashboard/new_hire/home.html', context)
@@ -160,6 +167,12 @@ def admin_home(request):
             ]
         })
 
+    for task in faculty_tasks:
+        if task['current_task'] and (task['current_task'].deadline - timezone.now()).seconds / 3600 <= 24 and (task['current_task'].deadline - timezone.now()).seconds / 3600 > 0 and Reminder.objects.filter(secondary_faculty=task['id'], task=task['current_task'].id).count() == 0:
+            send_reminder_admin(request, task['id'], task['current_task'].id, f"{task['name']} has less than 24 hours remaining to complete this task.")
+        elif task['current_task'] and (task['current_task'].deadline - timezone.now()).seconds / 3600 <= 0 and Reminder.objects.filter(secondary_faculty=task['id'], task=task['current_task'].id).count() == 0:
+            send_reminder_admin(request, task['id'], task['current_task'].id, f"This task is overdue for {task['name']}.")
+
     # admin tasks definition
     now = timezone.now()
     admin_tasks = [
@@ -192,9 +205,15 @@ def admin_home(request):
         }
     ]
 
+    unread_reminders_count = Reminder.objects.filter(
+        faculty=request.user.faculty_profile,
+        is_read=False
+    ).count()
+
     context = {
         'faculty_tasks': faculty_tasks,
         'admin_tasks': admin_tasks,
+        'unread_reminders_count': unread_reminders_count,
     }
 
     return render(request, 'dashboard/admin/home.html', context)

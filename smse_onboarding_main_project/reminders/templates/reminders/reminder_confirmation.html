@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                    <form method="POST" action="{% url 'reminders:send_reminder' faculty.id faculty.current_task.id %}" class="d-inline modal-form">
+                    <form method="POST" action="{% url 'reminders:send_reminder_faculty' faculty.id faculty.current_task.id %}" class="d-inline modal-form">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-primary">Yes</button>
                     </form>
