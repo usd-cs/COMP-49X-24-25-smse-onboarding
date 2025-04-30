@@ -40,7 +40,7 @@
             <div class="modal-body">
                 <p><strong>Created:</strong> {{ reminder.reminder_date|date:"M d, Y, g a" }}</p>
                 <p><strong>Description:</strong></p>
-                <p>{{ reminder.message }}</p>
+                <div style="white-space: pre-wrap;">{{ reminder.message }}</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
