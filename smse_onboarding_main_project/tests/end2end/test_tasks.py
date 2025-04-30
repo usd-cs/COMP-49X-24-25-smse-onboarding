@@ -6,7 +6,7 @@ from django.utils import timezone
 from datetime import timedelta
 import uuid
 import time
-from .base_test import BaseE2ETest
+from tests.end2end.base_test import BaseE2ETest
 from tasks.models import Task, TaskProgress
 from users.models import Faculty
 
@@ -175,7 +175,7 @@ class TasksTest(BaseE2ETest):
         print("\nExploring application structure...")
 
         # Try to login and navigate to tasks
-        login_success = self.login_and_go_to_tasks()
+        self.login_and_go_to_tasks()
 
         # Take screenshot of current state
         self.take_screenshot("app_exploration")
