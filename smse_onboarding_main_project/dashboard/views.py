@@ -168,9 +168,10 @@ def admin_home(request):
         })
 
     for task in faculty_tasks:
-        if task['current_task'] and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 24 and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 > 0 and Reminder.objects.filter(faculty=request.user.faculty_profile, secondary_faculty=task['id'], task=task['current_task'].id).count() == 0:
+        zero_reminders = Reminder.objects.filter(faculty=request.user.faculty_profile, secondary_faculty=task['id'], task=task['current_task'].id).count() == 0
+        if task['current_task'] and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 24 and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 > 0 and zero_reminders:
             send_reminder_admin(request, task['id'], task['current_task'].id, f"{task['name']} has less than 24 hours remaining to complete this task.")
-        elif task['current_task'] and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 0 and Reminder.objects.filter(faculty=request.user.faculty_profile, secondary_faculty=task['id'], task=task['current_task'].id).count() == 0:
+        elif task['current_task'] and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 0 and zero_reminders:
             send_reminder_admin(request, task['id'], task['current_task'].id, f"This task is overdue for {task['name']}.")
 
     # admin tasks definition
