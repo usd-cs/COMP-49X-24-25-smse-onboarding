@@ -1,0 +1,8 @@
+.table-responsive .table.table-hover tbody tr.reminder-card-unread {
+    border-left: 8px solid #67c2ff !important;
+    transition: all 0.3s ease;
+}
+
+.table-responsive .table.table-hover tbody tr.reminder-card-read {
+    border-left: 8px solid #ffffff !important;
+}

@@ -1,0 +1,22 @@
+{% load custom_filters %}
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th style="width: 5%"></th>
+                <th style="width: 45%">Title</th>
+                <th style="width: 25%">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reminder in reminders %}
+                {% include 'reminders/reminder_card.html' %}
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No notifications available.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
