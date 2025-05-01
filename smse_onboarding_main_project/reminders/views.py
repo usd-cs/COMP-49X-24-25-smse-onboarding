@@ -95,7 +95,7 @@ SMSE Admin Team"""
                 fail_silently=False,
             )
         except Exception as e:
-            pass
+            print(e)
 
     return redirect('dashboard:admin_home')
 
@@ -142,37 +142,6 @@ def send_reminder_admin(request, faculty_id, current_task_id, time_remaining):
     current_task = Task.objects.get(id=current_task_id)
 
     send_notification_admin(admin, faculty, current_task, time_remaining)
-
-    first_sentence = f"This is a reminder about {faculty.first_name} {faculty.last_name}'s onboarding task: {current_task.title}."
-    second_sentence = f"This task is due on {current_task.deadline.strftime('%B %d, %Y, %I:%M %p')}."
-    third_sentence = f"{time_remaining}"
-    fourth_sentence = "Please have them complete this task as soon as possible."
-    fifth_sentence = "Please have them navigate to the new hire dashboard in the SMSE Onboarding Portal to view the task and complete it."
-
-    message = f"""Hello {admin.first_name} {admin.last_name},
-
-{first_sentence} {second_sentence} {third_sentence} {fourth_sentence} {fifth_sentence}
-
-See below for the task details:
-
-Title: {current_task.title}
-Assigned To: {faculty.first_name} {faculty.last_name}
-Created: {current_task.created_at.strftime('%B %d, %Y, %I:%M %p')}
-Deadline: {current_task.deadline.strftime('%B %d, %Y, %I:%M %p')}
-Prerequisite Task: {current_task.prerequisite_task.title if current_task.prerequisite_task else "None"}
-Remaining Time: Less than 24 hours
-Description: {current_task.description}"""
-
-    try:
-        send_mail(
-            f"Reminder for {faculty.first_name} {faculty.last_name}'s Onboarding Task: {current_task.title}",
-            message,
-            settings.EMAIL_HOST_USER,
-            [admin.email],
-            fail_silently=False,
-        )
-    except Exception as e:
-        pass
 
 def send_notification_admin(admin, faculty, current_task, time_remaining):
     first_sentence = f"This is a reminder about {faculty.first_name} {faculty.last_name}'s onboarding task: {current_task.title}."
