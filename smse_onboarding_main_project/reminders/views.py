@@ -96,8 +96,11 @@ SMSE Admin Team"""
             )
         except Exception as e:
             print(e)
+<<<<<<< HEAD
 
         send_notification_faculty(faculty, current_task, days_remaining, time_remaining)
+=======
+>>>>>>> 6af0b9d04ea586b04f5d4935bb7908c088cf033c
 
     return redirect('dashboard:admin_home')
 
@@ -175,4 +178,8 @@ Description: {current_task.description}"""
         title=f"Reminder for {faculty.first_name} {faculty.last_name}'s Onboarding Task: {current_task.title}",
         message=message,
     )
+<<<<<<< HEAD
     notification.save()
+=======
+    notification.save()
+>>>>>>> 6af0b9d04ea586b04f5d4935bb7908c088cf033c
