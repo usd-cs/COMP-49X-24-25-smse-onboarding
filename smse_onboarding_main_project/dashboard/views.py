@@ -321,6 +321,14 @@ def continue_task(request, task_id):
     return redirect('dashboard:new_hire_home')
 
 @login_required
+def update_settings(request):
+    """Update user settings"""
+    # if request.method == 'POST':
+    #     dark_mode = request.POST.get('dark_mode') == 'on'
+    #     request.session['dark_mode'] = dark_mode
+    pass
+
+@login_required
 @user_passes_test(is_admin)
 def faculty_directory(request):
     """

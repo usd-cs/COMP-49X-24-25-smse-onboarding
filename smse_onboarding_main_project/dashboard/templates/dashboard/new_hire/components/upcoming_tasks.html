@@ -18,7 +18,7 @@
                         <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="task-completion-form">
                             {% csrf_token %}
                             <span class="tt" data-bs-placement="bottom" data-bs-title="Complete Task">
-                                <button type="submit" class="btn btn-link p-0 task-circle-btn" {% if not task.can_complete %}disabled title="Complete prerequisite task first"{% endif %}>
+                                <button type="submit" class="btn btn-link p-0 task-circle-btn" {% if not task.can_complete %}disabled title="Complete prerequisite task first"{% endif %} data-is-task="true">
                                     <i class="bi bi-circle {% if not task.can_complete %}text-muted{% else %}text-secondary{% endif %}" style="font-size: 1.2rem;"></i>
                                 </button>
                             </span>
