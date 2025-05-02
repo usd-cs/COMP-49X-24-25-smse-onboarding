@@ -53,7 +53,7 @@ def new_hire_home(request):
         faculty=faculty,
         is_read=False
     ).count()
-
+    print(faculty.dark_mode)
     # Get completed tasks for this faculty
     completed_task_ids = set(
         TaskProgress.objects.filter(
@@ -168,11 +168,12 @@ def admin_home(request):
         })
 
     for task in faculty_tasks:
-        zero_reminders = Reminder.objects.filter(faculty=request.user.faculty_profile, secondary_faculty=task['id'], task=task['current_task'].id).count() == 0
-        if task['current_task'] and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 24 and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 > 0 and zero_reminders:
-            send_reminder_admin(request, task['id'], task['current_task'].id, f"{task['name']} has less than 24 hours remaining to complete this task.")
-        elif task['current_task'] and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 0 and zero_reminders:
-            send_reminder_admin(request, task['id'], task['current_task'].id, f"This task is overdue for {task['name']}.")
+        if task['current_task']:
+            zero_reminders = Reminder.objects.filter(faculty=request.user.faculty_profile, secondary_faculty=task['id'], task=task['current_task'].id).count() == 0
+            if (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 24 and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 > 0 and zero_reminders:
+                send_reminder_admin(request, task['id'], task['current_task'].id, f"{task['name']} has less than 24 hours remaining to complete this task.")
+            elif (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 0 and zero_reminders:
+                send_reminder_admin(request, task['id'], task['current_task'].id, f"This task is overdue for {task['name']}.")
 
     # admin tasks definition
     now = timezone.now()
@@ -318,6 +319,22 @@ def continue_task(request, task_id):
         return JsonResponse({'status': 'error'}, status=400)
 
     return redirect('dashboard:new_hire_home')
+
+@login_required
+def update_settings(request):
+    """Update user settings"""
+    if request.method == 'POST':
+        faculty = get_faculty_from_request(request)
+        if not faculty:
+            return redirect('users:login')
+
+        faculty.dark_mode = request.POST.get('dark_mode') == 'on'
+        faculty.save()
+
+        if is_admin(request.user):
+            return redirect('dashboard:admin_home')
+        
+        return redirect('dashboard:new_hire_home')
 
 @login_required
 @user_passes_test(is_admin)

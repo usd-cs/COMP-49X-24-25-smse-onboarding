@@ -18,7 +18,7 @@
                         <span class="tt" data-bs-placement="bottom" data-bs-title="Set Task as Incomplete">
                             <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="task-completion-form">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-link p-0">
+                                <button type="submit" class="btn btn-link p-0" data-is-task="true">
                                     <i class="bi bi-check-circle-fill text-success" style="font-size: 1.2rem;"></i>
                                 </button>
                             </form>

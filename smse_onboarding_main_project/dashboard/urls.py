@@ -17,6 +17,7 @@ urlpatterns = [
     path('faculty-directory/', views.faculty_directory, name='faculty_directory'),
     path('complete-task/<int:task_id>/', views.complete_task, name='complete_task'),
     path('continue-task/<int:task_id>/', views.continue_task, name='continue_task'),
+    path('update-settings/', views.update_settings, name='update_settings'),
     path('api/faculty/<int:faculty_id>/tasks/', views.faculty_tasks, name='faculty_tasks'),
     path('api/faculty/<int:faculty_id>/', views.get_faculty, name='get_faculty'),
     path('api/faculty/<int:faculty_id>/update/', views.update_faculty, name='update_faculty'),

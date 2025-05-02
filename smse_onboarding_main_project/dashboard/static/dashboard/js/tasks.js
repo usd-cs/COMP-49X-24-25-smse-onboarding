@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // New task checkboxes functionality
-    const taskCheckboxes = document.querySelectorAll('.form-check-input');
+    const taskCheckboxes = document.querySelectorAll('.form-check-input[data-is-task="true"]');
     taskCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             const taskId = this.id.split('-')[1];
@@ -68,13 +68,17 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
 
             if (this.textContent.includes('Mark as Complete')) {
-                const checkbox = this.closest('tr').querySelector('.form-check-input');
-                checkbox.checked = true;
-                checkbox.dispatchEvent(new Event('change'));
+                const checkbox = this.closest('tr').querySelector('.form-check-input[data-is-task="true"]');
+                if (checkbox) {
+                    checkbox.checked = true;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
             } else if (this.textContent.includes('Mark as Incomplete')) {
-                const checkbox = this.closest('tr').querySelector('.form-check-input');
-                checkbox.checked = false;
-                checkbox.dispatchEvent(new Event('change'));
+                const checkbox = this.closest('tr').querySelector('.form-check-input[data-is-task="true"]');
+                if (checkbox) {
+                    checkbox.checked = false;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
             }
 
             // Handle View Details action here if needed

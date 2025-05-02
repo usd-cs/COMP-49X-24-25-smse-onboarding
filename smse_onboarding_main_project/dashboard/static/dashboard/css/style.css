@@ -17,7 +17,7 @@
 }
 
 body {
-    background-color: #eaeaea;
+    background-color: #2a2a2a;
     color: var(--text-color);
     min-height: 100vh;
     overflow-x: hidden; /* Prevent horizontal scrolling */
@@ -27,7 +27,7 @@ body {
 .main-container {
     padding: 20px;
     height: calc(100vh - 56px);
-    background-color: #eaeaea;
+    background-color: #2a2a2a;
     width: 100%;
 }
 

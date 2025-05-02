@@ -19,11 +19,11 @@
             </div>
 
             <!-- Bottom section (2/3) with white background -->
-            <div class="modal-body bg-white" style="padding: 2rem 1.5rem;">
+            <div class="modal-body" {% if faculty.dark_mode %}style="padding: 2rem 1.5rem; background-color: #4b4b4b;"{% else %}style="padding: 2rem 1.5rem; background-color: #ffffff;"{% endif %}>
                 {% if is_admin %}
                 <!-- Admin specific content -->
-                <h5 class="welcome-greeting mb-3">Welcome, {{ request.user.first_name }} {{ request.user.last_name }}, to the SMSE Onboarding Portal!</h5>
-                <p class="mb-4">
+                <h5 class="welcome-greeting mb-3" {% if faculty.dark_mode %}style="color: #4bb4ff;"{% endif %}>Welcome, {{ request.user.first_name }} {{ request.user.last_name }}, to the SMSE Onboarding Portal!</h5>
+                <p class="mb-4" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                     You are logged in as an administrator.
                     This dashboard allows you to manage new hire onboarding processes, track progress, and ensure all tasks are completed on time.
                 </p>
@@ -39,8 +39,8 @@
                 </div>
                 {% else %}
                 <!-- New hire specific content -->
-                <h5 class="welcome-greeting mb-3">Welcome, {{ request.user.first_name }} {{ request.user.last_name }}, to the SMSE Onboarding Portal!</h5>
-                <p class="mb-4">We're excited to have you join the School of Engineering team. This portal will guide you through all the necessary steps to complete your onboarding process.</p>
+                <h5 class="welcome-greeting mb-3" {% if faculty.dark_mode %}style="color: #4bb4ff;"{% endif %}>Welcome, {{ request.user.first_name }} {{ request.user.last_name }}, to the SMSE Onboarding Portal!</h5>
+                <p class="mb-4" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>We're excited to have you join the School of Engineering team. This portal will guide you through all the necessary steps to complete your onboarding process.</p>
 
                 <div class="alert alert-info">
                     <h5 class="alert-heading">Getting Started</h5>

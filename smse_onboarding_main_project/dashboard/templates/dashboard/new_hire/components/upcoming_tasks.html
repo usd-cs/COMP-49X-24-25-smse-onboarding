@@ -1,11 +1,11 @@
 {% load custom_filters %}
 
-<h5 class="card-title mb-3">Upcoming Tasks</h5>
-<div class="table-responsive">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th style="width: 5%"></th>
+<h5 class="card-title mb-3" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Upcoming Tasks</h5>
+<div class="table-responsive" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+    <table class="table table-hover" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+        <thead {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+            <tr {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+                <th style="width: 5%;"></th>
                 <th style="width: 45%">Task</th>
                 <th style="width: 25%">Due Date</th>
                 <th style="width: 25%">Days Remaining</th>
@@ -18,7 +18,7 @@
                         <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="task-completion-form">
                             {% csrf_token %}
                             <span class="tt" data-bs-placement="bottom" data-bs-title="Complete Task">
-                                <button type="submit" class="btn btn-link p-0 task-circle-btn" {% if not task.can_complete %}disabled title="Complete prerequisite task first"{% endif %}>
+                                <button type="submit" class="btn btn-link p-0 task-circle-btn" {% if not task.can_complete %}disabled title="Complete prerequisite task first"{% endif %} data-is-task="true">
                                     <i class="bi bi-circle {% if not task.can_complete %}text-muted{% else %}text-secondary{% endif %}" style="font-size: 1.2rem;"></i>
                                 </button>
                             </span>
