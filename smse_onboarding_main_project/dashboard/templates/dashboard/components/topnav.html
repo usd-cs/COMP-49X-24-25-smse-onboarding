@@ -1,17 +1,17 @@
 {% load static %}
 
 <!-- Top Navigation Bar -->
-<nav class="navbar navbar-expand navbar-light bg-white shadow-sm">
+<nav class="navbar navbar-expand shadow-sm" {% if faculty.dark_mode %}style="background-color: rgb(75, 75, 75) !important;"{% endif %}>
     <div class="container-fluid px-3">
         <!-- Sidebar toggle button -->
         <button class="sidebar-toggle border-0 bg-transparent mx-2" type="button" id="sidebarToggle">
             <span class="tt" data-bs-placement="bottom" data-bs-title="Toggle Sidebar">
-                <i class="bi bi-list fs-4" style="color: #0074c8; font-weight: bold;"></i>
+                <i class="bi bi-list fs-4" {% if faculty.dark_mode %}style="color: #4bb4ff; font-weight: bold;"{% else %}style="color: #0074c8; font-weight: bold;"{% endif %}></i>
             </span>
         </button>
 
         <!-- Title - Conditional based on dashboard type -->
-        <div class="navbar-brand-text">
+        <div class="navbar-brand-text" {% if faculty.dark_mode %}style="color: #3ca4ff; !important;"{% endif %}>
             <span class="fw-semibold">
                 {% if is_admin %}
                     SMSE ADMIN DASHBOARD
@@ -27,7 +27,7 @@
             <div class="mx-2">
                 <a href="{% if is_admin %}{% url 'users:admin_help_guide' %}{% else %}{% url 'users:welcome_info' %}{% endif %}" class="nav-link p-2">
                     <span class="tt" data-bs-placement="bottom" data-bs-title="Help & Information">
-                        <i class="bi bi-question-circle-fill fs-4" style="color: #0074c8; font-weight: bold;"></i>
+                        <i class="bi bi-question-circle-fill fs-4" {% if faculty.dark_mode %}style="color: #4bb4ff; font-weight: bold;"{% else %}style="color: #0074c8; font-weight: bold;"{% endif %}></i>
                     </span>
                 </a>
             </div>
@@ -36,7 +36,7 @@
             <div class="mx-2 position-relative">
                 <a href="{% url 'reminders:notifications' %}" class="nav-link p-2">
                     <span class="tt" data-bs-placement="bottom" data-bs-title="Notifications">
-                        <i class="bi bi-bell fs-4" style="color: #0074c8; font-weight: bold;"></i>
+                        <i class="bi bi-bell fs-4" {% if faculty.dark_mode %}style="color: #4bb4ff; font-weight: bold;"{% else %}style="color: #0074c8; font-weight: bold;"{% endif %}></i>
                         {% if unread_reminders_count > 0 %}
                             <span class="position-absolute top-50 start-80 translate-middle badge rounded-pill bg-danger" style="margin-top: -3px;">
                                 {{ unread_reminders_count }}
@@ -62,7 +62,7 @@
                                     class="img-profile"
                                     style="width: 32px !important; height: 32px !important; max-width: 32px !important; max-height: 32px !important; object-fit: cover !important;">
                             {% else %}
-                                <i class="bi bi-person-fill fs-4" style="color: #0074c8; font-weight: bold;"></i>
+                                <i class="bi bi-person-fill fs-4" {% if faculty.dark_mode %}style="color: #4bb4ff; font-weight: bold;"{% else %}style="color: #0074c8; font-weight: bold;"{% endif %}></i>
                             {% endif %}
                         </span>
                     </button>
@@ -99,4 +99,4 @@
 </nav>
 
 {% include 'users/profile/profile_settings_modal.html' %}
-{}
+{% include 'dashboard/components/settings_modal.html' %}

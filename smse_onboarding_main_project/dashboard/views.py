@@ -53,7 +53,7 @@ def new_hire_home(request):
         faculty=faculty,
         is_read=False
     ).count()
-
+    print(faculty.dark_mode)
     # Get completed tasks for this faculty
     completed_task_ids = set(
         TaskProgress.objects.filter(
@@ -323,10 +323,18 @@ def continue_task(request, task_id):
 @login_required
 def update_settings(request):
     """Update user settings"""
-    # if request.method == 'POST':
-    #     dark_mode = request.POST.get('dark_mode') == 'on'
-    #     request.session['dark_mode'] = dark_mode
-    pass
+    if request.method == 'POST':
+        faculty = get_faculty_from_request(request)
+        if not faculty:
+            return redirect('users:login')
+
+        faculty.dark_mode = request.POST.get('dark_mode') == 'on'
+        faculty.save()
+
+        if is_admin(request.user):
+            return redirect('dashboard:admin_home')
+        
+        return redirect('dashboard:new_hire_home')
 
 @login_required
 @user_passes_test(is_admin)

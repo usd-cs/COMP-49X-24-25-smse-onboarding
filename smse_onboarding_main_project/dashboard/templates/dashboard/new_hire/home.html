@@ -37,14 +37,14 @@
         {% endwith %}
     {% endblock %}
 
-    <div class="main-content">
+    <div class="main-content" {% if faculty.dark_mode %}style="background-color: #3c3c3c;"{% endif %}>
         <!-- Include the shared top navbar component with is_admin=False -->
         {% with is_admin=False %}
         {% include 'dashboard/components/topnav.html' %}
         {% endwith %}
 
         <!-- Dashboard Content -->
-        <div class="dashboard-content pt-4">
+        <div class="dashboard-content pt-4" {% if faculty.dark_mode %}style="background-color: #3c3c3c;"{% endif %}>
             <!-- Include Welcome Modal -->
             {% with is_admin=False %}
             {% include 'dashboard/components/welcome_modal.html' %}
@@ -54,7 +54,7 @@
                 <!-- Left Column - Task Lists -->
                 <div class="col-md-8">
                     <div class="card h-100">
-                        <div class="card-body p-3">
+                        <div class="card-body p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                             {% include 'dashboard/new_hire/components/upcoming_tasks.html' %}
 
                             {% include 'dashboard/new_hire/components/completed_tasks.html' %}

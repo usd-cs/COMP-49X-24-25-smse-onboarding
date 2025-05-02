@@ -24,6 +24,7 @@ class Faculty(models.Model):
     completed_onboarding = models.BooleanField(default=False)  # helps flag new hires from reg
     last_welcome_shown = models.DateTimeField(null=True, blank=True)
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    dark_mode = models.BooleanField(default=False)
 
     objects: Manager[Any] = models.Manager()
 
