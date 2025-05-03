@@ -33,22 +33,22 @@
                     <!-- Profile Details -->
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" value="{{ request.user.username }}">
+                        <input type="text" class="form-control" id="username" name="username" value="{{ request.user.username }}" placeholder="Enter username here">
                     </div>
 
                     <div class="mb-3">
                         <label for="job_role" class="form-label">Job Role</label>
-                        <input type="text" class="form-control" id="job_role" name="job_role" value="{{ faculty.job_role|default:'' }}">
+                        <input type="text" class="form-control" id="job_role" name="job_role" value="{{ faculty.job_role|default:'' }}" placeholder="Enter job role here">
                     </div>
 
                     <div class="mb-3">
                         <label for="office" class="form-label">Office</label>
-                        <input type="text" class="form-control" id="office" name="office" value="{{ faculty.office_room|default:'' }}">
+                        <input type="text" class="form-control" id="office" name="office" value="{{ faculty.office_room|default:'' }}" placeholder="Enter office room here">
                     </div>
 
                     <div class="mb-3">
                         <label for="bio" class="form-label">Bio</label>
-                        <textarea class="form-control" id="bio" name="bio" rows="3">{{ faculty.bio|default:'' }}</textarea>
+                        <textarea class="form-control" id="bio" name="bio" rows="3" placeholder="Enter bio here">{{ faculty.bio|default:'' }}</textarea>
                     </div>
 
                     <!-- Documents Section -->

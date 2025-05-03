@@ -1,14 +1,14 @@
 {% load custom_filters %}
 
 <h5 class="card-title mb-3" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Upcoming Tasks</h5>
-<div class="table-responsive" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
-    <table class="table table-hover" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
-        <thead {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
-            <tr {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
-                <th style="width: 5%;"></th>
-                <th style="width: 45%">Task</th>
-                <th style="width: 25%">Due Date</th>
-                <th style="width: 25%">Days Remaining</th>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 5%;" {% else %}style="width: 5%;"{% endif %}></th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 45%; color: #ffffff;" {% else %}style="width: 45%;"{% endif %}>Task</th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 25%; color: #ffffff;" {% else %}style="width: 25%;"{% endif %}>Due Date</th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 25%; color: #ffffff;" {% else %}style="width: 25%;"{% endif %}>Days Remaining</th>
             </tr>
         </thead>
         <tbody>
