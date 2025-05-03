@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-<h5 class="card-title mb-3 mt-4">Completed Tasks</h5>
+<h5 class="card-title mb-3 mt-4" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Completed Tasks</h5>
 <div class="table-responsive">
     <table class="table table-hover">
         <thead>
