@@ -1,33 +1,33 @@
 {% load custom_filters %}
 {% load static %}
 
-<div class="card shadow-sm">
-    <div class="card-body p-4">
+<div class="card shadow-sm" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border: 1px solid #4b4b4b;"{% endif %}>
+    <div class="card-body p-4" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border-radius: 4px;"{% endif %}>
         <!-- Three Dots Menu-->
         <div class="dropdown position-absolute" style="top: 1rem; right: 1.5rem;">
             <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="tt" data-bs-placement="bottom" data-bs-title="Options">
-                    <i class="bi bi-three-dots"></i>
+                    <i class="bi bi-three-dots" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}></i>
                 </span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileSettingsModal">
+            <ul class="dropdown-menu dropdown-menu-end" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileSettingsModal" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                     <i class="bi bi-person me-2"></i>Edit Profile
                 </a></li>
-                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#documentModal">
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#documentModal" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                     <i class="bi bi-file-earmark-text me-2"></i>Documents
                     {% if documents %}
                     <span class="badge rounded-pill bg-info ms-2" style="font-size: 0.6rem;">{{ documents|length }}</span>
                     {% endif %}
                 </a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settingsSettingsModal">
                     <i class="bi bi-gear me-2"></i>Settings
                 </a></li>
             </ul>
         </div>
 
-        <div class="welcome-text mb-3">
+        <div class="welcome-text mb-3" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
             Welcome, {{ faculty.first_name }}
         </div>
 
@@ -54,8 +54,8 @@
                     </div>
                     <!-- Name moved below profile photo -->
                     <div class="text-center mt-3">
-                        <div class="prof-email">{{ faculty.email }}</div>
-                        <div class="job-title">{{ faculty.job_role }}</div>
+                        <div class="prof-email" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ faculty.email }}</div>
+                        <div class="job-title" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ faculty.job_role }}</div>
                     </div>
                 </div>
 
@@ -74,8 +74,8 @@
                                     stroke-linecap="round"/>
                         </svg>
                         <div class="progress-text">
-                            <div>Progress</div>
-                            <div id="progressText">{{ num_completed }} of {{ num_tasks }}</div>
+                            <div {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Progress</div>
+                            <div id="progressText" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ num_completed }} of {{ num_tasks }}</div>
                         </div>
                     </div>
                 </div>
@@ -89,6 +89,9 @@
 
 <!-- Profile Modal -->
 {% include 'users/profile/profile_settings_modal.html' %}
+
+<!-- Settings Modal -->
+{% include 'dashboard/components/settings_modal.html' %}
 
 <style>
 .welcome-text {

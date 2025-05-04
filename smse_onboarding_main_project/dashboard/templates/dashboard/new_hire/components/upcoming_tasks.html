@@ -14,26 +14,26 @@
         <tbody>
             {% for task in upcoming_tasks %}
                 <tr>
-                    <td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                         <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="task-completion-form">
                             {% csrf_token %}
                             <span class="tt" data-bs-placement="bottom" data-bs-title="Complete Task">
                                 <button type="submit" class="btn btn-link p-0 task-circle-btn" {% if not task.can_complete %}disabled title="Complete prerequisite task first"{% endif %} data-is-task="true">
-                                    <i class="bi bi-circle {% if not task.can_complete %}text-muted{% else %}text-secondary{% endif %}" style="font-size: 1.2rem;"></i>
+                                    <i class="bi bi-circle {% if not task.can_complete %}text-muted{% else %}{% if faculty.dark_mode %}text-white{% else %}text-secondary{% endif %}{% endif %}" style="font-size: 1.2rem;"></i>
                                 </button>
                             </span>
                         </form>
                     </td>
-                    <td class="task-title" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
-                        <span class="tt" data-bs-placement="bottom" data-bs-title="See Task Details">
+                    <td class="task-title" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+                        <span class="tt" data-bs-placement="bottom" data-bs-title="See Task Details" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                             {{ task.title }}
                         </span>
                         {% if task.prerequisite_task and not task.prereq_completed %}
                             <span class="badge bg-warning text-dark ms-2">Prerequisite Required</span>
                         {% endif %}
                     </td>
-                    <td>{{ task.deadline|date:"M d, Y, g a" }}</td>
-                    <td class="{% if task.remaining_days < 0 %}text-danger{% elif task.remaining_days < 2 %}text-warning{% else %}text-muted{% endif %}">
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>{{ task.deadline|date:"M d, Y, g a" }}</td>
+                    <td class="{% if task.remaining_days < 0 %}text-danger{% elif task.remaining_days < 2 %}text-warning{% else %}{% if faculty.dark_mode %}text-white{% else %}text-muted{% endif %}{% endif %}" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                         {% if task.remaining_days < 0 %}
                             Overdue
                         {% elif task.remaining_days == 0 %}
@@ -48,16 +48,16 @@
                 <!-- Task Modal -->
                 <div class="modal fade" id="taskModal{{ task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ task.id }}" aria-hidden="true">
                     <div class="modal-dialog">
-                        <div class="modal-content">
+                        <div class="modal-content" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                             <div class="modal-header">
-                                <h5 class="modal-title" id="taskModalLabel{{ task.id }}">{{ task.title }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title" id="taskModalLabel{{ task.id }}" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ task.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {% if faculty.dark_mode %}style="background-color: #ffffff;"{% endif %}></button>
                             </div>
                             <div class="modal-body">
-                                <p><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
-                                <p><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
                                 {% if task.prerequisite_task %}
-                                    <p><strong>Prerequisite Task:</strong> {{ task.prerequisite_task.title }}
+                                    <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Prerequisite Task:</strong> {{ task.prerequisite_task.title }}
                                         {% if task.prereq_completed %}
                                             <span class="badge bg-success">Completed</span>
                                         {% else %}
@@ -65,7 +65,7 @@
                                         {% endif %}
                                     </p>
                                 {% endif %}
-                                <p><strong>Days Remaining:</strong>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Days Remaining:</strong>
                                     {% if task.remaining_days < 0 %}
                                         <span class="text-danger">Overdue</span>
                                     {% elif task.remaining_days == 0 %}
@@ -74,8 +74,8 @@
                                         {{ task.remaining_days }} days
                                     {% endif %}
                                 </p>
-                                <p><strong>Description:</strong></p>
-                                <p>{{ task.description }}</p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Description:</strong></p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ task.description }}</p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -101,7 +101,7 @@
                 </div>
             {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center">No upcoming tasks available.</td>
+                    <td colspan="4" class="text-center" {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>No upcoming tasks available.</td>
                 </tr>
             {% endfor %}
         </tbody>
