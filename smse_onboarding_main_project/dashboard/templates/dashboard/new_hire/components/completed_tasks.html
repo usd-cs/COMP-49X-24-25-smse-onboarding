@@ -5,16 +5,16 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th style="width: 5%"></th>
-                <th style="width: 45%">Task</th>
-                <th style="width: 25%">Due Date</th>
-                <th style="width: 25%">Status</th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 5%;" {% else %}style="width: 5%;"{% endif %}></th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 45%; color: #ffffff;" {% else %}style="width: 45%;"{% endif %}>Task</th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 25%; color: #ffffff;" {% else %}style="width: 25%;"{% endif %}>Due Date</th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 25%; color: #ffffff;" {% else %}style="width: 25%;"{% endif %}>Status</th>
             </tr>
         </thead>
         <tbody>
             {% for task in completed_tasks %}
                 <tr>
-                    <td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                         <span class="tt" data-bs-placement="bottom" data-bs-title="Set Task as Incomplete">
                             <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="task-completion-form">
                                 {% csrf_token %}
@@ -24,34 +24,34 @@
                             </form>
                         </span>
                     </td>
-                    <td class="task-title" data-bs-toggle="modal" data-bs-target="#completedTaskModal{{ task.id }}">
-                        <span class="tt" data-bs-placement="bottom" data-bs-title="See Task Details">
+                    <td class="task-title" data-bs-toggle="modal" data-bs-target="#completedTaskModal{{ task.id }}" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+                        <span class="tt" data-bs-placement="bottom" data-bs-title="See Task Details" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                             {{ task.title }}
                         </span>
                     </td>
-                    <td>{{ task.deadline|date:"M d, Y, g a" }}</td>
-                    <td class="text-success">Completed</td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>{{ task.deadline|date:"M d, Y, g a" }}</td>
+                    <td class="text-success" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>Completed</td>
                 </tr>
                 <!-- Completed Task Modal -->
                 <div class="modal fade" id="completedTaskModal{{ task.id }}" tabindex="-1" aria-labelledby="completedTaskModalLabel{{ task.id }}" aria-hidden="true">
                     <div class="modal-dialog">
-                        <div class="modal-content">
+                        <div class="modal-content" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                             <div class="modal-header">
-                                <h5 class="modal-title" id="completedTaskModalLabel{{ task.id }}">{{ task.title }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title" id="completedTaskModalLabel{{ task.id }}" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ task.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {% if faculty.dark_mode %}style="background-color: #ffffff;"{% endif %}></button>
                             </div>
                             <div class="modal-body">
-                                <p><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
-                                <p><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
-                                <p><strong>Status:</strong> <span class="text-success">Completed</span></p>
-                                <p><strong>Description:</strong></p>
-                                <p>{{ task.description }}</p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Status:</strong> <span class="text-success">Completed</span></p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Description:</strong></p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ task.description }}</p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <form method="POST" action="{% url 'dashboard:continue_task' task.id %}" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-secondary" onclick="this.form.submit(); return false;">Mark as Incomplete</button>
+                                    <button type="submit" class="btn btn-outline-secondary" onclick="this.form.submit(); return false;" {% if faculty.dark_mode %}style="background-color: #ffffff; color: #000000;"{% endif %}>Mark as Incomplete</button>
                                 </form>
                             </div>
                         </div>
@@ -59,7 +59,7 @@
                 </div>
             {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center">No completed tasks available.</td>
+                    <td colspan="4" class="text-center" {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>No completed tasks available.</td>
                 </tr>
             {% endfor %}
         </tbody>
