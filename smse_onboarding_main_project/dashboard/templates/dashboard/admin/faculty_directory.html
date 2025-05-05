@@ -7,119 +7,196 @@
 <link rel="stylesheet" href="{% static 'dashboard/css/faculty_directory.css' %}">
 <link rel="stylesheet" href="{% static 'dashboard/css/faculty_profile_card.css' %}">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<style>
+    .faculty-directory-dark {
+        background-color: #3c3c3c !important;
+        min-height: 100vh;
+        padding: 1rem;
+    }
+
+    .faculty-directory-dark .dashboard-container,
+    .faculty-directory-dark .main-content {
+        background-color: #3c3c3c !important;
+    }
+
+    .faculty-directory-dark .container-fluid {
+        background-color: #3c3c3c !important;
+    }
+
+    /* Dark mode table styles */
+    .dark-mode .table-responsive .table {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .table-responsive .table thead th {
+        background-color: #3c3c3c !important;
+        color: #ffffff !important;
+        border-bottom: 2px solid #4b4b4b !important;
+    }
+    
+    .dark-mode .table-responsive .table tbody tr {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .table-responsive .table tbody tr:hover {
+        background-color: #3c3c3c !important;
+    }
+
+    .dark-mode .table-responsive .table tbody td {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    /* DataTables specific dark mode styles */
+    .dark-mode .dataTables_wrapper .dataTables_length,
+    .dark-mode .dataTables_wrapper .dataTables_filter,
+    .dark-mode .dataTables_wrapper .dataTables_info,
+    .dark-mode .dataTables_wrapper .dataTables_processing,
+    .dark-mode .dataTables_wrapper .dataTables_paginate {
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button {
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+        background: #3c3c3c !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #4b4b4b !important;
+        border: 1px solid #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: #67c2ff !important;
+        border: 1px solid #67c2ff !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_filter input {
+        background-color: #3c3c3c !important;
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-container" id="dashboardContainer">
-    {% include 'dashboard/components/sidebar.html' %}
+<div {% if admin.dark_mode %}class="dark-mode faculty-directory-dark"{% endif %}>
+    <div class="dashboard-container" id="dashboardContainer">
+        {% include 'dashboard/components/sidebar.html' %}
 
-    <div class="main-content" id="mainContent">
-        {% include 'dashboard/components/topnav.html' %}
+        <div class="main-content" id="mainContent">
+            {% include 'dashboard/components/topnav.html' %}
 
-        <!-- Simple Header -->
-        <div class="container-fluid py-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3 mb-0">Faculty Directory</h1>
-            </div>
+            <!-- Simple Header -->
+            <div class="container-fluid py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 mb-0" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}>Faculty Directory</h1>
+                </div>
 
-            <!-- Faculty Table -->
-            <div class="table-responsive bg-white rounded shadow-sm p-3">
-                <table class="table" id="facultyDataTable">
-                    <thead>
-                        <tr>
-                            <th>NAME</th>
-                            <th>EMAIL</th>
-                            <th>DEPARTMENT</th>
-                            <th>STATUS</th>
-                            <th>START DATE</th>
-                            <th>ACTIONS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for faculty in faculty_members %}
-                        <tr data-faculty-id="{{ faculty.pk }}"
-                            data-faculty-first-name="{{ faculty.first_name }}"
-                            data-faculty-last-name="{{ faculty.last_name }}"
-                            data-faculty-email="{{ faculty.email|default:'None' }}"
-                            data-faculty-department="{{ faculty.department }}"
-                            data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
-                            data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
-                            data-faculty-extension="{{ faculty.extension|default:'None' }}"
-                            class="faculty-row">
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="faculty-avatar">
-                                        {% if faculty.profile_image %}
-                                            <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }}">
-                                        {% else %}
-                                            <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="ms-2" 
-                                         style="cursor: pointer;" 
-                                         data-faculty-id="{{ faculty.pk }}" 
-                                         onclick="showTaskProgress('{{ faculty.pk }}')"
-                                         data-bs-toggle="tooltip"
-                                         data-bs-placement="bottom"
-                                         title="View onboarding task progress">
-                                        <p class="fw-bold mb-0 small">{{ faculty.first_name }} {{ faculty.last_name }}</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <p class="text-muted mb-0 small">{{ faculty.email }}</p>
-                            </td>
-                            <td>
-                                <p class="text-muted mb-0 small">{{ faculty.department }}</p>
-                            </td>
-                            <td>
-                                <span class="badge rounded-pill {% if faculty.completed_onboarding %}bg-success{% else %}bg-warning{% endif %}">
-                                    {% if faculty.completed_onboarding %}
-                                        Completed
-                                    {% else %}
-                                        Pending
-                                    {% endif %}
-                                </span>
-                            </td>
-                            <td>
-                                <p class="text-muted mb-0 small">{{ faculty.start_date|date:"M d, Y" }}</p>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-link btn-sm p-1" 
+                <!-- Faculty Table -->
+                <div class="table-responsive bg-white rounded shadow-sm p-3" {% if admin.dark_mode %}style="background-color: #4b4b4b !important;"{% endif %}>
+                    <table class="table" id="facultyDataTable">
+                        <thead>
+                            <tr>
+                                <th>NAME</th>
+                                <th>EMAIL</th>
+                                <th>DEPARTMENT</th>
+                                <th>STATUS</th>
+                                <th>START DATE</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for faculty in faculty_members %}
+                            <tr data-faculty-id="{{ faculty.pk }}"
+                                data-faculty-first-name="{{ faculty.first_name }}"
+                                data-faculty-last-name="{{ faculty.last_name }}"
+                                data-faculty-email="{{ faculty.email|default:'None' }}"
+                                data-faculty-department="{{ faculty.department }}"
+                                data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
+                                data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
+                                data-faculty-extension="{{ faculty.extension|default:'None' }}"
+                                class="faculty-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="faculty-avatar">
+                                            {% if faculty.profile_image %}
+                                                <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }}">
+                                            {% else %}
+                                                <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="ms-2" 
+                                            style="cursor: pointer;" 
                                             data-faculty-id="{{ faculty.pk }}" 
-                                            onclick="showProfile(event)"
+                                            onclick="showTaskProgress('{{ faculty.pk }}')"
                                             data-bs-toggle="tooltip"
                                             data-bs-placement="bottom"
-                                            title="View faculty profile">
-                                        <i class="bi bi-person-lines-fill"></i>
-                                    </button>
-                                    <button class="btn btn-link btn-sm p-1"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom"
-                                            title="Send email to faculty">
-                                        <i class="bi bi-envelope"></i>
-                                    </button>
-                                    <button class="btn btn-link btn-sm p-1" 
-                                            onclick="showEditFacultyModal('{{ faculty.pk }}')"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom"
-                                            title="Edit faculty information">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn btn-link btn-sm p-1" 
-                                            onclick="showAssignUserRoleModal('{{ faculty.pk }}')"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom"
-                                            title="Manage user roles and permissions">
-                                        <i class="bi bi-shield-lock"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                            title="View onboarding task progress">
+                                            <p class="fw-bold mb-0 small">{{ faculty.first_name }} {{ faculty.last_name }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="{% if admin.dark_mode %}text-white{% else %}text-muted{% endif %} mb-0 small">{{ faculty.email }}</p>
+                                </td>
+                                <td>
+                                    <p class="{% if admin.dark_mode %}text-white{% else %}text-muted{% endif %} mb-0 small">{{ faculty.department }}</p>
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill {% if faculty.completed_onboarding %}bg-success{% else %}bg-warning{% endif %}">
+                                        {% if faculty.completed_onboarding %}
+                                            Completed
+                                        {% else %}
+                                            Pending
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <p class="{% if admin.dark_mode %}text-white{% else %}text-muted{% endif %} mb-0 small">{{ faculty.start_date|date:"M d, Y" }}</p>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-link btn-sm p-1" 
+                                                data-faculty-id="{{ faculty.pk }}" 
+                                                onclick="showProfile(event)"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="bottom"
+                                                title="View faculty profile">
+                                            <i class="bi bi-person-lines-fill"></i>
+                                        </button>
+                                        <button class="btn btn-link btn-sm p-1"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="bottom"
+                                                title="Send email to faculty">
+                                            <i class="bi bi-envelope"></i>
+                                        </button>
+                                        <button class="btn btn-link btn-sm p-1" 
+                                                onclick="showEditFacultyModal('{{ faculty.pk }}')"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="bottom"
+                                                title="Edit faculty information">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-link btn-sm p-1" 
+                                                onclick="showAssignUserRoleModal('{{ faculty.pk }}')"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="bottom"
+                                                title="Manage user roles and permissions">
+                                            <i class="bi bi-shield-lock"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -158,11 +235,19 @@
     });
 
     function showTaskProgress(facultyId) {
+        console.log('Opening task progress for faculty:', facultyId); // Debug log
+        
         // Get faculty information from the table row
         const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
+        if (!facultyRow) {
+            console.error('Could not find faculty row for ID:', facultyId);
+            return;
+        }
+
         const facultyName = facultyRow.querySelector('.fw-bold').textContent;
-        const facultyEmail = facultyRow.querySelector('.text-muted').textContent;
-        const facultyDepartment = facultyRow.querySelector('td:nth-child(3) .text-muted').textContent;
+        // Use both text-muted and text-white classes to support both modes
+        const facultyEmail = facultyRow.querySelector('.text-muted, .text-white').textContent;
+        const facultyDepartment = facultyRow.querySelector('td:nth-child(3) .text-muted, td:nth-child(3) .text-white').textContent;
 
         // Update faculty information in modal
         document.getElementById('facultyNameTitle').textContent = facultyName;
@@ -171,7 +256,12 @@
 
         // Fetch task data
         fetch(`/dashboard/api/faculty/${facultyId}/tasks/`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 // Calculate progress
                 const totalTasks = data.upcoming_tasks.length + data.completed_tasks.length;

@@ -359,11 +359,14 @@ def faculty_directory(request):
         faculty=request.user.faculty_profile,
         is_read=False
     ).count()
+
+    admin = request.user.faculty_profile
     
     context = {
         'faculty_members': faculty_members,
         'is_admin': True,
         'unread_reminders_count': unread_reminders_count,
+        'admin': admin,
     }
     
     return render(request, 'dashboard/admin/faculty_directory.html', context)

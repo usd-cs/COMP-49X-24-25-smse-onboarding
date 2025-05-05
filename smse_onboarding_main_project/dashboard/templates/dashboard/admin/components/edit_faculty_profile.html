@@ -1,10 +1,10 @@
 <!-- Edit Faculty Profile Modal -->
 <div class="modal fade" id="editFacultyModal" tabindex="-1" aria-labelledby="editFacultyModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
             <div class="modal-header">
                 <h5 class="modal-title" id="editFacultyModalLabel">Edit Faculty Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {% if admin.dark_mode %}style="background-color: #ffffff;"{% endif %}></button>
             </div>
             <form id="editFacultyForm" method="POST">
                 {% csrf_token %}
@@ -13,59 +13,59 @@
                         <!-- Basic Information -->
                         <div class="col-md-6">
                             <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="firstName" name="first_name" required placeholder="Enter first name here">
+                            <input type="text" class="form-control" id="firstName" name="first_name" required placeholder="Enter first name here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         <div class="col-md-6">
                             <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="lastName" name="last_name" required placeholder="Enter last name here">
+                            <input type="text" class="form-control" id="lastName" name="last_name" required placeholder="Enter last name here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         <div class="col-md-6">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required placeholder="Enter email here">
+                            <input type="email" class="form-control" id="email" name="email" required placeholder="Enter email here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         <div class="col-md-6">
                             <label for="department" class="form-label">Department</label>
-                            <input type="text" class="form-control" id="department" name="engineering_dept" required placeholder="Enter department here">
+                            <input type="text" class="form-control" id="department" name="engineering_dept" required placeholder="Enter department here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         
                         <!-- Contact Information -->
                         <div class="col-md-6">
                             <label for="phone" class="form-label">Phone</label>
-                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter phone number here">
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter phone number here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         <div class="col-md-6">
                             <label for="zoomPhone" class="form-label">Zoom Phone</label>
-                            <input type="text" class="form-control" id="zoomPhone" name="zoom_phone" placeholder="Enter zoom phone number here">
+                            <input type="text" class="form-control" id="zoomPhone" name="zoom_phone" placeholder="Enter zoom phone number here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         
                         <!-- Office Information -->
                         <div class="col-md-6">
                             <label for="officeRoom" class="form-label">Office Room</label>
-                            <input type="text" class="form-control" id="officeRoom" name="office_room" placeholder="Enter office room here">
+                            <input type="text" class="form-control" id="officeRoom" name="office_room" placeholder="Enter office room here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         
                         <!-- Dates -->
                         <div class="col-md-6">
                             <label for="hireDate" class="form-label">Hire Date</label>
-                            <input type="date" class="form-control" id="hireDate" name="hire_date" required>
+                            <input type="date" class="form-control" id="hireDate" name="hire_date" required {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         
                         <!-- Role Information -->
                         <div class="col-md-6">
                             <label for="jobRole" class="form-label">Job Role</label>
-                            <input type="text" class="form-control" id="jobRole" name="job_role" required placeholder="Enter job role here">
+                            <input type="text" class="form-control" id="jobRole" name="job_role" required placeholder="Enter job role here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         
                         <!-- Additional Information -->
                         <div class="col-12">
                             <label for="bio" class="form-label">Bio</label>
-                            <textarea class="form-control" id="bio" name="bio" rows="3" placeholder="Enter bio here"></textarea>
+                            <textarea class="form-control" id="bio" name="bio" rows="3" placeholder="Enter bio here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}></textarea>
                         </div>
                         
                         <!-- Status Checkboxes -->
                         <div class="col-md-6">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="completedOnboarding" name="completed_onboarding">
+                                <input class="form-check-input" type="checkbox" id="completedOnboarding" name="completed_onboarding" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                                 <label class="form-check-label" for="completedOnboarding">
                                     Completed Onboarding
                                 </label>
