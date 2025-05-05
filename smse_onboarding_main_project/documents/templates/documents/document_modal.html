@@ -1,10 +1,10 @@
 <!-- Document Modal -->
 <div class="modal fade" id="documentModal" tabindex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
             <div class="modal-header">
-                <h5 class="modal-title" id="documentModalLabel">My Documents</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="documentModalLabel" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>My Documents</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {% if faculty.dark_mode %}style="background-color: #ffffff;"{% endif %}></button>
             </div>
             <div class="modal-body">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -17,17 +17,17 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Upload Date</th>
-                                <th>Actions</th>
+                                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>Title</th>
+                                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>Upload Date</th>
+                                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for doc in documents %}
                             <tr>
-                                <td>{{ doc.title }}</td>
-                                <td>{{ doc.uploaded_at|date:"M d, Y" }}</td>
-                                <td>
+                                <td {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>{{ doc.title }}</td>
+                                <td {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>{{ doc.uploaded_at|date:"M d, Y" }}</td>
+                                <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                                     <a href="{{ doc.file.url }}" class="btn btn-sm btn-info" target="_blank">
                                         <i class="bi bi-eye"></i> View
                                     </a>
@@ -40,7 +40,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="3" class="text-center">No documents found.</td>
+                                <td colspan="3" class="text-center" {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>No documents found.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -51,53 +51,7 @@
     </div>
 </div>
 
-<!-- Upload Document Modal -->
-<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Upload Document</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" enctype="multipart/form-data" action="{% url 'documents:upload_document' %}" id="uploadForm">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Document Title</label>
-                        <input type="text" class="form-control" id="title" name="title" required placeholder="Enter document title here">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="document" class="form-label">Document File</label>
-                        <input type="file" class="form-control" id="document" name="document" required>
-                        <div class="form-text">Supported formats: PDF, DOC, DOCX</div>
-                    </div>
-
-                    {% if user.is_staff %}
-                    <div class="mb-3">
-                        <label for="faculty" class="form-label">Faculty Member</label>
-                        <select class="form-control" id="faculty" name="faculty" required>
-                            {% for faculty in faculties %}
-                                <option value="{{ faculty.faculty_id }}">
-                                    {{ faculty.first_name }} {{ faculty.last_name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    {% else %}
-                        <input type="hidden" name="faculty" value="{{ user.faculty_profile.faculty_id }}">
-                    {% endif %}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-upload"></i> Upload Document
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+{% include 'documents/upload_modal.html' %}
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

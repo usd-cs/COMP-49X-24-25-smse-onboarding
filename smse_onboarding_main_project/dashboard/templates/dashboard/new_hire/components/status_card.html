@@ -1,7 +1,7 @@
 {% load custom_filters %}
 {% load static %}
 
-<div class="card shadow-sm" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border: 1px solid #4b4b4b;"{% endif %}>
+<div class="card shadow-sm" {% if faculty.dark_mode %}style="border: 1px solid #4b4b4b;"{% endif %}>
     <div class="card-body p-4" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border-radius: 4px;"{% endif %}>
         <!-- Three Dots Menu-->
         <div class="dropdown position-absolute" style="top: 1rem; right: 1.5rem;">
@@ -21,7 +21,7 @@
                     {% endif %}
                 </a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settingsSettingsModal">
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settingsSettingsModal" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                     <i class="bi bi-gear me-2"></i>Settings
                 </a></li>
             </ul>

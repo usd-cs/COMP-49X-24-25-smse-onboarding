@@ -4,9 +4,9 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th style="width: 5%"></th>
-                <th style="width: 45%">Title</th>
-                <th style="width: 25%">Date</th>
+                <th {% if faculty.dark_mode %}style="width: 5%; background-color: #4b4b4b;"{% else %}style="width: 5%;"{% endif %}></th>
+                <th {% if faculty.dark_mode %}style="width: 45%; background-color: #4b4b4b; color: #ffffff;"{% else %}style="width: 45%;"{% endif %}>Title</th>
+                <th {% if faculty.dark_mode %}style="width: 25%; background-color: #4b4b4b; color: #ffffff;"{% else %}style="width: 25%;"{% endif %}>Date</th>
             </tr>
         </thead>
         <tbody>
@@ -14,7 +14,7 @@
                 {% include 'reminders/reminder_card.html' %}
             {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center">No notifications available.</td>
+                    <td colspan="4" class="text-center" {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>No notifications available.</td>
                 </tr>
             {% endfor %}
         </tbody>
