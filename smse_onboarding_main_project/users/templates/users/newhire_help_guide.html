@@ -1,9 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block dashboard_css %}
+<style>
+    .help-container-dark {
+        background-color: #3c3c3c;
+        min-height: 100vh;
+        padding: 1rem;
+    }
+</style>
+{% endblock %}
+
 {% block title %}Help & Information{% endblock %}
 
 {% block content %}
+<div {% if faculty.dark_mode %}class="help-container-dark"{% endif %}>
 <div class="container-fluid mt-4">
     <div class="row justify-content-center">
         <div class="col-11">

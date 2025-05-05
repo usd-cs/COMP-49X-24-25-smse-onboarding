@@ -2,24 +2,165 @@
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 
+<style>
+    /* Dark mode table styles */
+    .dark-mode .table-responsive .table {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .table-responsive .table thead th {
+        background-color: #3c3c3c !important;
+        color: #ffffff !important;
+        border-bottom: 2px solid #4b4b4b !important;
+    }
+    
+    .dark-mode .table-responsive .table tbody tr {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .table-responsive .table tbody tr:hover {
+        background-color: #3c3c3c !important;
+    }
+
+    .dark-mode .table-responsive .table tbody td {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    /* DataTables specific dark mode styles */
+    .dark-mode .dataTables_wrapper .dataTables_length,
+    .dark-mode .dataTables_wrapper .dataTables_filter,
+    .dark-mode .dataTables_wrapper .dataTables_info,
+    .dark-mode .dataTables_wrapper .dataTables_processing,
+    .dark-mode .dataTables_wrapper .dataTables_paginate {
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button {
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+        background: #3c3c3c !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #4b4b4b !important;
+        border: 1px solid #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: #67c2ff !important;
+        border: 1px solid #67c2ff !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_filter input {
+        background-color: #3c3c3c !important;
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+    }
+
+    /* Dark mode modal styles */
+    .dark-mode .modal {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-dialog {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-content {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+    }
+
+    .dark-mode .modal-header {
+        background-color: #4b4b4b !important;
+        border-bottom: 1px solid #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-title {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-body {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-footer {
+        background-color: #4b4b4b !important;
+        border-top: 1px solid #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .dark-mode .modal .btn-secondary {
+        background-color: #4b4b4b !important;
+        border-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal .btn-secondary:hover {
+        background-color: #4b4b4b !important;
+        border-color: #4b4b4b !important;
+    }
+
+    .dark-mode .modal strong {
+        color: #67c2ff !important;
+    }
+
+    .dark-mode .modal .badge {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal .text-danger {
+        color: #ff6b6b !important;
+    }
+
+    .dark-mode .modal .text-warning {
+        color: #ffd93d !important;
+    }
+
+    /* Additional modal styles */
+    .modal.show {
+        display: block !important;
+    }
+
+    .modal-backdrop.show {
+        opacity: 0.5;
+    }
+
+    .dark-mode .modal-backdrop {
+        background-color: #000;
+    }
+</style>
+
 <!-- Simple Header -->
-<div class="container-fluid py-4">
+<div class="container-fluid py-4 {% if faculty.dark_mode %}dark-mode{% endif %}">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Upcoming New Hire Deadlines</h1>
+        <h1 class="h3 mb-0" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Upcoming New Hire Deadlines</h1>
         <div class="d-flex gap-2">
         </div>
     </div>
 
     <!-- New Hire Deadlines Table -->
-    <div class="table-responsive bg-white rounded shadow-sm p-3">
+    <div class="table-responsive bg-white rounded shadow-sm p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b !important;"{% endif %}>
         <table class="table" id="newHireDeadlinesTable">
             <thead>
                 <tr>
-                    <th style="width: 20%">Name</th>
-                    <th style="width: 30%">Current Task</th>
-                    <th style="width: 20%">Status</th>
-                    <th style="width: 15%">Due Date</th>
-                    <th style="width: 15%">Actions</th>
+                    <th style="width: 20%;">Name</th>
+                    <th style="width: 30%;">Current Task</th>
+                    <th style="width: 20%;">Status</th>
+                    <th style="width: 15%;">Due Date</th>
+                    <th style="width: 15%;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,56 +179,7 @@
                     </td>
 
                     <!-- Task Modal -->
-                    <div class="modal fade" id="taskModal{{ faculty.current_task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ faculty.current_task.id }}" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                {% if faculty.current_task %}
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="taskModalLabel{{ faculty.current_task.id }}">{{ faculty.current_task.title }}</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p><strong>Created:</strong> {{ faculty.current_task.created_at|date:"M d, Y" }}</p>
-                                        <p><strong>Due Date:</strong> {{ faculty.current_task.deadline|date:"M d, Y, g a" }}</p>
-                                        {% if faculty.current_task.prerequisite_task %}
-                                            <p><strong>Prerequisite Task:</strong> {{ faculty.current_task.prerequisite_task.title }}
-                                                {% if task.prereq_completed %}
-                                                    <span class="badge bg-success">Completed</span>
-                                                {% else %}
-                                                    <span class="badge bg-warning text-dark">Not Completed</span>
-                                                {% endif %}
-                                            </p>
-                                        {% endif %}
-                                        <p><strong>Days Remaining:</strong>
-                                            {% if faculty.current_task.remaining_days < 0 %}
-                                                <span class="text-danger">Overdue</span>
-                                            {% elif faculty.current_task.remaining_days == 0 %}
-                                                <span class="text-warning">Due today</span>
-                                            {% else %}
-                                                {{ faculty.current_task.remaining_days }} days
-                                            {% endif %}
-                                        </p>
-                                        <p><strong>Description:</strong></p>
-                                        <p>{{ faculty.current_task.description }}</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                {% else %}
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">{{ faculty.current_task_title }}</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>{{ faculty.name }} has completed all of their assigned tasks.</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
+                    {% include 'dashboard/admin/components/admin_task_modal.html' %}
 
                     <td>
                         <div class="d-flex align-items-center">
@@ -133,7 +225,6 @@
         </table>
     </div>
 </div>
-
 
 <!-- DataTables script -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
