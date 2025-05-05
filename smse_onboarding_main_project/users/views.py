@@ -51,6 +51,7 @@ def login(request):
                         user=user,
                         first_name=user.first_name or user.email.split('@')[0],
                         last_name=user.last_name or '',
+                        date_of_birth="1990-01-01T00:00:00-08:00",
                         email=user.email,
                         hire_date=timezone.now(),
                         job_role="New Faculty",
@@ -85,6 +86,7 @@ def profile(request):
             user=request.user,
             first_name=request.user.first_name or request.user.email.split('@')[0],
             last_name=request.user.last_name or '',
+            date_of_birth="1990-01-01T00:00:00-08:00",
             email=request.user.email,
             hire_date=timezone.now(),
             job_role="New Faculty",
@@ -165,6 +167,10 @@ def update_profile(request):
             # Update job role if provided
             if 'job_role' in request.POST and request.POST['job_role'].strip():
                 faculty.job_role = request.POST['job_role'].strip()
+
+            # Update date of birth if provided
+            if 'date_of_birth' in request.POST and request.POST['date_of_birth'].strip():
+                faculty.date_of_birth = request.POST['date_of_birth'].strip()
 
             # Update office if provided
             if 'office' in request.POST and request.POST['office'].strip():
