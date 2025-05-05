@@ -18,11 +18,16 @@ services:
       DJANGO_SUPERUSER_PASSWORD: password
     command: >
       sh -c "
-        until nc -z db 5432; do echo 'Waiting for DB...'; sleep 2; done &&
+        until nc -z db 5432; do echo 'Waiting for Postgres...'; sleep 2; done &&
+        echo 'Postgres is ready' &&
         python manage.py migrate --noinput &&
+        echo 'Migrations are done' &&
         python manage.py loaddata fixtures/test_data.json || true &&
+        echo 'Test data is loaded' &&
         python manage.py createsuperuser --noinput --username=admin --email=admin@gmail.com || true &&
+        echo 'Superuser is created' &&
         python manage.py runserver 0.0.0.0:8000"
+        echo 'Server is running'
     restart: always
 
   proxy:
