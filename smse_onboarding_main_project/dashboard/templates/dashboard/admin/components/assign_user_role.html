@@ -1,10 +1,10 @@
 <!-- User Role Assignment Modal -->
 <div class="modal fade" id="assignUserRoleModal" tabindex="-1" aria-labelledby="assignUserRoleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
             <div class="modal-header">
                 <h5 class="modal-title" id="assignUserRoleModalLabel">Assign User Role</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {% if admin.dark_mode %}style="background-color: #ffffff;"{% endif %}></button>
             </div>
             <form id="assignUserRoleForm" method="POST">
                 {% csrf_token %}
@@ -13,11 +13,11 @@
                         <!-- User Information -->
                         <div class="col-md-6">
                             <label class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" readonly>
+                            <input type="text" class="form-control" id="username" readonly {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" id="userEmail" readonly>
+                            <input type="email" class="form-control" id="userEmail" readonly {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
 
                         <!-- Role Selection - Moved to top for better UX -->
@@ -27,14 +27,14 @@
                                 <input class="form-check-input" type="radio" name="userRole" id="roleAdmin" value="admin">
                                 <label class="form-check-label" for="roleAdmin">
                                     Admin
-                                    <small class="d-block text-muted">Full access to manage faculty, tasks, and system settings.</small>
+                                    <small class="d-block {% if admin.dark_mode %}text-white{% else %}text-muted{% endif %}">Full access to manage faculty, tasks, and system settings.</small>
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="userRole" id="roleNewHire" value="new_hire">
                                 <label class="form-check-label" for="roleNewHire">
                                     New Hire
-                                    <small class="d-block text-muted">Access limited to completing assigned onboarding tasks.</small>
+                                    <small class="d-block {% if admin.dark_mode %}text-white{% else %}text-muted{% endif %}">Access limited to completing assigned onboarding tasks.</small>
                                 </label>
                             </div>
                         </div>
@@ -42,12 +42,12 @@
                         <!-- Permissions Section -->
                         <div class="col-12">
                             <h6 class="mb-3">Permissions (Auto-set based on role)</h6>
-                            <div class="permissions-container border rounded p-3 bg-light">
+                            <div class="permissions-container border rounded p-3 {% if admin.dark_mode %}bg-dark{% else %}bg-light{% endif %}">
                                 <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" id="isActive" name="is_active" disabled>
                                     <label class="form-check-label" for="isActive">
                                         Active
-                                        <small class="d-block text-muted">Designates whether this user account should be treated as active.</small>
+                                        <small class="d-block {% if admin.dark_mode %}text-white{% else %}text-muted{% endif %}">Designates whether this user account should be treated as active.</small>
                                     </label>
                                 </div>
 
@@ -55,7 +55,7 @@
                                     <input class="form-check-input" type="checkbox" id="isStaff" name="is_staff" disabled>
                                     <label class="form-check-label" for="isStaff">
                                         Staff status
-                                        <small class="d-block text-muted">Designates whether the user can log into this admin site.</small>
+                                        <small class="d-block {% if admin.dark_mode %}text-white{% else %}text-muted{% endif %}">Designates whether the user can log into this admin site.</small>
                                     </label>
                                 </div>
 
@@ -63,7 +63,7 @@
                                     <input class="form-check-input" type="checkbox" id="isSuperuser" name="is_superuser" disabled>
                                     <label class="form-check-label" for="isSuperuser">
                                         Superuser status
-                                        <small class="d-block text-muted">Designates that this user has all permissions without explicitly assigning them.</small>
+                                        <small class="d-block {% if admin.dark_mode %}text-white{% else %}text-muted{% endif %}">Designates that this user has all permissions without explicitly assigning them.</small>
                                     </label>
                                 </div>
                             </div>
