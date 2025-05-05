@@ -26,7 +26,7 @@ services:
         echo 'Test data is loaded' &&
         python manage.py createsuperuser --noinput --username=admin --email=admin@gmail.com || true &&
         echo 'Superuser is created' &&
-        python manage.py runserver 0.0.0.0:8000"
+        python manage.py runserver 0.0.0.0:8000 &&
         echo 'Server is running'
     restart: always
 
