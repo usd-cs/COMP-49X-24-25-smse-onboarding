@@ -38,12 +38,12 @@
         {% include 'dashboard/components/sidebar.html' %}
     {% endwith %}
 
-    <div class="main-content">
+    <div class="main-content" {% if faculty.dark_mode %}style="background-color: #3c3c3c;"{% endif %}>
         {% with is_admin=True %}
         {% include 'dashboard/components/topnav.html' %}
         {% endwith %}
 
-        <div class="dashboard-content pt-4">
+        <div class="dashboard-content pt-4" {% if faculty.dark_mode %}style="background-color: #3c3c3c;"{% endif %}>
             <!-- Include Welcome Modal -->
             {% with is_admin=True %}
             {% include 'dashboard/components/welcome_modal.html' %}
@@ -52,8 +52,8 @@
             <div class="row g-2 h-100">
                 <!-- New Hire Deadlines Table - 60% width -->
                 <div class="col-8">
-                    <div class="card h-100">
-                        <div class="card-body p-3">
+                    <div class="card h-100" {% if faculty.dark_mode %}style="border: 1px solid #4b4b4b;"{% endif %}>
+                        <div class="card-body p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border-radius: 4px;"{% endif %}>
                             <!-- Upcoming New Hire Deadlines Section -->
                             {% include 'dashboard/admin/components/new_hire_deadlines.html' %}
                         </div>
@@ -62,8 +62,8 @@
 
                 <!-- Admin Tasks Table - 40% width -->
                 <div class="col-4">
-                    <div class="card h-100">
-                        <div class="card-body p-3">
+                    <div class="card h-100" {% if faculty.dark_mode %}style="border: 1px solid #4b4b4b;"{% endif %}>
+                        <div class="card-body p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border-radius: 4px;"{% endif %}>
                             <!-- Admin Tasks Section -->
                             {% include 'dashboard/admin/components/admin_tasks.html' %}
                         </div>

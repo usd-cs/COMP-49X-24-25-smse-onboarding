@@ -53,7 +53,7 @@ def new_hire_home(request):
         faculty=faculty,
         is_read=False
     ).count()
-    print(faculty.dark_mode)
+
     # Get completed tasks for this faculty
     completed_task_ids = set(
         TaskProgress.objects.filter(
@@ -212,10 +212,13 @@ def admin_home(request):
         is_read=False
     ).count()
 
+    admin = request.user.faculty_profile
+
     context = {
         'faculty_tasks': faculty_tasks,
         'admin_tasks': admin_tasks,
         'unread_reminders_count': unread_reminders_count,
+        'admin': admin,
     }
 
     return render(request, 'dashboard/admin/home.html', context)
@@ -352,9 +355,15 @@ def faculty_directory(request):
         faculty.profile_image = None  # We'll use initials instead
         faculty.extension = getattr(faculty, 'phone_extension', None)  # Add extension field
     
+    unread_reminders_count = Reminder.objects.filter(
+        faculty=request.user.faculty_profile,
+        is_read=False
+    ).count()
+    
     context = {
         'faculty_members': faculty_members,
         'is_admin': True,
+        'unread_reminders_count': unread_reminders_count,
     }
     
     return render(request, 'dashboard/admin/faculty_directory.html', context)

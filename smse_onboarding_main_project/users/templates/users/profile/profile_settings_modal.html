@@ -71,7 +71,7 @@
                                 {% endfor %}
                             </ul>
                         {% else %}
-                            <p class="text-muted small" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>No documents available.</p>
+                            <p class="{% if faculty.dark_mode %}text-white{% else %}text-muted{% endif %} small">No documents available.</p>
                         {% endif %}
                     </div>
 

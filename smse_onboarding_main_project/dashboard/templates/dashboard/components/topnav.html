@@ -55,15 +55,17 @@
                             data-bs-toggle="dropdown"
                             aria-expanded="false">
                         <!-- Profile Icon -->
-                        <span class="profile-icon-container">
-                            {% if faculty.profile_image %}
-                                <img src="{{ faculty.profile_image.url }}"
-                                    alt="Profile"
-                                    class="img-profile"
-                                    style="width: 32px !important; height: 32px !important; max-width: 32px !important; max-height: 32px !important; object-fit: cover !important;">
-                            {% else %}
-                                <i class="bi bi-person-fill fs-4" {% if faculty.dark_mode %}style="color: #4bb4ff; font-weight: bold;"{% else %}style="color: #0074c8; font-weight: bold;"{% endif %}></i>
-                            {% endif %}
+                        <span class="tt" data-bs-placement="bottom" data-bs-title="Profile">
+                            <span class="profile-icon-container">
+                                {% if faculty.profile_image %}
+                                    <img src="{{ faculty.profile_image.url }}"
+                                        alt="Profile"
+                                        class="img-profile"
+                                        style="width: 32px !important; height: 32px !important; max-width: 32px !important; max-height: 32px !important; object-fit: cover !important;">
+                                {% else %}
+                                    <i class="bi bi-person-fill fs-4" {% if faculty.dark_mode %}style="color: #4bb4ff; font-weight: bold;"{% else %}style="color: #0074c8; font-weight: bold;"{% endif %}></i>
+                                {% endif %}
+                            </span>
                         </span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>

@@ -1,40 +1,40 @@
 {% load custom_filters %}
 <div class="card shadow-sm">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">Your Admin Tasks</h5>
+    <div class="card-header d-flex justify-content-between align-items-center" {% if faculty.dark_mode %}style="background-color: #3c3c3c; border-radius: 4px;"{% endif %}>
+        <h5 class="card-title mb-0" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Your Admin Tasks</h5>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body p-0" {% if faculty.dark_mode %}style="background-color: #3c3c3c;"{% endif %}>
         <div class="table-responsive" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden;">
             <table class="admin-tasks-table w-100">
                 <thead>
                     <tr>
-                        <th style="width: 10%">Status</th>
-                        <th style="width: 45%">Task</th>
-                        <th style="width: 20%">Assigned By</th>
-                        <th style="width: 25%">Due Date</th>
+                        <th {% if faculty.dark_mode %}style="background-color: #4c4c4c; color: #ffffff; width: 10%;"{% endif %}>Status</th>
+                        <th {% if faculty.dark_mode %}style="background-color: #4c4c4c; color: #ffffff; width: 45%;"{% endif %}>Task</th>
+                        <th {% if faculty.dark_mode %}style="background-color: #4c4c4c; color: #ffffff; width: 20%;"{% endif %}>Assigned By</th>
+                        <th {% if faculty.dark_mode %}style="background-color: #4c4c4c; color: #ffffff; width: 25%;"{% endif %}>Due Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% if admin_tasks %}
                         {% for task in admin_tasks %}
                         <tr data-task-id="{{ task.id }}" class="{% if task.completed %}bg-light{% endif %}">
-                            <td class="text-center">
+                            <td class="text-center" {% if faculty.dark_mode %}style="background-color: #4c4c4c; color: #ffffff;"{% endif %}>
                                 {% if task.completed %}
                                     <i class="bi bi-check-circle-fill text-success"></i>
                                 {% else %}
                                     <div class="rounded-circle border border-2 {% if task.is_overdue %}border-danger{% else %}border-success{% endif %}" style="width: 20px; height: 20px;"></div>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td {% if faculty.dark_mode %}style="background-color: #4c4c4c; color: #ffffff;"{% endif %}>
                                 <div>
                                     <div class="fw-medium {% if task.completed %}text-success{% endif %}">{{ task.title }}</div>
                                     {% if task.description %}
-                                        <div class="text-muted small">{{ task.description }}</div>
+                                        <div class="{% if faculty.dark_mode %}text-white{% else %}text-muted{% endif %} small">{{ task.description }}</div>
                                     {% endif %}
                                 </div>
                             </td>
-                            <td>{{ task.assigned_to }}</td>
-                            <td>
+                            <td {% if faculty.dark_mode %}style="background-color: #4c4c4c; color: #ffffff;"{% endif %}>{{ task.assigned_to }}</td>
+                            <td {% if faculty.dark_mode %}style="background-color: #4c4c4c; color: #ffffff;"{% endif %}>
                                 {% if task.is_overdue %}
                                     <span class="badge bg-danger">{{ task.deadline|date:"m/d/y" }} (Overdue)</span>
                                 {% else %}
@@ -46,7 +46,7 @@
                     {% else %}
                         <tr>
                             <td colspan="4" class="text-center p-4 text-muted">
-                                <p>No admin tasks available</p>
+                                <p {% if faculty.dark_mode %}style="background-color: #4c4c4c; color: #ffffff;"{% endif %}>No admin tasks available</p>
                             </td>
                         </tr>
                     {% endif %}
