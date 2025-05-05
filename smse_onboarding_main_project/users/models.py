@@ -12,6 +12,7 @@ class Faculty(models.Model):
     faculty_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    date_of_birth = models.DateTimeField(default="1990-01-01T00:00:00-08:00")
     job_role = models.CharField(max_length=255)
     engineering_dept = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)

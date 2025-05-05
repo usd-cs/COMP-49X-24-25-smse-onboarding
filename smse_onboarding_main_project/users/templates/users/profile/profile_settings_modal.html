@@ -37,6 +37,11 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="date_of_birth" class="form-label" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Date of Birth</label>
+                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ faculty.date_of_birth|date:'Y-m-d' }}" required {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="job_role" class="form-label" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Job Role</label>
                         <input type="text" class="form-control" id="job_role" name="job_role" value="{{ faculty.job_role|default:'' }}" placeholder="Enter job role here" {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                     </div>

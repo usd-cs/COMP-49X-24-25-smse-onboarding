@@ -20,6 +20,10 @@
                             <input type="text" class="form-control" id="lastName" name="last_name" required placeholder="Enter last name here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
                         <div class="col-md-6">
+                            <label for="birthDate" class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" id="birthDate" name="date_of_birth" required {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
+                        </div>
+                        <div class="col-md-6">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" name="email" required placeholder="Enter email here" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
                         </div>
@@ -108,6 +112,7 @@ function showEditFacultyModal(facultyId) {
             document.getElementById('facultyId').value = facultyId;
             document.getElementById('firstName').value = data.first_name;
             document.getElementById('lastName').value = data.last_name;
+            document.getElementById('birthDate').value = data.date_of_birth;
             document.getElementById('email').value = data.email;
             document.getElementById('department').value = data.engineering_dept;
             document.getElementById('phone').value = data.phone || '';
@@ -151,6 +156,7 @@ document.getElementById('editFacultyForm').addEventListener('submit', function(e
                 // Update data attributes
                 facultyRow.dataset.facultyFirstName = formData.get('first_name');
                 facultyRow.dataset.facultyLastName = formData.get('last_name');
+                facultyRow.dataset.facultyBirthDate = formData.get('date_of_birth');
                 facultyRow.dataset.facultyEmail = formData.get('email');
                 facultyRow.dataset.facultyDepartment = formData.get('engineering_dept');
                 facultyRow.dataset.facultyStatus = formData.get('completed_onboarding') === 'on' ? 'Completed' : 'Pending';
