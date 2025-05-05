@@ -66,25 +66,25 @@
                             {% endif %}
                         </span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                         <div class="d-flex flex-column align-items-start px-3 py-2">
-                            <span class="fw-medium user-name">{{ request.user.get_full_name }}</span>
-                            <small class="text-secondary user-role">{{ request.user.groups.first.name|default:"User" }}</small>
+                            <span class="fw-medium user-name" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ request.user.get_full_name }}</span>
+                            <small class="{% if faculty.dark_mode %}text-white{% else %}text-secondary{% endif %} user-role">{{ request.user.groups.first.name|default:"User" }}</small>
                         </div>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileSettingsModal">
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileSettingsModal" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                                 <i class="bi bi-person me-2"></i>Profile
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settingsSettingsModal">
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settingsSettingsModal" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                                 <i class="bi bi-gear me-2"></i>Settings
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                                 <i class="bi bi-box-arrow-right me-2"></i>Logout
                             </a>
                             <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">

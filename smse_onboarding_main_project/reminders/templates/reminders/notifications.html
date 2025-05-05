@@ -2,24 +2,31 @@
 {% load static %}
 
 {% block dashboard_css %}
-<link href="{% static 'dashboard/css/sidebar.css' %}" rel="stylesheet">
 <link href="{% static 'dashboard/css/new_hire.css' %}" rel="stylesheet">
-<link href="{% static 'dashboard/css/topnav.css' %}" rel="stylesheet">
 <link href="{% static 'reminders/css/notifications.css' %}" rel="stylesheet">
+<style>
+    .notifications-container-dark {
+        background-color: #3c3c3c;
+        min-height: 100vh;
+        padding: 1rem;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div class="d-flex align-items-center">
-                <a href="{% if user.is_staff %}{% url 'dashboard:admin_home' %}{% else %}{% url 'dashboard:new_hire_home' %}{% endif %}" class="btn btn-outline-secondary me-3">
-                    <i class="bi bi-house-fill"></i> Back to Dashboard
-                </a>
+<div {% if faculty.dark_mode %}class="notifications-container-dark"{% endif %}>
+    <div class="card" {% if faculty.dark_mode %}style="border: 1px solid #4b4b4b;"{% endif %}>
+        <div class="card-body" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border-radius: 8px;"{% endif %}>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <a href="{% if user.is_staff %}{% url 'dashboard:admin_home' %}{% else %}{% url 'dashboard:new_hire_home' %}{% endif %}" class="btn btn-outline-secondary me-3" {% if faculty.dark_mode %}style="border-color: #ffffff; color: #ffffff;"{% endif %}>
+                        <i class="bi bi-house-fill"></i> Back to Dashboard
+                    </a>
+                </div>
             </div>
+            <h5 class="card-title" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Your Notifications</h5>
+            {% include 'reminders/reminder_list.html' %}
         </div>
-        <h5 class="card-title">Your Notifications</h5>
-        {% include 'reminders/reminder_list.html' %}
     </div>
 </div>
 {% endblock %}
