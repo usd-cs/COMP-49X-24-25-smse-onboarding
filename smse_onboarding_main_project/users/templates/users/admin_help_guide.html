@@ -52,6 +52,12 @@
 {% endblock %}
 
 {% block content %}
+<div class="spinner-wrapper">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <div {% if faculty.dark_mode %}class="help-container-dark"{% endif %}>
     <div class="container-fluid mt-4">
         <div class="row justify-content-center">

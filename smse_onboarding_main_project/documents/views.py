@@ -32,7 +32,7 @@ def show_documents(request, faculty_id=None):
         else:
             # For regular users, show only their documents
             faculty = get_object_or_404(Faculty, user=user)
-            documents = FacultyDocument.objects.filter(faculty=faculty)
+            documents = FacultyDocument.objects.filter(faculty=faculty).order_by('-uploaded_at')
             context = {
                 'documents': documents,
                 'faculty': faculty

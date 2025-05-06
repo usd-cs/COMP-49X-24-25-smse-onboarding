@@ -85,6 +85,12 @@
 {% endblock %}
 
 {% block content %}
+<div class="spinner-wrapper">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <div {% if admin.dark_mode %}class="dark-mode faculty-directory-dark"{% endif %}>
     <div class="dashboard-container" id="dashboardContainer">
         {% include 'dashboard/components/sidebar.html' %}
