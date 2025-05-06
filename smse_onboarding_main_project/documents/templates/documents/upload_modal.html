@@ -1,0 +1,47 @@
+<!-- Upload Document Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Upload Document</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {% if faculty.dark_mode %}style="background-color: #ffffff;"{% endif %}></button>
+            </div>
+            <form method="post" enctype="multipart/form-data" action="{% url 'documents:upload_document' %}" id="uploadForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Document Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required placeholder="Enter document title here" {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="document" class="form-label" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Document File</label>
+                        <input type="file" class="form-control" id="document" name="document" required {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
+                        <div class="form-text" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Supported formats: PDF, DOC, DOCX</div>
+                    </div>
+
+                    {% if user.is_staff %}
+                    <div class="mb-3">
+                        <label for="faculty" class="form-label" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Faculty Member</label>
+                        <select class="form-control" id="faculty" name="faculty" required {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
+                            {% for faculty in faculties %}
+                                <option value="{{ faculty.faculty_id }}" {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
+                                    {{ faculty.first_name }} {{ faculty.last_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% else %}
+                        <input type="hidden" name="faculty" value="{{ user.faculty_profile.faculty_id }}" {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload"></i> Upload Document
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

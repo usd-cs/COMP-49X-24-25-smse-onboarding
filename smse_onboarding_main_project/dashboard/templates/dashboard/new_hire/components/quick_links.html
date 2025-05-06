@@ -1,6 +1,6 @@
-<div class="card shadow-sm">
-    <div class="card-body p-4">
-        <h5 class="card-title mb-4 text-center">Quick Links</h5>
+<div class="card shadow-sm" {% if faculty.dark_mode %}style="border: 1px solid #4b4b4b;"{% endif %}>
+    <div class="card-body p-4" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border-radius: 4px;"{% endif %}>
+        <h5 class="card-title mb-4 text-center" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Quick Links</h5>
         
         <div class="row g-3">
             <div class="col-4">

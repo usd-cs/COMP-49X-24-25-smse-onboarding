@@ -1,14 +1,31 @@
 {% extends 'base.html' %}
 
+{% block dashboard_css %}
+<style>
+    .documents-container-dark {
+        background-color: #3c3c3c;
+        min-height: 100vh;
+        padding: 1rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="card h-100">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div class="d-flex align-items-center">
-                <a href="{% if user.is_staff %}{% url 'dashboard:admin_home' %}{% else %}{% url 'dashboard:new_hire_home' %}{% endif %}" class="btn btn-outline-secondary me-3">
+<div class="spinner-wrapper">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<div {% if faculty.dark_mode %}class="documents-container-dark"{% endif %}>
+    <div class="card h-100" {% if faculty.dark_mode %}style="border: 1px solid #4b4b4b;"{% endif %}>
+        <div class="card-body" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border-radius: 8px;"{% endif %}>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                <a href="{% if user.is_staff %}{% url 'dashboard:admin_home' %}{% else %}{% url 'dashboard:new_hire_home' %}{% endif %}" class="btn btn-outline-secondary me-3" {% if faculty.dark_mode %}style="border-color: #ffffff; color: #ffffff;"{% endif %}>
                     <i class="bi bi-house-fill"></i> Back to Dashboard
                 </a>
-                <h5 class="card-title mb-0">{% if user.is_staff %}All Documents{% else %}My Documents{% endif %}</h5>
+                <h5 class="card-title mb-0" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{% if user.is_staff %}All Documents{% else %}My Documents{% endif %}</h5>
             </div>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
                 <i class="bi bi-upload"></i> Upload New Document
@@ -30,22 +47,22 @@
                 <thead>
                     <tr>
                         {% if user.is_staff %}
-                        <th>Faculty</th>
+                        <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>Faculty</th>
                         {% endif %}
-                        <th>Title</th>
-                        <th>Upload Date</th>
-                        <th>Actions</th>
+                        <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>Title</th>
+                        <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>Upload Date</th>
+                        <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for doc in documents %}
                     <tr>
                         {% if user.is_staff %}
-                        <td>{{ doc.faculty.first_name }} {{ doc.faculty.last_name }}</td>
+                        <td {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>{{ doc.faculty.first_name }} {{ doc.faculty.last_name }}</td>
                         {% endif %}
-                        <td>{{ doc.title }}</td>
-                        <td>{{ doc.uploaded_at|date:"M d, Y" }}</td>
-                        <td>
+                        <td {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>{{ doc.title }}</td>
+                        <td {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>{{ doc.uploaded_at|date:"M d, Y" }}</td>
+                        <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                             <a href="{{ doc.file.url }}" class="btn btn-sm btn-info" target="_blank">
                                 <i class="bi bi-eye"></i> View
                             </a>
@@ -58,7 +75,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="{% if user.is_staff %}4{% else %}3{% endif %}" class="text-center">No documents found.</td>
+                        <td colspan="{% if user.is_staff %}4{% else %}3{% endif %}" class="text-center" {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>No documents found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -67,53 +84,7 @@
     </div>
 </div>
 
-<!-- Upload Document Modal -->
-<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Upload Document</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" enctype="multipart/form-data" action="{% url 'documents:upload_document' %}" id="uploadForm">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Document Title</label>
-                        <input type="text" class="form-control" id="title" name="title" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="document" class="form-label">Document File</label>
-                        <input type="file" class="form-control" id="document" name="document" required>
-                        <div class="form-text">Supported formats: PDF, DOC, DOCX</div>
-                    </div>
-
-                    {% if user.is_staff %}
-                    <div class="mb-3">
-                        <label for="faculty" class="form-label">Faculty Member</label>
-                        <select class="form-control" id="faculty" name="faculty" required>
-                            {% for faculty in faculties %}
-                                <option value="{{ faculty.faculty_id }}">
-                                    {{ faculty.first_name }} {{ faculty.last_name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    {% else %}
-                        <input type="hidden" name="faculty" value="{{ user.faculty_profile.faculty_id }}">
-                    {% endif %}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-upload"></i> Upload Document
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+{% include 'documents/upload_modal.html' %}
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

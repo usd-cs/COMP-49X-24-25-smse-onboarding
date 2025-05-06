@@ -1,39 +1,182 @@
 {% load custom_filters %}
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+<style>
+    /* Dark mode table styles */
+    .dark-mode .table-responsive .table {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .table-responsive .table thead th {
+        background-color: #3c3c3c !important;
+        color: #ffffff !important;
+        border-bottom: 2px solid #4b4b4b !important;
+    }
+    
+    .dark-mode .table-responsive .table tbody tr {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .table-responsive .table tbody tr:hover {
+        background-color: #3c3c3c !important;
+    }
+
+    .dark-mode .table-responsive .table tbody td {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    /* DataTables specific dark mode styles */
+    .dark-mode .dataTables_wrapper .dataTables_length,
+    .dark-mode .dataTables_wrapper .dataTables_filter,
+    .dark-mode .dataTables_wrapper .dataTables_info,
+    .dark-mode .dataTables_wrapper .dataTables_processing,
+    .dark-mode .dataTables_wrapper .dataTables_paginate {
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button {
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+        background: #3c3c3c !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #4b4b4b !important;
+        border: 1px solid #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: #67c2ff !important;
+        border: 1px solid #67c2ff !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_filter input {
+        background-color: #3c3c3c !important;
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+    }
+
+    /* Dark mode modal styles */
+    .dark-mode .modal {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-dialog {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-content {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+    }
+
+    .dark-mode .modal-header {
+        background-color: #4b4b4b !important;
+        border-bottom: 1px solid #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-title {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-body {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-footer {
+        background-color: #4b4b4b !important;
+        border-top: 1px solid #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .dark-mode .modal .btn-secondary {
+        background-color: #4b4b4b !important;
+        border-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal .btn-secondary:hover {
+        background-color: #4b4b4b !important;
+        border-color: #4b4b4b !important;
+    }
+
+    .dark-mode .modal strong {
+        color: #67c2ff !important;
+    }
+
+    .dark-mode .modal .badge {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal .text-danger {
+        color: #ff6b6b !important;
+    }
+
+    .dark-mode .modal .text-warning {
+        color: #ffd93d !important;
+    }
+
+    /* Additional modal styles */
+    .modal.show {
+        display: block !important;
+    }
+
+    .modal-backdrop.show {
+        opacity: 0.5;
+    }
+
+    .dark-mode .modal-backdrop {
+        background-color: #000;
+    }
+</style>
 
 <h5 class="card-title mb-3" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Upcoming Tasks</h5>
-<div class="table-responsive" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
-    <table class="table table-hover" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
-        <thead {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
-            <tr {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
-                <th style="width: 5%;"></th>
-                <th style="width: 45%">Task</th>
-                <th style="width: 25%">Due Date</th>
-                <th style="width: 25%">Days Remaining</th>
+<div class="table-responsive {% if faculty.dark_mode %}dark-mode{% endif %}">
+    <table class="table table-hover" id="upcomingTasksTable">
+        <thead>
+            <tr>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 5%;" {% else %}style="width: 5%;"{% endif %}></th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 40%; color: #ffffff;" {% else %}style="width: 40%;"{% endif %}>Task</th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 25%; color: #ffffff;" {% else %}style="width: 25%;"{% endif %}>Due Date</th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 30%; color: #ffffff;" {% else %}style="width: 30%;"{% endif %}>Days Remaining</th>
             </tr>
         </thead>
         <tbody>
             {% for task in upcoming_tasks %}
                 <tr>
-                    <td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                         <form method="POST" action="{% url 'dashboard:complete_task' task.id %}" class="task-completion-form">
                             {% csrf_token %}
                             <span class="tt" data-bs-placement="bottom" data-bs-title="Complete Task">
                                 <button type="submit" class="btn btn-link p-0 task-circle-btn" {% if not task.can_complete %}disabled title="Complete prerequisite task first"{% endif %} data-is-task="true">
-                                    <i class="bi bi-circle {% if not task.can_complete %}text-muted{% else %}text-secondary{% endif %}" style="font-size: 1.2rem;"></i>
+                                    <i class="bi bi-circle {% if not task.can_complete %}text-muted{% else %}{% if faculty.dark_mode %}text-white{% else %}text-secondary{% endif %}{% endif %}" style="font-size: 1.2rem;"></i>
                                 </button>
                             </span>
                         </form>
                     </td>
-                    <td class="task-title" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
-                        <span class="tt" data-bs-placement="bottom" data-bs-title="See Task Details">
+                    <td class="task-title" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+                        <span class="tt" data-bs-placement="bottom" data-bs-title="See Task Details" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                             {{ task.title }}
                         </span>
                         {% if task.prerequisite_task and not task.prereq_completed %}
                             <span class="badge bg-warning text-dark ms-2">Prerequisite Required</span>
                         {% endif %}
                     </td>
-                    <td>{{ task.deadline|date:"M d, Y, g a" }}</td>
-                    <td class="{% if task.remaining_days < 0 %}text-danger{% elif task.remaining_days < 2 %}text-warning{% else %}text-muted{% endif %}">
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>{{ task.deadline|date:"M d, Y, g a" }}</td>
+                    <td class="{% if task.remaining_days < 0 %}text-danger{% elif task.remaining_days < 2 %}text-warning{% else %}{% if faculty.dark_mode %}text-white{% else %}text-muted{% endif %}{% endif %}" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                         {% if task.remaining_days < 0 %}
                             Overdue
                         {% elif task.remaining_days == 0 %}
@@ -48,16 +191,16 @@
                 <!-- Task Modal -->
                 <div class="modal fade" id="taskModal{{ task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ task.id }}" aria-hidden="true">
                     <div class="modal-dialog">
-                        <div class="modal-content">
+                        <div class="modal-content" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                             <div class="modal-header">
-                                <h5 class="modal-title" id="taskModalLabel{{ task.id }}">{{ task.title }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title" id="taskModalLabel{{ task.id }}" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ task.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {% if faculty.dark_mode %}style="background-color: #ffffff;"{% endif %}></button>
                             </div>
                             <div class="modal-body">
-                                <p><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
-                                <p><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Created:</strong> {{ task.created_at|date:"M d, Y" }}</p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Due Date:</strong> {{ task.deadline|date:"M d, Y, g a" }}</p>
                                 {% if task.prerequisite_task %}
-                                    <p><strong>Prerequisite Task:</strong> {{ task.prerequisite_task.title }}
+                                    <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Prerequisite Task:</strong> {{ task.prerequisite_task.title }}
                                         {% if task.prereq_completed %}
                                             <span class="badge bg-success">Completed</span>
                                         {% else %}
@@ -65,7 +208,7 @@
                                         {% endif %}
                                     </p>
                                 {% endif %}
-                                <p><strong>Days Remaining:</strong>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Days Remaining:</strong>
                                     {% if task.remaining_days < 0 %}
                                         <span class="text-danger">Overdue</span>
                                     {% elif task.remaining_days == 0 %}
@@ -74,8 +217,8 @@
                                         {{ task.remaining_days }} days
                                     {% endif %}
                                 </p>
-                                <p><strong>Description:</strong></p>
-                                <p>{{ task.description }}</p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}><strong>Description:</strong></p>
+                                <p {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ task.description }}</p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -101,9 +244,42 @@
                 </div>
             {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center">No upcoming tasks available.</td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}></td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>No upcoming tasks available.</td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}></td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<!-- DataTables script -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    // Initialize DataTable when document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if jQuery is loaded
+        if (typeof jQuery !== 'undefined') {
+            if ($.fn.DataTable.isDataTable('#upcomingTasksTable')) {
+                $('#upcomingTasksTable').DataTable().destroy();
+            }
+
+            $('#upcomingTasksTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50],
+                language: {
+                    search: "Search tasks:",
+                    searchPlaceholder: "Enter task here"
+                },
+                columnDefs: [
+                    { orderable: false, targets: 0 },
+                ],
+                autoWidth: false
+            });
+        }
+    });
+</script>
