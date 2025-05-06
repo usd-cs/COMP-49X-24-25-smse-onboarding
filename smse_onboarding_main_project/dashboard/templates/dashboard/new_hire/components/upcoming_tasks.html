@@ -1,14 +1,157 @@
 {% load custom_filters %}
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+<style>
+    /* Dark mode table styles */
+    .dark-mode .table-responsive .table {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .table-responsive .table thead th {
+        background-color: #3c3c3c !important;
+        color: #ffffff !important;
+        border-bottom: 2px solid #4b4b4b !important;
+    }
+    
+    .dark-mode .table-responsive .table tbody tr {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .table-responsive .table tbody tr:hover {
+        background-color: #3c3c3c !important;
+    }
+
+    .dark-mode .table-responsive .table tbody td {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    /* DataTables specific dark mode styles */
+    .dark-mode .dataTables_wrapper .dataTables_length,
+    .dark-mode .dataTables_wrapper .dataTables_filter,
+    .dark-mode .dataTables_wrapper .dataTables_info,
+    .dark-mode .dataTables_wrapper .dataTables_processing,
+    .dark-mode .dataTables_wrapper .dataTables_paginate {
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button {
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+        background: #3c3c3c !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #4b4b4b !important;
+        border: 1px solid #4b4b4b !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: #67c2ff !important;
+        border: 1px solid #67c2ff !important;
+        color: #ffffff !important;
+    }
+    
+    .dark-mode .dataTables_wrapper .dataTables_filter input {
+        background-color: #3c3c3c !important;
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+    }
+
+    /* Dark mode modal styles */
+    .dark-mode .modal {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-dialog {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-content {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+        border: 1px solid #4b4b4b !important;
+    }
+
+    .dark-mode .modal-header {
+        background-color: #4b4b4b !important;
+        border-bottom: 1px solid #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-title {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-body {
+        background-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal-footer {
+        background-color: #4b4b4b !important;
+        border-top: 1px solid #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .dark-mode .modal .btn-secondary {
+        background-color: #4b4b4b !important;
+        border-color: #4b4b4b !important;
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal .btn-secondary:hover {
+        background-color: #4b4b4b !important;
+        border-color: #4b4b4b !important;
+    }
+
+    .dark-mode .modal strong {
+        color: #67c2ff !important;
+    }
+
+    .dark-mode .modal .badge {
+        color: #ffffff !important;
+    }
+
+    .dark-mode .modal .text-danger {
+        color: #ff6b6b !important;
+    }
+
+    .dark-mode .modal .text-warning {
+        color: #ffd93d !important;
+    }
+
+    /* Additional modal styles */
+    .modal.show {
+        display: block !important;
+    }
+
+    .modal-backdrop.show {
+        opacity: 0.5;
+    }
+
+    .dark-mode .modal-backdrop {
+        background-color: #000;
+    }
+</style>
 
 <h5 class="card-title mb-3" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Upcoming Tasks</h5>
-<div class="table-responsive">
-    <table class="table table-hover">
+<div class="table-responsive {% if faculty.dark_mode %}dark-mode{% endif %}">
+    <table class="table table-hover" id="upcomingTasksTable">
         <thead>
             <tr>
                 <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 5%;" {% else %}style="width: 5%;"{% endif %}></th>
-                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 45%; color: #ffffff;" {% else %}style="width: 45%;"{% endif %}>Task</th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 40%; color: #ffffff;" {% else %}style="width: 40%;"{% endif %}>Task</th>
                 <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 25%; color: #ffffff;" {% else %}style="width: 25%;"{% endif %}>Due Date</th>
-                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 25%; color: #ffffff;" {% else %}style="width: 25%;"{% endif %}>Days Remaining</th>
+                <th {% if faculty.dark_mode %}style="background-color: #4b4b4b; width: 30%; color: #ffffff;" {% else %}style="width: 30%;"{% endif %}>Days Remaining</th>
             </tr>
         </thead>
         <tbody>
@@ -101,9 +244,42 @@
                 </div>
             {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center" {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>No upcoming tasks available.</td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}></td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>No upcoming tasks available.</td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}></td>
+                    <td {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<!-- DataTables script -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    // Initialize DataTable when document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if jQuery is loaded
+        if (typeof jQuery !== 'undefined') {
+            if ($.fn.DataTable.isDataTable('#upcomingTasksTable')) {
+                $('#upcomingTasksTable').DataTable().destroy();
+            }
+
+            $('#upcomingTasksTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50],
+                language: {
+                    search: "Search tasks:",
+                    searchPlaceholder: "Enter task here"
+                },
+                columnDefs: [
+                    { orderable: false, targets: 0 },
+                ],
+                autoWidth: false
+            });
+        }
+    });
+</script>
