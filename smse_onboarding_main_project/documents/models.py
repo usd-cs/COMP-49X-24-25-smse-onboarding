@@ -23,6 +23,9 @@ class FacultyDocument(models.Model):
 
     objects: Manager = Manager()
 
+    class Meta:
+        ordering = ['-uploaded_at']
+
     class DoesNotExist(Exception):
         pass
 
