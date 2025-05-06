@@ -2,17 +2,13 @@
 {% load static %}
 
 <div class="card shadow-sm">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">Admin Portal</h5>
-        <!-- Save Notes Button -->
-        <button id="saveNotesBtn" class="btn btn-sm btn-primary">
-            <i class="bi bi-save me-1"></i> Save Notes
-        </button>
-    </div>
+
+
+
     <div class="card-body">
         <!-- Welcome Message -->
         <div class="welcome-text mb-3">
-            Welcome, Admin
+            Welcome, {{ user.first_name }}
         </div>
 
         <!-- Admin Profile Section -->
@@ -45,6 +41,7 @@
             </div>
         </div>
 
+
         <!-- Notes Section -->
         <div class="notes-section mt-4">
             <h6 class="card-subtitle mb-2 text-muted">
@@ -56,6 +53,12 @@
             </div>
             <div class="text-muted small mt-2">
                 <i class="bi bi-info-circle me-1"></i> Notes are saved in your browser
+            </div>
+            <div class="text-muted small mt-2">
+                <!-- Save Notes Button -->
+                <button id="saveNotesBtn" class="btn btn-sm btn-primary">
+                    <i class="bi bi-save me-1"></i> Save Notes
+                </button>
             </div>
         </div>
     </div>
