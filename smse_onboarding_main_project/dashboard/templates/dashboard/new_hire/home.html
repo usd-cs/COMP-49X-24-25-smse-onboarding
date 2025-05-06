@@ -7,6 +7,7 @@
 <link href="{% static 'dashboard/css/sidebar.css' %}" rel="stylesheet">
 <link href="{% static 'dashboard/css/new_hire.css' %}" rel="stylesheet">
 <link href="{% static 'dashboard/css/topnav.css' %}" rel="stylesheet">
+<link href="{% static 'dashboard/css/spinner.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block extra_js %}
@@ -29,6 +30,12 @@
 {% endblock %}
 
 {% block content %}
+<div class="spinner-wrapper">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <div class="dashboard-container">
     <!-- Sidebar -->
     {% block sidebar %}

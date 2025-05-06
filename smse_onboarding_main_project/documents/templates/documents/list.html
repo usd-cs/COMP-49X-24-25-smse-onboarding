@@ -11,6 +11,12 @@
 {% endblock %}
 
 {% block content %}
+<div class="spinner-wrapper">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <div {% if faculty.dark_mode %}class="documents-container-dark"{% endif %}>
     <div class="card h-100" {% if faculty.dark_mode %}style="border: 1px solid #4b4b4b;"{% endif %}>
         <div class="card-body" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border-radius: 8px;"{% endif %}>
