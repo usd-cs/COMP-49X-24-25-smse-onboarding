@@ -167,4 +167,49 @@
             });
         }
     });
+
+    function fetchDeadlinesAndUpdateTable() {
+        fetch('/dashboard/api/new-hire-deadlines/')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector('#newHireDeadlinesTable tbody');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No upcoming tasks available.</td></tr>';
+                    return;
+                }
+                data.forEach(faculty => {
+                    let statusHtml = '';
+                    if (faculty.progress === 100) {
+                        statusHtml = '<i class="bi bi-check-circle-fill text-success me-2"></i><span>100%</span>';
+                    } else {
+                        statusHtml = `<div class=\"progress me-2\" style=\"width: 50px; height: 6px;\"><div class=\"progress-bar faculty-progress-bar\" role=\"progressbar\" aria-valuenow=\"${faculty.progress}\" aria-valuemin=\"0\" aria-valuemax=\"100\"></div></div><span>${faculty.progress}%</span>`;
+                    }
+                    let dueHtml = '';
+                    if (faculty.progress === 100) {
+                        dueHtml = '<span class="badge rounded-pill bg-success">Completed</span>';
+                    } else if (faculty.days_overdue > 0) {
+                        dueHtml = `<span class=\"badge rounded-pill bg-danger\">${faculty.days_overdue} day overdue</span>`;
+                    } else {
+                        dueHtml = `<span class=\"badge rounded-pill bg-info\">0 days left</span>`;
+                    }
+                    tbody.innerHTML += `
+                    <tr>
+                        <td>${faculty.first_name} ${faculty.last_name}</td>
+                        <td>${faculty.current_task || ''}</td>
+                        <td>${statusHtml}</td>
+                        <td>${dueHtml}</td>
+                        <td><!-- Actions can be added as needed --></td>
+                    </tr>`;
+                });
+                // 重新设置进度条宽度
+                document.querySelectorAll('.faculty-progress-bar').forEach(function(bar) {
+                    const percentage = bar.getAttribute('aria-valuenow');
+                    bar.style.width = percentage + '%';
+                });
+            });
+    }
+    setInterval(fetchDeadlinesAndUpdateTable, 30000);
+    document.addEventListener('DOMContentLoaded', fetchDeadlinesAndUpdateTable);
 </script>
