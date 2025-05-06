@@ -101,8 +101,6 @@ def new_hire_home(request):
         'unread_reminders_count': unread_reminders_count,
     }
 
-    print(faculty.date_of_birth)
-
     return render(request, 'dashboard/new_hire/home.html', context)
 
 @login_required
@@ -369,7 +367,7 @@ def faculty_directory(request):
         'unread_reminders_count': unread_reminders_count,
         'admin': admin,
     }
-    print(context['faculty_members'])
+
     return render(request, 'dashboard/admin/faculty_directory.html', context)
 
 @login_required
