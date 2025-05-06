@@ -142,13 +142,13 @@
 <script>
     // Initialize DataTable when document is ready
     document.addEventListener('DOMContentLoaded', function() {
-        // Set progress bar widths dynamically
+        // Set the width of each progress bar based on its percentage value
         document.querySelectorAll('.faculty-progress-bar').forEach(function(bar) {
             const percentage = bar.getAttribute('aria-valuenow');
             bar.style.width = percentage + '%';
         });
 
-        // Check if jQuery is loaded
+        // Initialize DataTable if jQuery is available
         if (typeof jQuery !== 'undefined') {
             if ($.fn.DataTable.isDataTable('#newHireDeadlinesTable')) {
                 $('#newHireDeadlinesTable').DataTable().destroy();
@@ -162,13 +162,13 @@
                     search: "Search new hires:"
                 },
                 columnDefs: [
-                    { orderable: false, targets: 4 } // Disable sorting on actions column
+                    { orderable: false, targets: 4 } // Disable sorting on the actions column
                 ]
             });
         }
     });
 
-    // Periodically refresh the new hire deadlines table
+    // Function to fetch the latest new hire deadlines and update the table
     function fetchAndUpdateDeadlines() {
         fetch('/dashboard/api/new-hire-deadlines/')
             .then(response => response.json())
@@ -202,7 +202,8 @@
                 });
             });
     }
-    setInterval(fetchAndUpdateDeadlines, 30000); // Refresh every 30 seconds
-    // Refresh once on page load
+    // Set up a timer to refresh the new hire deadlines table every 30 seconds
+    setInterval(fetchAndUpdateDeadlines, 30000); // 30000 ms = 30 seconds
+    // Fetch and update the table once immediately on page load
     fetchAndUpdateDeadlines();
 </script>

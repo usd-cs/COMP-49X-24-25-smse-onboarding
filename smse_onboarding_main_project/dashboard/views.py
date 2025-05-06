@@ -501,17 +501,17 @@ def update_faculty(request, faculty_id):
 def get_new_hire_deadlines(request):
     """API endpoint to get updated new hire deadlines data"""
     try:
-        # 获取所有faculty，不论onboarding是否完成
+        # Get all faculty members, regardless of onboarding completion status
         all_faculty = Faculty.objects.all()
         deadlines_data = []
         for faculty in all_faculty:
-            # 获取当前未完成的任务
+            # Get the current unfinished task
             current_task = Task.objects.filter(assigned_to=faculty, completed=False).order_by('deadline').first()
             total_tasks = Task.objects.filter(assigned_to=faculty).count()
             completed_tasks = TaskProgress.objects.filter(faculty=faculty, completed=True).count()
             progress = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
             if current_task:
-                # 计算逾期天数
+                # Calculate overdue days
                 if current_task.deadline:
                     today = timezone.now().date()
                     days_overdue = (today - current_task.deadline.date()).days if today > current_task.deadline.date() else 0
@@ -528,7 +528,7 @@ def get_new_hire_deadlines(request):
                     'status_class': 'completed' if progress == 100 else ('overdue' if days_overdue > 0 else 'upcoming'),
                 })
             else:
-                # 所有任务已完成
+                # All tasks completed
                 deadlines_data.append({
                     'faculty_id': faculty.faculty_id,
                     'name': f"{faculty.first_name} {faculty.last_name}",
