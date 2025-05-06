@@ -5,7 +5,7 @@
             <i class="bi bi-x-lg"></i>
         </button>
         <div class="profile-image">
-            <i class="bi bi-person"></i>
+            <!-- Profile image or initials will be inserted here by JavaScript -->
         </div>
         <h4 class="faculty-name" id="profileFacultyName"></h4>
         <p class="faculty-title" id="profileFacultyDepartment"></p>
@@ -75,18 +75,24 @@
             statusElement.className = 'profile-info-value ' + (isCompleted ? 'text-success' : 'text-warning');
             statusElement.innerHTML = `<span class="status-dot ${isCompleted ? 'bg-success' : 'bg-warning'}"></span>${status}`;
 
-            // Update profile image with initials
+            // Update profile image with faculty image or initials
             const profileImage = profileCard.querySelector('.profile-image');
             if (profileImage) {
-                profileImage.innerHTML = '';
-                const initials = `${firstName[0]}${lastName[0]}`;
-                profileImage.textContent = initials;
-                profileImage.style.backgroundColor = '#1976d2';
-                profileImage.style.color = 'white';
-                profileImage.style.display = 'flex';
-                profileImage.style.alignItems = 'center';
-                profileImage.style.justifyContent = 'center';
-                profileImage.style.fontSize = '2rem';
+                const profileImageUrl = facultyRow.dataset.facultyProfileImage;
+                if (profileImageUrl) {
+                    profileImage.innerHTML = `<img src="${profileImageUrl}" alt="${firstName} ${lastName} profile image" style="width: 100px; height: 100px; max-width: 100px; max-height: 100px; object-fit: cover; border-radius: 50%;">`;
+                } else {
+                    // Fallback to initials if no profile image
+                    profileImage.innerHTML = '';
+                    const initials = `${firstName[0]}${lastName[0]}`;
+                    profileImage.textContent = initials;
+                    profileImage.style.backgroundColor = '#1976d2';
+                    profileImage.style.color = 'white';
+                    profileImage.style.display = 'flex';
+                    profileImage.style.alignItems = 'center';
+                    profileImage.style.justifyContent = 'center';
+                    profileImage.style.fontSize = '2rem';
+                }
             }
         }
 
