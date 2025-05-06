@@ -1,57 +1,221 @@
 {% load custom_filters %}
+{% load static %}
+
 <div class="card shadow-sm">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">Your Admin Tasks</h5>
+        <h5 class="card-title mb-0">Admin Portal</h5>
+        <!-- Save Notes Button -->
+        <button id="saveNotesBtn" class="btn btn-sm btn-primary">
+            <i class="bi bi-save me-1"></i> Save Notes
+        </button>
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive" style="max-height: 70vh; overflow-y: auto; overflow-x: hidden;">
-            <table class="admin-tasks-table w-100">
-                <thead>
-                    <tr>
-                        <th style="width: 10%">Status</th>
-                        <th style="width: 45%">Task</th>
-                        <th style="width: 20%">Assigned By</th>
-                        <th style="width: 25%">Due Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if admin_tasks %}
-                        {% for task in admin_tasks %}
-                        <tr data-task-id="{{ task.id }}" class="{% if task.completed %}bg-light{% endif %}">
-                            <td class="text-center">
-                                {% if task.completed %}
-                                    <i class="bi bi-check-circle-fill text-success"></i>
-                                {% else %}
-                                    <div class="rounded-circle border border-2 {% if task.is_overdue %}border-danger{% else %}border-success{% endif %}" style="width: 20px; height: 20px;"></div>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <div>
-                                    <div class="fw-medium {% if task.completed %}text-success{% endif %}">{{ task.title }}</div>
-                                    {% if task.description %}
-                                        <div class="text-muted small">{{ task.description }}</div>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td>{{ task.assigned_to }}</td>
-                            <td>
-                                {% if task.is_overdue %}
-                                    <span class="badge bg-danger">{{ task.deadline|date:"m/d/y" }} (Overdue)</span>
-                                {% else %}
-                                    <span class="badge {% if task.completed %}bg-success{% else %}bg-info{% endif %}">{{ task.deadline|date:"m/d/y" }}</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="4" class="text-center p-4 text-muted">
-                                <p>No admin tasks available</p>
-                            </td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+    <div class="card-body">
+        <!-- Welcome Message -->
+        <div class="welcome-text mb-3">
+            Welcome, Admin
+        </div>
+
+        <!-- Admin Profile Section -->
+        <div class="profile-card-wrapper">
+            <div class="admin-container">
+                <!-- Profile Section -->
+                <div class="profile-section">
+                    <div class="circle-container">
+                        <div class="profile-circle">
+                            <!-- Default Bootstrap Icon -->
+                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-light profile-img">
+                                <i class="bi bi-person-fill profile-icon"></i>
+                            </div>
+
+                            <!-- Profile Image (if available) -->
+                            {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}"
+                                 alt="Profile"
+                                 class="profile-img"
+                                 onerror="this.style.display='none'">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Admin information -->
+                    <div class="text-center mt-3">
+                        <div class="prof-email">{{ user.email }}</div>
+                        <div class="job-title">Onboarding Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="notes-section mt-4">
+            <h6 class="card-subtitle mb-2 text-muted">
+                <i class="bi bi-journal-text me-2"></i>Personal Notes
+            </h6>
+            <div class="form-floating">
+                <textarea class="form-control" id="adminNotes" style="height: 200px"></textarea>
+                <label for="adminNotes">Quick notes for yourself</label>
+            </div>
+            <div class="text-muted small mt-2">
+                <i class="bi bi-info-circle me-1"></i> Notes are saved in your browser
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+.welcome-text {
+    margin-top: 0.5rem;
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.profile-card-wrapper {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.prof-email {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.job-title {
+    font-size: 1rem;
+    color: #666;
+}
+
+.admin-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 1rem;
+}
+
+.profile-section {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.5rem;
+}
+
+.circle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-circle {
+    width: 120px;
+    height: 120px;
+    position: relative;
+}
+
+.profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #f0f0f0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.profile-img i {
+    font-size: 84px;
+}
+
+.profile-icon {
+    color: #0074c8; /* USD blue color */
+    font-size: 84px;
+}
+
+/* Notes section styling */
+.notes-section {
+    border-top: 1px solid #dee2e6;
+    padding-top: 1rem;
+}
+
+#adminNotes {
+    resize: none;
+    border-radius: 6px;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 575.98px) {
+    .profile-circle,
+    .profile-img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-img i {
+        font-size: 70px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load saved notes from localStorage
+    const adminNotes = document.getElementById('adminNotes');
+    const saveBtn = document.getElementById('saveNotesBtn');
+
+    // Load saved notes
+    if (adminNotes) {
+        adminNotes.value = localStorage.getItem('adminNotes') || '';
+    }
+
+    // Set up save button
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+            if (adminNotes) {
+                localStorage.setItem('adminNotes', adminNotes.value);
+
+                // Show saved confirmation
+                const toast = document.createElement('div');
+                toast.className = 'position-fixed bottom-0 end-0 p-3';
+                toast.style.zIndex = '1050';
+                toast.innerHTML = `
+                    <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bi bi-check-circle me-2"></i> Notes saved successfully
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(toast);
+
+                // Initialize and show the toast
+                const toastElement = toast.querySelector('.toast');
+                const bsToast = new bootstrap.Toast(toastElement, {
+                    autohide: true,
+                    delay: 3000
+                });
+                bsToast.show();
+
+                // Remove the toast element after it's hidden
+                toastElement.addEventListener('hidden.bs.toast', function() {
+                    toast.remove();
+                });
+            }
+        });
+    }
+
+    // Auto-save notes when user stops typing for 2 seconds
+    let typingTimer;
+    if (adminNotes) {
+        adminNotes.addEventListener('input', function() {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(function() {
+                localStorage.setItem('adminNotes', adminNotes.value);
+                console.log('Notes auto-saved');
+            }, 2000);
+        });
+    }
+});
+</script>
