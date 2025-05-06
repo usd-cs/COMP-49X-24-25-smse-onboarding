@@ -354,9 +354,8 @@ def faculty_directory(request):
     for faculty in faculty_members:
         faculty.department = faculty.engineering_dept
         faculty.start_date = faculty.hire_date
-        faculty.profile_image = None  # We'll use initials instead
         faculty.extension = getattr(faculty, 'phone_extension', None)  # Add extension field
-    
+
     unread_reminders_count = Reminder.objects.filter(
         faculty=request.user.faculty_profile,
         is_read=False
@@ -370,7 +369,7 @@ def faculty_directory(request):
         'unread_reminders_count': unread_reminders_count,
         'admin': admin,
     }
-    
+    print(context['faculty_members'])
     return render(request, 'dashboard/admin/faculty_directory.html', context)
 
 @login_required

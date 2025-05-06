@@ -127,12 +127,13 @@
                                 data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
                                 data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
                                 data-faculty-extension="{{ faculty.extension|default:'None' }}"
+                                data-faculty-profile-image="{% if faculty.profile_image %}{{ faculty.profile_image.url }}{% endif %}"
                                 class="faculty-row">
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="faculty-avatar">
                                             {% if faculty.profile_image %}
-                                                <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }}">
+                                                <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }} profile image" class="img-profile" style="width: 32px !important; height: 32px !important; max-width: 32px !important; max-height: 32px !important; object-fit: cover !important;">
                                             {% else %}
                                                 <div class="initials-avatar">{{ faculty.first_name|first }}{{ faculty.last_name|first }}</div>
                                             {% endif %}
@@ -236,7 +237,19 @@
             language: {
                 search: "Search faculty:",
                 searchPlaceholder: "Enter faculty here"
-            }
+            },
+            columnDefs: [{
+                targets: 0, // First column (NAME)
+                type: 'string',
+                render: function(data, type, row) {
+                    if (type === 'sort') {
+                        // For sorting, use just the name text
+                        return $(row[0]).find('.fw-bold').text().trim();
+                    }
+                    return data;
+                }
+            }],
+            order: [[0, 'asc']] // Sort by first column (NAME) in ascending order
         });
     });
 
@@ -249,6 +262,7 @@
             console.error('Could not find faculty row for ID:', facultyId);
             return;
         }
+        const profileCard = document.getElementById('newhireTaskProgress');
 
         const facultyName = facultyRow.querySelector('.fw-bold').textContent;
         // Use both text-muted and text-white classes to support both modes
@@ -259,6 +273,18 @@
         document.getElementById('facultyNameTitle').textContent = facultyName;
         document.getElementById('facultyDepartmentInfo').textContent = facultyDepartment;
         document.getElementById('facultyEmail').textContent = facultyEmail;
+
+        // Update profile image with faculty image or initials
+        const profileImage = profileCard.querySelector('.faculty-photo');
+        if (profileImage) {
+            const profileImageUrl = facultyRow.dataset.facultyProfileImage;
+            if (profileImageUrl) {
+                profileImage.innerHTML = `<img src="${profileImageUrl}" alt="${firstName} ${lastName} profile image" style="width: 120px; height: 120px; max-width: 120px; max-height: 120px; object-fit: cover; border-radius: 50%;">`;
+            } else {
+                // Fallback to profile icon if no profile image
+                profileImage.innerHTML = '<i class="bi bi-person-circle"></i>';
+            }
+        }
 
         // Fetch task data
         fetch(`/dashboard/api/faculty/${facultyId}/tasks/`)
