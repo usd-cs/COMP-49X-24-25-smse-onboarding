@@ -37,14 +37,4 @@ docker compose -f compose.yaml up -d --remove-orphans
 echo "Verifying services..."
 docker ps | grep "smse_onboarding_main_project"
 
-# 8. Check application health
-echo "Checking application health..."
-sleep 10  # Wait for services to fully start
-curl -s -o /dev/null -w "%{http_code}" http://localhost:80/
-if [ $? -eq 0 ]; then
-    echo "Application is responding."
-else
-    echo "WARNING: Just in case. Check logs with 'docker compose -f compose.yaml logs'."
-fi
 
-echo "Post-merge deployment completed. Check the application for any issues."
