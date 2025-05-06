@@ -2,10 +2,28 @@
 {% load static %}
 
 <div class="card shadow-sm">
-
-
-
     <div class="card-body">
+        <!-- Three Dots Menu-->
+        <div class="dropdown position-absolute" style="top: 1rem; right: 1.5rem;">
+            <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="tt" data-bs-placement="bottom" data-bs-title="Options">
+                    <i class="bi bi-three-dots"></i>
+                </span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileSettingsModal">
+                    <i class="bi bi-person me-2"></i>Edit Profile
+                </a></li>
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#documentModal">
+                    <i class="bi bi-file-earmark-text me-2"></i>Documents
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">
+                    <i class="bi bi-gear me-2"></i>Settings
+                </a></li>
+            </ul>
+        </div>
+
         <!-- Welcome Message -->
         <div class="welcome-text mb-3">
             Welcome, {{ user.first_name }}
@@ -63,6 +81,12 @@
         </div>
     </div>
 </div>
+
+<!-- Document Modal -->
+{% include 'documents/document_modal.html' %}
+
+<!-- Profile Modal -->
+{% include 'users/profile/profile_settings_modal.html' %}
 
 <style>
 .welcome-text {
@@ -146,6 +170,30 @@
     border-radius: 6px;
 }
 
+/* Three dots menu button style */
+.dropdown .btn-light {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    line-height: 32px;
+    background-color: transparent;
+    border: none;
+}
+
+.dropdown .btn-light:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-item i {
+    font-size: 1rem;
+}
+
 /* Media queries for responsive design */
 @media (max-width: 575.98px) {
     .profile-circle,
@@ -162,6 +210,12 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('.tt'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
     // Load saved notes from localStorage
     const adminNotes = document.getElementById('adminNotes');
     const saveBtn = document.getElementById('saveNotesBtn');
