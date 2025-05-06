@@ -501,10 +501,10 @@ def update_faculty(request, faculty_id):
 def get_new_hire_deadlines(request):
     """API endpoint to get updated new hire deadlines data"""
     try:
-        # Get all faculty members, regardless of onboarding completion status
-        all_faculty = Faculty.objects.all()
+        # Get only faculty members who have not completed onboarding
+        new_hires = Faculty.objects.filter(completed_onboarding=False)
         deadlines_data = []
-        for faculty in all_faculty:
+        for faculty in new_hires:
             # Get the current unfinished task
             current_task = Task.objects.filter(assigned_to=faculty, completed=False).order_by('deadline').first()
             total_tasks = Task.objects.filter(assigned_to=faculty).count()
