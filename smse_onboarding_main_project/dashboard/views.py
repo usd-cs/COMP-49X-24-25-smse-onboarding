@@ -169,11 +169,13 @@ def admin_home(request):
 
     for task in faculty_tasks:
         if task['current_task']:
-            zero_reminders = Reminder.objects.filter(faculty=request.user.faculty_profile, secondary_faculty=task['id'], task=task['current_task'].id).count() == 0
-            if (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 24 and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 > 0 and zero_reminders:
-                send_reminder_admin(request, task['id'], task['current_task'].id, f"{task['name']} has less than 24 hours remaining to complete this task.")
-            elif (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 0 and zero_reminders:
-                send_reminder_admin(request, task['id'], task['current_task'].id, f"This task is overdue for {task['name']}.")
+            faculty_profile = getattr(request.user, 'faculty_profile', None)
+            if faculty_profile:
+                zero_reminders = Reminder.objects.filter(faculty=faculty_profile, secondary_faculty=task['id'], task=task['current_task'].id).count() == 0
+                if (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 24 and (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 > 0 and zero_reminders:
+                    send_reminder_admin(request, task['id'], task['current_task'].id, f"{task['name']} has less than 24 hours remaining to complete this task.")
+                elif (task['current_task'].deadline - timezone.now()).total_seconds() / 3600 <= 0 and zero_reminders:
+                    send_reminder_admin(request, task['id'], task['current_task'].id, f"This task is overdue for {task['name']}.")
 
     # admin tasks definition
     now = timezone.now()
@@ -207,10 +209,14 @@ def admin_home(request):
         }
     ]
 
-    unread_reminders_count = Reminder.objects.filter(
-        faculty=request.user.faculty_profile,
-        is_read=False
-    ).count()
+    faculty_profile = getattr(request.user, 'faculty_profile', None)
+    if faculty_profile:
+        unread_reminders_count = Reminder.objects.filter(
+            faculty=faculty_profile,
+            is_read=False
+        ).count()
+    else:
+        unread_reminders_count = 0
 
     admin = request.user.faculty_profile
 
@@ -512,37 +518,42 @@ def update_faculty(request, faculty_id):
 def get_new_hire_deadlines(request):
     """API endpoint to get updated new hire deadlines data"""
     try:
-        # Get all faculty members with pending tasks
-        faculty_with_tasks = Faculty.objects.filter(completed_onboarding=False)
-        
+        # Get only faculty members who have not completed onboarding
+        new_hires = Faculty.objects.filter(completed_onboarding=False)
         deadlines_data = []
-        for faculty in faculty_with_tasks:
-            # Get the current task and its details
-            current_task = Task.objects.filter(faculty=faculty, completed=False).order_by('due_date').first()
-            
+        for faculty in new_hires:
+            # Get the current unfinished task
+            current_task = Task.objects.filter(assigned_to=faculty, completed=False).order_by('deadline').first()
+            total_tasks = Task.objects.filter(assigned_to=faculty).count()
+            completed_tasks = TaskProgress.objects.filter(faculty=faculty, completed=True).count()
+            progress = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
             if current_task:
-                # Calculate progress
-                total_tasks = Task.objects.filter(faculty=faculty).count()
-                completed_tasks = Task.objects.filter(faculty=faculty, completed=True).count()
-                progress = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
-                
-                # Calculate days overdue
-                if current_task.due_date:
+                # Calculate overdue days
+                if current_task.deadline:
                     today = timezone.now().date()
-                    days_overdue = (today - current_task.due_date).days if today > current_task.due_date else 0
+                    days_overdue = (today - current_task.deadline.date()).days if today > current_task.deadline.date() else 0
+                    remaining_days = (current_task.deadline.date() - today).days if today <= current_task.deadline.date() else 0
                 else:
                     days_overdue = 0
-                
+                    remaining_days = 0
                 deadlines_data.append({
-                    'faculty_id': faculty.id,
-                    'first_name': faculty.first_name,
-                    'last_name': faculty.last_name,
-                    'current_task': current_task.title,
-                    'progress': progress,
-                    'due_date': current_task.due_date.strftime('%Y-%m-%d') if current_task.due_date else None,
-                    'days_overdue': days_overdue
+                    'faculty_id': faculty.faculty_id,
+                    'name': f"{faculty.first_name} {faculty.last_name}",
+                    'current_task_title': current_task.title,
+                    'completion_percentage': progress,
+                    'remaining_days': -days_overdue if days_overdue > 0 else remaining_days,
+                    'status_class': 'completed' if progress == 100 else ('overdue' if days_overdue > 0 else 'upcoming'),
                 })
-        
+            else:
+                # All tasks completed
+                deadlines_data.append({
+                    'faculty_id': faculty.faculty_id,
+                    'name': f"{faculty.first_name} {faculty.last_name}",
+                    'current_task_title': 'All tasks completed',
+                    'completion_percentage': 100,
+                    'remaining_days': 0,
+                    'status_class': 'completed',
+                })
         return JsonResponse(deadlines_data, safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
