@@ -150,13 +150,15 @@
     left: 0;
 }
 
-.profile-img i {
-    font-size: 84px;
+/* Add this rule to ensure image is on top of the icon */
+img.profile-img {
+    z-index: 2;
 }
 
 .profile-icon {
     color: #0074c8; /* USD blue color */
     font-size: 84px;
+    z-index: 1;
 }
 
 /* Notes section styling */
@@ -273,6 +275,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Notes auto-saved');
             }, 2000);
         });
+    }
+
+    // Check if profile image exists and is loaded correctly
+    const profileImg = document.querySelector('img.profile-img');
+    if (profileImg) {
+        // If image loads successfully
+        profileImg.addEventListener('load', function() {
+            console.log('Profile image loaded successfully');
+            // Make sure image is visible and on top
+            profileImg.style.display = 'block';
+            profileImg.style.zIndex = '2';
+        });
+
+        // If image fails to load
+        profileImg.addEventListener('error', function() {
+            console.log('Profile image failed to load');
+            this.style.display = 'none';
+        });
+    } else {
+        console.log('No profile image element found in the DOM');
     }
 });
 </script>
