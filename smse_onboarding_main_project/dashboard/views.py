@@ -53,7 +53,7 @@ def new_hire_home(request):
         faculty=faculty,
         is_read=False
     ).count()
-    print(faculty.dark_mode)
+
     # Get completed tasks for this faculty
     completed_task_ids = set(
         TaskProgress.objects.filter(
@@ -218,10 +218,13 @@ def admin_home(request):
     else:
         unread_reminders_count = 0
 
+    admin = request.user.faculty_profile
+
     context = {
         'faculty_tasks': faculty_tasks,
         'admin_tasks': admin_tasks,
         'unread_reminders_count': unread_reminders_count,
+        'admin': admin,
     }
 
     return render(request, 'dashboard/admin/home.html', context)
@@ -355,14 +358,22 @@ def faculty_directory(request):
     for faculty in faculty_members:
         faculty.department = faculty.engineering_dept
         faculty.start_date = faculty.hire_date
-        faculty.profile_image = None  # We'll use initials instead
         faculty.extension = getattr(faculty, 'phone_extension', None)  # Add extension field
+
+    unread_reminders_count = Reminder.objects.filter(
+        faculty=request.user.faculty_profile,
+        is_read=False
+    ).count()
+
+    admin = request.user.faculty_profile
     
     context = {
         'faculty_members': faculty_members,
         'is_admin': True,
+        'unread_reminders_count': unread_reminders_count,
+        'admin': admin,
     }
-    
+
     return render(request, 'dashboard/admin/faculty_directory.html', context)
 
 @login_required
@@ -444,6 +455,7 @@ def get_faculty(request, faculty_id):
         data = {
             'first_name': faculty.first_name,
             'last_name': faculty.last_name,
+            'date_of_birth': faculty.date_of_birth.strftime('%Y-%m-%d') if faculty.date_of_birth else '',
             'email': faculty.email,
             'engineering_dept': faculty.engineering_dept,
             'phone': faculty.phone,
@@ -483,6 +495,11 @@ def update_faculty(request, faculty_id):
         hire_date = request.POST.get('hire_date')
         if hire_date:
             faculty.hire_date = datetime.strptime(hire_date, '%Y-%m-%d').date()
+            
+        # Handle date of birth
+        date_of_birth = request.POST.get('date_of_birth')
+        if date_of_birth:
+            faculty.date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
         
         faculty.job_role = request.POST.get('job_role', faculty.job_role)
         faculty.bio = request.POST.get('bio', faculty.bio)

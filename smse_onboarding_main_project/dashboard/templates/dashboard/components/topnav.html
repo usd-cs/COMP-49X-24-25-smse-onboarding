@@ -1,7 +1,7 @@
 {% load static %}
 
 <!-- Top Navigation Bar -->
-<nav class="navbar navbar-expand shadow-sm" {% if faculty.dark_mode %}style="background-color: rgb(75, 75, 75) !important;"{% endif %}>
+<nav class="navbar navbar-expand shadow-sm" {% if faculty.dark_mode %}style="background-color: #4b4b4b !important;"{% endif %}>
     <div class="container-fluid px-3">
         <!-- Sidebar toggle button -->
         <button class="sidebar-toggle border-0 bg-transparent mx-2" type="button" id="sidebarToggle">
@@ -55,36 +55,38 @@
                             data-bs-toggle="dropdown"
                             aria-expanded="false">
                         <!-- Profile Icon -->
-                        <span class="profile-icon-container">
-                            {% if faculty.profile_image %}
-                                <img src="{{ faculty.profile_image.url }}"
-                                    alt="Profile"
-                                    class="img-profile"
-                                    style="width: 32px !important; height: 32px !important; max-width: 32px !important; max-height: 32px !important; object-fit: cover !important;">
-                            {% else %}
-                                <i class="bi bi-person-fill fs-4" {% if faculty.dark_mode %}style="color: #4bb4ff; font-weight: bold;"{% else %}style="color: #0074c8; font-weight: bold;"{% endif %}></i>
-                            {% endif %}
+                        <span class="tt" data-bs-placement="bottom" data-bs-title="Profile">
+                            <span class="profile-icon-container">
+                                {% if faculty.profile_image %}
+                                    <img src="{{ faculty.profile_image.url }}"
+                                        alt="Profile"
+                                        class="img-profile"
+                                        style="width: 32px !important; height: 32px !important; max-width: 32px !important; max-height: 32px !important; object-fit: cover !important;">
+                                {% else %}
+                                    <i class="bi bi-person-fill fs-4" {% if faculty.dark_mode %}style="color: #4bb4ff; font-weight: bold;"{% else %}style="color: #0074c8; font-weight: bold;"{% endif %}></i>
+                                {% endif %}
+                            </span>
                         </span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
                         <div class="d-flex flex-column align-items-start px-3 py-2">
-                            <span class="fw-medium user-name">{{ request.user.get_full_name }}</span>
-                            <small class="text-secondary user-role">{{ request.user.groups.first.name|default:"User" }}</small>
+                            <span class="fw-medium user-name" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>{{ request.user.get_full_name }}</span>
+                            <small class="{% if faculty.dark_mode %}text-white{% else %}text-secondary{% endif %} user-role">{{ request.user.groups.first.name|default:"User" }}</small>
                         </div>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileSettingsModal">
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileSettingsModal" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                                 <i class="bi bi-person me-2"></i>Profile
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settingsSettingsModal">
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settingsSettingsModal" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                                 <i class="bi bi-gear me-2"></i>Settings
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                                 <i class="bi bi-box-arrow-right me-2"></i>Logout
                             </a>
                             <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
