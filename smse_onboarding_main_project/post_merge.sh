@@ -1,5 +1,5 @@
 #!/bin/bash
-# Post-merge script to use after merging to the main production branch
+# Post-merge script to use after merging to the main production branch.
 
 echo "============ Post-Merge Deployment ============"
 
