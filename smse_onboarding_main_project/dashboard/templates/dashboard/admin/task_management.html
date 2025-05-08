@@ -52,6 +52,7 @@
                                 <th>Title</th>
                                 <th>Description</th>
                                 <th>Prerequisite</th>
+                                <th>Deadline</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -67,6 +68,7 @@
                                         None
                                     {% endif %}
                                 </td>
+                                <td>{{ task.deadline|date:'Y-m-d' }}</td>
                                 <td data-deadline="{{ task.deadline|date:'Y-m-d' }}" style="display:none;"></td>
                                 <td>
                                     <button type="button"
