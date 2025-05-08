@@ -1,6 +1,6 @@
 <div class="modal fade" id="reminderModal{{ faculty.id }}_{{ faculty.current_task.id }}" aria-labelledby="reminderModalLabel" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content" style="opacity: 1 !important; pointer-events: auto !important;">
+        <div class="modal-content" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
             {% if faculty.current_task %}
                 <div class="modal-header">
                     <h5 class="modal-title">Send Reminder</h5>

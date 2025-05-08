@@ -5,6 +5,12 @@
 
 {% block extra_css %}
 <style>
+    .help-container-dark {
+        background-color: #3c3c3c;
+        min-height: 100vh;
+        padding: 1rem;
+    }
+
     /* Force cards to fit their content */
     .card {
         height: auto !important;
@@ -34,245 +40,261 @@
     .card-text {
         margin-bottom: 0 !important;
     }
+
+    .card-small {
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 0.5rem !important;
+        margin: 0 !important;
+        max-height: fit-content !important;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid mt-4">
-    <div class="row justify-content-center">
-        <div class="col-11">
-            <div class="card shadow-sm">
-                <div class="card-body p-3">
-                    <!-- Back button with house icon -->
-                    <a href="javascript:history.back()" class="btn btn-link text-secondary mb-3">
-                        <span class="tt" data-bs-placement="bottom" data-bs-title="Back to Dashboard">
-                            <i class="bi bi-house-fill fs-4"></i>
-                        </span>
-                    </a>
+<div class="spinner-wrapper">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
 
-                    <!-- Navigation Tabs -->
-                    <ul class="nav nav-tabs mb-3" id="helpTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab">
-                                <i class="bi bi-speedometer2 me-2"></i>Basic Admin Guide
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="advanced-tab" data-bs-toggle="tab" data-bs-target="#advanced" type="button" role="tab">
-                                <i class="bi bi-gear-fill me-2"></i>Advanced Admin Guide
-                            </button>
-                        </li>
-                    </ul>
+<div {% if faculty.dark_mode %}class="help-container-dark"{% endif %}>
+    <div class="container-fluid mt-4">
+        <div class="row justify-content-center">
+            <div class="col-11">
+                <div class="card shadow-sm" {% if faculty.dark_mode %}style="border: 1px solid #4b4b4b;"{% endif %}>
+                    <div class="card-body p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border-radius: 4px;"{% endif %}>
+                        <!-- Back button with house icon -->
+                        <a href="javascript:history.back()" class="btn btn-link {% if faculty.dark_mode %}text-white{% else %}text-secondary{% endif %} mb-3">
+                            <span class="tt" data-bs-placement="bottom" data-bs-title="Back to Dashboard">
+                                <i class="bi bi-house-fill fs-4"></i>
+                            </span>
+                        </a>
 
-                    <!-- Tab Content -->
-                    <div class="tab-content" id="helpTabsContent">
-                        <!-- Basic Admin Guide -->
-                        <div class="tab-pane fade show active" id="basic" role="tabpanel">
-                            <div class="row">
-                                <!-- Left Column - Welcome Message -->
-                                <div class="col-md-4">
-                                    <h1 class="card-title mb-3">Admin Dashboard Guide</h1>
-                                    <div class="alert alert-info p-2">
-                                        <div class="d-flex">
-                                            <div class="me-2">
-                                                <i class="bi bi-info-circle-fill fs-3"></i>
-                                            </div>
-                                            <div>
-                                                <h4 class="mb-1">Hello, {{ request.user.first_name }}!</h4>
-                                                <p class="mb-0">Welcome to the School of Engineering admin dashboard. This guide will help you manage faculty onboarding and administrative tasks effectively.</p>
+                        <!-- Navigation Tabs -->
+                        <ul class="nav nav-tabs mb-3" id="helpTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+                                    <i class="bi bi-speedometer2 me-2" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}></i><span {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Basic Admin Guide</span>
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="advanced-tab" data-bs-toggle="tab" data-bs-target="#advanced" type="button" role="tab" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+                                    <i class="bi bi-gear-fill me-2" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}></i><span {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Advanced Admin Guide</span>
+                                </button>
+                            </li>
+                        </ul>
+
+                        <!-- Tab Content -->
+                        <div class="tab-content" id="helpTabsContent">
+                            <!-- Basic Admin Guide -->
+                            <div class="tab-pane fade show active" id="basic" role="tabpanel">
+                                <div class="row">
+                                    <!-- Left Column - Welcome Message -->
+                                    <div class="col-md-4">
+                                        <h1 class="card-title mb-3" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Admin Dashboard Guide</h1>
+                                        <div class="alert alert-info p-2">
+                                            <div class="d-flex">
+                                                <div class="me-2">
+                                                    <i class="bi bi-info-circle-fill fs-3"></i>
+                                                </div>
+                                                <div>
+                                                    <h4 class="mb-1">Hello, {{ request.user.first_name }}!</h4>
+                                                    <p class="mb-0">Welcome to the School of Engineering admin dashboard. This guide will help you manage faculty onboarding and administrative tasks effectively.</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Right Column - Getting Started Cards -->
-                                <div class="col-md-8">
-                                    <div class="row g-2">
-                                        <div class="col-md-6">
-                                            <div class="card h-auto border-0 shadow-sm">
-                                                <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                                    <h5 class="card-title mb-1"><i class="bi bi-people-fill text-primary me-2"></i>Faculty Management</h5>
-                                                    <p class="card-text mb-0">Monitor new hire progress, view faculty directory, and manage faculty profiles and documents.</p>
+                                    <!-- Right Column - Getting Started Cards -->
+                                    <div class="col-md-8">
+                                        <div class="row g-2">
+                                            <div class="col-md-6">
+                                                <div class="card h-auto border-0 shadow-sm">
+                                                    <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px; color: #ffffff;"{% endif %}>
+                                                        <h5 class="card-title mb-1"><i class="bi bi-people-fill text-primary me-2"></i>Faculty Management</h5>
+                                                        <p class="card-text mb-0">Monitor new hire progress, view faculty directory, and manage faculty profiles and documents.</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="card h-auto border-0 shadow-sm">
-                                                <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                                    <h5 class="card-title mb-1"><i class="bi bi-check2-square text-primary me-2"></i>Task Oversight</h5>
-                                                    <p class="card-text mb-0">Track task completion, send reminders, and manage onboarding deadlines for faculty members.</p>
+                                            <div class="col-md-6">
+                                                <div class="card h-auto border-0 shadow-sm">
+                                                    <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px; color: #ffffff;"{% endif %}>
+                                                        <h5 class="card-title mb-1"><i class="bi bi-check2-square text-primary me-2"></i>Task Oversight</h5>
+                                                        <p class="card-text mb-0">Track task completion, send reminders, and manage onboarding deadlines for faculty members.</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="card h-auto border-0 shadow-sm">
-                                                <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                                    <h5 class="card-title mb-1"><i class="bi bi-file-earmark-text text-primary me-2"></i>Document Management</h5>
-                                                    <p class="card-text mb-0">Review and manage faculty documents, including resumes, certifications, and other required paperwork.</p>
+                                            <div class="col-md-6">
+                                                <div class="card h-auto border-0 shadow-sm">
+                                                    <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px; color: #ffffff;"{% endif %}>
+                                                        <h5 class="card-title mb-1"><i class="bi bi-file-earmark-text text-primary me-2"></i>Document Management</h5>
+                                                        <p class="card-text mb-0">Review and manage faculty documents, including resumes, certifications, and other required paperwork.</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="card h-auto border-0 shadow-sm">
-                                                <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                                    <h5 class="card-title mb-1"><i class="bi bi-bell-fill text-primary me-2"></i>Notifications</h5>
-                                                    <p class="card-text mb-0">Send reminders and notifications to faculty members about upcoming deadlines and incomplete tasks.</p>
+                                            <div class="col-md-6">
+                                                <div class="card h-auto border-0 shadow-sm">
+                                                    <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px; color: #ffffff;"{% endif %}>
+                                                        <h5 class="card-title mb-1"><i class="bi bi-bell-fill text-primary me-2"></i>Notifications</h5>
+                                                        <p class="card-text mb-0">Send reminders and notifications to faculty members about upcoming deadlines and incomplete tasks.</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Advanced Admin Guide -->
-                        <div class="tab-pane fade" id="advanced" role="tabpanel">
-                            <div class="row">
-                                <div class="col-12">
-                                    <h2 class="text-center mb-3">Advanced Admin Page Guide</h2>
-                                    <p class="text-muted text-center mb-3">Learn how to navigate and manage the advanced admin page efficiently.</p>
+                            <!-- Advanced Admin Guide -->
+                            <div class="tab-pane fade" id="advanced" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h2 class="text-center mb-3" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Advanced Admin Page Guide</h2>
+                                        <p class="{% if faculty.dark_mode %}text-white{% else %}text-muted{% endif %} text-center mb-3">Learn how to navigate and manage the advanced admin page efficiently.</p>
 
-                                    <!-- Table of Contents -->
-                                    <div class="card mb-2">
-                                        <div class="card-header bg-primary text-white py-2">
-                                            <h5 class="mb-0">Table of Contents</h5>
-                                        </div>
-                                        <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <ul class="list-unstyled mb-0">
-                                                        <li class="mb-1">
-                                                            <a href="#overview" class="text-decoration-none">
-                                                                <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Overview
-                                                            </a>
-                                                        </li>
-                                                        <li class="mb-1">
-                                                            <a href="#navigation" class="text-decoration-none">
-                                                                <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Navigation
-                                                            </a>
-                                                        </li>
-                                                        <li class="mb-1">
-                                                            <a href="#links" class="text-decoration-none">
-                                                                <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Explanation of Links
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <ul class="list-unstyled mb-0">
-                                                        <li class="mb-1">
-                                                            <a href="#searching" class="text-decoration-none">
-                                                                <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Searching & Filtering
-                                                            </a>
-                                                        </li>
-                                                        <li class="mb-1">
-                                                            <a href="#roles" class="text-decoration-none">
-                                                                <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>User Roles & Permissions
-                                                            </a>
-                                                        </li>
-                                                        <li class="mb-1">
-                                                            <a href="#faculty" class="text-decoration-none">
-                                                                <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Managing Faculty & Tasks
-                                                            </a>
-                                                        </li>
-                                                    </ul>
+                                        <!-- Table of Contents -->
+                                        <div class="card mb-2">
+                                            <div class="card-header bg-primary text-white py-2">
+                                                <h5 class="mb-0">Table of Contents</h5>
+                                            </div>
+                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <ul class="list-unstyled mb-0">
+                                                            <li class="mb-1">
+                                                                <a href="#overview" class="text-decoration-none">
+                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Overview
+                                                                </a>
+                                                            </li>
+                                                            <li class="mb-1">
+                                                                <a href="#navigation" class="text-decoration-none">
+                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Navigation
+                                                                </a>
+                                                            </li>
+                                                            <li class="mb-1">
+                                                                <a href="#links" class="text-decoration-none">
+                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Explanation of Links
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <ul class="list-unstyled mb-0">
+                                                            <li class="mb-1">
+                                                                <a href="#searching" class="text-decoration-none">
+                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Searching & Filtering
+                                                                </a>
+                                                            </li>
+                                                            <li class="mb-1">
+                                                                <a href="#roles" class="text-decoration-none">
+                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>User Roles & Permissions
+                                                                </a>
+                                                            </li>
+                                                            <li class="mb-1">
+                                                                <a href="#faculty" class="text-decoration-none">
+                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Managing Faculty & Tasks
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <!-- Section: Overview -->
-                                    <div class="card mb-2" id="overview">
-                                        <div class="card-header bg-primary text-white py-2">
-                                            <h5 class="mb-0">Overview of the Advanced Admin Page</h5>
+                                        <!-- Section: Overview -->
+                                        <div class="card mb-2" id="overview">
+                                            <div class="card-header bg-primary text-white py-2">
+                                                <h5 class="mb-0">Overview of the Advanced Admin Page</h5>
+                                            </div>
+                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
+                                                <p class="mb-1">The Advanced Admin Page is where administrators can manage faculty, users, and onboarding tasks in advanced settings.</p>
+                                                <p class="mb-0">Each section in the admin page corresponds to an area of the onboarding system.</p>
+                                            </div>
                                         </div>
-                                        <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                            <p class="mb-1">The Advanced Admin Page is where administrators can manage faculty, users, and onboarding tasks in advanced settings.</p>
-                                            <p class="mb-0">Each section in the admin page corresponds to an area of the onboarding system.</p>
-                                        </div>
-                                    </div>
 
-                                    <!-- Section: Navigation -->
-                                    <div class="card mb-2" id="navigation">
-                                        <div class="card-header bg-primary text-white py-2">
-                                            <h5 class="mb-0">Navigating the Advanced Admin Page</h5>
+                                        <!-- Section: Navigation -->
+                                        <div class="card mb-2" id="navigation">
+                                            <div class="card-header bg-primary text-white py-2">
+                                                <h5 class="mb-0">Navigating the Advanced Admin Page</h5>
+                                            </div>
+                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
+                                                <ul class="mb-0">
+                                                    <li><strong>Dashboard:</strong> Displays available sections like Users, Groups, Tasks, and Faculty.</li>
+                                                    <li><strong>Search Bar:</strong> Quickly find records by entering names, emails, or task titles.</li>
+                                                    <li><strong>Filters:</strong> Use the right sidebar to filter by categories like status, role, or department.</li>
+                                                </ul>
+                                            </div>
                                         </div>
-                                        <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                            <ul class="mb-0">
-                                                <li><strong>Dashboard:</strong> Displays available sections like Users, Groups, Tasks, and Faculty.</li>
-                                                <li><strong>Search Bar:</strong> Quickly find records by entering names, emails, or task titles.</li>
-                                                <li><strong>Filters:</strong> Use the right sidebar to filter by categories like status, role, or department.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
 
-                                    <!-- Section: Explanation of Each Link -->
-                                    <div class="card mb-2" id="links">
-                                        <div class="card-header bg-primary text-white py-2">
-                                            <h5 class="mb-0">Explanation of Each Link</h5>
+                                        <!-- Section: Explanation of Each Link -->
+                                        <div class="card mb-2" id="links">
+                                            <div class="card-header bg-primary text-white py-2">
+                                                <h5 class="mb-0">Explanation of Each Link</h5>
+                                            </div>
+                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
+                                                <ul class="mb-0">
+                                                    <li><strong>Groups:</strong> Manage user permission groups (e.g., Admins, Faculty, New Hires).</li>
+                                                    <li><strong>Users:</strong> View and edit user accounts, assign permissions, and reset passwords.</li>
+                                                    <li><strong>Tasks:</strong> Manage faculty onboarding tasks, assign tasks, and track progress.</li>
+                                                    <li><strong>Faculty Documents:</strong> Upload and view faculty resumes and other documents.</li>
+                                                    <li><strong>Faculty:</strong> View all faculty members, edit details, assign onboarding tasks.</li>
+                                                </ul>
+                                            </div>
                                         </div>
-                                        <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                            <ul class="mb-0">
-                                                <li><strong>Groups:</strong> Manage user permission groups (e.g., Admins, Faculty, New Hires).</li>
-                                                <li><strong>Users:</strong> View and edit user accounts, assign permissions, and reset passwords.</li>
-                                                <li><strong>Tasks:</strong> Manage faculty onboarding tasks, assign tasks, and track progress.</li>
-                                                <li><strong>Faculty Documents:</strong> Upload and view faculty resumes and other documents.</li>
-                                                <li><strong>Faculty:</strong> View all faculty members, edit details, assign onboarding tasks.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
 
-                                    <!-- Section: Searching & Filtering -->
-                                    <div class="card mb-2" id="searching">
-                                        <div class="card-header bg-primary text-white py-2">
-                                            <h5 class="mb-0">Searching & Filtering</h5>
+                                        <!-- Section: Searching & Filtering -->
+                                        <div class="card mb-2" id="searching">
+                                            <div class="card-header bg-primary text-white py-2">
+                                                <h5 class="mb-0">Searching & Filtering</h5>
+                                            </div>
+                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
+                                                <p class="mb-1"><strong>Searching:</strong></p>
+                                                <ul class="mb-2">
+                                                    <li>Use the search bar to find faculty members by name or email.</li>
+                                                    <li>Search tasks by title to find specific onboarding tasks.</li>
+                                                </ul>
+                                                <p class="mb-1"><strong>Filtering:</strong></p>
+                                                <ul class="mb-0">
+                                                    <li>Use filters (right side panel) to show only pending tasks or incomplete onboarding.</li>
+                                                    <li>Filter faculty by department, role, or onboarding status.</li>
+                                                </ul>
+                                            </div>
                                         </div>
-                                        <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                            <p class="mb-1"><strong>Searching:</strong></p>
-                                            <ul class="mb-2">
-                                                <li>Use the search bar to find faculty members by name or email.</li>
-                                                <li>Search tasks by title to find specific onboarding tasks.</li>
-                                            </ul>
-                                            <p class="mb-1"><strong>Filtering:</strong></p>
-                                            <ul class="mb-0">
-                                                <li>Use filters (right side panel) to show only pending tasks or incomplete onboarding.</li>
-                                                <li>Filter faculty by department, role, or onboarding status.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
 
-                                    <!-- Section: Editing & Managing Roles -->
-                                    <div class="card mb-2" id="roles">
-                                        <div class="card-header bg-primary text-white py-2">
-                                            <h5 class="mb-0">Changing User Roles & Permissions</h5>
+                                        <!-- Section: Editing & Managing Roles -->
+                                        <div class="card mb-2" id="roles">
+                                            <div class="card-header bg-primary text-white py-2">
+                                                <h5 class="mb-0">Changing User Roles & Permissions</h5>
+                                            </div>
+                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
+                                                <p class="mb-1"><strong>To change permissions:</strong></p>
+                                                <ul class="mb-0">
+                                                    <li>Go to <strong>Users</strong> in the admin panel.</li>
+                                                    <li>Click on a user and select their permissions (Admin, Staff, Faculty).</li>
+                                                    <li>Admins can add, delete, and manage all records, while staff may have limited access.</li>
+                                                </ul>
+                                            </div>
                                         </div>
-                                        <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                            <p class="mb-1"><strong>To change permissions:</strong></p>
-                                            <ul class="mb-0">
-                                                <li>Go to <strong>Users</strong> in the admin panel.</li>
-                                                <li>Click on a user and select their permissions (Admin, Staff, Faculty).</li>
-                                                <li>Admins can add, delete, and manage all records, while staff may have limited access.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
 
-                                    <!-- Section: Editing Faculty & Assigning Tasks -->
-                                    <div class="card mb-2" id="faculty">
-                                        <div class="card-header bg-primary text-white py-2">
-                                            <h5 class="mb-0">Managing Faculty & Assigning Tasks</h5>
-                                        </div>
-                                        <div class="card-body p-2" style="min-height: 0 !important; height: auto !important; padding: 0.5rem !important; margin: 0 !important; max-height: fit-content !important;">
-                                            <p class="mb-1"><strong>To edit faculty details:</strong></p>
-                                            <ul class="mb-2">
-                                                <li>Go to <strong>Faculty</strong> in the admin panel.</li>
-                                                <li>Click on a faculty member and update their department, contact info, or job title.</li>
-                                            </ul>
-                                            <p class="mb-1"><strong>To assign tasks:</strong></p>
-                                            <ul class="mb-0">
-                                                <li>Go to <strong>Tasks</strong> in the admin panel.</li>
-                                                <li>Click on an existing task or create a new one.</li>
-                                                <li>Select the faculty members to assign the task to.</li>
-                                            </ul>
+                                        <!-- Section: Editing Faculty & Assigning Tasks -->
+                                        <div class="card mb-2" id="faculty">
+                                            <div class="card-header bg-primary text-white py-2">
+                                                <h5 class="mb-0">Managing Faculty & Assigning Tasks</h5>
+                                            </div>
+                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
+                                                <p class="mb-1"><strong>To edit faculty details:</strong></p>
+                                                <ul class="mb-2">
+                                                    <li>Go to <strong>Faculty</strong> in the admin panel.</li>
+                                                    <li>Click on a faculty member and update their department, contact info, or job title.</li>
+                                                </ul>
+                                                <p class="mb-1"><strong>To assign tasks:</strong></p>
+                                                <ul class="mb-0">
+                                                    <li>Go to <strong>Tasks</strong> in the admin panel.</li>
+                                                    <li>Click on an existing task or create a new one.</li>
+                                                    <li>Select the faculty members to assign the task to.</li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

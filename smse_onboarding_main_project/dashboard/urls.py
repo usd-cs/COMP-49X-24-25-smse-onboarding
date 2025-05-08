@@ -26,5 +26,11 @@ urlpatterns = [
     # New endpoints for user permissions management
     path('api/faculty/<int:faculty_id>/user-permissions/', views.get_user_permissions, name='get_user_permissions'),
     path('api/faculty/user-permissions/<int:user_id>/update/', views.update_user_permissions, name='update_user_permissions'),
+    path('task-management/', views.task_management, name='task_management'),
+    path('edit-task/<int:task_id>/', views.edit_task, name='edit_task'),
+    path('api/edit-task/<int:task_id>/', views.api_edit_task, name='api_edit_task'),
+    path('api/add-task/', views.api_add_task, name='api_add_task'),
+    path('api/delete-task/<int:task_id>/', views.api_delete_task, name='api_delete_task'),
+    path('api/assign-tasks/', views.api_assign_tasks, name='api_assign_tasks'),
 ]
 

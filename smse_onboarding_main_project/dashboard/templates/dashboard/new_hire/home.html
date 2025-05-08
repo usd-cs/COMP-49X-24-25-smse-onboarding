@@ -7,6 +7,7 @@
 <link href="{% static 'dashboard/css/sidebar.css' %}" rel="stylesheet">
 <link href="{% static 'dashboard/css/new_hire.css' %}" rel="stylesheet">
 <link href="{% static 'dashboard/css/topnav.css' %}" rel="stylesheet">
+<link href="{% static 'dashboard/css/spinner.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block extra_js %}
@@ -29,6 +30,12 @@
 {% endblock %}
 
 {% block content %}
+<div class="spinner-wrapper">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <div class="dashboard-container">
     <!-- Sidebar -->
     {% block sidebar %}
@@ -53,8 +60,8 @@
             <div class="row g-2 h-100">
                 <!-- Left Column - Task Lists -->
                 <div class="col-md-8">
-                    <div class="card h-100">
-                        <div class="card-body p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
+                    <div class="card h-100" {% if faculty.dark_mode %}style="border: 1px solid #4b4b4b;"{% endif %}>
+                        <div class="card-body p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b; border-radius: 4px;"{% endif %}>
                             {% include 'dashboard/new_hire/components/upcoming_tasks.html' %}
 
                             {% include 'dashboard/new_hire/components/completed_tasks.html' %}

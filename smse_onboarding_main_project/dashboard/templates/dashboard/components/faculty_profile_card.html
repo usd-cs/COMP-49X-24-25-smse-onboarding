@@ -5,40 +5,40 @@
             <i class="bi bi-x-lg"></i>
         </button>
         <div class="profile-image">
-            <i class="bi bi-person"></i>
+            <!-- Profile image or initials will be inserted here by JavaScript -->
         </div>
         <h4 class="faculty-name" id="profileFacultyName"></h4>
         <p class="faculty-title" id="profileFacultyDepartment"></p>
     </div>
-    <div class="profile-content">
+    <div class="profile-content" {% if admin.dark_mode %}style="background-color: #4b4b4b;"{% endif %}>
         <div class="profile-section">
-            <h5 class="profile-section-title">Contact Information</h5>
+            <h5 class="profile-section-title" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}>Contact Information</h5>
             <div class="profile-info-item">
                 <i class="bi bi-envelope"></i>
-                <span class="profile-info-label">Email</span>
-                <span class="profile-info-value" id="profileFacultyEmail"></span>
+                <span class="profile-info-label" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}>Email</span>
+                <span class="profile-info-value" id="profileFacultyEmail" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}></span>
             </div>
             <div class="profile-info-item">
                 <i class="bi bi-telephone"></i>
-                <span class="profile-info-label">Extension</span>
-                <span class="profile-info-value" id="profileFacultyExtension"></span>
+                <span class="profile-info-label" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}>Extension</span>
+                <span class="profile-info-value" id="profileFacultyExtension" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}></span>
             </div>
             <div class="profile-info-item">
                 <i class="bi bi-building"></i>
-                <span class="profile-info-label">Department</span>
-                <span class="profile-info-value" id="profileFacultyDeptInfo"></span>
+                <span class="profile-info-label" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}>Department</span>
+                <span class="profile-info-value" id="profileFacultyDeptInfo" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}></span>
             </div>
         </div>
         <div class="profile-section">
-            <h5 class="profile-section-title">Status Information</h5>
+            <h5 class="profile-section-title" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}>Status Information</h5>
             <div class="profile-info-item">
                 <i class="bi bi-calendar"></i>
-                <span class="profile-info-label">Start Date</span>
-                <span class="profile-info-value" id="profileFacultyStartDate"></span>
+                <span class="profile-info-label" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}>Start Date</span>
+                <span class="profile-info-value" id="profileFacultyStartDate" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}></span>
             </div>
             <div class="profile-info-item">
                 <i class="bi bi-check-circle"></i>
-                <span class="profile-info-label">Onboarding Status</span>
+                <span class="profile-info-label" {% if admin.dark_mode %}style="color: #ffffff;"{% endif %}>Onboarding Status</span>
                 <span class="profile-info-value" id="profileFacultyStatus"></span>
             </div>
         </div>
@@ -75,18 +75,24 @@
             statusElement.className = 'profile-info-value ' + (isCompleted ? 'text-success' : 'text-warning');
             statusElement.innerHTML = `<span class="status-dot ${isCompleted ? 'bg-success' : 'bg-warning'}"></span>${status}`;
 
-            // Update profile image with initials
+            // Update profile image with faculty image or initials
             const profileImage = profileCard.querySelector('.profile-image');
             if (profileImage) {
-                profileImage.innerHTML = '';
-                const initials = `${firstName[0]}${lastName[0]}`;
-                profileImage.textContent = initials;
-                profileImage.style.backgroundColor = '#1976d2';
-                profileImage.style.color = 'white';
-                profileImage.style.display = 'flex';
-                profileImage.style.alignItems = 'center';
-                profileImage.style.justifyContent = 'center';
-                profileImage.style.fontSize = '2rem';
+                const profileImageUrl = facultyRow.dataset.facultyProfileImage;
+                if (profileImageUrl) {
+                    profileImage.innerHTML = `<img src="${profileImageUrl}" alt="${firstName} ${lastName} profile image" style="width: 100px; height: 100px; max-width: 100px; max-height: 100px; object-fit: cover; border-radius: 50%;">`;
+                } else {
+                    // Fallback to initials if no profile image
+                    profileImage.innerHTML = '';
+                    const initials = `${firstName[0]}${lastName[0]}`;
+                    profileImage.textContent = initials;
+                    profileImage.style.backgroundColor = '#1976d2';
+                    profileImage.style.color = 'white';
+                    profileImage.style.display = 'flex';
+                    profileImage.style.alignItems = 'center';
+                    profileImage.style.justifyContent = 'center';
+                    profileImage.style.fontSize = '2rem';
+                }
             }
         }
 

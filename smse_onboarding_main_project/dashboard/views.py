@@ -10,6 +10,8 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from datetime import datetime
 import logging
+from django import forms
+from django.views.decorators.http import require_POST
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +55,7 @@ def new_hire_home(request):
         faculty=faculty,
         is_read=False
     ).count()
-    print(faculty.dark_mode)
+
     # Get completed tasks for this faculty
     completed_task_ids = set(
         TaskProgress.objects.filter(
@@ -212,10 +214,13 @@ def admin_home(request):
         is_read=False
     ).count()
 
+    admin = request.user.faculty_profile
+
     context = {
         'faculty_tasks': faculty_tasks,
         'admin_tasks': admin_tasks,
         'unread_reminders_count': unread_reminders_count,
+        'admin': admin,
         'faculty': request.user.faculty_profile,
     }
 
@@ -350,12 +355,20 @@ def faculty_directory(request):
     for faculty in faculty_members:
         faculty.department = faculty.engineering_dept
         faculty.start_date = faculty.hire_date
-        faculty.profile_image = None  # We'll use initials instead
         faculty.extension = getattr(faculty, 'phone_extension', None)  # Add extension field
+
+    unread_reminders_count = Reminder.objects.filter(
+        faculty=request.user.faculty_profile,
+        is_read=False
+    ).count()
+
+    admin = request.user.faculty_profile
 
     context = {
         'faculty_members': faculty_members,
         'is_admin': True,
+        'unread_reminders_count': unread_reminders_count,
+        'admin': admin,
     }
 
     return render(request, 'dashboard/admin/faculty_directory.html', context)
@@ -439,6 +452,7 @@ def get_faculty(request, faculty_id):
         data = {
             'first_name': faculty.first_name,
             'last_name': faculty.last_name,
+            'date_of_birth': faculty.date_of_birth.strftime('%Y-%m-%d') if faculty.date_of_birth else '',
             'email': faculty.email,
             'engineering_dept': faculty.engineering_dept,
             'phone': faculty.phone,
@@ -478,6 +492,11 @@ def update_faculty(request, faculty_id):
         hire_date = request.POST.get('hire_date')
         if hire_date:
             faculty.hire_date = datetime.strptime(hire_date, '%Y-%m-%d').date()
+
+        # Handle date of birth
+        date_of_birth = request.POST.get('date_of_birth')
+        if date_of_birth:
+            faculty.date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
 
         faculty.job_role = request.POST.get('job_role', faculty.job_role)
         faculty.bio = request.POST.get('bio', faculty.bio)
@@ -595,3 +614,123 @@ def update_user_permissions(request, user_id):
         return JsonResponse({'error': 'User not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def api_assign_tasks(request):
+    user_id = request.POST.get('user_id')
+    task_ids = request.POST.getlist('task_ids[]')
+    if not user_id or not task_ids:
+        return JsonResponse({'status': 'error', 'msg': 'User and tasks required'})
+    try:
+        faculty = Faculty.objects.get(pk=user_id)
+        tasks = Task.objects.filter(id__in=task_ids)
+        for task in tasks:
+            task.assigned_to.add(faculty)
+        return JsonResponse({'status': 'success'})
+    except Faculty.DoesNotExist:
+        return JsonResponse({'status': 'error', 'msg': 'User not found'})
+
+@login_required
+@user_passes_test(is_admin)
+def task_management(request):
+    faculty = get_faculty_from_request(request)
+    unread_reminders_count = Reminder.objects.filter(faculty=faculty, is_read=False).count() if faculty else 0
+    tasks = Task.objects.all().select_related('prerequisite_task')
+    faculty_list = Faculty.objects.all()
+    context = {
+        'faculty': faculty,
+        'unread_reminders_count': unread_reminders_count,
+        'tasks': tasks,
+        'faculty_list': faculty_list,
+    }
+    return render(request, 'dashboard/admin/task_management.html', context)
+
+class TaskEditForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['description', 'prerequisite_task', 'deadline']
+        widgets = {
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'prerequisite_task': forms.Select(attrs={'class': 'form-select'}),
+            'deadline': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+@login_required
+@user_passes_test(is_admin)
+def edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.method == 'POST':
+        form = TaskEditForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard:task_management')
+    else:
+        form = TaskEditForm(instance=task)
+    faculty = get_faculty_from_request(request)
+    context = {
+        'form': form,
+        'task': task,
+        'faculty': faculty,
+    }
+    return render(request, 'dashboard/admin/edit_task.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def api_edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    description = request.POST.get('description', '').strip()
+    prerequisite_id = request.POST.get('prerequisite_task')
+    deadline_str = request.POST.get('deadline')
+    if description:
+        task.description = description
+    if prerequisite_id == '' or prerequisite_id == 'None':
+        task.prerequisite_task = None
+    elif prerequisite_id:
+        task.prerequisite_task = Task.objects.get(id=prerequisite_id)
+    if deadline_str:
+        try:
+            task.deadline = datetime.strptime(deadline_str, '%Y-%m-%d')
+        except Exception:
+            pass
+    task.save()
+    return JsonResponse({'status': 'success'})
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def api_add_task(request):
+    from tasks.models import Task
+    title = request.POST.get('title', '').strip()
+    description = request.POST.get('description', '').strip()
+    prerequisite_id = request.POST.get('prerequisite_task')
+    deadline_str = request.POST.get('deadline')
+    if not title:
+        return JsonResponse({'status': 'error', 'msg': 'Title is required'})
+    if not deadline_str:
+        return JsonResponse({'status': 'error', 'msg': 'Deadline is required'})
+    try:
+        deadline = datetime.strptime(deadline_str, '%Y-%m-%d')
+    except Exception:
+        return JsonResponse({'status': 'error', 'msg': 'Invalid deadline format'})
+    task = Task(title=title, description=description, deadline=deadline)
+    if prerequisite_id:
+        try:
+            task.prerequisite_task = Task.objects.get(id=prerequisite_id)
+        except Task.DoesNotExist:
+            pass
+    task.save()
+    return JsonResponse({'status': 'success'})
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def api_delete_task(request, task_id):
+    from tasks.models import Task
+    try:
+        Task.objects.get(id=task_id).delete()
+        return JsonResponse({'status': 'success'})
+    except Task.DoesNotExist:
+        return JsonResponse({'status': 'error', 'msg': 'Task not found'})

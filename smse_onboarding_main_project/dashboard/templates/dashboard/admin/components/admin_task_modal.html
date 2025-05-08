@@ -1,0 +1,50 @@
+<div class="modal fade" id="taskModal{{ faculty.current_task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ faculty.current_task.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" {% if admin.dark_mode %}style="background-color: #4b4b4b; color: #ffffff;"{% endif %}>
+            {% if faculty.current_task %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="taskModalLabel{{ faculty.current_task.id }}">{{ faculty.current_task.title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {% if admin.dark_mode %}style="background-color: #ffffff;"{% endif %}></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Created:</strong> {{ faculty.current_task.created_at|date:"M d, Y" }}</p>
+                    <p><strong>Due Date:</strong> {{ faculty.current_task.deadline|date:"M d, Y, g a" }}</p>
+                    {% if faculty.current_task.prerequisite_task %}
+                        <p><strong>Prerequisite Task:</strong> {{ faculty.current_task.prerequisite_task.title }}
+                            {% if task.prereq_completed %}
+                                <span class="badge bg-success">Completed</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Not Completed</span>
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                    <p><strong>Days Remaining:</strong>
+                        {% if faculty.current_task.remaining_days < 0 %}
+                            <span class="text-danger">Overdue</span>
+                        {% elif faculty.current_task.remaining_days == 0 %}
+                            <span class="text-warning">Due today</span>
+                        {% else %}
+                            {{ faculty.current_task.remaining_days }} days
+                        {% endif %}
+                    </p>
+                    <p><strong>Description:</strong></p>
+                    <p>{{ faculty.current_task.description }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            {% else %}
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ faculty.current_task_title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ faculty.name }} has completed all of their assigned tasks.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
