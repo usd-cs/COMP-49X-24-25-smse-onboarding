@@ -29,7 +29,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Task Management</h1>
                 </div>
-                <!-- Task Management Table or Content Goes Here -->
+                <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add Task</button>
                 <div class="table-responsive bg-white rounded shadow-sm p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b !important;"{% endif %}>
                     <table class="table" id="taskManagementTable">
                         <thead>
@@ -52,6 +52,7 @@
                                         None
                                     {% endif %}
                                 </td>
+                                <td data-deadline="{{ task.deadline|date:'Y-m-d' }}" style="display:none;"></td>
                                 <td>
                                     <button type="button" class="btn btn-primary btn-sm edit-task-btn"
                                             data-bs-toggle="modal"
@@ -61,11 +62,83 @@
                                             data-prerequisite="{% if task.prerequisite_task %}{{ task.prerequisite_task.id }}{% endif %}">
                                         Edit
                                     </button>
+                                    <button type="button" class="btn btn-danger btn-sm delete-task-btn"
+                                            data-task-id="{{ task.id }}"
+                                            data-task-title="{{ task.title }}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteTaskModal">
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Add Task Modal -->
+                <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <form id="addTaskForm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="addTaskModalLabel">Add New Task</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          {% csrf_token %}
+                          <div class="mb-3">
+                            <label for="addTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="addTitle" name="title" required>
+                          </div>
+                          <div class="mb-3">
+                            <label for="addDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="addDescription" name="description" rows="3"></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="addPrerequisite" class="form-label">Prerequisite Task</label>
+                            <select class="form-select" id="addPrerequisite" name="prerequisite_task">
+                              <option value="">None</option>
+                              {% for t in tasks %}
+                                <option value="{{ t.id }}">{{ t.title }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="mb-3">
+                            <label for="addDeadline" class="form-label">Deadline</label>
+                            <input type="date" class="form-control" id="addDeadline" name="deadline" required>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-success">Add</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- Delete Task Modal -->
+                <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <form id="deleteTaskForm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="deleteTaskModalLabel">Delete Task</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          {% csrf_token %}
+                          <input type="hidden" id="deleteTaskId" name="task_id">
+                          <p>Are you sure you want to delete <strong id="deleteTaskTitle"></strong>?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-danger">Delete</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
                 </div>
 
                 <!-- Edit Task Modal -->
@@ -85,15 +158,18 @@
 
                 <script>
                 document.addEventListener('DOMContentLoaded', function() {
+                  // Edit Task Modal
                   var editTaskModal = document.getElementById('editTaskModal');
                   editTaskModal.addEventListener('show.bs.modal', function (event) {
                     var button = event.relatedTarget;
                     var taskId = button.getAttribute('data-task-id');
                     var description = button.getAttribute('data-description');
                     var prerequisite = button.getAttribute('data-prerequisite');
+                    var deadline = button.closest('tr').querySelector('td[data-deadline]').getAttribute('data-deadline');
                     document.getElementById('editTaskId').value = taskId;
                     document.getElementById('editDescription').value = description;
                     document.getElementById('editPrerequisite').value = prerequisite;
+                    document.getElementById('editDeadline').value = deadline;
                   });
 
                   document.getElementById('editTaskForm').addEventListener('submit', function(e) {
@@ -101,6 +177,7 @@
                     var taskId = document.getElementById('editTaskId').value;
                     var description = document.getElementById('editDescription').value;
                     var prerequisite = document.getElementById('editPrerequisite').value;
+                    var deadline = document.getElementById('editDeadline').value;
                     var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
                     fetch(`/dashboard/api/edit-task/${taskId}/`, {
@@ -111,7 +188,8 @@
                       },
                       body: new URLSearchParams({
                         description: description,
-                        prerequisite_task: prerequisite
+                        prerequisite_task: prerequisite,
+                        deadline: deadline
                       })
                     })
                     .then(response => response.json())
@@ -120,6 +198,70 @@
                         location.reload();
                       } else {
                         alert('Failed to update task');
+                      }
+                    });
+                  });
+
+                  // Add Task Modal
+                  document.getElementById('addTaskForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var title = document.getElementById('addTitle').value;
+                    var description = document.getElementById('addDescription').value;
+                    var prerequisite = document.getElementById('addPrerequisite').value;
+                    var deadline = document.getElementById('addDeadline').value;
+                    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch('/dashboard/api/add-task/', {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Accept': 'application/json',
+                      },
+                      body: new URLSearchParams({
+                        title: title,
+                        description: description,
+                        prerequisite_task: prerequisite,
+                        deadline: deadline
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.status === 'success') {
+                        location.reload();
+                      } else {
+                        alert('Failed to add task: ' + (data.msg || ''));
+                      }
+                    });
+                  });
+
+                  // Delete Task Modal
+                  var deleteTaskModal = document.getElementById('deleteTaskModal');
+                  deleteTaskModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var taskId = button.getAttribute('data-task-id');
+                    var taskTitle = button.getAttribute('data-task-title');
+                    document.getElementById('deleteTaskId').value = taskId;
+                    document.getElementById('deleteTaskTitle').textContent = taskTitle;
+                  });
+
+                  document.getElementById('deleteTaskForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var taskId = document.getElementById('deleteTaskId').value;
+                    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch(`/dashboard/api/delete-task/${taskId}/`, {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Accept': 'application/json',
+                      }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.status === 'success') {
+                        location.reload();
+                      } else {
+                        alert('Failed to delete task: ' + (data.msg || ''));
                       }
                     });
                   });

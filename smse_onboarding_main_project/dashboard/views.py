@@ -631,10 +631,11 @@ def task_management(request):
 class TaskEditForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['description', 'prerequisite_task']
+        fields = ['description', 'prerequisite_task', 'deadline']
         widgets = {
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'prerequisite_task': forms.Select(attrs={'class': 'form-select'}),
+            'deadline': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
 @login_required
@@ -663,11 +664,54 @@ def api_edit_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     description = request.POST.get('description', '').strip()
     prerequisite_id = request.POST.get('prerequisite_task')
+    deadline_str = request.POST.get('deadline')
     if description:
         task.description = description
     if prerequisite_id == '' or prerequisite_id == 'None':
         task.prerequisite_task = None
     elif prerequisite_id:
         task.prerequisite_task = Task.objects.get(id=prerequisite_id)
+    if deadline_str:
+        try:
+            task.deadline = datetime.strptime(deadline_str, '%Y-%m-%d')
+        except Exception:
+            pass
     task.save()
     return JsonResponse({'status': 'success'})
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def api_add_task(request):
+    from tasks.models import Task
+    title = request.POST.get('title', '').strip()
+    description = request.POST.get('description', '').strip()
+    prerequisite_id = request.POST.get('prerequisite_task')
+    deadline_str = request.POST.get('deadline')
+    if not title:
+        return JsonResponse({'status': 'error', 'msg': 'Title is required'})
+    if not deadline_str:
+        return JsonResponse({'status': 'error', 'msg': 'Deadline is required'})
+    try:
+        deadline = datetime.strptime(deadline_str, '%Y-%m-%d')
+    except Exception:
+        return JsonResponse({'status': 'error', 'msg': 'Invalid deadline format'})
+    task = Task(title=title, description=description, deadline=deadline)
+    if prerequisite_id:
+        try:
+            task.prerequisite_task = Task.objects.get(id=prerequisite_id)
+        except Task.DoesNotExist:
+            pass
+    task.save()
+    return JsonResponse({'status': 'success'})
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def api_delete_task(request, task_id):
+    from tasks.models import Task
+    try:
+        Task.objects.get(id=task_id).delete()
+        return JsonResponse({'status': 'success'})
+    except Task.DoesNotExist:
+        return JsonResponse({'status': 'error', 'msg': 'Task not found'})

@@ -29,5 +29,7 @@ urlpatterns = [
     path('task-management/', views.task_management, name='task_management'),
     path('edit-task/<int:task_id>/', views.edit_task, name='edit_task'),
     path('api/edit-task/<int:task_id>/', views.api_edit_task, name='api_edit_task'),
+    path('api/add-task/', views.api_add_task, name='api_add_task'),
+    path('api/delete-task/<int:task_id>/', views.api_delete_task, name='api_delete_task'),
 ]
 
