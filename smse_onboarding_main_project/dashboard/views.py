@@ -272,7 +272,7 @@ def complete_task(request, task_id):
                     defaults={'completed': True}
                 )
 
-                # 检查该 faculty 是否所有任务都完成，若是则设置 completed_onboarding = True
+                # Check Faculty if complete completed_onboarding = True
                 assigned_tasks = Task.objects.filter(assigned_to=faculty)
                 total_tasks = assigned_tasks.count()
                 completed_tasks = TaskProgress.objects.filter(
