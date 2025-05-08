@@ -1,0 +1,468 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Task Management{% endblock %}
+
+{% block dashboard_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/faculty_directory.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/css/faculty_profile_card.css' %}">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<div class="spinner-wrapper">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<div {% if faculty.dark_mode %}class="dark-mode faculty-directory-dark"{% endif %}>
+    <div class="dashboard-container" id="dashboardContainer">
+        {% with is_admin=True %}
+            {% include 'dashboard/components/sidebar.html' %}
+        {% endwith %}
+        <div class="main-content" id="mainContent">
+            {% with is_admin=True %}
+                {% include 'dashboard/components/topnav.html' %}
+            {% endwith %}
+            <div class="container-fluid py-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h1 class="h3 fw-bold mb-0" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                            Task Management
+                        </h1>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sidebar d-flex align-items-center gap-2 shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#assignTasksModal">
+                            <i class="bi bi-people-fill"></i> Assign Tasks
+                        </button>
+                        <button class="btn btn-success d-flex align-items-center gap-2 shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                            <i class="bi bi-plus-circle"></i> Add Task
+                        </button>
+                    </div>
+                </div>
+                <hr class="mb-4" style="border-top: 2px solid #e9ecef;">
+                <div class="table-responsive bg-white rounded shadow-sm p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b !important;"{% endif %}>
+                    <table class="table" id="taskManagementTable">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Prerequisite</th>
+                                <th>Deadline</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tasks %}
+                            <tr>
+                                <td>{{ task.title }}</td>
+                                <td>{{ task.description }}</td>
+                                <td>
+                                    {% if task.prerequisite_task %}
+                                        {{ task.prerequisite_task.title }}
+                                    {% else %}
+                                        None
+                                    {% endif %}
+                                </td>
+                                <td>{{ task.deadline|date:'Y-m-d' }}</td>
+                                <td data-deadline="{{ task.deadline|date:'Y-m-d' }}" style="display:none;"></td>
+                                <td>
+                                    <button type="button"
+                                            class="btn btn-icon btn-primary btn-sm me-1 edit-task-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editTaskModal"
+                                            data-task-id="{{ task.id }}"
+                                            data-description="{{ task.description|escapejs }}"
+                                            data-prerequisite="{% if task.prerequisite_task %}{{ task.prerequisite_task.id }}{% endif %}"
+                                            title="Edit Task">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-icon btn-danger btn-sm delete-task-btn"
+                                            data-task-id="{{ task.id }}"
+                                            data-task-title="{{ task.title }}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteTaskModal"
+                                            title="Delete Task">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add Task Modal -->
+                <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <form id="addTaskForm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="addTaskModalLabel">Add New Task</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          {% csrf_token %}
+                          <div class="mb-3">
+                            <label for="addTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="addTitle" name="title" required>
+                          </div>
+                          <div class="mb-3">
+                            <label for="addDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="addDescription" name="description" rows="3"></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="addPrerequisite" class="form-label">Prerequisite Task</label>
+                            <select class="form-select" id="addPrerequisite" name="prerequisite_task">
+                              <option value="">None</option>
+                              {% for t in tasks %}
+                                <option value="{{ t.id }}">{{ t.title }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="mb-3">
+                            <label for="addDeadline" class="form-label">Deadline</label>
+                            <input type="date" class="form-control" id="addDeadline" name="deadline" required>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-success">Add</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- Delete Task Modal -->
+                <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <form id="deleteTaskForm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="deleteTaskModalLabel">Delete Task</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          {% csrf_token %}
+                          <input type="hidden" id="deleteTaskId" name="task_id">
+                          <p>Are you sure you want to delete <strong id="deleteTaskTitle"></strong>?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-danger">Delete</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- Edit Task Modal -->
+                <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="editTaskModalLabel">Edit Task</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        {% include 'dashboard/admin/components/edit_task.html' %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Assign Tasks Modal -->
+                <div class="modal fade" id="assignTasksModal" tabindex="-1" aria-labelledby="assignTasksModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg">
+                    <form id="assignTasksForm">
+                      <div class="modal-content">
+                        <div class="modal-header bg-info bg-opacity-10 border-0">
+                          <h4 class="modal-title fw-bold d-flex align-items-center gap-2" id="assignTasksModalLabel">
+                            <i class="bi bi-person-plus-fill text-info"></i> Assign Tasks to User
+                          </h4>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body px-4 py-3">
+                          {% csrf_token %}
+                          <div class="row g-4">
+                            <div class="col-md-4">
+                              <label for="assignUser" class="form-label fw-semibold">Select User</label>
+                              <select class="form-select" id="assignUser" name="user_id" required>
+                                <option value="">Select a user</option>
+                                {% for user in faculty_list %}
+                                  <option value="{{ user.pk }}">{{ user.first_name }} {{ user.last_name }} ({{ user.email }})</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                            <div class="col-md-8">
+                              <label for="assignTasks" class="form-label fw-semibold">Select Tasks</label>
+                              <select class="form-select" id="assignTasks" name="task_ids" multiple required style="width: 100%; min-height: 250px;">
+                                {% for t in tasks %}
+                                  <option value="{{ t.id }}">{{ t.title }}</option>
+                                {% endfor %}
+                              </select>
+                              <small class="text-muted">Hold Ctrl (Windows) or Command (Mac) to select multiple tasks, or search by typing.</small>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                          <button type="submit" class="btn btn-sidebar px-4 d-flex align-items-center gap-2"><i class="bi bi-check2-circle"></i>Assign</button>
+                          <button type="button" class="btn btn-secondary d-flex align-items-center gap-2" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i>Cancel</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- Toast for feedback -->
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11000">
+                  <div id="assignToast" class="toast align-items-center toast-sidebar border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                      <div class="toast-body">
+                        Tasks assigned successfully!
+                      </div>
+                      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                  </div>
+                </div>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                  // Edit Task Modal
+                  var editTaskModal = document.getElementById('editTaskModal');
+                  editTaskModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var taskId = button.getAttribute('data-task-id');
+                    var description = button.getAttribute('data-description');
+                    var prerequisite = button.getAttribute('data-prerequisite');
+                    var deadline = button.closest('tr').querySelector('td[data-deadline]').getAttribute('data-deadline');
+                    document.getElementById('editTaskId').value = taskId;
+                    document.getElementById('editDescription').value = description;
+                    document.getElementById('editPrerequisite').value = prerequisite;
+                    document.getElementById('editDeadline').value = deadline;
+                  });
+
+                  document.getElementById('editTaskForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var taskId = document.getElementById('editTaskId').value;
+                    var description = document.getElementById('editDescription').value;
+                    var prerequisite = document.getElementById('editPrerequisite').value;
+                    var deadline = document.getElementById('editDeadline').value;
+                    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch(`/dashboard/api/edit-task/${taskId}/`, {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Accept': 'application/json',
+                      },
+                      body: new URLSearchParams({
+                        description: description,
+                        prerequisite_task: prerequisite,
+                        deadline: deadline
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.status === 'success') {
+                        location.reload();
+                      } else {
+                        alert('Failed to update task');
+                      }
+                    });
+                  });
+
+                  // Add Task Modal
+                  document.getElementById('addTaskForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var title = document.getElementById('addTitle').value;
+                    var description = document.getElementById('addDescription').value;
+                    var prerequisite = document.getElementById('addPrerequisite').value;
+                    var deadline = document.getElementById('addDeadline').value;
+                    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch('/dashboard/api/add-task/', {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Accept': 'application/json',
+                      },
+                      body: new URLSearchParams({
+                        title: title,
+                        description: description,
+                        prerequisite_task: prerequisite,
+                        deadline: deadline
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.status === 'success') {
+                        location.reload();
+                      } else {
+                        alert('Failed to add task: ' + (data.msg || ''));
+                      }
+                    });
+                  });
+
+                  // Delete Task Modal
+                  var deleteTaskModal = document.getElementById('deleteTaskModal');
+                  deleteTaskModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var taskId = button.getAttribute('data-task-id');
+                    var taskTitle = button.getAttribute('data-task-title');
+                    document.getElementById('deleteTaskId').value = taskId;
+                    document.getElementById('deleteTaskTitle').textContent = taskTitle;
+                  });
+
+                  document.getElementById('deleteTaskForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var taskId = document.getElementById('deleteTaskId').value;
+                    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch(`/dashboard/api/delete-task/${taskId}/`, {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Accept': 'application/json',
+                      }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.status === 'success') {
+                        location.reload();
+                      } else {
+                        alert('Failed to delete task: ' + (data.msg || ''));
+                      }
+                    });
+                  });
+
+                  // Assign Tasks Modal
+                  // 初始化Select2
+                  $(document).ready(function() {
+                    $('#assignTasks').select2({
+                      width: '100%',
+                      placeholder: 'Select tasks',
+                      allowClear: true
+                    });
+                  });
+                  document.getElementById('assignTasksForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var userId = document.getElementById('assignUser').value;
+                    var selectedTasks = $('#assignTasks').val();
+                    var csrfToken = document.querySelector('#assignTasksForm [name=csrfmiddlewaretoken]').value;
+
+                    fetch('/dashboard/api/assign-tasks/', {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Accept': 'application/json',
+                      },
+                      body: new URLSearchParams({
+                        user_id: userId,
+                        'task_ids[]': selectedTasks
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.status === 'success') {
+                        var toastEl = document.getElementById('assignToast');
+                        var toast = new bootstrap.Toast(toastEl);
+                        toast.show();
+                        setTimeout(function() { location.reload(); }, 1200);
+                      } else {
+                        alert('Failed to assign tasks: ' + (data.msg || ''));
+                      }
+                    });
+                  });
+
+                  // 启用所有tooltip，hover即刻显示
+                  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+                  tooltipTriggerList.forEach(function (el) {
+                    new bootstrap.Tooltip(el, { delay: { show: 0, hide: 100 } });
+                  });
+                });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+  .btn-sidebar {
+    background-color: #003b70 !important;
+    color: #fff !important;
+    border: none;
+  }
+  .btn-sidebar:hover, .btn-sidebar:focus {
+    background-color: #33628d !important;
+    color: #fff !important;
+  }
+  .toast-sidebar {
+    background-color: #003b70 !important;
+    color: #fff !important;
+  }
+  .btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    box-shadow: none;
+    background: #fff;
+    border: 1.5px solid transparent;
+    transition: background 0.15s, color 0.15s, border 0.15s;
+  }
+  .btn-icon.btn-primary {
+    border-color: #003b70;
+    color: #003b70;
+  }
+  .btn-icon.btn-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+  .btn-icon.btn-primary:hover, .btn-icon.btn-primary:focus {
+    background: #003b70;
+    color: #fff;
+    border-color: #003b70;
+  }
+  .btn-icon.btn-danger:hover, .btn-icon.btn-danger:focus {
+    background: #dc3545;
+    color: #fff;
+    border-color: #dc3545;
+  }
+  .btn-icon i {
+    font-size: 1.1rem;
+    transition: color 0.15s;
+  }
+  .btn-icon.btn-primary:not(:hover) i {
+    color: #003b70;
+  }
+  .btn-icon.btn-primary:hover i,
+  .btn-icon.btn-primary:focus i {
+    color: #fff;
+  }
+  .btn-icon.btn-danger:not(:hover) i {
+    color: #dc3545;
+  }
+  .btn-icon.btn-danger:hover i,
+  .btn-icon.btn-danger:focus i {
+    color: #fff;
+  }
+  .btn-icon:focus {
+    box-shadow: 0 0 0 0.15rem rgba(0,59,112,0.15);
+  }
+  /* Tooltip立即显示 */
+  .tooltip {
+    transition-delay: 0s !important;
+  }
+</style>
+{% endblock %} 
