@@ -27,11 +27,24 @@
                 {% include 'dashboard/components/topnav.html' %}
             {% endwith %}
             <div class="container-fluid py-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="h3 mb-0" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Task Management</h1>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h1 class="h3 fw-bold mb-0" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                            Task Management
+                        </h1>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sidebar d-flex align-items-center gap-2 shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#assignTasksModal">
+                            <i class="bi bi-people-fill"></i> Assign Tasks
+                        </button>
+                        <button class="btn btn-success d-flex align-items-center gap-2 shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                            <i class="bi bi-plus-circle"></i> Add Task
+                        </button>
+                    </div>
                 </div>
-                <button class="btn btn-info mb-3" data-bs-toggle="modal" data-bs-target="#assignTasksModal">Assign Tasks</button>
-                <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add Task</button>
+                <hr class="mb-4" style="border-top: 2px solid #e9ecef;">
                 <div class="table-responsive bg-white rounded shadow-sm p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b !important;"{% endif %}>
                     <table class="table" id="taskManagementTable">
                         <thead>
@@ -56,20 +69,24 @@
                                 </td>
                                 <td data-deadline="{{ task.deadline|date:'Y-m-d' }}" style="display:none;"></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm edit-task-btn"
+                                    <button type="button"
+                                            class="btn btn-icon btn-primary btn-sm me-1 edit-task-btn"
                                             data-bs-toggle="modal"
                                             data-bs-target="#editTaskModal"
                                             data-task-id="{{ task.id }}"
                                             data-description="{{ task.description|escapejs }}"
-                                            data-prerequisite="{% if task.prerequisite_task %}{{ task.prerequisite_task.id }}{% endif %}">
-                                        Edit
+                                            data-prerequisite="{% if task.prerequisite_task %}{{ task.prerequisite_task.id }}{% endif %}"
+                                            title="Edit Task">
+                                        <i class="bi bi-pencil"></i>
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm delete-task-btn"
+                                    <button type="button"
+                                            class="btn btn-icon btn-danger btn-sm delete-task-btn"
                                             data-task-id="{{ task.id }}"
                                             data-task-title="{{ task.title }}"
                                             data-bs-toggle="modal"
-                                            data-bs-target="#deleteTaskModal">
-                                        Delete
+                                            data-bs-target="#deleteTaskModal"
+                                            title="Delete Task">
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -361,6 +378,12 @@
                       }
                     });
                   });
+
+                  // 启用所有tooltip，hover即刻显示
+                  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+                  tooltipTriggerList.forEach(function (el) {
+                    new bootstrap.Tooltip(el, { delay: { show: 0, hide: 100 } });
+                  });
                 });
                 </script>
             </div>
@@ -381,6 +404,63 @@
   .toast-sidebar {
     background-color: #003b70 !important;
     color: #fff !important;
+  }
+  .btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    box-shadow: none;
+    background: #fff;
+    border: 1.5px solid transparent;
+    transition: background 0.15s, color 0.15s, border 0.15s;
+  }
+  .btn-icon.btn-primary {
+    border-color: #003b70;
+    color: #003b70;
+  }
+  .btn-icon.btn-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+  .btn-icon.btn-primary:hover, .btn-icon.btn-primary:focus {
+    background: #003b70;
+    color: #fff;
+    border-color: #003b70;
+  }
+  .btn-icon.btn-danger:hover, .btn-icon.btn-danger:focus {
+    background: #dc3545;
+    color: #fff;
+    border-color: #dc3545;
+  }
+  .btn-icon i {
+    font-size: 1.1rem;
+    transition: color 0.15s;
+  }
+  .btn-icon.btn-primary:not(:hover) i {
+    color: #003b70;
+  }
+  .btn-icon.btn-primary:hover i,
+  .btn-icon.btn-primary:focus i {
+    color: #fff;
+  }
+  .btn-icon.btn-danger:not(:hover) i {
+    color: #dc3545;
+  }
+  .btn-icon.btn-danger:hover i,
+  .btn-icon.btn-danger:focus i {
+    color: #fff;
+  }
+  .btn-icon:focus {
+    box-shadow: 0 0 0 0.15rem rgba(0,59,112,0.15);
+  }
+  /* Tooltip立即显示 */
+  .tooltip {
+    transition-delay: 0s !important;
   }
 </style>
 {% endblock %} 
