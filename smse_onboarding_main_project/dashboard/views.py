@@ -170,7 +170,7 @@ def admin_home(request):
             'completed_onboarding': faculty.completed_onboarding,
             'current_task': next_task if next_task else None,
             'current_task_title': next_task.title if next_task else "All tasks completed",
-            'completion_percentage': round(completion_percentage),
+            'completion_percentage': 100 if not next_task else round(completion_percentage),
             'status_class': status_class,
             'remaining_days': (next_task.deadline - timezone.now()).days if next_task else 0,
             'all_tasks': [
@@ -272,18 +272,17 @@ def complete_task(request, task_id):
                     defaults={'completed': True}
                 )
 
-                # Check if all faculty have completed this task
-                assigned_faculty_count = task.assigned_to.count()
-                completed_faculty_count = TaskProgress.objects.filter(
-                    task=task,
-                    faculty__in=task.assigned_to.all(),
-                    completed=True
+                # Check Faculty if complete completed_onboarding = True
+                assigned_tasks = Task.objects.filter(assigned_to=faculty)
+                total_tasks = assigned_tasks.count()
+                completed_tasks = TaskProgress.objects.filter(
+                    faculty=faculty,
+                    completed=True,
+                    task__in=assigned_tasks
                 ).count()
-
-                # Only update the task's completed status if all assigned faculty have completed it
-                if completed_faculty_count == assigned_faculty_count and not task.completed:
-                    task.completed = True
-                    task.save()
+                if total_tasks > 0 and completed_tasks == total_tasks and not faculty.completed_onboarding:
+                    faculty.completed_onboarding = True
+                    faculty.save()
 
                 # If AJAX request, return JSON response
                 if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
