@@ -1,6 +1,9 @@
 {% load custom_filters %}
+{% load static %}
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<!-- Faculty Profile Card CSS -->
+<link rel="stylesheet" href="{% static 'dashboard/css/faculty_profile_card.css' %}">
 
 <style>
     /* Dark mode table styles */
@@ -141,6 +144,149 @@
     .dark-mode .modal-backdrop {
         background-color: #000;
     }
+
+    /* Faculty Profile Card Styles */
+    .faculty-profile-card {
+        position: fixed;
+        top: 80px;
+        right: -400px;
+        width: 400px;
+        height: calc(100vh - 160px);
+        background-color: white;
+        box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+        transition: right 0.3s ease;
+        z-index: 1000;
+        overflow-y: auto;
+        border-radius: 12px 0 0 12px;
+        margin: 20px 0;
+    }
+
+    .faculty-profile-card.active {
+        right: 0;
+    }
+
+    .profile-header {
+        padding: 24px;
+        text-align: center;
+        background: linear-gradient(135deg, #1976d2, #1565c0);
+        color: white;
+        border-radius: 12px 0 0 0;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+    }
+
+    .profile-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-bottom: 16px;
+        background-color: rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+        position: relative;
+    }
+
+    .profile-header .faculty-name {
+        font-size: 1.5rem;
+        margin: 0;
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    .profile-header .faculty-title {
+        font-size: 1rem;
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    .profile-content {
+        padding: 32px 24px 24px;
+    }
+
+    .profile-section {
+        margin-bottom: 24px;
+    }
+
+    .profile-section-title {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+    }
+
+    .profile-info-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    .profile-info-item:last-child {
+        border-bottom: none;
+    }
+
+    .profile-info-item i {
+        color: #1976d2;
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    .profile-info-label {
+        font-size: 0.9rem;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .profile-info-value {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 6px;
+    }
+
+    .close-profile-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: none;
+        border: none;
+        color: white;
+        opacity: 0.8;
+        cursor: pointer;
+        padding: 4px;
+        transition: opacity 0.2s;
+    }
+
+    .close-profile-btn:hover {
+        opacity: 1;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .faculty-profile-card {
+            width: 330px;
+            right: -330px;
+        }
+    }
 </style>
 
 <!-- Simple Header -->
@@ -165,21 +311,36 @@
             </thead>
             <tbody>
                 {% for faculty in faculty_tasks %}
-                <tr>
-                    <td class="faculty-name" data-bs-toggle="modal" data-bs-target="#profileModal{{ faculty.id|default:'Default' }}">
+                <tr data-faculty-id="{{ faculty.id }}"
+                    data-faculty-first-name="{{ faculty.first_name }}"
+                    data-faculty-last-name="{{ faculty.last_name }}"
+                    data-faculty-email="{{ faculty.email|default:'None' }}"
+                    data-faculty-department="{{ faculty.department }}"
+                    data-faculty-start-date="{{ faculty.start_date|date:'M d, Y' }}"
+                    data-faculty-status="{% if faculty.completed_onboarding %}Completed{% else %}Pending{% endif %}"
+                    data-faculty-extension="{{ faculty.extension|default:'None' }}"
+                    data-faculty-profile-image="{% if faculty.profile_image %}{{ faculty.profile_image.url }}{% endif %}"
+                    class="faculty-row">
+                    <td>
                         <div class="d-flex align-items-center">
-                            <div class="faculty-avatar me-2">
+                            <div class="faculty-avatar">
                                 {% if faculty.profile_image %}
-                                    <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.name }} profile image" class="img-profile" style="width: 32px !important; height: 32px !important; max-width: 32px !important; max-height: 32px !important; object-fit: cover !important; border-radius: 50%;">
+                                    <img src="{{ faculty.profile_image.url }}" alt="{{ faculty.first_name }} {{ faculty.last_name }} profile image" class="img-profile" style="width: 32px !important; height: 32px !important; max-width: 32px !important; max-height: 32px !important; object-fit: cover !important; border-radius: 50%;">
                                 {% else %}
                                     <div class="initials-avatar" style="width: 32px !important; height: 32px !important; max-width: 32px !important; max-height: 32px !important; border-radius: 50%; background-color: #e9ecef; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #495057;">
-                                        {{ faculty.name|first }}
+                                        {{ faculty.first_name|first }}{{ faculty.last_name|first }}
                                     </div>
                                 {% endif %}
                             </div>
-                            <span class="tt" data-bs-placement="bottom" data-bs-title="View Faculty Profile">
-                                {{ faculty.name }}
-                            </span>
+                            <div class="ms-2"
+                                style="cursor: pointer;"
+                                data-faculty-id="{{ faculty.id }}"
+                                onclick="showTaskProgress('{{ faculty.id }}')"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="bottom"
+                                title="View faculty profile">
+                                <p class="fw-bold mb-0 small">{{ faculty.name }}</p>
+                            </div>
                         </div>
                     </td>
 
@@ -237,10 +398,14 @@
     </div>
 </div>
 
+<!-- Include New Hire Task Progress Component -->
+{% include 'dashboard/admin/components/newhire_task_progress.html' %}
+
 <!-- DataTables script -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Initialize DataTable when document is ready
     document.addEventListener('DOMContentLoaded', function() {
@@ -248,6 +413,12 @@
         document.querySelectorAll('.faculty-progress-bar').forEach(function(bar) {
             const percentage = bar.getAttribute('aria-valuenow');
             bar.style.width = percentage + '%';
+        });
+
+        // Initialize all tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
 
         // Check if jQuery is loaded
@@ -270,4 +441,108 @@
             });
         }
     });
+
+    function showTaskProgress(facultyId) {
+        console.log('Opening task progress for faculty:', facultyId); // Debug log
+
+        // Get faculty information from the table row
+        const facultyRow = document.querySelector(`tr[data-faculty-id="${facultyId}"]`);
+        if (!facultyRow) {
+            console.error('Could not find faculty row for ID:', facultyId);
+            return;
+        }
+
+        const facultyName = facultyRow.querySelector('.fw-bold').textContent;
+        const facultyEmail = facultyRow.dataset.facultyEmail;
+        const facultyDepartment = facultyRow.dataset.facultyDepartment;
+
+        // Update faculty information in modal
+        document.getElementById('facultyNameTitle').textContent = facultyName;
+        document.getElementById('facultyDepartmentInfo').textContent = facultyDepartment;
+        document.getElementById('facultyEmail').textContent = facultyEmail;
+
+        // Update profile image with faculty image or initials
+        const profileImage = document.querySelector('.faculty-photo');
+        if (profileImage) {
+            const profileImageUrl = facultyRow.dataset.facultyProfileImage;
+            if (profileImageUrl) {
+                profileImage.innerHTML = `<img src="${profileImageUrl}" alt="${facultyName} profile image" style="width: 120px; height: 120px; max-width: 120px; max-height: 120px; object-fit: cover; border-radius: 50%;">`;
+            } else {
+                // Fallback to profile icon if no profile image
+                profileImage.innerHTML = '<i class="bi bi-person-circle"></i>';
+            }
+        }
+
+        // Fetch task data
+        fetch(`/dashboard/api/faculty/${facultyId}/tasks/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Calculate progress
+                const totalTasks = data.upcoming_tasks.length + data.completed_tasks.length;
+                const completedTasks = data.completed_tasks.length;
+                const percentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
+                // Update progress indicators
+                document.getElementById('completionPercentage').textContent = `${Math.round(percentage)}%`;
+                document.getElementById('progressBar').style.width = `${percentage}%`;
+                document.getElementById('tasksCompleteCount').textContent = `${completedTasks}/${totalTasks} complete`;
+
+                // Update upcoming tasks
+                const upcomingTasksList = document.getElementById('upcomingTasksList');
+                if (data.upcoming_tasks.length === 0) {
+                    upcomingTasksList.innerHTML = `
+                        <div class="alert alert-info mb-0">
+                            No upcoming tasks at this moment
+                        </div>
+                    `;
+                } else {
+                    upcomingTasksList.innerHTML = data.upcoming_tasks.map(task => `
+                        <div class="task-item">
+                            <div class="task-info">
+                                <div class="task-title">${task.title}</div>
+                                <div class="task-meta">
+                                    <span>Due: ${task.due_date}</span>
+                                    <span class="ms-2 task-due">${task.days_left}</span>
+                                </div>
+                            </div>
+                            <span class="task-status pending">Pending</span>
+                        </div>
+                    `).join('');
+                }
+
+                // Update completed tasks
+                const completedTasksList = document.getElementById('completedTasksList');
+                if (data.completed_tasks.length === 0) {
+                    completedTasksList.innerHTML = `
+                        <div class="alert alert-info mb-0">
+                            No completed tasks at this moment
+                        </div>
+                    `;
+                } else {
+                    completedTasksList.innerHTML = data.completed_tasks.map(task => `
+                        <div class="task-item">
+                            <div class="task-info">
+                                <div class="task-title">${task.title}</div>
+                                <div class="task-meta">Completed: ${task.completed_date}</div>
+                            </div>
+                            <span class="task-status completed">Completed</span>
+                        </div>
+                    `).join('');
+                }
+
+                // Show the modal
+                const modalElement = document.getElementById('newhireTaskProgress');
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error fetching task data:', error);
+                alert('Error loading task progress. Please try again.');
+            });
+    }
 </script>

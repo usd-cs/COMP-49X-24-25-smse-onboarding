@@ -152,9 +152,22 @@ def admin_home(request):
         elif next_task and (next_task.deadline - timezone.now()).days < 7:
             status_class = 'approaching'
 
+        # Add additional faculty data
+        faculty.department = faculty.engineering_dept
+        faculty.start_date = faculty.hire_date
+        faculty.extension = getattr(faculty, 'phone_extension', None)
+
         faculty_tasks.append({
             'id': faculty.faculty_id,
             'name': f"{faculty.first_name} {faculty.last_name}",
+            'first_name': faculty.first_name,
+            'last_name': faculty.last_name,
+            'email': faculty.email,
+            'department': faculty.department,
+            'start_date': faculty.start_date,
+            'extension': faculty.extension,
+            'profile_image': faculty.profile_image,
+            'completed_onboarding': faculty.completed_onboarding,
             'current_task': next_task if next_task else None,
             'current_task_title': next_task.title if next_task else "All tasks completed",
             'completion_percentage': round(completion_percentage),
