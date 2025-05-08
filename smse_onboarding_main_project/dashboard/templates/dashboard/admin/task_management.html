@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Task Management{% endblock %}
+
+{% block dashboard_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/faculty_directory.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/css/faculty_profile_card.css' %}">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="spinner-wrapper">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<div {% if faculty.dark_mode %}class="dark-mode faculty-directory-dark"{% endif %}>
+    <div class="dashboard-container" id="dashboardContainer">
+        {% with is_admin=True %}
+            {% include 'dashboard/components/sidebar.html' %}
+        {% endwith %}
+        <div class="main-content" id="mainContent">
+            {% with is_admin=True %}
+                {% include 'dashboard/components/topnav.html' %}
+            {% endwith %}
+            <div class="container-fluid py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 mb-0" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Task Management</h1>
+                </div>
+                <!-- Task Management Table or Content Goes Here -->
+                <div class="table-responsive bg-white rounded shadow-sm p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b !important;"{% endif %}>
+                    <table class="table" id="taskManagementTable">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Prerequisite</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tasks %}
+                            <tr>
+                                <td>{{ task.title }}</td>
+                                <td>{{ task.description }}</td>
+                                <td>
+                                    {% if task.prerequisite_task %}
+                                        {{ task.prerequisite_task.title }}
+                                    {% else %}
+                                        None
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'dashboard:edit_task' task.id %}" class="btn btn-primary btn-sm">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

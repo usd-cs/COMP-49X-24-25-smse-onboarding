@@ -10,6 +10,7 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from datetime import datetime
 import logging
+from django import forms
 
 logger = logging.getLogger(__name__)
 
@@ -611,3 +612,45 @@ def update_user_permissions(request, user_id):
         return JsonResponse({'error': 'User not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@user_passes_test(is_admin)
+def task_management(request):
+    """Admin Task Management page"""
+    faculty = get_faculty_from_request(request)
+    unread_reminders_count = Reminder.objects.filter(faculty=faculty, is_read=False).count() if faculty else 0
+    tasks = Task.objects.all().select_related('prerequisite_task')
+    context = {
+        'faculty': faculty,
+        'unread_reminders_count': unread_reminders_count,
+        'tasks': tasks,
+    }
+    return render(request, 'dashboard/admin/task_management.html', context)
+
+class TaskEditForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['description', 'prerequisite_task']
+        widgets = {
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'prerequisite_task': forms.Select(attrs={'class': 'form-select'}),
+        }
+
+@login_required
+@user_passes_test(is_admin)
+def edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.method == 'POST':
+        form = TaskEditForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard:task_management')
+    else:
+        form = TaskEditForm(instance=task)
+    faculty = get_faculty_from_request(request)
+    context = {
+        'form': form,
+        'task': task,
+        'faculty': faculty,
+    }
+    return render(request, 'dashboard/admin/edit_task.html', context)
