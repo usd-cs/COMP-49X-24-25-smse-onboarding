@@ -11,6 +11,7 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 from django import forms
+from django.views.decorators.http import require_POST
 
 logger = logging.getLogger(__name__)
 
@@ -654,3 +655,19 @@ def edit_task(request, task_id):
         'faculty': faculty,
     }
     return render(request, 'dashboard/admin/edit_task.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def api_edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    description = request.POST.get('description', '').strip()
+    prerequisite_id = request.POST.get('prerequisite_task')
+    if description:
+        task.description = description
+    if prerequisite_id == '' or prerequisite_id == 'None':
+        task.prerequisite_task = None
+    elif prerequisite_id:
+        task.prerequisite_task = Task.objects.get(id=prerequisite_id)
+    task.save()
+    return JsonResponse({'status': 'success'})

@@ -1,0 +1,21 @@
+<form id="editTaskForm">
+    {% csrf_token %}
+    <input type="hidden" id="editTaskId" name="task_id">
+    <div class="mb-3">
+        <label for="editDescription" class="form-label">Description</label>
+        <textarea class="form-control" id="editDescription" name="description" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="editPrerequisite" class="form-label">Prerequisite Task</label>
+        <select class="form-select" id="editPrerequisite" name="prerequisite_task">
+            <option value="">None</option>
+            {% for t in tasks %}
+                <option value="{{ t.id }}">{{ t.title }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form> 

@@ -53,13 +53,78 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <a href="{% url 'dashboard:edit_task' task.id %}" class="btn btn-primary btn-sm">Edit</a>
+                                    <button type="button" class="btn btn-primary btn-sm edit-task-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editTaskModal"
+                                            data-task-id="{{ task.id }}"
+                                            data-description="{{ task.description|escapejs }}"
+                                            data-prerequisite="{% if task.prerequisite_task %}{{ task.prerequisite_task.id }}{% endif %}">
+                                        Edit
+                                    </button>
                                 </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Edit Task Modal -->
+                <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="editTaskModalLabel">Edit Task</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        {% include 'dashboard/admin/components/edit_task.html' %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                  var editTaskModal = document.getElementById('editTaskModal');
+                  editTaskModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var taskId = button.getAttribute('data-task-id');
+                    var description = button.getAttribute('data-description');
+                    var prerequisite = button.getAttribute('data-prerequisite');
+                    document.getElementById('editTaskId').value = taskId;
+                    document.getElementById('editDescription').value = description;
+                    document.getElementById('editPrerequisite').value = prerequisite;
+                  });
+
+                  document.getElementById('editTaskForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var taskId = document.getElementById('editTaskId').value;
+                    var description = document.getElementById('editDescription').value;
+                    var prerequisite = document.getElementById('editPrerequisite').value;
+                    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch(`/dashboard/api/edit-task/${taskId}/`, {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Accept': 'application/json',
+                      },
+                      body: new URLSearchParams({
+                        description: description,
+                        prerequisite_task: prerequisite
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.status === 'success') {
+                        location.reload();
+                      } else {
+                        alert('Failed to update task');
+                      }
+                    });
+                  });
+                });
+                </script>
             </div>
         </div>
     </div>

@@ -28,5 +28,6 @@ urlpatterns = [
     path('api/faculty/user-permissions/<int:user_id>/update/', views.update_user_permissions, name='update_user_permissions'),
     path('task-management/', views.task_management, name='task_management'),
     path('edit-task/<int:task_id>/', views.edit_task, name='edit_task'),
+    path('api/edit-task/<int:task_id>/', views.api_edit_task, name='api_edit_task'),
 ]
 
