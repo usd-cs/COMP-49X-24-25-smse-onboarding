@@ -152,9 +152,22 @@ def admin_home(request):
         elif next_task and (next_task.deadline - timezone.now()).days < 7:
             status_class = 'approaching'
 
+        # Add additional faculty data
+        faculty.department = faculty.engineering_dept
+        faculty.start_date = faculty.hire_date
+        faculty.extension = getattr(faculty, 'phone_extension', None)
+
         faculty_tasks.append({
             'id': faculty.faculty_id,
             'name': f"{faculty.first_name} {faculty.last_name}",
+            'first_name': faculty.first_name,
+            'last_name': faculty.last_name,
+            'email': faculty.email,
+            'department': faculty.department,
+            'start_date': faculty.start_date,
+            'extension': faculty.extension,
+            'profile_image': faculty.profile_image,
+            'completed_onboarding': faculty.completed_onboarding,
             'current_task': next_task if next_task else None,
             'current_task_title': next_task.title if next_task else "All tasks completed",
             'completion_percentage': round(completion_percentage),
@@ -221,6 +234,7 @@ def admin_home(request):
         'admin_tasks': admin_tasks,
         'unread_reminders_count': unread_reminders_count,
         'admin': admin,
+        'faculty': request.user.faculty_profile,
     }
 
     return render(request, 'dashboard/admin/home.html', context)
@@ -338,7 +352,7 @@ def update_settings(request):
 
         if is_admin(request.user):
             return redirect('dashboard:admin_home')
-        
+
         return redirect('dashboard:new_hire_home')
 
 @login_required
@@ -349,7 +363,7 @@ def faculty_directory(request):
     """
     # Get all faculty members
     faculty_members = Faculty.objects.all().order_by('first_name')
-    
+
     # Format the faculty data for the template
     for faculty in faculty_members:
         faculty.department = faculty.engineering_dept
@@ -362,7 +376,7 @@ def faculty_directory(request):
     ).count()
 
     admin = request.user.faculty_profile
-    
+
     context = {
         'faculty_members': faculty_members,
         'is_admin': True,
@@ -378,16 +392,16 @@ def faculty_tasks(request, faculty_id):
     """API endpoint to get task data for a specific faculty member"""
     try:
         faculty = Faculty.objects.get(pk=faculty_id)
-        
+
         # Get all tasks assigned to this faculty
         assigned_tasks = Task.objects.filter(assigned_to=faculty)
-        
+
         # Get completed task progress records
         task_progress_records = TaskProgress.objects.filter(
             faculty=faculty,
             completed=True
         )
-        
+
         # Create a set of completed task IDs for faster lookups
         completed_task_ids = set(task_progress_records.values_list('task_id', flat=True))
 
@@ -403,7 +417,7 @@ def faculty_tasks(request, faculty_id):
                 days_text = "1 day left"
             else:
                 days_text = f"{days_left} days left"
-            
+
             upcoming_tasks.append({
                 'title': task.title,
                 'due_date': task.deadline.strftime('%b %d, %Y'),
@@ -416,10 +430,10 @@ def faculty_tasks(request, faculty_id):
         for task in assigned_tasks.filter(id__in=completed_task_ids):
             try:
                 task_progress = task_progress_records.get(task=task)
-                
+
                 # Use current date if completion_date is not available
                 completion_date = getattr(task_progress, 'completion_date', timezone.now())
-                
+
                 completed_tasks.append({
                     'title': task.title,
                     'completed_date': completion_date.strftime('%b %d, %Y'),
@@ -474,10 +488,10 @@ def update_faculty(request, faculty_id):
     """API endpoint to update faculty information"""
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-    
+
     try:
         faculty = Faculty.objects.get(pk=faculty_id)
-        
+
         # Update faculty fields
         faculty.first_name = request.POST.get('first_name', faculty.first_name)
         faculty.last_name = request.POST.get('last_name', faculty.last_name)
@@ -486,23 +500,23 @@ def update_faculty(request, faculty_id):
         faculty.phone = request.POST.get('phone', faculty.phone)
         faculty.zoom_phone = request.POST.get('zoom_phone', faculty.zoom_phone)
         faculty.office_room = request.POST.get('office_room', faculty.office_room)
-        
+
         # Handle hire date
         hire_date = request.POST.get('hire_date')
         if hire_date:
             faculty.hire_date = datetime.strptime(hire_date, '%Y-%m-%d').date()
-            
+
         # Handle date of birth
         date_of_birth = request.POST.get('date_of_birth')
         if date_of_birth:
             faculty.date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
-        
+
         faculty.job_role = request.POST.get('job_role', faculty.job_role)
         faculty.bio = request.POST.get('bio', faculty.bio)
         faculty.completed_onboarding = request.POST.get('completed_onboarding') == 'on'
-        
+
         faculty.save()
-        
+
         return JsonResponse({'status': 'success'})
     except Faculty.DoesNotExist:
         return JsonResponse({'error': 'Faculty not found'}, status=404)
@@ -516,25 +530,25 @@ def get_new_hire_deadlines(request):
     try:
         # Get all faculty members with pending tasks
         faculty_with_tasks = Faculty.objects.filter(completed_onboarding=False)
-        
+
         deadlines_data = []
         for faculty in faculty_with_tasks:
             # Get the current task and its details
             current_task = Task.objects.filter(faculty=faculty, completed=False).order_by('due_date').first()
-            
+
             if current_task:
                 # Calculate progress
                 total_tasks = Task.objects.filter(faculty=faculty).count()
                 completed_tasks = Task.objects.filter(faculty=faculty, completed=True).count()
                 progress = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
-                
+
                 # Calculate days overdue
                 if current_task.due_date:
                     today = timezone.now().date()
                     days_overdue = (today - current_task.due_date).days if today > current_task.due_date else 0
                 else:
                     days_overdue = 0
-                
+
                 deadlines_data.append({
                     'faculty_id': faculty.id,
                     'first_name': faculty.first_name,
@@ -544,7 +558,7 @@ def get_new_hire_deadlines(request):
                     'due_date': current_task.due_date.strftime('%Y-%m-%d') if current_task.due_date else None,
                     'days_overdue': days_overdue
                 })
-        
+
         return JsonResponse(deadlines_data, safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
@@ -556,7 +570,7 @@ def get_user_permissions(request, faculty_id):
     try:
         faculty = Faculty.objects.get(pk=faculty_id)
         user = faculty.user
-        
+
         data = {
             'user_id': user.id,
             'username': user.username,
@@ -578,17 +592,17 @@ def update_user_permissions(request, user_id):
     """API endpoint to update user permissions"""
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
-    
+
     try:
         from django.contrib.auth import get_user_model
         User = get_user_model()
         user = User.objects.get(pk=user_id)
-        
+
         # Update user permissions
         user.is_active = request.POST.get('is_active') == 'on'
         user.is_staff = request.POST.get('is_staff') == 'on'
         user.is_superuser = request.POST.get('is_superuser') == 'on'
-        
+
         # Handle role-based permissions
         if request.POST.get('userRole') == 'admin':
             user.is_staff = True
@@ -605,9 +619,9 @@ def update_user_permissions(request, user_id):
                 faculty.save()
             except:
                 pass
-        
+
         user.save()
-        
+
         return JsonResponse({'status': 'success'})
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
