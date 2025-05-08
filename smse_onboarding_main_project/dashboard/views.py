@@ -616,15 +616,33 @@ def update_user_permissions(request, user_id):
 
 @login_required
 @user_passes_test(is_admin)
+@require_POST
+def api_assign_tasks(request):
+    user_id = request.POST.get('user_id')
+    task_ids = request.POST.getlist('task_ids[]')
+    if not user_id or not task_ids:
+        return JsonResponse({'status': 'error', 'msg': 'User and tasks required'})
+    try:
+        faculty = Faculty.objects.get(pk=user_id)
+        tasks = Task.objects.filter(id__in=task_ids)
+        for task in tasks:
+            task.assigned_to.add(faculty)
+        return JsonResponse({'status': 'success'})
+    except Faculty.DoesNotExist:
+        return JsonResponse({'status': 'error', 'msg': 'User not found'})
+
+@login_required
+@user_passes_test(is_admin)
 def task_management(request):
-    """Admin Task Management page"""
     faculty = get_faculty_from_request(request)
     unread_reminders_count = Reminder.objects.filter(faculty=faculty, is_read=False).count() if faculty else 0
     tasks = Task.objects.all().select_related('prerequisite_task')
+    faculty_list = Faculty.objects.all()
     context = {
         'faculty': faculty,
         'unread_reminders_count': unread_reminders_count,
         'tasks': tasks,
+        'faculty_list': faculty_list,
     }
     return render(request, 'dashboard/admin/task_management.html', context)
 

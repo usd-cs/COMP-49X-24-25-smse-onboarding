@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="{% static 'dashboard/css/faculty_directory.css' %}">
 <link rel="stylesheet" href="{% static 'dashboard/css/faculty_profile_card.css' %}">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 {% endblock %}
 
 {% block content %}
@@ -29,6 +30,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Task Management</h1>
                 </div>
+                <button class="btn btn-info mb-3" data-bs-toggle="modal" data-bs-target="#assignTasksModal">Assign Tasks</button>
                 <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add Task</button>
                 <div class="table-responsive bg-white rounded shadow-sm p-3" {% if faculty.dark_mode %}style="background-color: #4b4b4b !important;"{% endif %}>
                     <table class="table" id="taskManagementTable">
@@ -156,6 +158,61 @@
                   </div>
                 </div>
 
+                <!-- Assign Tasks Modal -->
+                <div class="modal fade" id="assignTasksModal" tabindex="-1" aria-labelledby="assignTasksModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg">
+                    <form id="assignTasksForm">
+                      <div class="modal-content">
+                        <div class="modal-header bg-info bg-opacity-10 border-0">
+                          <h4 class="modal-title fw-bold d-flex align-items-center gap-2" id="assignTasksModalLabel">
+                            <i class="bi bi-person-plus-fill text-info"></i> Assign Tasks to User
+                          </h4>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body px-4 py-3">
+                          {% csrf_token %}
+                          <div class="row g-4">
+                            <div class="col-md-4">
+                              <label for="assignUser" class="form-label fw-semibold">Select User</label>
+                              <select class="form-select" id="assignUser" name="user_id" required>
+                                <option value="">Select a user</option>
+                                {% for user in faculty_list %}
+                                  <option value="{{ user.pk }}">{{ user.first_name }} {{ user.last_name }} ({{ user.email }})</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                            <div class="col-md-8">
+                              <label for="assignTasks" class="form-label fw-semibold">Select Tasks</label>
+                              <select class="form-select" id="assignTasks" name="task_ids" multiple required style="width: 100%; min-height: 250px;">
+                                {% for t in tasks %}
+                                  <option value="{{ t.id }}">{{ t.title }}</option>
+                                {% endfor %}
+                              </select>
+                              <small class="text-muted">Hold Ctrl (Windows) or Command (Mac) to select multiple tasks, or search by typing.</small>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                          <button type="submit" class="btn btn-sidebar px-4 d-flex align-items-center gap-2"><i class="bi bi-check2-circle"></i>Assign</button>
+                          <button type="button" class="btn btn-secondary d-flex align-items-center gap-2" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i>Cancel</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- Toast for feedback -->
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11000">
+                  <div id="assignToast" class="toast align-items-center toast-sidebar border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                      <div class="toast-body">
+                        Tasks assigned successfully!
+                      </div>
+                      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                  </div>
+                </div>
+
                 <script>
                 document.addEventListener('DOMContentLoaded', function() {
                   // Edit Task Modal
@@ -265,10 +322,65 @@
                       }
                     });
                   });
+
+                  // Assign Tasks Modal
+                  // 初始化Select2
+                  $(document).ready(function() {
+                    $('#assignTasks').select2({
+                      width: '100%',
+                      placeholder: 'Select tasks',
+                      allowClear: true
+                    });
+                  });
+                  document.getElementById('assignTasksForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var userId = document.getElementById('assignUser').value;
+                    var selectedTasks = $('#assignTasks').val();
+                    var csrfToken = document.querySelector('#assignTasksForm [name=csrfmiddlewaretoken]').value;
+
+                    fetch('/dashboard/api/assign-tasks/', {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Accept': 'application/json',
+                      },
+                      body: new URLSearchParams({
+                        user_id: userId,
+                        'task_ids[]': selectedTasks
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.status === 'success') {
+                        var toastEl = document.getElementById('assignToast');
+                        var toast = new bootstrap.Toast(toastEl);
+                        toast.show();
+                        setTimeout(function() { location.reload(); }, 1200);
+                      } else {
+                        alert('Failed to assign tasks: ' + (data.msg || ''));
+                      }
+                    });
+                  });
                 });
                 </script>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+  .btn-sidebar {
+    background-color: #003b70 !important;
+    color: #fff !important;
+    border: none;
+  }
+  .btn-sidebar:hover, .btn-sidebar:focus {
+    background-color: #33628d !important;
+    color: #fff !important;
+  }
+  .toast-sidebar {
+    background-color: #003b70 !important;
+    color: #fff !important;
+  }
+</style>
 {% endblock %} 
