@@ -148,8 +148,8 @@ class ReminderIntegrationTests(TestCase):
 
         sent_notification = Reminder.objects.get(faculty=self.faculty1, task=self.task3)
 
-        first_sentence = f"This is a reminder about your new hire onboarding task: Task 3."
-        second_sentence = f"This task is due on November 08, 2024, 09:30 AM."
+        first_sentence = "This is a reminder about your new hire onboarding task: Task 3."
+        second_sentence = "This task is due on November 08, 2024, 09:30 AM."
         third_sentence = "You have 1 day remaining."
         fourth_sentence = "Please complete this task as soon as possible."
         fifth_sentence = "Please navigate to the new hire dashboard in the SMSE Onboarding Portal to view the task and complete it."
@@ -172,7 +172,7 @@ If you have any questions, please contact the SMSE Admin team at smseadmin@sandi
 Thank you,
 
 SMSE Admin Team"""
-        self.maxDiff = None
+
         self.assertEqual(sent_notification.faculty, self.faculty1)
         self.assertEqual(sent_notification.task, self.task3)
         self.assertEqual(sent_notification.is_read, False)
@@ -185,8 +185,8 @@ SMSE Admin Team"""
 
         sent_notification = Reminder.objects.get(faculty=self.faculty2, secondary_faculty=self.faculty1, task=self.task3)
 
-        first_sentence = f"This is a reminder about Long Pham's onboarding task: Task 3."
-        second_sentence = f"This task is due on November 08, 2024, 09:30 AM."
+        first_sentence = "This is a reminder about Long Pham's onboarding task: Task 3."
+        second_sentence = "This task is due on November 08, 2024, 09:30 AM."
         third_sentence = "This user has less than 24 hours remaining."
         fourth_sentence = "Please have them complete this task as soon as possible."
         fifth_sentence = "Please have them navigate to the new hire dashboard in the SMSE Onboarding Portal to view the task and complete it."
@@ -204,7 +204,7 @@ Deadline: November 08, 2024, 09:30 AM
 Prerequisite Task: None
 Remaining Time: Less than 24 hours
 Description: Description 3"""
-        self.maxDiff = None
+
         self.assertEqual(sent_notification.faculty, self.faculty2)
         self.assertEqual(sent_notification.secondary_faculty, self.faculty1)
         self.assertEqual(sent_notification.task, self.task3)
