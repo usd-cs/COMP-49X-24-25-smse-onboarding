@@ -151,49 +151,49 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <h2 class="text-center mb-3" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>Advanced Admin Page Guide</h2>
-                                        <p class="{% if faculty.dark_mode %}text-white{% else %}text-muted{% endif %} text-center mb-3">Learn how to navigate and manage the advanced admin page efficiently.</p>
+                                        <p class="{% if faculty.dark_mode %}text-white{% else %}text-muted{% endif %} text-center mb-4">Learn how to navigate and manage the advanced admin page efficiently.</p>
 
                                         <!-- Table of Contents -->
-                                        <div class="card mb-2">
+                                        <div class="card mb-4" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px;"{% endif %}>
                                             <div class="card-header bg-primary text-white py-2">
                                                 <h5 class="mb-0">Table of Contents</h5>
                                             </div>
-                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
+                                            <div class="card-body p-3" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <ul class="list-unstyled mb-0">
-                                                            <li class="mb-1">
-                                                                <a href="#overview" class="text-decoration-none">
-                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Overview
+                                                            <li class="mb-2">
+                                                                <a href="#overview-section" class="text-decoration-none" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                                    <i class="bi bi-info-circle-fill text-primary me-2"></i>Overview
                                                                 </a>
                                                             </li>
-                                                            <li class="mb-1">
-                                                                <a href="#navigation" class="text-decoration-none">
-                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Navigation
+                                                            <li class="mb-2">
+                                                                <a href="#navigation-section" class="text-decoration-none" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                                    <i class="bi bi-compass-fill text-primary me-2"></i>Navigation
                                                                 </a>
                                                             </li>
-                                                            <li class="mb-1">
-                                                                <a href="#links" class="text-decoration-none">
-                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Explanation of Links
+                                                            <li class="mb-2">
+                                                                <a href="#user-management-section" class="text-decoration-none" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                                    <i class="bi bi-people-fill text-primary me-2"></i>User Management
                                                                 </a>
                                                             </li>
                                                         </ul>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <ul class="list-unstyled mb-0">
-                                                            <li class="mb-1">
-                                                                <a href="#searching" class="text-decoration-none">
-                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Searching & Filtering
+                                                            <li class="mb-2">
+                                                                <a href="#permissions-section" class="text-decoration-none" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                                    <i class="bi bi-shield-lock-fill text-primary me-2"></i>Permissions
                                                                 </a>
                                                             </li>
-                                                            <li class="mb-1">
-                                                                <a href="#roles" class="text-decoration-none">
-                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>User Roles & Permissions
+                                                            <li class="mb-2">
+                                                                <a href="#task-management-section" class="text-decoration-none" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                                    <i class="bi bi-list-check text-primary me-2"></i>Task Management
                                                                 </a>
                                                             </li>
-                                                            <li class="mb-1">
-                                                                <a href="#faculty" class="text-decoration-none">
-                                                                    <i class="bi bi-arrow-right-circle-fill text-primary me-2"></i>Managing Faculty & Tasks
+                                                            <li class="mb-2">
+                                                                <a href="#document-management-section" class="text-decoration-none" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                                    <i class="bi bi-file-earmark-text text-primary me-2"></i>Document Management
                                                                 </a>
                                                             </li>
                                                         </ul>
@@ -202,98 +202,106 @@
                                             </div>
                                         </div>
 
-                                        <!-- Section: Overview -->
-                                        <div class="card mb-2" id="overview">
-                                            <div class="card-header bg-primary text-white py-2">
-                                                <h5 class="mb-0">Overview of the Advanced Admin Page</h5>
+                                        <!-- Overview Section -->
+                                        <div class="row g-3 mb-4" id="overview-section">
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-0 shadow-sm" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px;"{% endif %}>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            <i class="bi bi-info-circle-fill text-primary me-2"></i>Overview
+                                                        </h5>
+                                                        <p class="card-text" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            The Advanced Admin Page is where administrators can manage faculty, users, and onboarding tasks in advanced settings. Each section corresponds to an area of the onboarding system.
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
-                                                <p class="mb-1">The Advanced Admin Page is where administrators can manage faculty, users, and onboarding tasks in advanced settings.</p>
-                                                <p class="mb-0">Each section in the admin page corresponds to an area of the onboarding system.</p>
-                                            </div>
-                                        </div>
-
-                                        <!-- Section: Navigation -->
-                                        <div class="card mb-2" id="navigation">
-                                            <div class="card-header bg-primary text-white py-2">
-                                                <h5 class="mb-0">Navigating the Advanced Admin Page</h5>
-                                            </div>
-                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
-                                                <ul class="mb-0">
-                                                    <li><strong>Dashboard:</strong> Displays available sections like Users, Groups, Tasks, and Faculty.</li>
-                                                    <li><strong>Search Bar:</strong> Quickly find records by entering names, emails, or task titles.</li>
-                                                    <li><strong>Filters:</strong> Use the right sidebar to filter by categories like status, role, or department.</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <!-- Section: Explanation of Each Link -->
-                                        <div class="card mb-2" id="links">
-                                            <div class="card-header bg-primary text-white py-2">
-                                                <h5 class="mb-0">Explanation of Each Link</h5>
-                                            </div>
-                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
-                                                <ul class="mb-0">
-                                                    <li><strong>Groups:</strong> Manage user permission groups (e.g., Admins, Faculty, New Hires).</li>
-                                                    <li><strong>Users:</strong> View and edit user accounts, assign permissions, and reset passwords.</li>
-                                                    <li><strong>Tasks:</strong> Manage faculty onboarding tasks, assign tasks, and track progress.</li>
-                                                    <li><strong>Faculty Documents:</strong> Upload and view faculty resumes and other documents.</li>
-                                                    <li><strong>Faculty:</strong> View all faculty members, edit details, assign onboarding tasks.</li>
-                                                </ul>
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-0 shadow-sm" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px;"{% endif %}>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            <i class="bi bi-compass-fill text-primary me-2"></i>Navigation
+                                                        </h5>
+                                                        <p class="card-text" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            Navigate through the admin dashboard using the sidebar menu. Access different sections like Users, Groups, Tasks, and Faculty management.
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <!-- Section: Searching & Filtering -->
-                                        <div class="card mb-2" id="searching">
-                                            <div class="card-header bg-primary text-white py-2">
-                                                <h5 class="mb-0">Searching & Filtering</h5>
+                                        <!-- User Management Section -->
+                                        <div class="row g-3 mb-4" id="user-management-section">
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-0 shadow-sm" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px;"{% endif %}>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            <i class="bi bi-people-fill text-primary me-2"></i>User Management & Permissions
+                                                        </h5>
+                                                        <p class="card-text" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            Manage user accounts, assign permissions, and control access levels. Create new users and modify existing user roles. Configure user permissions and access levels. Manage who can view, edit, or delete specific content and features.
+                                                        </p>
+                                                        <div class="mt-3">
+                                                            <div class="embed-responsive embed-responsive-16by9">
+                                                                <iframe src="https://scribehow.com/embed/User_Management_Guide__wKujrzKcQ9KC-J72dxqLEA" width="100%" height="100%" allow="fullscreen" style="aspect-ratio: 3 / 4; max-width: 100%; max-height: 600px; border: 0;"></iframe>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
-                                                <p class="mb-1"><strong>Searching:</strong></p>
-                                                <ul class="mb-2">
-                                                    <li>Use the search bar to find faculty members by name or email.</li>
-                                                    <li>Search tasks by title to find specific onboarding tasks.</li>
-                                                </ul>
-                                                <p class="mb-1"><strong>Filtering:</strong></p>
-                                                <ul class="mb-0">
-                                                    <li>Use filters (right side panel) to show only pending tasks or incomplete onboarding.</li>
-                                                    <li>Filter faculty by department, role, or onboarding status.</li>
-                                                </ul>
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-0 shadow-sm" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px;"{% endif %}>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            <i class="bi bi-shield-lock-fill text-primary me-2"></i> Reminders & Notifications
+                                                        </h5>
+                                                        <p class="card-text" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            Set reminders and notifications for faculty members. Send reminders and notifications to faculty members about upcoming deadlines and incomplete tasks.
+                                                        </p>
+                                                        <div class="mt-3">
+                                                            <div class="embed-responsive embed-responsive-16by9">
+                                                                <iframe src="https://scribehow.com/embed/Managing_Reminders_and_Adding_New_Ones__ejcWN46LQJiBhGuVxXixCA" width="100%" height="100%" allow="fullscreen" style="aspect-ratio: 3 / 4; max-width: 100%; max-height: 600px; border: 0"></iframe>                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <!-- Section: Editing & Managing Roles -->
-                                        <div class="card mb-2" id="roles">
-                                            <div class="card-header bg-primary text-white py-2">
-                                                <h5 class="mb-0">Changing User Roles & Permissions</h5>
+                                        <!-- Task Management Section -->
+                                        <div class="row g-3 mb-4" id="task-management-section">
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-0 shadow-sm" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px;"{% endif %}>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            <i class="bi bi-list-check text-primary me-2"></i>Task Management
+                                                        </h5>
+                                                        <p class="card-text" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            Create and manage onboarding tasks. Set deadlines, assign tasks to faculty members, and track completion status.
+                                                        </p>
+                                                        <div class="mt-3">
+                                                            <div class="embed-responsive embed-responsive-16by9">
+                                                                <iframe src="https://scribehow.com/embed/How_To_Add_and_Manage_New_Tasks_In_Advanced_Admin_Panel__pvaDbhh6R_a7Kdl1fZAtaA" width="100%" height="100%" allow="fullscreen" style="aspect-ratio: 3 / 4; max-width: 100%; max-height: 600px; border: 0;"></iframe>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
-                                                <p class="mb-1"><strong>To change permissions:</strong></p>
-                                                <ul class="mb-0">
-                                                    <li>Go to <strong>Users</strong> in the admin panel.</li>
-                                                    <li>Click on a user and select their permissions (Admin, Staff, Faculty).</li>
-                                                    <li>Admins can add, delete, and manage all records, while staff may have limited access.</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <!-- Section: Editing Faculty & Assigning Tasks -->
-                                        <div class="card mb-2" id="faculty">
-                                            <div class="card-header bg-primary text-white py-2">
-                                                <h5 class="mb-0">Managing Faculty & Assigning Tasks</h5>
-                                            </div>
-                                            <div class="card-body p-2 card-small" {% if faculty.dark_mode %}style="background-color: #5c5c5c; color: #ffffff;"{% endif %}>
-                                                <p class="mb-1"><strong>To edit faculty details:</strong></p>
-                                                <ul class="mb-2">
-                                                    <li>Go to <strong>Faculty</strong> in the admin panel.</li>
-                                                    <li>Click on a faculty member and update their department, contact info, or job title.</li>
-                                                </ul>
-                                                <p class="mb-1"><strong>To assign tasks:</strong></p>
-                                                <ul class="mb-0">
-                                                    <li>Go to <strong>Tasks</strong> in the admin panel.</li>
-                                                    <li>Click on an existing task or create a new one.</li>
-                                                    <li>Select the faculty members to assign the task to.</li>
-                                                </ul>
+                                            <div class="col-md-6">
+                                                <div class="card h-100 border-0 shadow-sm" {% if faculty.dark_mode %}style="background-color: #5c5c5c; border-radius: 8px;"{% endif %}>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            <i class="bi bi-file-earmark-text text-primary me-2"></i>Document Management
+                                                        </h5>
+                                                        <p class="card-text" {% if faculty.dark_mode %}style="color: #ffffff;"{% endif %}>
+                                                            Manage faculty documents and required paperwork. Review, approve, or request additional documentation as needed.
+                                                        </p>
+                                                        <div class="mt-3">
+                                                            <div class="embed-responsive embed-responsive-16by9">
+                                                                <iframe src="https://scribehow.com/embed/Document_Management_Guide__wKujrzKcQ9KC-J72dxqLEA" width="100%" height="100%" allow="fullscreen" style="aspect-ratio: 3 / 4; max-width: 100%; max-height: 600px; border: 0;"></iframe>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
