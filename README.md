@@ -86,13 +86,23 @@ The test data is called `test_data.json` and is under `posts/fixtures`.
 Check the admin page to make sure all the users and tasks are there.
 
 ## 10. URLs
-
+- Local Site (using command `docker compose -f compose_dev.yaml up` to start up the site)
 - (http://127.0.0.1:8000/admin/) - directs to the Django admin panel
-- (http://127.0.0.1:8000/) - directs to the login page of the onboarding portal
+- （http://127.0.0.1:8000/） - directs to the login page of the onboarding portal
+
+- Django Site (check 12)
+- (https://smse-onboarding.dedyn.io/admin/) - directs to the Django admin panel
+- （https://smse-onboarding.dedyn.io/） - directs to the login page of the onboarding portal
 
 ## 11. Test Data
 
 The following test data is used in the unit tests for the SMSE Onboarding application. These include sample Faculty and Task data to validate the functionality of models and their relationships.
+
+## 12. Run On Digital Ocean
+
+**1.** cd into your cloned repository, and then use the command `cd smse_onboarding_main_project`.
+**2.** use command `docker compose up -d` to run the application.
+**3.** use command `docker compose down` to shut down.
 
 ### Faculty User 1
 
