@@ -18,6 +18,15 @@
 **10.** URLs
 **11.** Test Data
 **12.** UI Design
+**13.** Pre-Merge Steps
+**14.** Post-Merge Steps
+**15.** Additional Dependencies
+**16.** Environment Configuration
+**17.** Static and Media Files
+**18.** Docker Deployment
+**19.** Nginx Configuration
+**20.** System Highlights
+
 
 ## 1. Features
 
@@ -86,13 +95,23 @@ The test data is called `test_data.json` and is under `posts/fixtures`.
 Check the admin page to make sure all the users and tasks are there.
 
 ## 10. URLs
-
+- Local Site (using command `docker compose -f compose_dev.yaml up` to start up the site)
 - (http://127.0.0.1:8000/admin/) - directs to the Django admin panel
-- (http://127.0.0.1:8000/) - directs to the login page of the onboarding portal
+- （http://127.0.0.1:8000/） - directs to the login page of the onboarding portal
+
+- Django Site ()
+- (https://smse-onboarding.dedyn.io/admin/) - directs to the Django admin panel
+- (https://smse-onboarding.dedyn.io/) - directs to the login page of the onboarding portal
+- Run On Digital Ocean
+
+**1.** cd into your cloned repository, and then use the command `cd smse_onboarding_main_project`.
+**2.** use command `docker compose up -d` to run the application.
+**3.** use command `docker compose down` to shut down.
 
 ## 11. Test Data
 
 The following test data is used in the unit tests for the SMSE Onboarding application. These include sample Faculty and Task data to validate the functionality of models and their relationships.
+
 
 ### Faculty User 1
 
@@ -326,6 +345,52 @@ After merging to the main production branch, run the post-merge script post_merg
 9. **Check the application:**
     - In your browser, go to `smse-onboarding.dedyn.io`
     - This will check that the application is running
+
+## 15. Additional Dependencies
+
+- Pillow: For profile image and document image processing
+- social-auth-app-django: Supports third-party social authentication
+- psycopg2-binary: PostgreSQL database driver
+
+## 16. Environment Configuration
+
+- Supports switching between development and production settings.
+- Development: Set `DJANGO_SETTINGS_MODULE=smse_onboarding.settings_dev`
+- Production: Uses `settings.py` by default
+
+## 17. Static and Media Files
+
+- Collect static files:
+  ```bash
+  python manage.py collectstatic
+  ```
+- Static files are stored in `staticfiles/`, uploaded media files (such as profile images, documents) are stored in `media/`
+
+## 18. Docker Deployment
+
+- Build and run:
+  ```bash
+  docker compose -f compose.yaml up --build
+  ```
+- For development:
+  ```bash
+  docker compose -f compose_dev.yaml up --build
+  ```
+- The `Dockerfile` and compose files are in the project root directory
+
+## 19. Nginx Configuration
+
+- For production, refer to `nginx.conf` for static and media file proxy configuration
+- Adjust server_name, static, and media paths as needed for your deployment
+
+## 20. System Highlights
+
+- Centralized onboarding management for both faculty and admin roles
+- Automated reminders and notifications to reduce missed steps
+- Real-time progress tracking and visual feedback
+- Modern web architecture (Django + Bootstrap)
+- Easy to extend and customize
+
 
 
 
